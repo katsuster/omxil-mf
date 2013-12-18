@@ -49,8 +49,8 @@ AC_CHECK_FUNCS([memmove memset strcasecmp])
 
 
 # Specify the Makefile
-AC_CONFIG_FILES([Makefile src/Makefile ])
-#tests/Makefile doc/Makefile
+AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile ])
+#doc/Makefile
 
 
 # Specify subdir of configure
