@@ -51,7 +51,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-check_PROGRAMS = init_deinit_test$(EXEEXT)
+check_PROGRAMS = init_deinit_test$(EXEEXT) \
+	enum_components_test$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -62,13 +63,15 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+am_enum_components_test_OBJECTS =  \
+	enum_components_test-test_enum_components.$(OBJEXT)
+enum_components_test_OBJECTS = $(am_enum_components_test_OBJECTS)
+am__DEPENDENCIES_1 =
+enum_components_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_init_deinit_test_OBJECTS =  \
 	init_deinit_test-test_init_deinit.$(OBJEXT)
 init_deinit_test_OBJECTS = $(am_init_deinit_test_OBJECTS)
-init_deinit_test_DEPENDENCIES = $(study_LDADD)
-init_deinit_test_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(init_deinit_test_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+init_deinit_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -82,8 +85,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(init_deinit_test_SOURCES)
-DIST_SOURCES = $(init_deinit_test_SOURCES)
+SOURCES = $(enum_components_test_SOURCES) $(init_deinit_test_SOURCES)
+DIST_SOURCES = $(enum_components_test_SOURCES) \
+	$(init_deinit_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -91,6 +95,8 @@ am__can_run_installinfo = \
   esac
 ETAGS = etags
 CTAGS = ctags
+am__tty_colors = \
+red=; grn=; lgn=; blu=; std=
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -214,13 +220,22 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-study_LDADD = $(top_builddir)/src/libomxil-study.la
-study_CFLAGS = -I$(top_srcdir)/include
-#common_LDADD = ../common/libtestcommon.la
+test_LDADD = -lomxil-bellagio
+test_CPPFLAGS = -I/usr/include
+test_CFLAGS = -DUSE_BELLAGIO
+
+#test_LDADD    = $(top_builddir)/src/libomxil-study.la
+#test_CPPFLAGS = -I$(top_srcdir)/include
+#test_CFLAGS   = -DUSE_STUDY
+#common_LDADD  = ../common/libtestcommon.la
 #common_CFLAGS = -I$(srcdir)/../common
 init_deinit_test_SOURCES = test_init_deinit.c
-init_deinit_test_LDADD = $(study_LDADD) $(common_LDADD) -lpthread
-init_deinit_test_CFLAGS = $(study_CFLAGS) $(common_CFLAGS)
+init_deinit_test_LDADD = $(test_LDADD) $(common_LDADD) -lpthread
+init_deinit_test_CPPFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+enum_components_test_SOURCES = test_enum_components.c
+enum_components_test_LDADD = $(test_LDADD) $(common_LDADD)
+enum_components_test_CPPFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+TESTS = $(check_PROGRAMS)
 all: all-am
 
 .SUFFIXES:
@@ -264,9 +279,12 @@ clean-checkPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+enum_components_test$(EXEEXT): $(enum_components_test_OBJECTS) $(enum_components_test_DEPENDENCIES) $(EXTRA_enum_components_test_DEPENDENCIES) 
+	@rm -f enum_components_test$(EXEEXT)
+	$(LINK) $(enum_components_test_OBJECTS) $(enum_components_test_LDADD) $(LIBS)
 init_deinit_test$(EXEEXT): $(init_deinit_test_OBJECTS) $(init_deinit_test_DEPENDENCIES) $(EXTRA_init_deinit_test_DEPENDENCIES) 
 	@rm -f init_deinit_test$(EXEEXT)
-	$(init_deinit_test_LINK) $(init_deinit_test_OBJECTS) $(init_deinit_test_LDADD) $(LIBS)
+	$(LINK) $(init_deinit_test_OBJECTS) $(init_deinit_test_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -274,6 +292,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/enum_components_test-test_enum_components.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_deinit_test-test_init_deinit.Po@am__quote@
 
 .c.o:
@@ -297,19 +316,33 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
+enum_components_test-test_enum_components.o: test_enum_components.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT enum_components_test-test_enum_components.o -MD -MP -MF $(DEPDIR)/enum_components_test-test_enum_components.Tpo -c -o enum_components_test-test_enum_components.o `test -f 'test_enum_components.c' || echo '$(srcdir)/'`test_enum_components.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/enum_components_test-test_enum_components.Tpo $(DEPDIR)/enum_components_test-test_enum_components.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_enum_components.c' object='enum_components_test-test_enum_components.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o enum_components_test-test_enum_components.o `test -f 'test_enum_components.c' || echo '$(srcdir)/'`test_enum_components.c
+
+enum_components_test-test_enum_components.obj: test_enum_components.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT enum_components_test-test_enum_components.obj -MD -MP -MF $(DEPDIR)/enum_components_test-test_enum_components.Tpo -c -o enum_components_test-test_enum_components.obj `if test -f 'test_enum_components.c'; then $(CYGPATH_W) 'test_enum_components.c'; else $(CYGPATH_W) '$(srcdir)/test_enum_components.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/enum_components_test-test_enum_components.Tpo $(DEPDIR)/enum_components_test-test_enum_components.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_enum_components.c' object='enum_components_test-test_enum_components.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o enum_components_test-test_enum_components.obj `if test -f 'test_enum_components.c'; then $(CYGPATH_W) 'test_enum_components.c'; else $(CYGPATH_W) '$(srcdir)/test_enum_components.c'; fi`
+
 init_deinit_test-test_init_deinit.o: test_init_deinit.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(init_deinit_test_CFLAGS) $(CFLAGS) -MT init_deinit_test-test_init_deinit.o -MD -MP -MF $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo -c -o init_deinit_test-test_init_deinit.o `test -f 'test_init_deinit.c' || echo '$(srcdir)/'`test_init_deinit.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT init_deinit_test-test_init_deinit.o -MD -MP -MF $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo -c -o init_deinit_test-test_init_deinit.o `test -f 'test_init_deinit.c' || echo '$(srcdir)/'`test_init_deinit.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo $(DEPDIR)/init_deinit_test-test_init_deinit.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_init_deinit.c' object='init_deinit_test-test_init_deinit.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(init_deinit_test_CFLAGS) $(CFLAGS) -c -o init_deinit_test-test_init_deinit.o `test -f 'test_init_deinit.c' || echo '$(srcdir)/'`test_init_deinit.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o init_deinit_test-test_init_deinit.o `test -f 'test_init_deinit.c' || echo '$(srcdir)/'`test_init_deinit.c
 
 init_deinit_test-test_init_deinit.obj: test_init_deinit.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(init_deinit_test_CFLAGS) $(CFLAGS) -MT init_deinit_test-test_init_deinit.obj -MD -MP -MF $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo -c -o init_deinit_test-test_init_deinit.obj `if test -f 'test_init_deinit.c'; then $(CYGPATH_W) 'test_init_deinit.c'; else $(CYGPATH_W) '$(srcdir)/test_init_deinit.c'; fi`
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT init_deinit_test-test_init_deinit.obj -MD -MP -MF $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo -c -o init_deinit_test-test_init_deinit.obj `if test -f 'test_init_deinit.c'; then $(CYGPATH_W) 'test_init_deinit.c'; else $(CYGPATH_W) '$(srcdir)/test_init_deinit.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo $(DEPDIR)/init_deinit_test-test_init_deinit.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_init_deinit.c' object='init_deinit_test-test_init_deinit.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(init_deinit_test_CFLAGS) $(CFLAGS) -c -o init_deinit_test-test_init_deinit.obj `if test -f 'test_init_deinit.c'; then $(CYGPATH_W) 'test_init_deinit.c'; else $(CYGPATH_W) '$(srcdir)/test_init_deinit.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o init_deinit_test-test_init_deinit.obj `if test -f 'test_init_deinit.c'; then $(CYGPATH_W) 'test_init_deinit.c'; else $(CYGPATH_W) '$(srcdir)/test_init_deinit.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -369,6 +402,99 @@ GTAGS:
 distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
+check-TESTS: $(TESTS)
+	@failed=0; all=0; xfail=0; xpass=0; skip=0; \
+	srcdir=$(srcdir); export srcdir; \
+	list=' $(TESTS) '; \
+	$(am__tty_colors); \
+	if test -n "$$list"; then \
+	  for tst in $$list; do \
+	    if test -f ./$$tst; then dir=./; \
+	    elif test -f $$tst; then dir=; \
+	    else dir="$(srcdir)/"; fi; \
+	    if $(TESTS_ENVIRONMENT) $${dir}$$tst; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *[\ \	]$$tst[\ \	]*) \
+		xpass=`expr $$xpass + 1`; \
+		failed=`expr $$failed + 1`; \
+		col=$$red; res=XPASS; \
+	      ;; \
+	      *) \
+		col=$$grn; res=PASS; \
+	      ;; \
+	      esac; \
+	    elif test $$? -ne 77; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *[\ \	]$$tst[\ \	]*) \
+		xfail=`expr $$xfail + 1`; \
+		col=$$lgn; res=XFAIL; \
+	      ;; \
+	      *) \
+		failed=`expr $$failed + 1`; \
+		col=$$red; res=FAIL; \
+	      ;; \
+	      esac; \
+	    else \
+	      skip=`expr $$skip + 1`; \
+	      col=$$blu; res=SKIP; \
+	    fi; \
+	    echo "$${col}$$res$${std}: $$tst"; \
+	  done; \
+	  if test "$$all" -eq 1; then \
+	    tests="test"; \
+	    All=""; \
+	  else \
+	    tests="tests"; \
+	    All="All "; \
+	  fi; \
+	  if test "$$failed" -eq 0; then \
+	    if test "$$xfail" -eq 0; then \
+	      banner="$$All$$all $$tests passed"; \
+	    else \
+	      if test "$$xfail" -eq 1; then failures=failure; else failures=failures; fi; \
+	      banner="$$All$$all $$tests behaved as expected ($$xfail expected $$failures)"; \
+	    fi; \
+	  else \
+	    if test "$$xpass" -eq 0; then \
+	      banner="$$failed of $$all $$tests failed"; \
+	    else \
+	      if test "$$xpass" -eq 1; then passes=pass; else passes=passes; fi; \
+	      banner="$$failed of $$all $$tests did not behave as expected ($$xpass unexpected $$passes)"; \
+	    fi; \
+	  fi; \
+	  dashes="$$banner"; \
+	  skipped=""; \
+	  if test "$$skip" -ne 0; then \
+	    if test "$$skip" -eq 1; then \
+	      skipped="($$skip test was not run)"; \
+	    else \
+	      skipped="($$skip tests were not run)"; \
+	    fi; \
+	    test `echo "$$skipped" | wc -c` -le `echo "$$banner" | wc -c` || \
+	      dashes="$$skipped"; \
+	  fi; \
+	  report=""; \
+	  if test "$$failed" -ne 0 && test -n "$(PACKAGE_BUGREPORT)"; then \
+	    report="Please report to $(PACKAGE_BUGREPORT)"; \
+	    test `echo "$$report" | wc -c` -le `echo "$$banner" | wc -c` || \
+	      dashes="$$report"; \
+	  fi; \
+	  dashes=`echo "$$dashes" | sed s/./=/g`; \
+	  if test "$$failed" -eq 0; then \
+	    col="$$grn"; \
+	  else \
+	    col="$$red"; \
+	  fi; \
+	  echo "$${col}$$dashes$${std}"; \
+	  echo "$${col}$$banner$${std}"; \
+	  test -z "$$skipped" || echo "$${col}$$skipped$${std}"; \
+	  test -z "$$report" || echo "$${col}$$report$${std}"; \
+	  echo "$${col}$$dashes$${std}"; \
+	  test "$$failed" -eq 0; \
+	else :; fi
+
 distdir: $(DISTFILES)
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
@@ -401,6 +527,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
 all-am: Makefile
 installdirs:
@@ -507,7 +634,7 @@ uninstall-am:
 
 .MAKE: check-am install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean \
+.PHONY: CTAGS GTAGS all all-am check check-TESTS check-am clean \
 	clean-checkPROGRAMS clean-generic clean-libtool ctags \
 	distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
