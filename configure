@@ -15617,12 +15617,13 @@ fi
 
 done
 
-for ac_header in OMX_Core.h
+for ac_header in OMX_Core.h OMX_Component.h OMX_Types.h OMX_Audio.h OMX_Video.h
 do :
-  ac_fn_c_check_header_mongrel "$LINENO" "OMX_Core.h" "ac_cv_header_OMX_Core_h" "$ac_includes_default"
-if test "x$ac_cv_header_OMX_Core_h" = xyes; then :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
   cat >>confdefs.h <<_ACEOF
-#define HAVE_OMX_CORE_H 1
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
 _ACEOF
 
 fi

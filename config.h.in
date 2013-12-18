@@ -18,8 +18,20 @@
 /* Define to 1 if you have the `memset' function. */
 #undef HAVE_MEMSET
 
+/* Define to 1 if you have the <OMX_Audio.h> header file. */
+#undef HAVE_OMX_AUDIO_H
+
+/* Define to 1 if you have the <OMX_Component.h> header file. */
+#undef HAVE_OMX_COMPONENT_H
+
 /* Define to 1 if you have the <OMX_Core.h> header file. */
 #undef HAVE_OMX_CORE_H
+
+/* Define to 1 if you have the <OMX_Types.h> header file. */
+#undef HAVE_OMX_TYPES_H
+
+/* Define to 1 if you have the <OMX_Video.h> header file. */
+#undef HAVE_OMX_VIDEO_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
