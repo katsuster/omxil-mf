@@ -66,12 +66,20 @@ CONFIG_CLEAN_VPATH_FILES =
 am_enum_components_test_OBJECTS =  \
 	enum_components_test-test_enum_components.$(OBJEXT)
 enum_components_test_OBJECTS = $(am_enum_components_test_OBJECTS)
-am__DEPENDENCIES_1 =
+@USE_BELLAGIO_FALSE@am__DEPENDENCIES_1 =  \
+@USE_BELLAGIO_FALSE@	$(top_builddir)/src/libomxil-study.la
 enum_components_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
+enum_components_test_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(enum_components_test_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am_init_deinit_test_OBJECTS =  \
 	init_deinit_test-test_init_deinit.$(OBJEXT)
 init_deinit_test_OBJECTS = $(am_init_deinit_test_OBJECTS)
 init_deinit_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
+init_deinit_test_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(init_deinit_test_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -220,21 +228,29 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-test_LDADD = -lomxil-bellagio
-test_CPPFLAGS = -I/usr/include
-test_CFLAGS = -DUSE_BELLAGIO
+@USE_BELLAGIO_FALSE@test_LDADD = $(top_builddir)/src/libomxil-study.la
+@USE_BELLAGIO_TRUE@test_LDADD = -lomxil-bellagio
+@USE_BELLAGIO_FALSE@test_CPPFLAGS = \
+@USE_BELLAGIO_FALSE@  	-I$(top_srcdir)/include \
+@USE_BELLAGIO_FALSE@  	-DUSE_STUDY
 
-#test_LDADD    = $(top_builddir)/src/libomxil-study.la
-#test_CPPFLAGS = -I$(top_srcdir)/include
-#test_CFLAGS   = -DUSE_STUDY
+@USE_BELLAGIO_TRUE@test_CPPFLAGS = \
+@USE_BELLAGIO_TRUE@  	-I/usr/include \
+@USE_BELLAGIO_TRUE@  	-DUSE_BELLAGIO
+
+@USE_BELLAGIO_FALSE@test_CFLAGS = 
+@USE_BELLAGIO_TRUE@test_CFLAGS = 
+
 #common_LDADD  = ../common/libtestcommon.la
 #common_CFLAGS = -I$(srcdir)/../common
 init_deinit_test_SOURCES = test_init_deinit.c
 init_deinit_test_LDADD = $(test_LDADD) $(common_LDADD) -lpthread
-init_deinit_test_CPPFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+init_deinit_test_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
+init_deinit_test_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
 enum_components_test_SOURCES = test_enum_components.c
 enum_components_test_LDADD = $(test_LDADD) $(common_LDADD)
-enum_components_test_CPPFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+enum_components_test_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
+enum_components_test_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
 TESTS = $(check_PROGRAMS)
 all: all-am
 
@@ -281,10 +297,10 @@ clean-checkPROGRAMS:
 	rm -f $$list
 enum_components_test$(EXEEXT): $(enum_components_test_OBJECTS) $(enum_components_test_DEPENDENCIES) $(EXTRA_enum_components_test_DEPENDENCIES) 
 	@rm -f enum_components_test$(EXEEXT)
-	$(LINK) $(enum_components_test_OBJECTS) $(enum_components_test_LDADD) $(LIBS)
+	$(enum_components_test_LINK) $(enum_components_test_OBJECTS) $(enum_components_test_LDADD) $(LIBS)
 init_deinit_test$(EXEEXT): $(init_deinit_test_OBJECTS) $(init_deinit_test_DEPENDENCIES) $(EXTRA_init_deinit_test_DEPENDENCIES) 
 	@rm -f init_deinit_test$(EXEEXT)
-	$(LINK) $(init_deinit_test_OBJECTS) $(init_deinit_test_LDADD) $(LIBS)
+	$(init_deinit_test_LINK) $(init_deinit_test_OBJECTS) $(init_deinit_test_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -317,32 +333,32 @@ distclean-compile:
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 enum_components_test-test_enum_components.o: test_enum_components.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT enum_components_test-test_enum_components.o -MD -MP -MF $(DEPDIR)/enum_components_test-test_enum_components.Tpo -c -o enum_components_test-test_enum_components.o `test -f 'test_enum_components.c' || echo '$(srcdir)/'`test_enum_components.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(enum_components_test_CFLAGS) $(CFLAGS) -MT enum_components_test-test_enum_components.o -MD -MP -MF $(DEPDIR)/enum_components_test-test_enum_components.Tpo -c -o enum_components_test-test_enum_components.o `test -f 'test_enum_components.c' || echo '$(srcdir)/'`test_enum_components.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/enum_components_test-test_enum_components.Tpo $(DEPDIR)/enum_components_test-test_enum_components.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_enum_components.c' object='enum_components_test-test_enum_components.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o enum_components_test-test_enum_components.o `test -f 'test_enum_components.c' || echo '$(srcdir)/'`test_enum_components.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(enum_components_test_CFLAGS) $(CFLAGS) -c -o enum_components_test-test_enum_components.o `test -f 'test_enum_components.c' || echo '$(srcdir)/'`test_enum_components.c
 
 enum_components_test-test_enum_components.obj: test_enum_components.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT enum_components_test-test_enum_components.obj -MD -MP -MF $(DEPDIR)/enum_components_test-test_enum_components.Tpo -c -o enum_components_test-test_enum_components.obj `if test -f 'test_enum_components.c'; then $(CYGPATH_W) 'test_enum_components.c'; else $(CYGPATH_W) '$(srcdir)/test_enum_components.c'; fi`
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(enum_components_test_CFLAGS) $(CFLAGS) -MT enum_components_test-test_enum_components.obj -MD -MP -MF $(DEPDIR)/enum_components_test-test_enum_components.Tpo -c -o enum_components_test-test_enum_components.obj `if test -f 'test_enum_components.c'; then $(CYGPATH_W) 'test_enum_components.c'; else $(CYGPATH_W) '$(srcdir)/test_enum_components.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/enum_components_test-test_enum_components.Tpo $(DEPDIR)/enum_components_test-test_enum_components.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_enum_components.c' object='enum_components_test-test_enum_components.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o enum_components_test-test_enum_components.obj `if test -f 'test_enum_components.c'; then $(CYGPATH_W) 'test_enum_components.c'; else $(CYGPATH_W) '$(srcdir)/test_enum_components.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(enum_components_test_CFLAGS) $(CFLAGS) -c -o enum_components_test-test_enum_components.obj `if test -f 'test_enum_components.c'; then $(CYGPATH_W) 'test_enum_components.c'; else $(CYGPATH_W) '$(srcdir)/test_enum_components.c'; fi`
 
 init_deinit_test-test_init_deinit.o: test_init_deinit.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT init_deinit_test-test_init_deinit.o -MD -MP -MF $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo -c -o init_deinit_test-test_init_deinit.o `test -f 'test_init_deinit.c' || echo '$(srcdir)/'`test_init_deinit.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(init_deinit_test_CFLAGS) $(CFLAGS) -MT init_deinit_test-test_init_deinit.o -MD -MP -MF $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo -c -o init_deinit_test-test_init_deinit.o `test -f 'test_init_deinit.c' || echo '$(srcdir)/'`test_init_deinit.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo $(DEPDIR)/init_deinit_test-test_init_deinit.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_init_deinit.c' object='init_deinit_test-test_init_deinit.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o init_deinit_test-test_init_deinit.o `test -f 'test_init_deinit.c' || echo '$(srcdir)/'`test_init_deinit.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(init_deinit_test_CFLAGS) $(CFLAGS) -c -o init_deinit_test-test_init_deinit.o `test -f 'test_init_deinit.c' || echo '$(srcdir)/'`test_init_deinit.c
 
 init_deinit_test-test_init_deinit.obj: test_init_deinit.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT init_deinit_test-test_init_deinit.obj -MD -MP -MF $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo -c -o init_deinit_test-test_init_deinit.obj `if test -f 'test_init_deinit.c'; then $(CYGPATH_W) 'test_init_deinit.c'; else $(CYGPATH_W) '$(srcdir)/test_init_deinit.c'; fi`
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(init_deinit_test_CFLAGS) $(CFLAGS) -MT init_deinit_test-test_init_deinit.obj -MD -MP -MF $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo -c -o init_deinit_test-test_init_deinit.obj `if test -f 'test_init_deinit.c'; then $(CYGPATH_W) 'test_init_deinit.c'; else $(CYGPATH_W) '$(srcdir)/test_init_deinit.c'; fi`
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo $(DEPDIR)/init_deinit_test-test_init_deinit.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_init_deinit.c' object='init_deinit_test-test_init_deinit.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o init_deinit_test-test_init_deinit.obj `if test -f 'test_init_deinit.c'; then $(CYGPATH_W) 'test_init_deinit.c'; else $(CYGPATH_W) '$(srcdir)/test_init_deinit.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(init_deinit_test_CFLAGS) $(CFLAGS) -c -o init_deinit_test-test_init_deinit.obj `if test -f 'test_init_deinit.c'; then $(CYGPATH_W) 'test_init_deinit.c'; else $(CYGPATH_W) '$(srcdir)/test_init_deinit.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

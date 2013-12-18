@@ -634,6 +634,8 @@ ac_includes_default="\
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
+USE_BELLAGIO_FALSE
+USE_BELLAGIO_TRUE
 LIBOBJS
 CXXCPP
 CPP
@@ -765,6 +767,8 @@ enable_fast_install
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
+enable_debug
+enable_use_bellagio
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1405,6 +1409,8 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --enable-debug	  turn on debugging [default=no]
+  --enable-bellagio	  use libomxil-bellagio [default=no]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -16198,6 +16204,59 @@ done
 
 
 
+
+
+# Checks for arguments.
+# Check whether --enable-debug was given.
+if test "${enable_debug+set}" = set; then :
+  enableval=$enable_debug;
+else
+  enable_debug=no
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable debuging" >&5
+$as_echo_n "checking whether to enable debuging... " >&6; }
+if test x$enable_debug = xyes; then
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+$as_echo "#define DEBUG 1" >>confdefs.h
+
+	CFLAGS="$CFLAGS -g -O0"
+	CXXFLAGS="$CXXFLAGS -g -O0"
+else
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	CFLAGS="$CFLAGS -O2"
+	CXXFLAGS="$CXXFLAGS -O2"
+fi
+
+# Check whether --enable-use_bellagio was given.
+if test "${enable_use_bellagio+set}" = set; then :
+  enableval=$enable_use_bellagio;
+else
+  enable_use_bellagio=no
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use libomxil-bellagio" >&5
+$as_echo_n "checking whether to use libomxil-bellagio... " >&6; }
+if test x$enable_use_bellagio = xyes; then
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+ if test x$enable_use_bellagio = xyes; then
+  USE_BELLAGIO_TRUE=
+  USE_BELLAGIO_FALSE='#'
+else
+  USE_BELLAGIO_TRUE='#'
+  USE_BELLAGIO_FALSE=
+fi
+
+
+
 # Specify the Makefile
 ac_config_files="$ac_config_files Makefile src/Makefile tests/Makefile"
 
@@ -16334,6 +16393,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${USE_BELLAGIO_TRUE}" && test -z "${USE_BELLAGIO_FALSE}"; then
+  as_fn_error $? "conditional \"USE_BELLAGIO\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
