@@ -20,6 +20,8 @@ AC_PROG_INSTALL()
 AC_PROG_LN_S()
 AC_PROG_LIBTOOL()
 
+#AC_SUBST(VAR, [var_value])
+
 
 # Checks for header files.
 AC_HEADER_STDC()
