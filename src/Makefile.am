@@ -1,16 +1,16 @@
 
-omxstudydir = $(libdir)
+omxil_studydir = $(libdir)
 
-omxstudy_LTLIBRARIES = libomxstudy.la
+omxil_study_LTLIBRARIES = libomxil-study.la
 
-libomxstudy_la_SOURCES = \
+libomxil_study_la_SOURCES = \
 	main.cpp \
 	entry.c
 
-libomxstudy_la_LIBADD  = 
-libomxstudy_la_LDFLAGS = 
-libomxstudy_la_CPPFLAGS  = \
+libomxil_study_la_LIBADD  = 
+libomxil_study_la_LDFLAGS = 
+libomxil_study_la_CPPFLAGS  = \
 	-I$(top_srcdir)/include
-libomxstudy_la_CFLAGS  = \
+libomxil_study_la_CFLAGS  = \
 	-Wall
 
