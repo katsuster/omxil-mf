@@ -15488,6 +15488,8 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+#AC_SUBST(VAR, [var_value])
+
 
 # Checks for header files.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ANSI C header files" >&5
