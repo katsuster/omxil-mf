@@ -18,11 +18,13 @@ AC_PROG_CXX()
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_LN_S()
+AC_PROG_LIBTOOL()
 
 
 # Checks for header files.
 AC_HEADER_STDC()
 AC_CHECK_HEADERS([fcntl.h stdlib.h string.h strings.h unistd.h])
+AC_CHECK_HEADERS([OMX_Core.h])
 
 
 # Checks for typedefs, structures, and compiler characteristics.
