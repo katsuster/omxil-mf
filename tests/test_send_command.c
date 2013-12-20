@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	
 	//Reference:
 	//    OpenMAX IL specification version 1.1.2
-	//    3.2.3.4.3 Sample Code Showing Calling Sequence
+	//    3.4.1.1 Non-tunneled Initialization
 	
 	comp = NULL;
 	result = OMX_ErrorNone;
