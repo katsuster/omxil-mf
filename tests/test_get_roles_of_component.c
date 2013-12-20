@@ -33,8 +33,7 @@ int main(int argc, char *argv[])
 		goto err_out1;
 	}
 	
-	snprintf(name_comp, sizeof(name_comp), 
-		arg_comp);
+	snprintf(name_comp, sizeof(name_comp), arg_comp);
 	num_roles = ARRAY_SIZE(name_roles);
 	for (i = 0; i < ARRAY_SIZE(name_roles); i++) {
 		name_roles[i] = (OMX_U8 *)malloc(OMX_MAX_STRINGNAME_SIZE);
