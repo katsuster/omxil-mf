@@ -23,6 +23,7 @@ OMX_ERRORTYPE test_fill_buffer_done(OMX_OUT OMX_HANDLETYPE hComponent, OMX_OUT O
 
 int main(int argc, char *argv[])
 {
+	const char *arg_comp;
 	OMX_HANDLETYPE comp;
 	char name_comp[OMX_MAX_STRINGNAME_SIZE];
 	OMX_PTR app_data;
@@ -31,6 +32,13 @@ int main(int argc, char *argv[])
 	OMX_UUIDTYPE uuid_comp;
 	OMX_ERRORTYPE result;
 	OMX_U32 i;
+	
+	//get arguments
+	if (argc < 2) {
+		arg_comp = "OMX.st.video_decoder.avc";
+	} else {
+		arg_comp = argv[1];
+	}
 	
 	//Reference:
 	//    OpenMAX IL specification version 1.1.2
@@ -45,8 +53,7 @@ int main(int argc, char *argv[])
 		goto err_out1;
 	}
 	
-	snprintf(name_comp, sizeof(name_comp), 
-		"OMX.st.video_decoder.avc");
+	snprintf(name_comp, sizeof(name_comp), arg_comp);
 	app_data = NULL;
 	callbacks.EventHandler = test_event_handler;
 	callbacks.EmptyBufferDone = test_empty_buffer_done;
