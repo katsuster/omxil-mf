@@ -4,8 +4,8 @@ omxil_studydir = $(libdir)
 omxil_study_LTLIBRARIES = libomxil-study.la
 
 libomxil_study_la_SOURCES = \
-	main.cpp \
-	entry.c
+	entry.cpp \
+	main.cpp 
 
 libomxil_study_la_LIBADD  = 
 libomxil_study_la_LDFLAGS = 

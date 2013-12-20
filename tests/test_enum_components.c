@@ -12,7 +12,8 @@ int main(int argc, char *argv[])
 	OMX_U32 i;
 	
 	//Reference:
-	//    OpenMAX IL 3.2.3.2.3 Sample Code Showing Calling Sequence
+	//    OpenMAX IL specification version 1.1.2
+	//    3.2.3.2.3 Sample Code Showing Calling Sequence
 	
 	result = OMX_ErrorNone;
 	
