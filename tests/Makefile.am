@@ -1,10 +1,11 @@
 
 check_PROGRAMS = \
-	init_deinit_test \
-	enum_components_test \
-	get_roles_of_component_test \
-	get_components_of_role_test \
-	get_handle_test
+	init_deinit \
+	enum_components \
+	get_roles_of_component \
+	get_components_of_role \
+	get_handle \
+	send_command
 
 if USE_BELLAGIO
   test_LDADD    = -lomxil-bellagio
@@ -20,33 +21,45 @@ else
   test_CFLAGS   = 
 endif
 
+common_SOURCES = common/omxil_utils.c
 #common_LDADD  = ../common/libtestcommon.la
 #common_CFLAGS = -I$(srcdir)/../common
 
-init_deinit_test_SOURCES   = test_init_deinit.c
-init_deinit_test_LDADD     = $(test_LDADD) $(common_LDADD)
-init_deinit_test_CPPFLAGS  = $(test_CPPFLAGS) $(common_CPPFLAGS)
-init_deinit_test_CFLAGS    = $(test_CFLAGS) $(common_CFLAGS)
+init_deinit_SOURCES   = test_init_deinit.c $(common_SOURCES)
+init_deinit_LDADD     = $(test_LDADD) $(common_LDADD)
+init_deinit_CPPFLAGS  = $(test_CPPFLAGS) $(common_CPPFLAGS)
+init_deinit_CFLAGS    = $(test_CFLAGS) $(common_CFLAGS)
 
-enum_components_test_SOURCES   = test_enum_components.c
-enum_components_test_LDADD     = $(test_LDADD) $(common_LDADD)
-enum_components_test_CPPFLAGS  = $(test_CPPFLAGS) $(common_CPPFLAGS)
-enum_components_test_CFLAGS    = $(test_CFLAGS) $(common_CFLAGS)
+enum_components_SOURCES   = test_enum_components.c $(common_SOURCES)
+enum_components_LDADD     = $(test_LDADD) $(common_LDADD)
+enum_components_CPPFLAGS  = $(test_CPPFLAGS) $(common_CPPFLAGS)
+enum_components_CFLAGS    = $(test_CFLAGS) $(common_CFLAGS)
 
-get_roles_of_component_test_SOURCES   = test_get_roles_of_component.c
-get_roles_of_component_test_LDADD     = $(test_LDADD) $(common_LDADD)
-get_roles_of_component_test_CPPFLAGS  = $(test_CPPFLAGS) $(common_CPPFLAGS)
-get_roles_of_component_test_CFLAGS    = $(test_CFLAGS) $(common_CFLAGS)
+get_roles_of_component_SOURCES   = test_get_roles_of_component.c $(common_SOURCES)
+get_roles_of_component_LDADD     = $(test_LDADD) $(common_LDADD)
+get_roles_of_component_CPPFLAGS  = $(test_CPPFLAGS) $(common_CPPFLAGS)
+get_roles_of_component_CFLAGS    = $(test_CFLAGS) $(common_CFLAGS)
 
-get_components_of_role_test_SOURCES   = test_get_components_of_role.c
-get_components_of_role_test_LDADD     = $(test_LDADD) $(common_LDADD)
-get_components_of_role_test_CPPFLAGS  = $(test_CPPFLAGS) $(common_CPPFLAGS)
-get_components_of_role_test_CFLAGS    = $(test_CFLAGS) $(common_CFLAGS)
+get_components_of_role_SOURCES   = test_get_components_of_role.c $(common_SOURCES)
+get_components_of_role_LDADD     = $(test_LDADD) $(common_LDADD)
+get_components_of_role_CPPFLAGS  = $(test_CPPFLAGS) $(common_CPPFLAGS)
+get_components_of_role_CFLAGS    = $(test_CFLAGS) $(common_CFLAGS)
 
-get_handle_test_SOURCES   = test_get_handle.c
-get_handle_test_LDADD     = $(test_LDADD) $(common_LDADD)
-get_handle_test_CPPFLAGS  = $(test_CPPFLAGS) $(common_CPPFLAGS)
-get_handle_test_CFLAGS    = $(test_CFLAGS) $(common_CFLAGS)
+get_handle_SOURCES   = test_get_handle.c $(common_SOURCES)
+get_handle_LDADD     = $(test_LDADD) $(common_LDADD)
+get_handle_CPPFLAGS  = $(test_CPPFLAGS) $(common_CPPFLAGS)
+get_handle_CFLAGS    = $(test_CFLAGS) $(common_CFLAGS)
 
-TESTS = $(check_PROGRAMS)
+send_command_SOURCES   = test_send_command.c $(common_SOURCES)
+send_command_LDADD     = $(test_LDADD) $(common_LDADD)
+send_command_CPPFLAGS  = $(test_CPPFLAGS) $(common_CPPFLAGS)
+send_command_CFLAGS    = $(test_CFLAGS) $(common_CFLAGS)
+
+TESTS = \
+	init_deinit \
+	enum_components \
+	get_roles_of_component.sh \
+	get_components_of_role.sh \
+	get_handle \
+	send_command
 
