@@ -71,7 +71,7 @@ else
 fi
 
 AC_ARG_ENABLE(use_bellagio, 
-	[  --enable-bellagio	  use libomxil-bellagio [[default=no]]],
+	[  --enable-use-bellagio	  use libomxil-bellagio [[default=no]]],
 	, enable_use_bellagio=no)
 AC_MSG_CHECKING(whether to use libomxil-bellagio)
 if test x$enable_use_bellagio = xyes; then
