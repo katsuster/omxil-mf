@@ -52,7 +52,9 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 check_PROGRAMS = init_deinit_test$(EXEEXT) \
-	enum_components_test$(EXEEXT)
+	enum_components_test$(EXEEXT) \
+	get_roles_of_component_test$(EXEEXT) \
+	get_components_of_role_test$(EXEEXT) get_handle_test$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -72,6 +74,29 @@ enum_components_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
 enum_components_test_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(enum_components_test_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am_get_components_of_role_test_OBJECTS = get_components_of_role_test-test_get_components_of_role.$(OBJEXT)
+get_components_of_role_test_OBJECTS =  \
+	$(am_get_components_of_role_test_OBJECTS)
+get_components_of_role_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
+get_components_of_role_test_LINK = $(LIBTOOL) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(get_components_of_role_test_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am_get_handle_test_OBJECTS =  \
+	get_handle_test-test_get_handle.$(OBJEXT)
+get_handle_test_OBJECTS = $(am_get_handle_test_OBJECTS)
+get_handle_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
+get_handle_test_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(get_handle_test_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am_get_roles_of_component_test_OBJECTS = get_roles_of_component_test-test_get_roles_of_component.$(OBJEXT)
+get_roles_of_component_test_OBJECTS =  \
+	$(am_get_roles_of_component_test_OBJECTS)
+get_roles_of_component_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
+get_roles_of_component_test_LINK = $(LIBTOOL) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(get_roles_of_component_test_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am_init_deinit_test_OBJECTS =  \
 	init_deinit_test-test_init_deinit.$(OBJEXT)
@@ -93,8 +118,15 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(enum_components_test_SOURCES) $(init_deinit_test_SOURCES)
+SOURCES = $(enum_components_test_SOURCES) \
+	$(get_components_of_role_test_SOURCES) \
+	$(get_handle_test_SOURCES) \
+	$(get_roles_of_component_test_SOURCES) \
+	$(init_deinit_test_SOURCES)
 DIST_SOURCES = $(enum_components_test_SOURCES) \
+	$(get_components_of_role_test_SOURCES) \
+	$(get_handle_test_SOURCES) \
+	$(get_roles_of_component_test_SOURCES) \
 	$(init_deinit_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -244,13 +276,25 @@ top_srcdir = @top_srcdir@
 #common_LDADD  = ../common/libtestcommon.la
 #common_CFLAGS = -I$(srcdir)/../common
 init_deinit_test_SOURCES = test_init_deinit.c
-init_deinit_test_LDADD = $(test_LDADD) $(common_LDADD) -lpthread
+init_deinit_test_LDADD = $(test_LDADD) $(common_LDADD)
 init_deinit_test_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
 init_deinit_test_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
 enum_components_test_SOURCES = test_enum_components.c
 enum_components_test_LDADD = $(test_LDADD) $(common_LDADD)
 enum_components_test_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
 enum_components_test_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+get_roles_of_component_test_SOURCES = test_get_roles_of_component.c
+get_roles_of_component_test_LDADD = $(test_LDADD) $(common_LDADD)
+get_roles_of_component_test_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
+get_roles_of_component_test_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+get_components_of_role_test_SOURCES = test_get_components_of_role.c
+get_components_of_role_test_LDADD = $(test_LDADD) $(common_LDADD)
+get_components_of_role_test_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
+get_components_of_role_test_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+get_handle_test_SOURCES = test_get_handle.c
+get_handle_test_LDADD = $(test_LDADD) $(common_LDADD)
+get_handle_test_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
+get_handle_test_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
 TESTS = $(check_PROGRAMS)
 all: all-am
 
@@ -298,6 +342,15 @@ clean-checkPROGRAMS:
 enum_components_test$(EXEEXT): $(enum_components_test_OBJECTS) $(enum_components_test_DEPENDENCIES) $(EXTRA_enum_components_test_DEPENDENCIES) 
 	@rm -f enum_components_test$(EXEEXT)
 	$(enum_components_test_LINK) $(enum_components_test_OBJECTS) $(enum_components_test_LDADD) $(LIBS)
+get_components_of_role_test$(EXEEXT): $(get_components_of_role_test_OBJECTS) $(get_components_of_role_test_DEPENDENCIES) $(EXTRA_get_components_of_role_test_DEPENDENCIES) 
+	@rm -f get_components_of_role_test$(EXEEXT)
+	$(get_components_of_role_test_LINK) $(get_components_of_role_test_OBJECTS) $(get_components_of_role_test_LDADD) $(LIBS)
+get_handle_test$(EXEEXT): $(get_handle_test_OBJECTS) $(get_handle_test_DEPENDENCIES) $(EXTRA_get_handle_test_DEPENDENCIES) 
+	@rm -f get_handle_test$(EXEEXT)
+	$(get_handle_test_LINK) $(get_handle_test_OBJECTS) $(get_handle_test_LDADD) $(LIBS)
+get_roles_of_component_test$(EXEEXT): $(get_roles_of_component_test_OBJECTS) $(get_roles_of_component_test_DEPENDENCIES) $(EXTRA_get_roles_of_component_test_DEPENDENCIES) 
+	@rm -f get_roles_of_component_test$(EXEEXT)
+	$(get_roles_of_component_test_LINK) $(get_roles_of_component_test_OBJECTS) $(get_roles_of_component_test_LDADD) $(LIBS)
 init_deinit_test$(EXEEXT): $(init_deinit_test_OBJECTS) $(init_deinit_test_DEPENDENCIES) $(EXTRA_init_deinit_test_DEPENDENCIES) 
 	@rm -f init_deinit_test$(EXEEXT)
 	$(init_deinit_test_LINK) $(init_deinit_test_OBJECTS) $(init_deinit_test_LDADD) $(LIBS)
@@ -309,6 +362,9 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/enum_components_test-test_enum_components.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/get_components_of_role_test-test_get_components_of_role.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/get_handle_test-test_get_handle.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/get_roles_of_component_test-test_get_roles_of_component.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_deinit_test-test_init_deinit.Po@am__quote@
 
 .c.o:
@@ -345,6 +401,48 @@ enum_components_test-test_enum_components.obj: test_enum_components.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_enum_components.c' object='enum_components_test-test_enum_components.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_test_CPPFLAGS) $(CPPFLAGS) $(enum_components_test_CFLAGS) $(CFLAGS) -c -o enum_components_test-test_enum_components.obj `if test -f 'test_enum_components.c'; then $(CYGPATH_W) 'test_enum_components.c'; else $(CYGPATH_W) '$(srcdir)/test_enum_components.c'; fi`
+
+get_components_of_role_test-test_get_components_of_role.o: test_get_components_of_role.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_test_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_test_CFLAGS) $(CFLAGS) -MT get_components_of_role_test-test_get_components_of_role.o -MD -MP -MF $(DEPDIR)/get_components_of_role_test-test_get_components_of_role.Tpo -c -o get_components_of_role_test-test_get_components_of_role.o `test -f 'test_get_components_of_role.c' || echo '$(srcdir)/'`test_get_components_of_role.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/get_components_of_role_test-test_get_components_of_role.Tpo $(DEPDIR)/get_components_of_role_test-test_get_components_of_role.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_get_components_of_role.c' object='get_components_of_role_test-test_get_components_of_role.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_test_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_test_CFLAGS) $(CFLAGS) -c -o get_components_of_role_test-test_get_components_of_role.o `test -f 'test_get_components_of_role.c' || echo '$(srcdir)/'`test_get_components_of_role.c
+
+get_components_of_role_test-test_get_components_of_role.obj: test_get_components_of_role.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_test_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_test_CFLAGS) $(CFLAGS) -MT get_components_of_role_test-test_get_components_of_role.obj -MD -MP -MF $(DEPDIR)/get_components_of_role_test-test_get_components_of_role.Tpo -c -o get_components_of_role_test-test_get_components_of_role.obj `if test -f 'test_get_components_of_role.c'; then $(CYGPATH_W) 'test_get_components_of_role.c'; else $(CYGPATH_W) '$(srcdir)/test_get_components_of_role.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/get_components_of_role_test-test_get_components_of_role.Tpo $(DEPDIR)/get_components_of_role_test-test_get_components_of_role.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_get_components_of_role.c' object='get_components_of_role_test-test_get_components_of_role.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_test_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_test_CFLAGS) $(CFLAGS) -c -o get_components_of_role_test-test_get_components_of_role.obj `if test -f 'test_get_components_of_role.c'; then $(CYGPATH_W) 'test_get_components_of_role.c'; else $(CYGPATH_W) '$(srcdir)/test_get_components_of_role.c'; fi`
+
+get_handle_test-test_get_handle.o: test_get_handle.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_test_CPPFLAGS) $(CPPFLAGS) $(get_handle_test_CFLAGS) $(CFLAGS) -MT get_handle_test-test_get_handle.o -MD -MP -MF $(DEPDIR)/get_handle_test-test_get_handle.Tpo -c -o get_handle_test-test_get_handle.o `test -f 'test_get_handle.c' || echo '$(srcdir)/'`test_get_handle.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/get_handle_test-test_get_handle.Tpo $(DEPDIR)/get_handle_test-test_get_handle.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_get_handle.c' object='get_handle_test-test_get_handle.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_test_CPPFLAGS) $(CPPFLAGS) $(get_handle_test_CFLAGS) $(CFLAGS) -c -o get_handle_test-test_get_handle.o `test -f 'test_get_handle.c' || echo '$(srcdir)/'`test_get_handle.c
+
+get_handle_test-test_get_handle.obj: test_get_handle.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_test_CPPFLAGS) $(CPPFLAGS) $(get_handle_test_CFLAGS) $(CFLAGS) -MT get_handle_test-test_get_handle.obj -MD -MP -MF $(DEPDIR)/get_handle_test-test_get_handle.Tpo -c -o get_handle_test-test_get_handle.obj `if test -f 'test_get_handle.c'; then $(CYGPATH_W) 'test_get_handle.c'; else $(CYGPATH_W) '$(srcdir)/test_get_handle.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/get_handle_test-test_get_handle.Tpo $(DEPDIR)/get_handle_test-test_get_handle.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_get_handle.c' object='get_handle_test-test_get_handle.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_test_CPPFLAGS) $(CPPFLAGS) $(get_handle_test_CFLAGS) $(CFLAGS) -c -o get_handle_test-test_get_handle.obj `if test -f 'test_get_handle.c'; then $(CYGPATH_W) 'test_get_handle.c'; else $(CYGPATH_W) '$(srcdir)/test_get_handle.c'; fi`
+
+get_roles_of_component_test-test_get_roles_of_component.o: test_get_roles_of_component.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_test_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_test_CFLAGS) $(CFLAGS) -MT get_roles_of_component_test-test_get_roles_of_component.o -MD -MP -MF $(DEPDIR)/get_roles_of_component_test-test_get_roles_of_component.Tpo -c -o get_roles_of_component_test-test_get_roles_of_component.o `test -f 'test_get_roles_of_component.c' || echo '$(srcdir)/'`test_get_roles_of_component.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/get_roles_of_component_test-test_get_roles_of_component.Tpo $(DEPDIR)/get_roles_of_component_test-test_get_roles_of_component.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_get_roles_of_component.c' object='get_roles_of_component_test-test_get_roles_of_component.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_test_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_test_CFLAGS) $(CFLAGS) -c -o get_roles_of_component_test-test_get_roles_of_component.o `test -f 'test_get_roles_of_component.c' || echo '$(srcdir)/'`test_get_roles_of_component.c
+
+get_roles_of_component_test-test_get_roles_of_component.obj: test_get_roles_of_component.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_test_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_test_CFLAGS) $(CFLAGS) -MT get_roles_of_component_test-test_get_roles_of_component.obj -MD -MP -MF $(DEPDIR)/get_roles_of_component_test-test_get_roles_of_component.Tpo -c -o get_roles_of_component_test-test_get_roles_of_component.obj `if test -f 'test_get_roles_of_component.c'; then $(CYGPATH_W) 'test_get_roles_of_component.c'; else $(CYGPATH_W) '$(srcdir)/test_get_roles_of_component.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/get_roles_of_component_test-test_get_roles_of_component.Tpo $(DEPDIR)/get_roles_of_component_test-test_get_roles_of_component.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_get_roles_of_component.c' object='get_roles_of_component_test-test_get_roles_of_component.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_test_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_test_CFLAGS) $(CFLAGS) -c -o get_roles_of_component_test-test_get_roles_of_component.obj `if test -f 'test_get_roles_of_component.c'; then $(CYGPATH_W) 'test_get_roles_of_component.c'; else $(CYGPATH_W) '$(srcdir)/test_get_roles_of_component.c'; fi`
 
 init_deinit_test-test_init_deinit.o: test_init_deinit.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_test_CPPFLAGS) $(CPPFLAGS) $(init_deinit_test_CFLAGS) $(CFLAGS) -MT init_deinit_test-test_init_deinit.o -MD -MP -MF $(DEPDIR)/init_deinit_test-test_init_deinit.Tpo -c -o init_deinit_test-test_init_deinit.o `test -f 'test_init_deinit.c' || echo '$(srcdir)/'`test_init_deinit.c

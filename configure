@@ -1410,7 +1410,7 @@ Optional Features:
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --enable-debug	  turn on debugging [default=no]
-  --enable-bellagio	  use libomxil-bellagio [default=no]
+  --enable-use-bellagio	  use libomxil-bellagio [default=no]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
