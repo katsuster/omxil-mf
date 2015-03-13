@@ -1,7 +1,7 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
 /* Define to enable the debug functions */
-#undef DEBUG
+#undef ENABLE_DEBUG
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
@@ -88,35 +88,8 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* The size of `signed char', as computed by sizeof. */
-#undef SIZEOF_SIGNED_CHAR
-
-/* The size of `signed int', as computed by sizeof. */
-#undef SIZEOF_SIGNED_INT
-
-/* The size of `signed long int', as computed by sizeof. */
-#undef SIZEOF_SIGNED_LONG_INT
-
-/* The size of `signed long long int', as computed by sizeof. */
-#undef SIZEOF_SIGNED_LONG_LONG_INT
-
-/* The size of `signed short int', as computed by sizeof. */
-#undef SIZEOF_SIGNED_SHORT_INT
-
-/* The size of `unsigned char', as computed by sizeof. */
-#undef SIZEOF_UNSIGNED_CHAR
-
-/* The size of `unsigned int', as computed by sizeof. */
-#undef SIZEOF_UNSIGNED_INT
-
-/* The size of `unsigned long int', as computed by sizeof. */
-#undef SIZEOF_UNSIGNED_LONG_INT
-
 /* The size of `unsigned long long int', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_LONG_LONG_INT
-
-/* The size of `unsigned short int', as computed by sizeof. */
-#undef SIZEOF_UNSIGNED_SHORT_INT
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
