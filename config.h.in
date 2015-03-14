@@ -6,44 +6,17 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define to 1 if you have the <fcntl.h> header file. */
-#undef HAVE_FCNTL_H
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the `memmove' function. */
-#undef HAVE_MEMMOVE
-
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
-
-/* Define to 1 if you have the `memset' function. */
-#undef HAVE_MEMSET
-
-/* Define to 1 if you have the <OMX_Audio.h> header file. */
-#undef HAVE_OMX_AUDIO_H
-
-/* Define to 1 if you have the <OMX_Component.h> header file. */
-#undef HAVE_OMX_COMPONENT_H
-
-/* Define to 1 if you have the <OMX_Core.h> header file. */
-#undef HAVE_OMX_CORE_H
-
-/* Define to 1 if you have the <OMX_Types.h> header file. */
-#undef HAVE_OMX_TYPES_H
-
-/* Define to 1 if you have the <OMX_Video.h> header file. */
-#undef HAVE_OMX_VIDEO_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
-
-/* Define to 1 if you have the `strcasecmp' function. */
-#undef HAVE_STRCASECMP
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
@@ -88,9 +61,6 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* The size of `unsigned long long int', as computed by sizeof. */
-#undef SIZEOF_UNSIGNED_LONG_LONG_INT
-
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
@@ -105,12 +75,3 @@
 #ifndef __cplusplus
 #undef inline
 #endif
-
-/* Define to `long int' if <sys/types.h> does not define. */
-#undef off_t
-
-/* Define to `unsigned int' if <sys/types.h> does not define. */
-#undef size_t
-
-/* Define to `int' if <sys/types.h> does not define. */
-#undef ssize_t
