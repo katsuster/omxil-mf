@@ -10,6 +10,7 @@ syntax: regexp
 ^config.status$
 ^libtool$
 ^stamp-h1$
+^Makefile$
 /Makefile$
 /\.deps/
 
