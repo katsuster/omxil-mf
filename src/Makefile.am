@@ -9,7 +9,9 @@ libomxil_mf_ladir = $(includedir)
 libomxil_mf_la_SOURCES = \
 	entry.cpp \
 	main.cpp \
+	util/omx_types_enum_name.cpp \
 	util/omx_core_enum_name.cpp \
+	util/omx_component_enum_name.cpp \
 	debug/dbgprint.c
 EXTRA_libomxil_mf_la_SOURCES = \
 	main.hpp \

@@ -225,4 +225,121 @@ const char *omx_enum_name::get_OMX_ERRORTYPE_name(OMX_ERRORTYPE id)
 	return name;
 }
 
+const char *omx_enum_name::get_OMX_EXTRADATATYPE_name(OMX_EXTRADATATYPE id)
+{
+	const char *name = "(error)";
+
+	switch (id) {
+	case OMX_ExtraDataNone:
+		name = "OMX_ExtraDataNone";
+		break;
+	case OMX_ExtraDataQuantization:
+		name = "OMX_ExtraDataQuantization";
+		break;
+	case OMX_ExtraDataMax:
+		name = "OMX_ExtraDataMax";
+		break;
+	default:
+		name = "(unknown)";
+		break;
+	}
+
+	if (OMX_ExtraDataKhronosExtensions <= id && 
+		id < OMX_ExtraDataVendorStartUnused) {
+		name = "(OMX_ExtraDataKhronosExtensions)";
+	}
+	if (OMX_ExtraDataVendorStartUnused <= id && 
+		id < OMX_ExtraDataMax) {
+		name = "(OMX_ExtraDataVendorStartUnused)";
+	}
+
+	return name;
+}
+
+const char *omx_enum_name::get_OMX_EVENTTYPE_name(OMX_EVENTTYPE id)
+{
+	const char *name = "(error)";
+
+	switch (id) {
+	case OMX_EventCmdComplete:
+		name = "OMX_EventCmdComplete";
+		break;
+	case OMX_EventError:
+		name = "OMX_EventError";
+		break;
+	case OMX_EventMark:
+		name = "OMX_EventMark";
+		break;
+	case OMX_EventPortSettingsChanged:
+		name = "OMX_EventPortSettingsChanged";
+		break;
+	case OMX_EventBufferFlag:
+		name = "OMX_EventBufferFlag";
+		break;
+	case OMX_EventResourcesAcquired:
+		name = "OMX_EventResourcesAcquired";
+		break;
+	case OMX_EventComponentResumed:
+		name = "OMX_EventComponentResumed";
+		break;
+	case OMX_EventDynamicResourcesAvailable:
+		name = "OMX_EventDynamicResourcesAvailable";
+		break;
+	case OMX_EventPortFormatDetected:
+		name = "OMX_EventPortFormatDetected";
+		break;
+	case OMX_EventMax:
+		name = "OMX_EventMax";
+		break;
+	default:
+		name = "(unknown)";
+		break;
+	}
+
+	if (OMX_EventKhronosExtensions <= id && 
+		id < OMX_EventVendorStartUnused) {
+		name = "(OMX_EventKhronosExtensions)";
+	}
+	if (OMX_EventVendorStartUnused <= id && 
+		id < OMX_EventMax) {
+		name = "(OMX_EventVendorStartUnused)";
+	}
+
+	return name;
+}
+
+const char *omx_enum_name::get_OMX_BUFFERSUPPLIERTYPE_name(OMX_BUFFERSUPPLIERTYPE id)
+{
+	const char *name = "(error)";
+
+	switch (id) {
+	case OMX_BufferSupplyUnspecified:
+		name = "OMX_BufferSupplyUnspecified";
+		break;
+	case OMX_BufferSupplyInput:
+		name = "OMX_BufferSupplyInput";
+		break;
+	case OMX_BufferSupplyOutput:
+		name = "OMX_BufferSupplyOutput";
+		break;
+	case OMX_BufferSupplyMax:
+		name = "OMX_BufferSupplyMax";
+		break;
+	default:
+		name = "(unknown)";
+		break;
+	}
+
+	if (OMX_BufferSupplyKhronosExtensions <= id && 
+		id < OMX_BufferSupplyVendorStartUnused) {
+		name = "(OMX_BufferSupplyKhronosExtensions)";
+	}
+	if (OMX_BufferSupplyVendorStartUnused <= id && 
+		id < OMX_BufferSupplyMax) {
+		name = "(OMX_BufferSupplyVendorStartUnused)";
+	}
+
+	return name;
+}
+
 } //namespace mf
