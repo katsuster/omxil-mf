@@ -16183,15 +16183,6 @@ else
   USE_BELLAGIO_FALSE=
 fi
 
-if test x$enable_use_bellagio = xyes; then
-	test_CPPFLAGS="$test_CPPFLAGS -I/usr/include -DUSE_BELLAGIO "
-	test_CFLAGS="$test_CFLAGS "
-	test_LDADD="$test_LDADD -lomxil-bellagio "
-else
-	test_CPPFLAGS="$test_CPPFLAGS -I${top_srcdir}/include -DDUSE_MF "
-	test_CFLAGS="$test_CFLAGS "
-	test_LDADD="$test_LDADD -lomxil-mf "
-fi
 
 
 ac_config_files="$ac_config_files Makefile src/Makefile tests/Makefile tests/basic/Makefile"
