@@ -279,7 +279,7 @@ top_srcdir = @top_srcdir@
 @USE_BELLAGIO_TRUE@test_LDADD = -lomxil-bellagio
 @USE_BELLAGIO_FALSE@test_CPPFLAGS = \
 @USE_BELLAGIO_FALSE@  	-I$(top_srcdir)/include \
-@USE_BELLAGIO_FALSE@  	-DUSE_STUDY
+@USE_BELLAGIO_FALSE@  	-DUSE_MF
 
 @USE_BELLAGIO_TRUE@test_CPPFLAGS = \
 @USE_BELLAGIO_TRUE@  	-I/usr/include \
