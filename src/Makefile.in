@@ -54,7 +54,7 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 subdir = src
-DIST_COMMON = $(libomxil_study_la_HEADERS) $(srcdir)/Makefile.am \
+DIST_COMMON = $(libomxil_mf_la_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.in
@@ -91,17 +91,17 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(omxil_studydir)" \
-	"$(DESTDIR)$(libomxil_study_ladir)"
-LTLIBRARIES = $(omxil_study_LTLIBRARIES)
-libomxil_study_la_DEPENDENCIES =
-am_libomxil_study_la_OBJECTS = libomxil_study_la-entry.lo \
-	libomxil_study_la-main.lo libomxil_study_la-dbgprint.lo
-libomxil_study_la_OBJECTS = $(am_libomxil_study_la_OBJECTS)
-libomxil_study_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+am__installdirs = "$(DESTDIR)$(omxil_mfdir)" \
+	"$(DESTDIR)$(libomxil_mf_ladir)"
+LTLIBRARIES = $(omxil_mf_LTLIBRARIES)
+libomxil_mf_la_DEPENDENCIES =
+am_libomxil_mf_la_OBJECTS = libomxil_mf_la-entry.lo \
+	libomxil_mf_la-main.lo libomxil_mf_la-dbgprint.lo
+libomxil_mf_la_OBJECTS = $(am_libomxil_mf_la_OBJECTS)
+libomxil_mf_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(libomxil_study_la_CXXFLAGS) $(CXXFLAGS) \
-	$(libomxil_study_la_LDFLAGS) $(LDFLAGS) -o $@
+	$(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) \
+	$(libomxil_mf_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -124,14 +124,14 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libomxil_study_la_SOURCES)
-DIST_SOURCES = $(libomxil_study_la_SOURCES)
+SOURCES = $(libomxil_mf_la_SOURCES)
+DIST_SOURCES = $(libomxil_mf_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-HEADERS = $(libomxil_study_la_HEADERS)
+HEADERS = $(libomxil_mf_la_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -257,15 +257,15 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-omxil_studydir = $(libdir)
-omxil_study_LTLIBRARIES = libomxil-study.la
-libomxil_study_ladir = $(includedir)
-libomxil_study_la_SOURCES = \
+omxil_mfdir = $(libdir)
+omxil_mf_LTLIBRARIES = libomxil-mf.la
+libomxil_mf_ladir = $(includedir)
+libomxil_mf_la_SOURCES = \
 	entry.cpp \
 	main.cpp \
 	debug/dbgprint.c
 
-libomxil_study_la_HEADERS = \
+libomxil_mf_la_HEADERS = \
 	../include/OMX_Audio.h \
 	../include/OMX_Component.h \
 	../include/OMX_ContentPipe.h \
@@ -276,18 +276,18 @@ libomxil_study_la_HEADERS = \
 	../include/OMX_Other.h \
 	../include/OMX_Types.h \
 	../include/OMX_Video.h \
-	../include/omxilstudy.h
+	../include/omxil_mf.h
 
-libomxil_study_la_CPPFLAGS = \
+libomxil_mf_la_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-Wall -Werror
 
-libomxil_study_la_CFLAGS = 
-libomxil_study_la_CXXFLAGS = 
-libomxil_study_la_LIBADD = \
+libomxil_mf_la_CFLAGS = 
+libomxil_mf_la_CXXFLAGS = 
+libomxil_mf_la_LIBADD = \
 	-lpthread
 
-libomxil_study_la_LDFLAGS = 
+libomxil_mf_la_LDFLAGS = 
 all: all-am
 
 .SUFFIXES:
@@ -322,40 +322,40 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-install-omxil_studyLTLIBRARIES: $(omxil_study_LTLIBRARIES)
+install-omxil_mfLTLIBRARIES: $(omxil_mf_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
-	@list='$(omxil_study_LTLIBRARIES)'; test -n "$(omxil_studydir)" || list=; \
+	@list='$(omxil_mf_LTLIBRARIES)'; test -n "$(omxil_mfdir)" || list=; \
 	list2=; for p in $$list; do \
 	  if test -f $$p; then \
 	    list2="$$list2 $$p"; \
 	  else :; fi; \
 	done; \
 	test -z "$$list2" || { \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(omxil_studydir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(omxil_studydir)" || exit 1; \
-	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(omxil_studydir)'"; \
-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(omxil_studydir)"; \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(omxil_mfdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(omxil_mfdir)" || exit 1; \
+	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(omxil_mfdir)'"; \
+	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(omxil_mfdir)"; \
 	}
 
-uninstall-omxil_studyLTLIBRARIES:
+uninstall-omxil_mfLTLIBRARIES:
 	@$(NORMAL_UNINSTALL)
-	@list='$(omxil_study_LTLIBRARIES)'; test -n "$(omxil_studydir)" || list=; \
+	@list='$(omxil_mf_LTLIBRARIES)'; test -n "$(omxil_mfdir)" || list=; \
 	for p in $$list; do \
 	  $(am__strip_dir) \
-	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f '$(DESTDIR)$(omxil_studydir)/$$f'"; \
-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f "$(DESTDIR)$(omxil_studydir)/$$f"; \
+	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f '$(DESTDIR)$(omxil_mfdir)/$$f'"; \
+	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=uninstall rm -f "$(DESTDIR)$(omxil_mfdir)/$$f"; \
 	done
 
-clean-omxil_studyLTLIBRARIES:
-	-test -z "$(omxil_study_LTLIBRARIES)" || rm -f $(omxil_study_LTLIBRARIES)
-	@list='$(omxil_study_LTLIBRARIES)'; for p in $$list; do \
+clean-omxil_mfLTLIBRARIES:
+	-test -z "$(omxil_mf_LTLIBRARIES)" || rm -f $(omxil_mf_LTLIBRARIES)
+	@list='$(omxil_mf_LTLIBRARIES)'; for p in $$list; do \
 	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
 	  test "$$dir" != "$$p" || dir=.; \
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libomxil-study.la: $(libomxil_study_la_OBJECTS) $(libomxil_study_la_DEPENDENCIES) $(EXTRA_libomxil_study_la_DEPENDENCIES) 
-	$(libomxil_study_la_LINK) -rpath $(omxil_studydir) $(libomxil_study_la_OBJECTS) $(libomxil_study_la_LIBADD) $(LIBS)
+libomxil-mf.la: $(libomxil_mf_la_OBJECTS) $(libomxil_mf_la_DEPENDENCIES) $(EXTRA_libomxil_mf_la_DEPENDENCIES) 
+	$(libomxil_mf_la_LINK) -rpath $(omxil_mfdir) $(libomxil_mf_la_OBJECTS) $(libomxil_mf_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -363,9 +363,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_study_la-dbgprint.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_study_la-entry.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_study_la-main.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-dbgprint.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-entry.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-main.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -388,12 +388,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-libomxil_study_la-dbgprint.lo: debug/dbgprint.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_study_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_study_la_CFLAGS) $(CFLAGS) -MT libomxil_study_la-dbgprint.lo -MD -MP -MF $(DEPDIR)/libomxil_study_la-dbgprint.Tpo -c -o libomxil_study_la-dbgprint.lo `test -f 'debug/dbgprint.c' || echo '$(srcdir)/'`debug/dbgprint.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libomxil_study_la-dbgprint.Tpo $(DEPDIR)/libomxil_study_la-dbgprint.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='debug/dbgprint.c' object='libomxil_study_la-dbgprint.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-dbgprint.lo: debug/dbgprint.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CFLAGS) $(CFLAGS) -MT libomxil_mf_la-dbgprint.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-dbgprint.Tpo -c -o libomxil_mf_la-dbgprint.lo `test -f 'debug/dbgprint.c' || echo '$(srcdir)/'`debug/dbgprint.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libomxil_mf_la-dbgprint.Tpo $(DEPDIR)/libomxil_mf_la-dbgprint.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='debug/dbgprint.c' object='libomxil_mf_la-dbgprint.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_study_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_study_la_CFLAGS) $(CFLAGS) -c -o libomxil_study_la-dbgprint.lo `test -f 'debug/dbgprint.c' || echo '$(srcdir)/'`debug/dbgprint.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CFLAGS) $(CFLAGS) -c -o libomxil_mf_la-dbgprint.lo `test -f 'debug/dbgprint.c' || echo '$(srcdir)/'`debug/dbgprint.c
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -416,46 +416,46 @@ libomxil_study_la-dbgprint.lo: debug/dbgprint.c
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
-libomxil_study_la-entry.lo: entry.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_study_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_study_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_study_la-entry.lo -MD -MP -MF $(DEPDIR)/libomxil_study_la-entry.Tpo -c -o libomxil_study_la-entry.lo `test -f 'entry.cpp' || echo '$(srcdir)/'`entry.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libomxil_study_la-entry.Tpo $(DEPDIR)/libomxil_study_la-entry.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='entry.cpp' object='libomxil_study_la-entry.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-entry.lo: entry.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-entry.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-entry.Tpo -c -o libomxil_mf_la-entry.lo `test -f 'entry.cpp' || echo '$(srcdir)/'`entry.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libomxil_mf_la-entry.Tpo $(DEPDIR)/libomxil_mf_la-entry.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='entry.cpp' object='libomxil_mf_la-entry.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_study_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_study_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_study_la-entry.lo `test -f 'entry.cpp' || echo '$(srcdir)/'`entry.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-entry.lo `test -f 'entry.cpp' || echo '$(srcdir)/'`entry.cpp
 
-libomxil_study_la-main.lo: main.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_study_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_study_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_study_la-main.lo -MD -MP -MF $(DEPDIR)/libomxil_study_la-main.Tpo -c -o libomxil_study_la-main.lo `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libomxil_study_la-main.Tpo $(DEPDIR)/libomxil_study_la-main.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main.cpp' object='libomxil_study_la-main.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-main.lo: main.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-main.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-main.Tpo -c -o libomxil_mf_la-main.lo `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libomxil_mf_la-main.Tpo $(DEPDIR)/libomxil_mf_la-main.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main.cpp' object='libomxil_mf_la-main.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_study_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_study_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_study_la-main.lo `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-main.lo `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-libomxil_study_laHEADERS: $(libomxil_study_la_HEADERS)
+install-libomxil_mf_laHEADERS: $(libomxil_mf_la_HEADERS)
 	@$(NORMAL_INSTALL)
-	@list='$(libomxil_study_la_HEADERS)'; test -n "$(libomxil_study_ladir)" || list=; \
+	@list='$(libomxil_mf_la_HEADERS)'; test -n "$(libomxil_mf_ladir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(libomxil_study_ladir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(libomxil_study_ladir)" || exit 1; \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(libomxil_mf_ladir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(libomxil_mf_ladir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(libomxil_study_ladir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(libomxil_study_ladir)" || exit $$?; \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(libomxil_mf_ladir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(libomxil_mf_ladir)" || exit $$?; \
 	done
 
-uninstall-libomxil_study_laHEADERS:
+uninstall-libomxil_mf_laHEADERS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(libomxil_study_la_HEADERS)'; test -n "$(libomxil_study_ladir)" || list=; \
+	@list='$(libomxil_mf_la_HEADERS)'; test -n "$(libomxil_mf_ladir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(libomxil_study_ladir)'; $(am__uninstall_files_from_dir)
+	dir='$(DESTDIR)$(libomxil_mf_ladir)'; $(am__uninstall_files_from_dir)
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -543,7 +543,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(omxil_studydir)" "$(DESTDIR)$(libomxil_study_ladir)"; do \
+	for dir in "$(DESTDIR)$(omxil_mfdir)" "$(DESTDIR)$(libomxil_mf_ladir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -578,7 +578,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-omxil_studyLTLIBRARIES \
+clean-am: clean-generic clean-libtool clean-omxil_mfLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
@@ -599,8 +599,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-libomxil_study_laHEADERS \
-	install-omxil_studyLTLIBRARIES
+install-data-am: install-libomxil_mf_laHEADERS \
+	install-omxil_mfLTLIBRARIES
 
 install-dvi: install-dvi-am
 
@@ -646,26 +646,26 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-libomxil_study_laHEADERS \
-	uninstall-omxil_studyLTLIBRARIES
+uninstall-am: uninstall-libomxil_mf_laHEADERS \
+	uninstall-omxil_mfLTLIBRARIES
 
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-omxil_studyLTLIBRARIES ctags distclean \
+	clean-libtool clean-omxil_mfLTLIBRARIES ctags distclean \
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am \
-	install-libomxil_study_laHEADERS install-man \
-	install-omxil_studyLTLIBRARIES install-pdf install-pdf-am \
+	install-libomxil_mf_laHEADERS install-man \
+	install-omxil_mfLTLIBRARIES install-pdf install-pdf-am \
 	install-ps install-ps-am install-strip installcheck \
 	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-libomxil_study_laHEADERS \
-	uninstall-omxil_studyLTLIBRARIES
+	tags uninstall uninstall-am uninstall-libomxil_mf_laHEADERS \
+	uninstall-omxil_mfLTLIBRARIES
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

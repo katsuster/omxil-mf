@@ -74,7 +74,7 @@ am_enum_components_OBJECTS =  \
 	$(am__objects_1)
 enum_components_OBJECTS = $(am_enum_components_OBJECTS)
 @USE_BELLAGIO_FALSE@am__DEPENDENCIES_1 =  \
-@USE_BELLAGIO_FALSE@	$(top_builddir)/src/libomxil-study.la
+@USE_BELLAGIO_FALSE@	$(top_builddir)/src/libomxil-mf.la
 enum_components_DEPENDENCIES = $(am__DEPENDENCIES_1)
 enum_components_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(enum_components_CFLAGS) \
@@ -275,7 +275,7 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@USE_BELLAGIO_FALSE@test_LDADD = $(top_builddir)/src/libomxil-study.la
+@USE_BELLAGIO_FALSE@test_LDADD = $(top_builddir)/src/libomxil-mf.la
 @USE_BELLAGIO_TRUE@test_LDADD = -lomxil-bellagio
 @USE_BELLAGIO_FALSE@test_CPPFLAGS = \
 @USE_BELLAGIO_FALSE@  	-I$(top_srcdir)/include \
