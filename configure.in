@@ -75,7 +75,8 @@ AM_CONDITIONAL(USE_BELLAGIO, test x$enable_use_bellagio = xyes)
 
 
 # Specify the Makefile
-AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile ])
+AC_CONFIG_FILES([Makefile src/Makefile 
+	tests/Makefile tests/basic/Makefile])
 #doc/Makefile
 
 
