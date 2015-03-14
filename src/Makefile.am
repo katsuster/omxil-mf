@@ -9,7 +9,12 @@ libomxil_mf_ladir = $(includedir)
 libomxil_mf_la_SOURCES = \
 	entry.cpp \
 	main.cpp \
+	util/omx_core_enum_name.cpp \
 	debug/dbgprint.c
+EXTRA_libomxil_mf_la_SOURCES = \
+	main.hpp \
+	util/omx_enum_name.hpp \
+	debug/dbgprint.h
 
 libomxil_mf_la_HEADERS = \
 	../include/OMX_Audio.h \
@@ -24,16 +29,17 @@ libomxil_mf_la_HEADERS = \
 	../include/OMX_Video.h \
 	../include/omxil_mf.h
 
-libomxil_mf_la_CPPFLAGS  = \
+libomxil_mf_la_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	-Wall -Werror
 
-libomxil_mf_la_CFLAGS  = 
-libomxil_mf_la_CXXFLAGS  = 
+libomxil_mf_la_CFLAGS   = 
 
-libomxil_mf_la_LIBADD  = \
+libomxil_mf_la_CXXFLAGS = \
+	-std=c++0x
+
+libomxil_mf_la_LIBADD   = \
 	-lpthread
-
-libomxil_mf_la_LDFLAGS = 
+libomxil_mf_la_LDFLAGS  = 
 
 
