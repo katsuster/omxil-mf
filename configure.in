@@ -1,10 +1,12 @@
 
 AC_PREREQ(2.61)
 
+dnl ----------------------------------------
+dnl Information on this package.
+dnl ----------------------------------------
 AC_INIT([omxil-mf], [0.1], [no-define])
-AC_CANONICAL_SYSTEM()
+
 AC_ARG_PROGRAM()
-AC_CONFIG_AUX_DIR([.])
 
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
@@ -12,41 +14,66 @@ AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([foreign])
+LT_INIT()
 
-
-# Checks for programs.
+dnl ----------------------------------------
+dnl Checks for programs.
+dnl ----------------------------------------
 AC_PROG_CC()
 AC_PROG_CXX()
+AC_PROG_AWK()
 AC_PROG_INSTALL()
 AC_PROG_LN_S()
 AC_PROG_LIBTOOL()
+AC_PROG_SED()
 AM_PROG_CC_C_O()
-LT_INIT()
+AM_PROG_LIBTOOL()
 
-#AC_SUBST(VAR, [var_value])
+dnl AC_SUBST(VAR, [var_value])
 
 
-# Checks for header files.
+dnl ----------------------------------------
+dnl Checks for libraries.
+dnl ----------------------------------------
+
+
+dnl ----------------------------------------
+dnl Checks for header files.
+dnl ----------------------------------------
 AC_HEADER_STDC()
-#AC_CHECK_HEADERS([fcntl.h stdlib.h string.h strings.h unistd.h])
-#AC_CHECK_HEADERS([OMX_Core.h OMX_Component.h OMX_Types.h OMX_Audio.h OMX_Video.h])
+
+dnl AC_CHECK_HEADERS([fcntl.h stdlib.h string.h strings.h unistd.h])
+dnl AC_CHECK_HEADERS([OMX_Core.h OMX_Component.h OMX_Types.h OMX_Audio.h OMX_Video.h])
 
 
-# Checks for typedefs, structures, and compiler characteristics.
+dnl ----------------------------------------
+dnl Checks for types, structures, compiler characteristics.
+dnl ----------------------------------------
 AC_C_CONST()
 AC_C_INLINE()
-#AC_TYPE_OFF_T()
-#AC_TYPE_SIZE_T()
-#AC_TYPE_SSIZE_T()
-#AC_CHECK_SIZEOF(unsigned long long int)
+
+dnl AC_TYPE_OFF_T()
+dnl AC_TYPE_SIZE_T()
+dnl AC_TYPE_SSIZE_T()
+dnl AC_CHECK_SIZEOF(unsigned long long int)
 
 
-# Checks for library functions.
+dnl ----------------------------------------
+dnl Checks for library functions.
+dnl ----------------------------------------
 AC_FUNC_MEMCMP()
-#AC_CHECK_FUNCS([memmove memset strcasecmp])
+
+dnl AC_CHECK_FUNCS([memmove memset strcasecmp])
 
 
-# Checks for arguments.
+dnl ----------------------------------------
+dnl Checks for system services.
+dnl ----------------------------------------
+
+
+dnl ----------------------------------------
+dnl Checks for arguments.
+dnl ----------------------------------------
 AC_ARG_ENABLE(debug, 
 	[  --enable-debug	  turn on debugging [[default=no]]],
 	, enable_debug=no)
@@ -55,32 +82,37 @@ AC_MSG_RESULT($enable_debug)
 AM_CONDITIONAL(ENABLE_DEBUG, [test x$enable_debug = xyes])
 if test x$enable_debug = xyes; then
 	AC_DEFINE(ENABLE_DEBUG, 1, Define to enable the debug functions)
-	CFLAGS="$CFLAGS -g -O0"
-	CXXFLAGS="$CXXFLAGS -g -O0"
+	CFLAGS="$CFLAGS -g -O0 "
+	CXXFLAGS="$CXXFLAGS -g -O0 "
 else
-	CFLAGS="$CFLAGS -O2"
-	CXXFLAGS="$CXXFLAGS -O2"
+	CFLAGS="$CFLAGS -O2 "
+	CXXFLAGS="$CXXFLAGS -O2 "
 fi
 
 AC_ARG_ENABLE(use_bellagio, 
 	[  --enable-use-bellagio	  use libomxil-bellagio [[default=no]]],
 	, enable_use_bellagio=no)
 AC_MSG_CHECKING(whether to use libomxil-bellagio)
-if test x$enable_use_bellagio = xyes; then
-	AC_MSG_RESULT(yes)
-else
-	AC_MSG_RESULT(no)
-fi
+AC_MSG_RESULT($enable_use_bellagio)
 AM_CONDITIONAL(USE_BELLAGIO, test x$enable_use_bellagio = xyes)
+if test x$enable_use_bellagio = xyes; then
+	test_CPPFLAGS="$test_CPPFLAGS -I/usr/include -DUSE_BELLAGIO "
+	test_CFLAGS="$test_CFLAGS "
+	test_LDADD="$test_LDADD -lomxil-bellagio "
+else
+	test_CPPFLAGS="$test_CPPFLAGS -I${top_srcdir}/include -DDUSE_MF "
+	test_CFLAGS="$test_CFLAGS "
+	test_LDADD="$test_LDADD -lomxil-mf "
+fi
 
 
-# Specify the Makefile
+dnl ----------------------------------------
+dnl Output the configure.
+dnl ----------------------------------------
 AC_CONFIG_FILES([Makefile src/Makefile 
 	tests/Makefile tests/basic/Makefile])
 #doc/Makefile
 
-
-# Specify subdir of configure
 #AC_CONFIG_SUBDIRS([src/other])
 
 AC_OUTPUT()
