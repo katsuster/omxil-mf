@@ -43,7 +43,6 @@ dnl ----------------------------------------
 AC_HEADER_STDC()
 
 dnl AC_CHECK_HEADERS([fcntl.h stdlib.h string.h strings.h unistd.h])
-dnl AC_CHECK_HEADERS([OMX_Core.h OMX_Component.h OMX_Types.h OMX_Audio.h OMX_Video.h])
 
 
 dnl ----------------------------------------
@@ -64,6 +63,8 @@ dnl ----------------------------------------
 AC_FUNC_MEMCMP()
 
 dnl AC_CHECK_FUNCS([memmove memset strcasecmp])
+dnl AC_CHECK_LIB([xxxx], [func_xxxx], [], 
+dnl	[AC_MSG_ERROR([cannot find libxxxx])])
 
 
 dnl ----------------------------------------
@@ -95,6 +96,14 @@ AC_ARG_ENABLE(use_bellagio,
 AC_MSG_CHECKING(whether to use libomxil-bellagio)
 AC_MSG_RESULT($enable_use_bellagio)
 AM_CONDITIONAL(USE_BELLAGIO, test x$enable_use_bellagio = xyes)
+if test x$enable_use_bellagio = xyes; then
+	AC_CHECK_HEADERS([OMX_Core.h OMX_Component.h OMX_Types.h OMX_Audio.h OMX_Video.h], [], 
+		[AC_MSG_ERROR([cannot find OMX_Core.h])])
+	AC_CHECK_LIB([omxil-bellagio], [OMX_Init], [], 
+		[AC_MSG_ERROR([cannot find libomxil-bellagio])])
+else
+	:;
+fi
 
 
 dnl ----------------------------------------
