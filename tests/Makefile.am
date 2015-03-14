@@ -17,7 +17,7 @@ else
   test_LDADD    = $(top_builddir)/src/libomxil-mf.la
   test_CPPFLAGS = \
   	-I$(top_srcdir)/include \
-  	-DUSE_STUDY
+  	-DUSE_MF
   test_CFLAGS   = 
 endif
 
