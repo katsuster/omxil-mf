@@ -50,11 +50,16 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-target_triplet = @target@
 check_PROGRAMS = init_deinit$(EXEEXT) enum_components$(EXEEXT) \
 	get_roles_of_component$(EXEEXT) \
 	get_components_of_role$(EXEEXT) get_handle$(EXEEXT) \
 	send_command$(EXEEXT)
+@USE_BELLAGIO_TRUE@am__append_1 = -DUSE_BELLAGIO
+@USE_BELLAGIO_TRUE@am__append_2 = 
+@USE_BELLAGIO_TRUE@am__append_3 = -lomxil-bellagio
+@USE_BELLAGIO_FALSE@am__append_4 = -DUSE_MF -I$(top_srcdir)/include
+@USE_BELLAGIO_FALSE@am__append_5 = 
+@USE_BELLAGIO_FALSE@am__append_6 = $(top_builddir)/src/libomxil-mf.la
 TESTS = init_deinit$(EXEEXT) enum_components$(EXEEXT) \
 	get_roles_of_component.sh get_components_of_role.sh \
 	get_handle$(EXEEXT) send_command$(EXEEXT)
@@ -73,9 +78,9 @@ am_enum_components_OBJECTS =  \
 	enum_components-test_enum_components.$(OBJEXT) \
 	$(am__objects_1)
 enum_components_OBJECTS = $(am_enum_components_OBJECTS)
-@USE_BELLAGIO_FALSE@am__DEPENDENCIES_1 =  \
-@USE_BELLAGIO_FALSE@	$(top_builddir)/src/libomxil-mf.la
-enum_components_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am__DEPENDENCIES_1 =
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__append_6)
+enum_components_DEPENDENCIES = $(am__DEPENDENCIES_2)
 enum_components_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(enum_components_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -84,7 +89,7 @@ am_get_components_of_role_OBJECTS =  \
 	get_components_of_role-test_get_components_of_role.$(OBJEXT) \
 	$(am__objects_2)
 get_components_of_role_OBJECTS = $(am_get_components_of_role_OBJECTS)
-get_components_of_role_DEPENDENCIES = $(am__DEPENDENCIES_1)
+get_components_of_role_DEPENDENCIES = $(am__DEPENDENCIES_2)
 get_components_of_role_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(get_components_of_role_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -93,7 +98,7 @@ am__objects_3 = get_handle-omxil_utils.$(OBJEXT)
 am_get_handle_OBJECTS = get_handle-test_get_handle.$(OBJEXT) \
 	$(am__objects_3)
 get_handle_OBJECTS = $(am_get_handle_OBJECTS)
-get_handle_DEPENDENCIES = $(am__DEPENDENCIES_1)
+get_handle_DEPENDENCIES = $(am__DEPENDENCIES_2)
 get_handle_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(get_handle_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -102,7 +107,7 @@ am_get_roles_of_component_OBJECTS =  \
 	get_roles_of_component-test_get_roles_of_component.$(OBJEXT) \
 	$(am__objects_4)
 get_roles_of_component_OBJECTS = $(am_get_roles_of_component_OBJECTS)
-get_roles_of_component_DEPENDENCIES = $(am__DEPENDENCIES_1)
+get_roles_of_component_DEPENDENCIES = $(am__DEPENDENCIES_2)
 get_roles_of_component_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(get_roles_of_component_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -111,7 +116,7 @@ am__objects_5 = init_deinit-omxil_utils.$(OBJEXT)
 am_init_deinit_OBJECTS = init_deinit-test_init_deinit.$(OBJEXT) \
 	$(am__objects_5)
 init_deinit_OBJECTS = $(am_init_deinit_OBJECTS)
-init_deinit_DEPENDENCIES = $(am__DEPENDENCIES_1)
+init_deinit_DEPENDENCIES = $(am__DEPENDENCIES_2)
 init_deinit_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(init_deinit_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -119,7 +124,7 @@ am__objects_6 = send_command-omxil_utils.$(OBJEXT)
 am_send_command_OBJECTS = send_command-test_send_command.$(OBJEXT) \
 	$(am__objects_6)
 send_command_OBJECTS = $(am_send_command_OBJECTS)
-send_command_DEPENDENCIES = $(am__DEPENDENCIES_1)
+send_command_DEPENDENCIES = $(am__DEPENDENCIES_2)
 send_command_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(send_command_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -267,56 +272,40 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
-target = @target@
 target_alias = @target_alias@
-target_cpu = @target_cpu@
-target_os = @target_os@
-target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-TEST_DIR = ..
+TEST_DIR = $(top_srcdir)/tests
 COMMON_DIR = $(TEST_DIR)/common
-@USE_BELLAGIO_FALSE@test_LDADD = $(top_builddir)/src/libomxil-mf.la
-@USE_BELLAGIO_TRUE@test_LDADD = -lomxil-bellagio
-@USE_BELLAGIO_FALSE@test_CPPFLAGS = \
-@USE_BELLAGIO_FALSE@  	-I$(top_srcdir)/include \
-@USE_BELLAGIO_FALSE@  	-DUSE_MF
-
-@USE_BELLAGIO_TRUE@test_CPPFLAGS = \
-@USE_BELLAGIO_TRUE@  	-I/usr/include \
-@USE_BELLAGIO_TRUE@  	-DUSE_BELLAGIO
-
-@USE_BELLAGIO_FALSE@test_CFLAGS = 
-@USE_BELLAGIO_TRUE@test_CFLAGS = 
 common_SOURCES = $(COMMON_DIR)/omxil_utils.c
-#common_LDADD  = ../common/libtestcommon.la
-common_CPPFLAGS = -I$(TEST_DIR)
-#common_CFLAGS = -I$(srcdir)/../common
+common_CPPFLAGS = -I$(TEST_DIR) $(am__append_1) $(am__append_4)
+common_CFLAGS = $(am__append_2) $(am__append_5)
+common_LDADD = $(am__append_3) $(am__append_6)
 init_deinit_SOURCES = test_init_deinit.c $(common_SOURCES)
-init_deinit_LDADD = $(test_LDADD) $(common_LDADD)
-init_deinit_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
-init_deinit_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+init_deinit_LDADD = $(common_LDADD)
+init_deinit_CPPFLAGS = $(common_CPPFLAGS)
+init_deinit_CFLAGS = $(common_CFLAGS)
 enum_components_SOURCES = test_enum_components.c $(common_SOURCES)
-enum_components_LDADD = $(test_LDADD) $(common_LDADD)
-enum_components_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
-enum_components_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+enum_components_LDADD = $(common_LDADD)
+enum_components_CPPFLAGS = $(common_CPPFLAGS)
+enum_components_CFLAGS = $(common_CFLAGS)
 get_roles_of_component_SOURCES = test_get_roles_of_component.c $(common_SOURCES)
-get_roles_of_component_LDADD = $(test_LDADD) $(common_LDADD)
-get_roles_of_component_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
-get_roles_of_component_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+get_roles_of_component_LDADD = $(common_LDADD)
+get_roles_of_component_CPPFLAGS = $(common_CPPFLAGS)
+get_roles_of_component_CFLAGS = $(common_CFLAGS)
 get_components_of_role_SOURCES = test_get_components_of_role.c $(common_SOURCES)
-get_components_of_role_LDADD = $(test_LDADD) $(common_LDADD)
-get_components_of_role_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
-get_components_of_role_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+get_components_of_role_LDADD = $(common_LDADD)
+get_components_of_role_CPPFLAGS = $(common_CPPFLAGS)
+get_components_of_role_CFLAGS = $(common_CFLAGS)
 get_handle_SOURCES = test_get_handle.c $(common_SOURCES)
-get_handle_LDADD = $(test_LDADD) $(common_LDADD)
-get_handle_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
-get_handle_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+get_handle_LDADD = $(common_LDADD)
+get_handle_CPPFLAGS = $(common_CPPFLAGS)
+get_handle_CFLAGS = $(common_CFLAGS)
 send_command_SOURCES = test_send_command.c $(common_SOURCES)
-send_command_LDADD = $(test_LDADD) $(common_LDADD)
-send_command_CPPFLAGS = $(test_CPPFLAGS) $(common_CPPFLAGS)
-send_command_CFLAGS = $(test_CFLAGS) $(common_CFLAGS)
+send_command_LDADD = $(common_LDADD)
+send_command_CPPFLAGS = $(common_CPPFLAGS)
+send_command_CFLAGS = $(common_CFLAGS)
 all: all-am
 
 .SUFFIXES:
