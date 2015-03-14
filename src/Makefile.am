@@ -1,17 +1,17 @@
 
-omxil_studydir = $(libdir)
+omxil_mfdir = $(libdir)
 
-omxil_study_LTLIBRARIES = libomxil-study.la
+omxil_mf_LTLIBRARIES = libomxil-mf.la
 
 
-libomxil_study_ladir = $(includedir)
+libomxil_mf_ladir = $(includedir)
 
-libomxil_study_la_SOURCES = \
+libomxil_mf_la_SOURCES = \
 	entry.cpp \
 	main.cpp \
 	debug/dbgprint.c
 
-libomxil_study_la_HEADERS = \
+libomxil_mf_la_HEADERS = \
 	../include/OMX_Audio.h \
 	../include/OMX_Component.h \
 	../include/OMX_ContentPipe.h \
@@ -22,18 +22,18 @@ libomxil_study_la_HEADERS = \
 	../include/OMX_Other.h \
 	../include/OMX_Types.h \
 	../include/OMX_Video.h \
-	../include/omxilstudy.h
+	../include/omxil_mf.h
 
-libomxil_study_la_CPPFLAGS  = \
+libomxil_mf_la_CPPFLAGS  = \
 	-I$(top_srcdir)/include \
 	-Wall -Werror
 
-libomxil_study_la_CFLAGS  = 
-libomxil_study_la_CXXFLAGS  = 
+libomxil_mf_la_CFLAGS  = 
+libomxil_mf_la_CXXFLAGS  = 
 
-libomxil_study_la_LIBADD  = \
+libomxil_mf_la_LIBADD  = \
 	-lpthread
 
-libomxil_study_la_LDFLAGS = 
+libomxil_mf_la_LDFLAGS = 
 
 

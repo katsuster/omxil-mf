@@ -14,7 +14,7 @@ if USE_BELLAGIO
   	-DUSE_BELLAGIO
   test_CFLAGS   = 
 else
-  test_LDADD    = $(top_builddir)/src/libomxil-study.la
+  test_LDADD    = $(top_builddir)/src/libomxil-mf.la
   test_CPPFLAGS = \
   	-I$(top_srcdir)/include \
   	-DUSE_STUDY

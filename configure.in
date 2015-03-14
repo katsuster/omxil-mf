@@ -1,7 +1,7 @@
 
 AC_PREREQ(2.61)
 
-AC_INIT([libomxil-study], [0.1], [no-define])
+AC_INIT([omxil-mf], [0.1], [no-define])
 AC_CANONICAL_SYSTEM()
 AC_ARG_PROGRAM()
 AC_CONFIG_AUX_DIR([.])
