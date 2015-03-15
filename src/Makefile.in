@@ -98,6 +98,7 @@ am_libomxil_mf_la_OBJECTS = libomxil_mf_la-entry.lo \
 	libomxil_mf_la-main.lo libomxil_mf_la-omx_types_enum_name.lo \
 	libomxil_mf_la-omx_core_enum_name.lo \
 	libomxil_mf_la-omx_component_enum_name.lo \
+	libomxil_mf_la-omx_video_enum_name.lo \
 	libomxil_mf_la-dbgprint.lo
 libomxil_mf_la_OBJECTS = $(am_libomxil_mf_la_OBJECTS)
 libomxil_mf_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -265,6 +266,7 @@ libomxil_mf_la_SOURCES = \
 	util/omx_types_enum_name.cpp \
 	util/omx_core_enum_name.cpp \
 	util/omx_component_enum_name.cpp \
+	util/omx_video_enum_name.cpp \
 	debug/dbgprint.c
 
 EXTRA_libomxil_mf_la_SOURCES = \
@@ -378,6 +380,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_component_enum_name.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_core_enum_name.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_types_enum_name.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -462,6 +465,13 @@ libomxil_mf_la-omx_component_enum_name.lo: util/omx_component_enum_name.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='util/omx_component_enum_name.cpp' object='libomxil_mf_la-omx_component_enum_name.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omx_component_enum_name.lo `test -f 'util/omx_component_enum_name.cpp' || echo '$(srcdir)/'`util/omx_component_enum_name.cpp
+
+libomxil_mf_la-omx_video_enum_name.lo: util/omx_video_enum_name.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-omx_video_enum_name.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Tpo -c -o libomxil_mf_la-omx_video_enum_name.lo `test -f 'util/omx_video_enum_name.cpp' || echo '$(srcdir)/'`util/omx_video_enum_name.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Tpo $(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='util/omx_video_enum_name.cpp' object='libomxil_mf_la-omx_video_enum_name.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omx_video_enum_name.lo `test -f 'util/omx_video_enum_name.cpp' || echo '$(srcdir)/'`util/omx_video_enum_name.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
