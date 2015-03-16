@@ -23,6 +23,9 @@ public:
 	static const char *get_OMX_ENDIANTYPE_name(OMX_ENDIANTYPE id);
 	static const char *get_OMX_NUMERICALDATATYPE_name(OMX_NUMERICALDATATYPE id);
 
+	//OMX_Index.h
+	static const char *get_OMX_INDEXTYPE_name(OMX_INDEXTYPE id);
+
 	//OMX_Core.h
 	static const char *get_OMX_COMMANDTYPE_name(OMX_COMMANDTYPE id);
 	static const char *get_OMX_STATETYPE_name(OMX_STATETYPE id);
@@ -30,7 +33,7 @@ public:
 	static const char *get_OMX_EXTRADATATYPE_name(OMX_EXTRADATATYPE id);
 	static const char *get_OMX_EVENTTYPE_name(OMX_EVENTTYPE id);
 	static const char *get_OMX_BUFFERSUPPLIERTYPE_name(OMX_BUFFERSUPPLIERTYPE id);
-	
+
 	//OMX_Component.h
 	static const char *get_OMX_PORTDOMAINTYPE_name(OMX_PORTDOMAINTYPE id);
 	static const char *get_OMX_SUSPENSIONPOLICYTYPE_name(OMX_SUSPENSIONPOLICYTYPE id);
