@@ -16062,7 +16062,6 @@ esac
 
 
 
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for working memcmp" >&5
 $as_echo_n "checking for working memcmp... " >&6; }
 if ${ac_cv_func_memcmp_working+:} false; then :
@@ -16162,9 +16161,6 @@ fi
 
 ac_config_files="$ac_config_files Makefile src/Makefile tests/Makefile"
 
-#doc/Makefile
-
-#AC_CONFIG_SUBDIRS([src/other])
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
