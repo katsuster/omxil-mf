@@ -1,4 +1,2 @@
-
-SUBDIRS = src tests 
-#doc
+SUBDIRS = src tests component
 
