@@ -6,7 +6,7 @@ MF_HEADER_DIR = $(BASE_DIR)/omxil_mf
 
 libomxil_mf_ladir = $(includedir)
 
-libomxil_mf_la_HEADERS = \
+nobase_libomxil_mf_la_HEADERS = \
 	$(HEADER_DIR)/OMX_Audio.h \
 	$(HEADER_DIR)/OMX_Component.h \
 	$(HEADER_DIR)/OMX_ContentPipe.h \
@@ -22,7 +22,7 @@ libomxil_mf_la_HEADERS = \
 	$(RING_DIR)/bounded_buffer.hpp \
 	$(RING_DIR)/buffer_base.hpp \
 	$(RING_DIR)/ring_buffer.hpp \
-	$(MF_HEADER_DIR)/omxil_mf.hpp \
+	$(MF_HEADER_DIR)/omxil_mf.h \
 	$(MF_HEADER_DIR)/omx_reflector.hpp \
 	$(MF_HEADER_DIR)/component.hpp \
 	$(MF_HEADER_DIR)/port.hpp
