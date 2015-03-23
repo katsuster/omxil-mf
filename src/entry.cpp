@@ -3,7 +3,7 @@ extern "C" {
 }; //extern "C"
 
 #include "entry.hpp"
-#include "component/component.hpp"
+#include "omxil_mf/component.hpp"
 #include "debug/scoped_log.hpp"
 
 extern "C" {
