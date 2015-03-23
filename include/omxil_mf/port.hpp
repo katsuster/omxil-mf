@@ -9,11 +9,8 @@
 #include <OMX_Component.h>
 #include <OMX_Core.h>
 
-#include "consts.h"
-#include "util/omx_enum_name.hpp"
-#include "ring/ring_buffer.hpp"
-#include "ring/bounded_buffer.hpp"
-#include "debug/scoped_log.hpp"
+#include "omxil_mf/ring/ring_buffer.hpp"
+#include "omxil_mf/ring/bounded_buffer.hpp"
 
 
 //OpenMAX バッファを受け渡すバッファの深さ
@@ -296,69 +293,9 @@ public:
 	//disable default constructor
 	port() = delete;
 
-	port(int ind, component *c)
-	: index(ind), comp(c),
-	ring_send(nullptr), bound_send(nullptr),
-	ring_ret(nullptr), bound_ret(nullptr), th_ret(nullptr),
-	dir(OMX_DirMax),
-	buffer_count_actual(0), buffer_count_min(0), buffer_size(0),
-	f_enabled(OMX_FALSE), f_populated(OMX_FALSE),
-	domain(OMX_PortDomainMax),
-	buffers_contiguous(OMX_FALSE), buffer_alignment(0) {
-		scoped_log_begin;
+	port(int ind, component *c);
 
-		try {
-			//creating ring buffer for sending OpenMAX buffers
-			ring_send  = new ring_buffer<port_buffer>(nullptr, OMX_MF_BUFS_DEPTH + 1);
-			bound_send = new bounded_buffer<ring_buffer<port_buffer>, port_buffer>(*ring_send);
-
-			//creating ring buffer for returning OpenMAX buffers
-			ring_ret  = new ring_buffer<port_buffer>(nullptr, OMX_MF_BUFS_DEPTH + 1);
-			bound_ret = new bounded_buffer<ring_buffer<port_buffer>, port_buffer>(*ring_ret);
-
-			//start returning OpenMAX buffers thread
-			th_ret = new std::thread(buffer_done_thread_main, this);
-		} catch (const std::bad_alloc& e) {
-			errprint("failed to construct '%s'.\n", e.what());
-
-			delete th_ret;
-			th_ret = nullptr;
-
-			delete bound_ret;
-			bound_ret = nullptr;
-			delete ring_ret;
-			ring_ret = nullptr;
-
-			delete bound_send;
-			bound_send = nullptr;
-			delete ring_send;
-			ring_send = nullptr;
-
-			throw;
-		}
-	}
-
-	virtual ~port() {
-		scoped_log_begin;
-
-		//shutdown returning OpenMAX buffers thread
-		if (bound_ret) {
-			bound_ret->shutdown();
-		}
-		if (th_ret) {
-			th_ret->join();
-		}
-		delete th_ret;
-		delete bound_ret;
-		delete ring_ret;
-
-		//shutdown sending OpenMAX buffers thread
-		if (bound_send) {
-			bound_send->shutdown();
-		}
-		delete bound_send;
-		delete ring_send;
-	}
+	virtual ~port();
 
 	//disable copy constructor
 	port(const port& obj) = delete;
@@ -366,117 +303,62 @@ public:
 	//disable operator=
 	port& operator=(const port& obj) = delete;
 
-	virtual const char *get_name() const {
-		return "port";
-	}
+	virtual const char *get_name() const;
 
 	/**
 	 * ポートが所属するコンポーネントを取得します。
 	 *
 	 * @return コンポーネントへのポインタ、属していなければ nullptr
 	 */
-	virtual const component *get_component() const {
-		return comp;
-	}
+	virtual const component *get_component() const;
 
 	/**
 	 * ポートが所属するコンポーネントを取得します。
 	 *
 	 * @return コンポーネントへのポインタ、属していなければ nullptr
 	 */
-	virtual component *get_component() {
-		return comp;
-	}
+	virtual component *get_component();
 
 	/**
 	 * ポートのインデックスを取得します。
 	 *
 	 * @return ポートのインデックス
 	 */
-	virtual OMX_U32 get_index() const {
-		return index;
-	}
+	virtual OMX_U32 get_index() const;
 
 	/**
 	 * ポートのインデックスを設定します。
 	 *
 	 * @param v ポートのインデックス
 	 */
-	virtual void set_index(OMX_U32 v) {
-		index = v;
-	}
+	virtual void set_index(OMX_U32 v);
 
-	virtual OMX_DIRTYPE get_dir() const {
-		return dir;
-	}
+	virtual OMX_DIRTYPE get_dir() const;
+	virtual void set_dir(OMX_DIRTYPE v);
 
-	virtual void set_dir(OMX_DIRTYPE v) {
-		dir = v;
-	}
+	virtual OMX_U32 get_buffer_count_actual() const;
+	virtual void set_buffer_count_actual(OMX_U32 v);
 
-	virtual OMX_U32 get_buffer_count_actual() const {
-		return buffer_count_actual;
-	}
+	virtual OMX_U32 get_buffer_count_min() const;
+	virtual void set_buffer_count_min(OMX_U32 v);
 
-	virtual void set_buffer_count_actual(OMX_U32 v) {
-		buffer_count_actual = v;
-	}
+	virtual OMX_U32 get_buffer_size() const;
+	virtual void set_buffer_size(OMX_U32 v);
 
-	virtual OMX_U32 get_buffer_count_min() const {
-		return buffer_count_min;
-	}
+	virtual OMX_BOOL get_enabled() const;
+	virtual void set_enabled(OMX_BOOL v);
 
-	virtual void set_buffer_count_min(OMX_U32 v) {
-		buffer_count_min = v;
-	}
+	virtual OMX_BOOL get_populated() const;
+	virtual void set_populated(OMX_BOOL v);
 
-	virtual OMX_U32 get_buffer_size() const {
-		return buffer_size;
-	}
+	virtual OMX_PORTDOMAINTYPE get_domain() const;
+	virtual void set_domain(OMX_PORTDOMAINTYPE v);
 
-	virtual void set_buffer_size(OMX_U32 v) {
-		buffer_size = v;
-	}
+	virtual OMX_BOOL get_buffers_contiguous() const;
+	virtual void set_buffers_contiguous(OMX_BOOL v);
 
-	virtual OMX_BOOL get_enabled() const {
-		return f_enabled;
-	}
-
-	virtual void set_enabled(OMX_BOOL v) {
-		f_enabled = v;
-	}
-
-	virtual OMX_BOOL get_populated() const {
-		return f_populated;
-	}
-
-	virtual void set_populated(OMX_BOOL v) {
-		f_populated = v;
-	}
-
-	virtual OMX_PORTDOMAINTYPE get_domain() const {
-		return domain;
-	}
-
-	virtual void set_domain(OMX_PORTDOMAINTYPE v) {
-		domain = v;
-	}
-
-	virtual OMX_BOOL get_buffers_contiguous() const {
-		return buffers_contiguous;
-	}
-
-	virtual void set_buffers_contiguous(OMX_BOOL v) {
-		buffers_contiguous = v;
-	}
-
-	virtual OMX_U32 get_buffer_alignment() const {
-		return buffer_alignment;
-	}
-
-	virtual void set_buffer_alignment(OMX_U32 v) {
-		buffer_alignment = v;
-	}
+	virtual OMX_U32 get_buffer_alignment() const;
+	virtual void set_buffer_alignment(OMX_U32 v);
 
 	/**
 	 * Get OpenMAX IL definition data of this port.
@@ -507,29 +389,7 @@ public:
 	 *
 	 * @return port definition data of OpenMAX IL
 	 */
-	virtual const OMX_PARAM_PORTDEFINITIONTYPE *get_definition() const {
-		scoped_log_begin;
-
-		memset(&definition, 0, sizeof(definition));
-
-		definition.nSize = sizeof(OMX_PARAM_PORTDEFINITIONTYPE);
-		definition.nVersion.s.nVersionMajor = OMX_MF_IL_MAJOR;
-		definition.nVersion.s.nVersionMinor = OMX_MF_IL_MINOR;
-		definition.nVersion.s.nRevision     = OMX_MF_IL_REVISION;
-		definition.nVersion.s.nStep         = OMX_MF_IL_STEP;
-		definition.eDir               = dir;
-		definition.nBufferCountActual = buffer_count_actual;
-		definition.nBufferCountMin    = buffer_count_min;
-		definition.nBufferSize        = buffer_size;
-		definition.bEnabled           = f_enabled;
-		definition.bPopulated         = f_populated;
-		definition.eDomain            = domain;
-		//definition.format is not set
-		definition.bBuffersContiguous = buffers_contiguous;
-		definition.nBufferAlignment   = buffer_alignment;
-
-		return &definition;
-	}
+	virtual const OMX_PARAM_PORTDEFINITIONTYPE *get_definition() const;
 
 	/**
 	 * Set OpenMAX IL definition data of this port.
@@ -561,50 +421,19 @@ public:
 	 *
 	 * @return port definition data of OpenMAX IL
 	 */
-	virtual void set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v) {
-		scoped_log_begin;
+	virtual void set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v);
 
-		dir                 = v.eDir;
-		buffer_count_actual = v.nBufferCountActual;
-		buffer_count_min    = v.nBufferCountMin;
-		buffer_size         = v.nBufferSize;
-		f_enabled           = v.bEnabled;
-		f_populated         = v.bPopulated;
-		domain              = v.eDomain;
-		//definition.format is ignored
-		buffers_contiguous  = v.bBuffersContiguous;
-		buffer_alignment    = v.nBufferAlignment;
-	}
+	virtual void disable_port();
 
-	virtual void disable_port() {
-		scoped_log_begin;
-		//do nothing
-	}
+	virtual void enable_port();
 
-	virtual void enable_port() {
-		scoped_log_begin;
-		//do nothing
-	}
+	virtual void flush_buffers();
 
-	virtual void flush_buffers() {
-		scoped_log_begin;
-		//do nothing
-	}
+	virtual void component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup);
 
-	virtual void component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup) {
-		scoped_log_begin;
-		//do nothing
-	}
+	virtual void allocate_tunnel_buffer(OMX_U32 index);
 
-	virtual void allocate_tunnel_buffer(OMX_U32 index) {
-		scoped_log_begin;
-		//do nothing
-	}
-
-	virtual void free_tunnel_buffer(OMX_U32 index) {
-		scoped_log_begin;
-		//do nothing
-	}
+	virtual void free_tunnel_buffer(OMX_U32 index);
 
 	/**
 	 * コンポーネント外部で確保されたバッファを、
@@ -633,79 +462,7 @@ public:
 	 * @param bufhead OpenMAX バッファヘッダを受け取るためのポインタ
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size, OMX_U8 *buf) {
-		scoped_log_begin;
-		port_buffer *pb = nullptr;
-		OMX_BUFFERHEADERTYPE *header = nullptr;
-		OMX_ERRORTYPE err;
-
-		try {
-			//allocate buffer of port
-			pb = new port_buffer();
-
-			//allocate OpenMAX BUFFERHEADER
-			header = new OMX_BUFFERHEADERTYPE();
-		} catch (const std::bad_alloc& e) {
-			errprint("failed to allocate '%s'.\n", e.what());
-			err = OMX_ErrorInsufficientResources;
-			goto err_out;
-		}
-
-		{
-			std::lock_guard<std::recursive_mutex> lk(mut_list_bufs);
-
-			//init buffer of port
-			pb->p           = this;
-			pb->f_allocate  = false;
-			pb->header      = header;
-			pb->index       = 0;
-
-			list_bufs.push_back(pb);
-
-			//init OpenMAX BUFFERHEADER
-			header->nSize = sizeof(OMX_BUFFERHEADERTYPE);
-			header->nVersion.s.nVersionMajor = OMX_MF_IL_MAJOR;
-			header->nVersion.s.nVersionMinor = OMX_MF_IL_MINOR;
-			header->nVersion.s.nRevision     = OMX_MF_IL_REVISION;
-			header->nVersion.s.nStep         = OMX_MF_IL_STEP;
-			header->pBuffer              = buf;
-			header->nAllocLen            = size;
-			header->nFilledLen           = 0;
-			header->nOffset              = 0;
-			header->pAppPrivate          = priv;
-			header->pPlatformPrivate     = pb;
-			if (get_dir() == OMX_DirInput) {
-				header->pInputPortPrivate  = nullptr;
-				header->nInputPortIndex    = get_index();
-			} else if (get_dir() == OMX_DirOutput) {
-				header->pOutputPortPrivate = nullptr;
-				header->nOutputPortIndex   = get_index();
-			} else {
-				errprint("unknown direction.\n");
-				err = OMX_ErrorBadPortIndex;
-				goto err_out;
-			}
-			header->hMarkTargetComponent = nullptr;
-			header->pMarkData            = nullptr;
-			header->nTickCount           = 0;
-			header->nTimeStamp           = 0;
-			header->nFlags               = 0;
-		}
-
-		//return result
-		*bufhead = header;
-
-		//success
-		err = OMX_ErrorNone;
-
-	err_out:
-		if (err != OMX_ErrorNone) {
-			delete header;
-			delete pb;
-		}
-
-		return err;
-	}
+	virtual OMX_ERRORTYPE use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size, OMX_U8 *buf);
 
 	/**
 	 * コンポーネントでバッファを確保し、
@@ -734,84 +491,7 @@ public:
 	 * @param bufhead OpenMAX バッファヘッダを受け取るためのポインタ
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size) {
-		scoped_log_begin;
-		OMX_U8 *backbuf = nullptr;
-		port_buffer *pb = nullptr;
-		OMX_BUFFERHEADERTYPE *header = nullptr;
-		OMX_ERRORTYPE err;
-
-		try {
-			//allocate back buffer of OpenMAX buffer
-			backbuf = new OMX_U8[size];
-
-			//allocate buffer of port
-			pb = new port_buffer();
-
-			//allocate OpenMAX BUFFERHEADER
-			header = new OMX_BUFFERHEADERTYPE();
-		} catch (const std::bad_alloc& e) {
-			errprint("failed to allocate '%s'.\n", e.what());
-			err = OMX_ErrorInsufficientResources;
-			goto err_out;
-		}
-
-		{
-			std::lock_guard<std::recursive_mutex> lk(mut_list_bufs);
-
-			//init buffer of port
-			pb->p           = this;
-			pb->f_allocate  = true;
-			pb->header      = header;
-			pb->index       = 0;
-
-			list_bufs.push_back(pb);
-
-			//init OpenMAX BUFFERHEADER
-			header->nSize = sizeof(OMX_BUFFERHEADERTYPE);
-			header->nVersion.s.nVersionMajor = OMX_MF_IL_MAJOR;
-			header->nVersion.s.nVersionMinor = OMX_MF_IL_MINOR;
-			header->nVersion.s.nRevision     = OMX_MF_IL_REVISION;
-			header->nVersion.s.nStep         = OMX_MF_IL_STEP;
-			header->pBuffer              = backbuf;
-			header->nAllocLen            = size;
-			header->nFilledLen           = 0;
-			header->nOffset              = 0;
-			header->pAppPrivate          = priv;
-			header->pPlatformPrivate     = pb;
-			if (get_dir() == OMX_DirInput) {
-				header->pInputPortPrivate  = nullptr;
-				header->nInputPortIndex    = get_index();
-			} else if (get_dir() == OMX_DirOutput) {
-				header->pOutputPortPrivate = nullptr;
-				header->nOutputPortIndex   = get_index();
-			} else {
-				errprint("unknown direction.\n");
-				err = OMX_ErrorBadPortIndex;
-				goto err_out;
-			}
-			header->hMarkTargetComponent = nullptr;
-			header->pMarkData            = nullptr;
-			header->nTickCount           = 0;
-			header->nTimeStamp           = 0;
-			header->nFlags               = 0;
-		}
-
-		//return result
-		*bufhead = header;
-
-		//success
-		err = OMX_ErrorNone;
-
-	err_out:
-		if (err != OMX_ErrorNone) {
-			delete header;
-			delete pb;
-			delete[] backbuf;
-		}
-
-		return err;
-	}
+	virtual OMX_ERRORTYPE allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size);
 
 	/**
 	 * バッファを解放します。
@@ -819,34 +499,7 @@ public:
 	 * @param bufhead OpenMAX バッファヘッダ
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE free_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
-		scoped_log_begin;
-		std::lock_guard<std::recursive_mutex> lk(mut_list_bufs);
-		std::vector<port_buffer *>::iterator it;
-		port_buffer *pb;
-
-		for (it = list_bufs.begin(); it != list_bufs.end(); it++) {
-			pb = *it;
-
-			if (pb->header != bufhead) {
-				//not match
-				continue;
-			}
-
-			list_bufs.erase(it);
-			if (pb->f_allocate) {
-				delete[] pb->header->pBuffer;
-				pb->header->pBuffer = nullptr;
-			}
-			delete pb->header;
-			pb->header = nullptr;
-			delete pb;
-
-			break;
-		}
-
-		return OMX_ErrorNone;
-	}
+	virtual OMX_ERRORTYPE free_buffer(OMX_BUFFERHEADERTYPE *bufhead);
 
 	/**
 	 * バッファを解放します。
@@ -854,10 +507,7 @@ public:
 	 * @param pb ポートバッファ
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE free_buffer(port_buffer *pb) {
-		scoped_log_begin;
-		return free_buffer(pb->header);
-	}
+	virtual OMX_ERRORTYPE free_buffer(port_buffer *pb);
 
 	/**
 	 * バッファを検索します。
@@ -869,18 +519,7 @@ public:
 	 * @return OpenMAX エラー値、
 	 * 指定したバッファが見つかれば OMX_ErrorNone、見つからなければそれ以外
 	 */
-	virtual bool find_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
-		std::lock_guard<std::recursive_mutex> lk(mut_list_bufs);
-
-		for (port_buffer *pb : list_bufs) {
-			if (pb->header->pBuffer == bufhead->pBuffer) {
-				//found
-				return OMX_ErrorNone;
-			}
-		}
-
-		return OMX_ErrorBadParameter;
-	}
+	virtual bool find_buffer(OMX_BUFFERHEADERTYPE *bufhead);
 
 	/**
 	 * バッファを検索します。
@@ -892,9 +531,7 @@ public:
 	 * @return OpenMAX エラー値、
 	 * 指定したバッファが見つかれば OMX_ErrorNone、見つからなければそれ以外
 	 */
-	virtual bool find_buffer(port_buffer *pb) {
-		return find_buffer(pb->header);
-	}
+	virtual bool find_buffer(port_buffer *pb);
 
 
 	//----------------------------------------
