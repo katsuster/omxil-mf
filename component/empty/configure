@@ -594,7 +594,7 @@ PACKAGE_STRING='omxil-mf-empty 0.1'
 PACKAGE_BUGREPORT='no-define'
 PACKAGE_URL=''
 
-ac_unique_file="src/main.cpp"
+ac_unique_file="src/entry.cpp"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -634,6 +634,8 @@ ac_includes_default="\
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
+USE_INNER_LIB_FALSE
+USE_INNER_LIB_TRUE
 ENABLE_DEBUG_FALSE
 ENABLE_DEBUG_TRUE
 LIBOBJS
@@ -764,6 +766,7 @@ with_gnu_ld
 with_sysroot
 enable_libtool_lock
 enable_debug
+enable_use_inner_lib
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1403,7 +1406,8 @@ Optional Features:
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
   --disable-libtool-lock  avoid locking (might break parallel builds)
-  --enable-debug	  turn on debugging [default=no]
+  --enable-debug          turn on debugging [default=no]
+  --enable-use-inner-lib  use inner library for debug [default=no]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -16159,6 +16163,27 @@ else
 	CXXFLAGS="$CXXFLAGS -O2 "
 fi
 
+# Check whether --enable-use_inner_lib was given.
+if test "${enable_use_inner_lib+set}" = set; then :
+  enableval=$enable_use_inner_lib;
+else
+  enable_use_inner_lib=no
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable using inner library" >&5
+$as_echo_n "checking whether to enable using inner library... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $enable_use_inner_lib" >&5
+$as_echo "$enable_use_inner_lib" >&6; }
+ if test x$enable_use_inner_lib = xyes; then
+  USE_INNER_LIB_TRUE=
+  USE_INNER_LIB_FALSE='#'
+else
+  USE_INNER_LIB_TRUE='#'
+  USE_INNER_LIB_FALSE=
+fi
+
+
+
 ac_config_files="$ac_config_files Makefile src/Makefile tests/Makefile"
 
 
@@ -16297,6 +16322,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${ENABLE_DEBUG_TRUE}" && test -z "${ENABLE_DEBUG_FALSE}"; then
   as_fn_error $? "conditional \"ENABLE_DEBUG\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${USE_INNER_LIB_TRUE}" && test -z "${USE_INNER_LIB_FALSE}"; then
+  as_fn_error $? "conditional \"USE_INNER_LIB\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

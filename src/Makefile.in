@@ -15,7 +15,6 @@
 
 @SET_MAKE@
 
-
 VPATH = @srcdir@
 am__make_dryrun = \
   { \
@@ -53,8 +52,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = src
-DIST_COMMON = $(libomxil_mf_la_HEADERS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -90,8 +88,7 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(omxil_mfdir)" \
-	"$(DESTDIR)$(libomxil_mf_ladir)"
+am__installdirs = "$(DESTDIR)$(omxil_mfdir)"
 LTLIBRARIES = $(omxil_mf_LTLIBRARIES)
 libomxil_mf_la_DEPENDENCIES =
 am_libomxil_mf_la_OBJECTS = libomxil_mf_la-main.lo \
@@ -101,8 +98,8 @@ am_libomxil_mf_la_OBJECTS = libomxil_mf_la-main.lo \
 	libomxil_mf_la-omx_core_enum_name.lo \
 	libomxil_mf_la-omx_component_enum_name.lo \
 	libomxil_mf_la-omx_video_enum_name.lo \
-	libomxil_mf_la-component.lo libomxil_mf_la-port.lo \
-	libomxil_mf_la-dbgprint.lo
+	libomxil_mf_la-omx_reflector.lo libomxil_mf_la-component.lo \
+	libomxil_mf_la-port.lo libomxil_mf_la-dbgprint.lo
 libomxil_mf_la_OBJECTS = $(am_libomxil_mf_la_OBJECTS)
 libomxil_mf_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) \
@@ -138,7 +135,6 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-HEADERS = $(libomxil_mf_la_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -262,6 +258,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 BASE_DIR = .
+HEADER_DIR = $(BASE_DIR)/../include
+MF_HEADER_DIR = $(BASE_DIR)/../include/omxil_mf
 UTIL_DIR = $(BASE_DIR)/util
 RING_DIR = $(BASE_DIR)/ring
 COMPONENT_DIR = $(BASE_DIR)/component
@@ -278,6 +276,7 @@ libomxil_mf_la_SOURCES = \
 	$(UTIL_DIR)/omx_core_enum_name.cpp \
 	$(UTIL_DIR)/omx_component_enum_name.cpp \
 	$(UTIL_DIR)/omx_video_enum_name.cpp \
+	$(COMPONENT_DIR)/omx_reflector.cpp \
 	$(COMPONENT_DIR)/component.cpp \
 	$(COMPONENT_DIR)/port.cpp \
 	$(DEBUG_DIR)/dbgprint.c
@@ -288,29 +287,8 @@ EXTRA_libomxil_mf_la_SOURCES = \
 	$(BASE_DIR)/entry.hpp \
 	$(UTIL_DIR)/util.hpp \
 	$(UTIL_DIR)/omx_enum_name.hpp \
-	$(RING_DIR)/bit_buffer.hpp \
-	$(RING_DIR)/bounded_bit_buffer.hpp \
-	$(RING_DIR)/bounded_buffer.hpp \
-	$(RING_DIR)/buffer_base.hpp \
-	$(RING_DIR)/ring_buffer.hpp \
-	$(COMPONENT_DIR)/omx_reflector.hpp \
-	$(COMPONENT_DIR)/component.hpp \
-	$(COMPONENT_DIR)/port.hpp \
 	$(DEBUG_DIR)/dbgprint.h \
 	$(DEBUG_DIR)/scoped_log.hpp
-
-libomxil_mf_la_HEADERS = \
-	../include/OMX_Audio.h \
-	../include/OMX_Component.h \
-	../include/OMX_ContentPipe.h \
-	../include/OMX_Core.h \
-	../include/OMX_Image.h \
-	../include/OMX_Index.h \
-	../include/OMX_IVCommon.h \
-	../include/OMX_Other.h \
-	../include/OMX_Types.h \
-	../include/OMX_Video.h \
-	../include/omxil_mf.h
 
 libomxil_mf_la_CPPFLAGS = \
 	-I$(top_srcdir)/include \
@@ -406,6 +384,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_component_enum_name.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_core_enum_name.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_index_enum_name.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_reflector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_types_enum_name.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-port.Plo@am__quote@
@@ -516,6 +495,13 @@ libomxil_mf_la-omx_video_enum_name.lo: $(UTIL_DIR)/omx_video_enum_name.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omx_video_enum_name.lo `test -f '$(UTIL_DIR)/omx_video_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_video_enum_name.cpp
 
+libomxil_mf_la-omx_reflector.lo: $(COMPONENT_DIR)/omx_reflector.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-omx_reflector.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-omx_reflector.Tpo -c -o libomxil_mf_la-omx_reflector.lo `test -f '$(COMPONENT_DIR)/omx_reflector.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/omx_reflector.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libomxil_mf_la-omx_reflector.Tpo $(DEPDIR)/libomxil_mf_la-omx_reflector.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(COMPONENT_DIR)/omx_reflector.cpp' object='libomxil_mf_la-omx_reflector.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omx_reflector.lo `test -f '$(COMPONENT_DIR)/omx_reflector.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/omx_reflector.cpp
+
 libomxil_mf_la-component.lo: $(COMPONENT_DIR)/component.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-component.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-component.Tpo -c -o libomxil_mf_la-component.lo `test -f '$(COMPONENT_DIR)/component.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/component.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libomxil_mf_la-component.Tpo $(DEPDIR)/libomxil_mf_la-component.Plo
@@ -535,27 +521,6 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-libomxil_mf_laHEADERS: $(libomxil_mf_la_HEADERS)
-	@$(NORMAL_INSTALL)
-	@list='$(libomxil_mf_la_HEADERS)'; test -n "$(libomxil_mf_ladir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(libomxil_mf_ladir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(libomxil_mf_ladir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(libomxil_mf_ladir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(libomxil_mf_ladir)" || exit $$?; \
-	done
-
-uninstall-libomxil_mf_laHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(libomxil_mf_la_HEADERS)'; test -n "$(libomxil_mf_ladir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(libomxil_mf_ladir)'; $(am__uninstall_files_from_dir)
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -641,9 +606,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(omxil_mfdir)" "$(DESTDIR)$(libomxil_mf_ladir)"; do \
+	for dir in "$(DESTDIR)$(omxil_mfdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -699,8 +664,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-libomxil_mf_laHEADERS \
-	install-omxil_mfLTLIBRARIES
+install-data-am: install-omxil_mfLTLIBRARIES
 
 install-dvi: install-dvi-am
 
@@ -746,8 +710,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-libomxil_mf_laHEADERS \
-	uninstall-omxil_mfLTLIBRARIES
+uninstall-am: uninstall-omxil_mfLTLIBRARIES
 
 .MAKE: install-am install-strip
 
@@ -757,15 +720,13 @@ uninstall-am: uninstall-libomxil_mf_laHEADERS \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am \
-	install-libomxil_mf_laHEADERS install-man \
+	install-html-am install-info install-info-am install-man \
 	install-omxil_mfLTLIBRARIES install-pdf install-pdf-am \
 	install-ps install-ps-am install-strip installcheck \
 	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-libomxil_mf_laHEADERS \
-	uninstall-omxil_mfLTLIBRARIES
+	tags uninstall uninstall-am uninstall-omxil_mfLTLIBRARIES
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
