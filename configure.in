@@ -76,7 +76,8 @@ dnl ----------------------------------------
 dnl Checks for arguments.
 dnl ----------------------------------------
 AC_ARG_ENABLE(debug, 
-	[  --enable-debug	  turn on debugging [[default=no]]],
+	AS_HELP_STRING([--enable-debug], 
+		[turn on debugging [default=no]]),
 	, enable_debug=no)
 AC_MSG_CHECKING(whether to enable debuging)
 AC_MSG_RESULT($enable_debug)
@@ -91,7 +92,8 @@ else
 fi
 
 AC_ARG_ENABLE(use_bellagio, 
-	[  --enable-use-bellagio	  use libomxil-bellagio [[default=no]]],
+	AS_HELP_STRING([--enable-use-bellagio],
+		[use libomxil-bellagio [default=no]]),
 	, enable_use_bellagio=no)
 AC_MSG_CHECKING(whether to use libomxil-bellagio)
 AC_MSG_RESULT($enable_use_bellagio)
@@ -109,7 +111,7 @@ fi
 dnl ----------------------------------------
 dnl Output the configure.
 dnl ----------------------------------------
-AC_CONFIG_FILES([Makefile src/Makefile 
+AC_CONFIG_FILES([Makefile include/Makefile src/Makefile 
 	component/Makefile 
 	tests/Makefile tests/basic/Makefile])
 #doc/Makefile
