@@ -2,13 +2,18 @@
 #define __OMX_EXPORTS
 #include <OMX_Core.h>
 
+#include "regist/register_component.hpp"
 #include "debug/scoped_log.hpp"
 
 extern "C" {
 
-OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponent(const char *name, struct OMX_MF_COMPONENT_INFO *info)
+OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponent(const char *name, const OMX_MF_COMPONENT_INFO *info)
 {
 	scoped_log_begin;
+	mf::register_component *rc = mf::register_component::get_instance();
+
+	rc->add(name, info);
+
 	return OMX_ErrorNotImplemented;
 	//return OMX_ErrorNone;
 }

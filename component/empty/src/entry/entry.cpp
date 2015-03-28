@@ -39,7 +39,7 @@ void OMX_APIENTRY renderer_null_destructor(OMX_COMPONENTTYPE *component)
 
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 {
-	struct OMX_MF_COMPONENT_INFO comp_info;
+	OMX_MF_COMPONENT_INFO comp_info;
 	OMX_ERRORTYPE result;
 
 	printf("%s:%d\n", __func__, __LINE__);

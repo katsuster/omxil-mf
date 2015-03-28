@@ -6,6 +6,7 @@ API_DIR       = $(BASE_DIR)/api
 UTIL_DIR      = $(BASE_DIR)/util
 RING_DIR      = $(BASE_DIR)/ring
 COMPONENT_DIR = $(BASE_DIR)/component
+REGIST_DIR    = $(BASE_DIR)/regist
 DEBUG_DIR     = $(BASE_DIR)/debug
 
 omxil_mfdir = $(libdir)
@@ -25,11 +26,13 @@ libomxil_mf_la_SOURCES = \
 	$(COMPONENT_DIR)/omx_reflector.cpp \
 	$(COMPONENT_DIR)/component.cpp \
 	$(COMPONENT_DIR)/port.cpp \
+	$(REGIST_DIR)/register_component.cpp \
 	$(DEBUG_DIR)/dbgprint.c
 EXTRA_libomxil_mf_la_SOURCES = \
 	$(API_DIR)/consts.h \
 	$(UTIL_DIR)/util.hpp \
 	$(UTIL_DIR)/omx_enum_name.hpp \
+	$(REGIST_DIR)/register_component.hpp \
 	$(DEBUG_DIR)/dbgprint.h \
 	$(DEBUG_DIR)/scoped_log.hpp
 

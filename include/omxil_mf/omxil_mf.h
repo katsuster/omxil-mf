@@ -27,13 +27,13 @@ typedef void OMX_APIENTRY (*OMX_MF_DESTRUCTOR_FUNC)(OMX_COMPONENTTYPE *comp);
  * API for additional components library.
  */
 
-struct OMX_MF_COMPONENT_INFO {
+typedef struct OMX_MF_COMPONENT_INFO_tag {
 	OMX_VERSIONTYPE version;
 	OMX_MF_CONSTRUCTOR_FUNC constructor;
 	OMX_MF_DESTRUCTOR_FUNC destructor;
-};
+} OMX_MF_COMPONENT_INFO;
 
-OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponent(const char *name, struct OMX_MF_COMPONENT_INFO *info);
+OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponent(const char *name, const OMX_MF_COMPONENT_INFO *info);
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponentAlias(const char *name, const char *alias);
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponentRole(const char *name, const char *role);
 

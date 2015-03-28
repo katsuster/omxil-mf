@@ -1,83 +1,31 @@
 
 #include <fstream>
 
-#include <dlfcn.h>
-
 #define __OMX_EXPORTS
 #include <OMX_Core.h>
 
 #include <omxil_mf/omxil_mf.h>
 #include <omxil_mf/component.hpp>
 
+#include "regist/register_component.hpp"
 #include "debug/scoped_log.hpp"
 
+//----------------------------------------
+//external APIs
+//----------------------------------------
 extern "C" {
 
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_Init(void)
 {
 	scoped_log_begin;
-	const char *homedir = getenv("HOME");
-	std::string rcfilename = "/.omxilmfrc";
+	mf::register_component *rc = mf::register_component::get_instance();
 
-	if (homedir != nullptr) {
-		rcfilename.insert(0, homedir);
+	if (rc->is_init()) {
+		//already inited
+		return OMX_ErrorNone;
 	}
-	dprint("rcfile:%s\n", rcfilename.c_str());
 
-	std::ifstream ifs(rcfilename, std::ifstream::in);
-
-	while (ifs.good()) {
-		std::string libname;
-		void *libhandle = nullptr;
-		OMX_MF_ENTRY_FUNC entry_func = nullptr;
-		OMX_ERRORTYPE libresult;
-		int result;
-
-		std::getline(ifs, libname);
-		if (libname.compare("") == 0) {
-			//ignore empty line
-			continue;
-		}
-
-		//load component
-		libhandle = dlopen(libname.c_str(), RTLD_LAZY);
-		if (libhandle == nullptr) {
-			//not found or error
-			errprint("Library '%s' is not found. "
-					"Skipped.\n", 
-				libname.c_str());
-			continue;
-		}
-
-		entry_func = (OMX_MF_ENTRY_FUNC)
-			dlsym(libhandle, OMX_MF_ENTRY_FUNCNAME);
-		if (entry_func == nullptr) {
-			//not have entry func
-			errprint("Library '%s' does not have entry '%s'. "
-					"Skipped.\n", 
-				libname.c_str(), OMX_MF_ENTRY_FUNCNAME);
-			goto err_load;
-		}
-
-		//register component
-		libresult = entry_func();
-		if (libresult != OMX_ErrorNone) {
-			//failed to regist
-			errprint("Library '%s' entry '%s' was failed. "
-					"Skipped.\n", 
-				libname.c_str(), OMX_MF_ENTRY_FUNCNAME);
-			goto err_load;
-		}
-
-err_load:
-		//lazy close
-		result = dlclose(libhandle);
-		if (result != 0) {
-			errprint("Library '%s' cannot close. "
-					"Ignored.\n", 
-				libname.c_str());
-		}
-	}
+	rc->init();
 
 	return OMX_ErrorNone;
 }
