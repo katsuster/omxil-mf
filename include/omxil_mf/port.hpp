@@ -9,8 +9,8 @@
 #include <OMX_Component.h>
 #include <OMX_Core.h>
 
-#include "omxil_mf/ring/ring_buffer.hpp"
-#include "omxil_mf/ring/bounded_buffer.hpp"
+#include <omxil_mf/ring/ring_buffer.hpp>
+#include <omxil_mf/ring/bounded_buffer.hpp>
 
 
 //OpenMAX バッファを受け渡すバッファの深さ

@@ -12,10 +12,10 @@
 #include <OMX_Component.h>
 #include <OMX_Core.h>
 
-#include "omxil_mf/ring/ring_buffer.hpp"
-#include "omxil_mf/ring/bounded_buffer.hpp"
-#include "omxil_mf/omx_reflector.hpp"
-#include "omxil_mf/port.hpp"
+#include <omxil_mf/ring/ring_buffer.hpp>
+#include <omxil_mf/ring/bounded_buffer.hpp>
+#include <omxil_mf/omx_reflector.hpp>
+#include <omxil_mf/port.hpp>
 
 //コマンドを受け渡すバッファの深さ
 #define OMX_SEND_CMD_DEPTH    1

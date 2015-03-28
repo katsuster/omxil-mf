@@ -1,6 +1,7 @@
+
 extern "C" {
 #include <OMX_Core.h>
-}; //extern "C"
+} //extern "C"
 
 #include <omxil_mf/component.hpp>
 
@@ -105,4 +106,4 @@ OMX_API OMX_ERRORTYPE OMX_GetRolesOfComponent(OMX_IN OMX_STRING compName, OMX_IN
 	//return OMX_ErrorNone;
 }
 
-}; //extern "C"
+} //extern "C"
