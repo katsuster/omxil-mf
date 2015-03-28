@@ -14,8 +14,8 @@ omxil_mf_LTLIBRARIES = libomxil-mf.la
 libomxil_mf_ladir = $(includedir)
 
 libomxil_mf_la_SOURCES = \
-	$(API_DIR)/entry.cpp \
-	$(API_DIR)/main.cpp \
+	$(API_DIR)/omxil.cpp \
+	$(API_DIR)/omxil_mf.cpp \
 	$(UTIL_DIR)/util.cpp \
 	$(UTIL_DIR)/omx_types_enum_name.cpp \
 	$(UTIL_DIR)/omx_index_enum_name.cpp \
