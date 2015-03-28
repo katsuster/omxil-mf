@@ -1,8 +1,8 @@
 
-BASE_DIR        = .
-ENTRY_DIR       = $(BASE_DIR)/entry
-READER_ZERO_DIR = $(BASE_DIR)/reader_zero
-RENDER_NULL_DIR = $(BASE_DIR)/render_null
+BASE_DIR          = .
+ENTRY_DIR         = $(BASE_DIR)/entry
+READER_ZERO_DIR   = $(BASE_DIR)/reader_zero
+RENDERER_NULL_DIR = $(BASE_DIR)/renderer_null
 
 omxil_mf_emptydir = $(libdir)
 omxil_mf_empty_LTLIBRARIES = libomxil-mf-empty.la
@@ -11,11 +11,11 @@ libomxil_mf_empty_ladir = $(includedir)
 
 libomxil_mf_empty_la_SOURCES = \
 	$(ENTRY_DIR)/entry.cpp \
-	$(RENDER_NULL_DIR)/render_null.cpp
+	$(RENDERER_NULL_DIR)/renderer_null.cpp
 
 EXTRA_libomxil_mf_empty_la_SOURCES = \
 	$(ENTRY_DIR)/entry.h \
-	$(RENDER_NULL_DIR)/render_null.hpp
+	$(RENDERER_NULL_DIR)/renderer_null.hpp
 
 libomxil_mf_empty_la_HEADERS = 
 
