@@ -50,8 +50,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-check_PROGRAMS = init_deinit$(EXEEXT) enum_components$(EXEEXT) \
-	get_roles_of_component$(EXEEXT) \
+check_PROGRAMS = init_deinit$(EXEEXT) init_deinit_multi$(EXEEXT) \
+	enum_components$(EXEEXT) get_roles_of_component$(EXEEXT) \
 	get_components_of_role$(EXEEXT) get_handle$(EXEEXT) \
 	send_command$(EXEEXT)
 @USE_BELLAGIO_TRUE@am__append_1 = -DUSE_BELLAGIO
@@ -60,9 +60,10 @@ check_PROGRAMS = init_deinit$(EXEEXT) enum_components$(EXEEXT) \
 @USE_BELLAGIO_FALSE@am__append_4 = -DUSE_MF -I$(top_srcdir)/include
 @USE_BELLAGIO_FALSE@am__append_5 = 
 @USE_BELLAGIO_FALSE@am__append_6 = $(top_builddir)/src/libomxil-mf.la
-TESTS = init_deinit$(EXEEXT) enum_components$(EXEEXT) \
-	get_roles_of_component.sh get_components_of_role.sh \
-	get_handle$(EXEEXT) send_command$(EXEEXT)
+TESTS = init_deinit$(EXEEXT) init_deinit_multi$(EXEEXT) \
+	enum_components$(EXEEXT) get_roles_of_component.sh \
+	get_components_of_role.sh get_handle$(EXEEXT) \
+	send_command$(EXEEXT)
 subdir = tests/basic
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -120,9 +121,19 @@ init_deinit_DEPENDENCIES = $(am__DEPENDENCIES_2)
 init_deinit_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(init_deinit_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_6 = send_command-omxil_utils.$(OBJEXT)
-am_send_command_OBJECTS = send_command-test_send_command.$(OBJEXT) \
+am__objects_6 = init_deinit_multi-omxil_utils.$(OBJEXT)
+am_init_deinit_multi_OBJECTS =  \
+	init_deinit_multi-test_init_deinit_multi.$(OBJEXT) \
 	$(am__objects_6)
+init_deinit_multi_OBJECTS = $(am_init_deinit_multi_OBJECTS)
+init_deinit_multi_DEPENDENCIES = $(am__DEPENDENCIES_2)
+init_deinit_multi_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(init_deinit_multi_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
+am__objects_7 = send_command-omxil_utils.$(OBJEXT)
+am_send_command_OBJECTS = send_command-test_send_command.$(OBJEXT) \
+	$(am__objects_7)
 send_command_OBJECTS = $(am_send_command_OBJECTS)
 send_command_DEPENDENCIES = $(am__DEPENDENCIES_2)
 send_command_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -143,11 +154,12 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(enum_components_SOURCES) $(get_components_of_role_SOURCES) \
 	$(get_handle_SOURCES) $(get_roles_of_component_SOURCES) \
-	$(init_deinit_SOURCES) $(send_command_SOURCES)
+	$(init_deinit_SOURCES) $(init_deinit_multi_SOURCES) \
+	$(send_command_SOURCES)
 DIST_SOURCES = $(enum_components_SOURCES) \
 	$(get_components_of_role_SOURCES) $(get_handle_SOURCES) \
 	$(get_roles_of_component_SOURCES) $(init_deinit_SOURCES) \
-	$(send_command_SOURCES)
+	$(init_deinit_multi_SOURCES) $(send_command_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -287,6 +299,10 @@ init_deinit_SOURCES = test_init_deinit.c $(common_SOURCES)
 init_deinit_LDADD = $(common_LDADD)
 init_deinit_CPPFLAGS = $(common_CPPFLAGS)
 init_deinit_CFLAGS = $(common_CFLAGS)
+init_deinit_multi_SOURCES = test_init_deinit_multi.c $(common_SOURCES)
+init_deinit_multi_LDADD = $(common_LDADD)
+init_deinit_multi_CPPFLAGS = $(common_CPPFLAGS)
+init_deinit_multi_CFLAGS = $(common_CFLAGS)
 enum_components_SOURCES = test_enum_components.c $(common_SOURCES)
 enum_components_LDADD = $(common_LDADD)
 enum_components_CPPFLAGS = $(common_CPPFLAGS)
@@ -365,6 +381,9 @@ get_roles_of_component$(EXEEXT): $(get_roles_of_component_OBJECTS) $(get_roles_o
 init_deinit$(EXEEXT): $(init_deinit_OBJECTS) $(init_deinit_DEPENDENCIES) $(EXTRA_init_deinit_DEPENDENCIES) 
 	@rm -f init_deinit$(EXEEXT)
 	$(init_deinit_LINK) $(init_deinit_OBJECTS) $(init_deinit_LDADD) $(LIBS)
+init_deinit_multi$(EXEEXT): $(init_deinit_multi_OBJECTS) $(init_deinit_multi_DEPENDENCIES) $(EXTRA_init_deinit_multi_DEPENDENCIES) 
+	@rm -f init_deinit_multi$(EXEEXT)
+	$(init_deinit_multi_LINK) $(init_deinit_multi_OBJECTS) $(init_deinit_multi_LDADD) $(LIBS)
 send_command$(EXEEXT): $(send_command_OBJECTS) $(send_command_DEPENDENCIES) $(EXTRA_send_command_DEPENDENCIES) 
 	@rm -f send_command$(EXEEXT)
 	$(send_command_LINK) $(send_command_OBJECTS) $(send_command_LDADD) $(LIBS)
@@ -385,6 +404,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_deinit-omxil_utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_deinit-test_init_deinit.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_deinit_multi-omxil_utils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/init_deinit_multi-test_init_deinit_multi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_command-omxil_utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_command-test_send_command.Po@am__quote@
 
@@ -548,6 +569,34 @@ init_deinit-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(COMMON_DIR)/omxil_utils.c' object='init_deinit-omxil_utils.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_CPPFLAGS) $(CPPFLAGS) $(init_deinit_CFLAGS) $(CFLAGS) -c -o init_deinit-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
+
+init_deinit_multi-test_init_deinit_multi.o: test_init_deinit_multi.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_multi_CPPFLAGS) $(CPPFLAGS) $(init_deinit_multi_CFLAGS) $(CFLAGS) -MT init_deinit_multi-test_init_deinit_multi.o -MD -MP -MF $(DEPDIR)/init_deinit_multi-test_init_deinit_multi.Tpo -c -o init_deinit_multi-test_init_deinit_multi.o `test -f 'test_init_deinit_multi.c' || echo '$(srcdir)/'`test_init_deinit_multi.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/init_deinit_multi-test_init_deinit_multi.Tpo $(DEPDIR)/init_deinit_multi-test_init_deinit_multi.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_init_deinit_multi.c' object='init_deinit_multi-test_init_deinit_multi.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_multi_CPPFLAGS) $(CPPFLAGS) $(init_deinit_multi_CFLAGS) $(CFLAGS) -c -o init_deinit_multi-test_init_deinit_multi.o `test -f 'test_init_deinit_multi.c' || echo '$(srcdir)/'`test_init_deinit_multi.c
+
+init_deinit_multi-test_init_deinit_multi.obj: test_init_deinit_multi.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_multi_CPPFLAGS) $(CPPFLAGS) $(init_deinit_multi_CFLAGS) $(CFLAGS) -MT init_deinit_multi-test_init_deinit_multi.obj -MD -MP -MF $(DEPDIR)/init_deinit_multi-test_init_deinit_multi.Tpo -c -o init_deinit_multi-test_init_deinit_multi.obj `if test -f 'test_init_deinit_multi.c'; then $(CYGPATH_W) 'test_init_deinit_multi.c'; else $(CYGPATH_W) '$(srcdir)/test_init_deinit_multi.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/init_deinit_multi-test_init_deinit_multi.Tpo $(DEPDIR)/init_deinit_multi-test_init_deinit_multi.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_init_deinit_multi.c' object='init_deinit_multi-test_init_deinit_multi.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_multi_CPPFLAGS) $(CPPFLAGS) $(init_deinit_multi_CFLAGS) $(CFLAGS) -c -o init_deinit_multi-test_init_deinit_multi.obj `if test -f 'test_init_deinit_multi.c'; then $(CYGPATH_W) 'test_init_deinit_multi.c'; else $(CYGPATH_W) '$(srcdir)/test_init_deinit_multi.c'; fi`
+
+init_deinit_multi-omxil_utils.o: $(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_multi_CPPFLAGS) $(CPPFLAGS) $(init_deinit_multi_CFLAGS) $(CFLAGS) -MT init_deinit_multi-omxil_utils.o -MD -MP -MF $(DEPDIR)/init_deinit_multi-omxil_utils.Tpo -c -o init_deinit_multi-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/init_deinit_multi-omxil_utils.Tpo $(DEPDIR)/init_deinit_multi-omxil_utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(COMMON_DIR)/omxil_utils.c' object='init_deinit_multi-omxil_utils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_multi_CPPFLAGS) $(CPPFLAGS) $(init_deinit_multi_CFLAGS) $(CFLAGS) -c -o init_deinit_multi-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
+
+init_deinit_multi-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_multi_CPPFLAGS) $(CPPFLAGS) $(init_deinit_multi_CFLAGS) $(CFLAGS) -MT init_deinit_multi-omxil_utils.obj -MD -MP -MF $(DEPDIR)/init_deinit_multi-omxil_utils.Tpo -c -o init_deinit_multi-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/init_deinit_multi-omxil_utils.Tpo $(DEPDIR)/init_deinit_multi-omxil_utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(COMMON_DIR)/omxil_utils.c' object='init_deinit_multi-omxil_utils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_multi_CPPFLAGS) $(CPPFLAGS) $(init_deinit_multi_CFLAGS) $(CFLAGS) -c -o init_deinit_multi-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
 
 send_command-test_send_command.o: test_send_command.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CFLAGS) $(CFLAGS) -MT send_command-test_send_command.o -MD -MP -MF $(DEPDIR)/send_command-test_send_command.Tpo -c -o send_command-test_send_command.o `test -f 'test_send_command.c' || echo '$(srcdir)/'`test_send_command.c
