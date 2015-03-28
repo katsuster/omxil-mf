@@ -3,10 +3,11 @@
 #include <pthread.h>
 #include <sys/prctl.h>
 
-#include "consts.h"
+#include <omxil_mf/component.hpp>
+#include <omxil_mf/port.hpp>
+
+#include "api/consts.h"
 #include "util/omx_enum_name.hpp"
-#include "omxil_mf/component.hpp"
-#include "omxil_mf/port.hpp"
 #include "debug/scoped_log.hpp"
 
 namespace mf {
@@ -563,7 +564,7 @@ bool port::find_buffer(port_buffer *pb) {
 
 
 //----------------------------------------
-//ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆåˆ©ç”¨è€… â†’ ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¸ã®ãƒãƒƒãƒ•ã‚¡é€ä»˜
+//ƒRƒ“ƒ|[ƒlƒ“ƒg—˜—pŽÒ ¨ ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ö‚Ìƒoƒbƒtƒ@‘—•t
 //----------------------------------------
 
 OMX_ERRORTYPE port::empty_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
@@ -654,7 +655,7 @@ OMX_ERRORTYPE port::pop_buffer(port_buffer *pb) {
 
 
 //----------------------------------------
-//ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ â†’ ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆåˆ©ç”¨è€…ã¸ã®ãƒãƒƒãƒ•ã‚¡è¿”å´
+//ƒRƒ“ƒ|[ƒlƒ“ƒg ¨ ƒRƒ“ƒ|[ƒlƒ“ƒg—˜—pŽÒ‚Ö‚Ìƒoƒbƒtƒ@•Ô‹p
 //----------------------------------------
 
 OMX_ERRORTYPE port::empty_buffer_done(OMX_BUFFERHEADERTYPE *bufhead) {
@@ -731,7 +732,7 @@ OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead) {
 
 
 //----------------------------------------
-//ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆåˆ©ç”¨è€…ã¸ã®ãƒãƒƒãƒ•ã‚¡è¿”å´ã‚¹ãƒ¬ãƒƒãƒ‰
+//ƒRƒ“ƒ|[ƒlƒ“ƒg—˜—pŽÒ‚Ö‚Ìƒoƒbƒtƒ@•Ô‹pƒXƒŒƒbƒh
 //----------------------------------------
 
 void *port::buffer_done() {
@@ -780,7 +781,7 @@ void *port::buffer_done_thread_main(port *p) {
 	std::string thname;
 
 	try {
-		//ã‚¹ãƒ¬ãƒƒãƒ‰åã‚’ã¤ã‘ã‚‹
+		//ƒXƒŒƒbƒh–¼‚ð‚Â‚¯‚é
 		thname = "omx:p";
 		thname += std::to_string(p->get_index());
 		thname += ":";

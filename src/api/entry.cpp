@@ -2,8 +2,9 @@ extern "C" {
 #include <OMX_Core.h>
 }; //extern "C"
 
-#include "entry.hpp"
-#include "omxil_mf/component.hpp"
+#include <omxil_mf/component.hpp>
+
+#include "api/entry.hpp"
 #include "debug/scoped_log.hpp"
 
 extern "C" {

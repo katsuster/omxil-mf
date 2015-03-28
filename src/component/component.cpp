@@ -7,10 +7,11 @@
 #include <OMX_Component.h>
 #include <OMX_Core.h>
 
-#include "consts.h"
+#include <omxil_mf/component.hpp>
+#include <omxil_mf/port.hpp>
+
+#include "api/consts.h"
 #include "util/omx_enum_name.hpp"
-#include "omxil_mf/component.hpp"
-#include "omxil_mf/port.hpp"
 #include "debug/scoped_log.hpp"
 
 namespace mf {

@@ -2,6 +2,7 @@
 BASE_DIR      = .
 HEADER_DIR    = $(BASE_DIR)/../include
 MF_HEADER_DIR = $(BASE_DIR)/../include/omxil_mf
+API_DIR       = $(BASE_DIR)/api
 UTIL_DIR      = $(BASE_DIR)/util
 RING_DIR      = $(BASE_DIR)/ring
 COMPONENT_DIR = $(BASE_DIR)/component
@@ -13,8 +14,8 @@ omxil_mf_LTLIBRARIES = libomxil-mf.la
 libomxil_mf_ladir = $(includedir)
 
 libomxil_mf_la_SOURCES = \
-	$(BASE_DIR)/main.cpp \
-	$(BASE_DIR)/entry.cpp \
+	$(API_DIR)/entry.cpp \
+	$(API_DIR)/main.cpp \
 	$(UTIL_DIR)/util.cpp \
 	$(UTIL_DIR)/omx_types_enum_name.cpp \
 	$(UTIL_DIR)/omx_index_enum_name.cpp \
@@ -26,9 +27,9 @@ libomxil_mf_la_SOURCES = \
 	$(COMPONENT_DIR)/port.cpp \
 	$(DEBUG_DIR)/dbgprint.c
 EXTRA_libomxil_mf_la_SOURCES = \
-	$(BASE_DIR)/consts.h \
-	$(BASE_DIR)/main.hpp \
-	$(BASE_DIR)/entry.hpp \
+	$(API_DIR)/consts.h \
+	$(API_DIR)/entry.hpp \
+	$(API_DIR)/main.hpp \
 	$(UTIL_DIR)/util.hpp \
 	$(UTIL_DIR)/omx_enum_name.hpp \
 	$(DEBUG_DIR)/dbgprint.h \
