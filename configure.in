@@ -8,7 +8,7 @@ AC_INIT([omxil-mf], [0.1], [no-define])
 
 AC_ARG_PROGRAM()
 
-AC_CONFIG_SRCDIR([src/main.cpp])
+AC_CONFIG_SRCDIR([src/api/entry.cpp])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_MACRO_DIR([m4])
