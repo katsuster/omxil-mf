@@ -6,6 +6,8 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 
+#include "config.h"
+
 #define gettid()    ((pid_t)syscall(SYS_gettid))
 
 #define errprint_cont(fmt, ...)    \
