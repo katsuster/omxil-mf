@@ -14,11 +14,17 @@
 		fflush(stderr); \
 	} while (0)
 
-#if 1 //#ifdef ENABLE_DEBUG
+#ifdef ENABLE_DEBUG
 #define dprint_cont(fmt, ...)    errprint_cont(fmt, ##__VA_ARGS__)
 #else
 #define dprint_cont(fmt, ...)    no_printf(fmt, ##__VA_ARGS__)
+#ifdef __cplusplus
+extern "C" {
+#endif //__cplusplus
 int no_printf(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
+#ifdef __cplusplus
+}
+#endif //__cplusplus
 #endif
 
 #ifdef __GNUC__
