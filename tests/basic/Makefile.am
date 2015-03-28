@@ -3,6 +3,7 @@ COMMON_DIR = $(TEST_DIR)/common
 
 check_PROGRAMS = \
 	init_deinit \
+	init_deinit_multi \
 	enum_components \
 	get_roles_of_component \
 	get_components_of_role \
@@ -28,6 +29,11 @@ init_deinit_SOURCES   = test_init_deinit.c $(common_SOURCES)
 init_deinit_LDADD     = $(common_LDADD)
 init_deinit_CPPFLAGS  = $(common_CPPFLAGS)
 init_deinit_CFLAGS    = $(common_CFLAGS)
+
+init_deinit_multi_SOURCES   = test_init_deinit_multi.c $(common_SOURCES)
+init_deinit_multi_LDADD     = $(common_LDADD)
+init_deinit_multi_CPPFLAGS  = $(common_CPPFLAGS)
+init_deinit_multi_CFLAGS    = $(common_CFLAGS)
 
 enum_components_SOURCES   = test_enum_components.c $(common_SOURCES)
 enum_components_LDADD     = $(common_LDADD)
@@ -56,6 +62,7 @@ send_command_CFLAGS    = $(common_CFLAGS)
 
 TESTS = \
 	init_deinit \
+	init_deinit_multi \
 	enum_components \
 	get_roles_of_component.sh \
 	get_components_of_role.sh \
