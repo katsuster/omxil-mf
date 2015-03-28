@@ -31,7 +31,7 @@ namespace mf {
  * public functions
  */
 
-component::component(OMX_COMPONENTTYPE *c, OMX_STRING cname)
+component::component(OMX_COMPONENTTYPE *c, const char *cname)
 		: omx_reflector(c, cname), broken(false),
 		state(OMX_StateInvalid), omx_cbs(nullptr), omx_cbs_priv(nullptr),
 		th_accept(nullptr), ring_accept(nullptr), bound_accept(nullptr),

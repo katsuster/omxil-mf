@@ -52,7 +52,7 @@ public:
 	//disable default constructor
 	component() = delete;
 
-	component(OMX_COMPONENTTYPE *c, OMX_STRING cname);
+	component(OMX_COMPONENTTYPE *c, const char *cname);
 
 	virtual ~component();
 

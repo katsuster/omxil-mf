@@ -61,7 +61,7 @@ public:
 	//disable default constructor
 	omx_reflector() = delete;
 
-	omx_reflector(OMX_COMPONENTTYPE *c, OMX_STRING cname);
+	omx_reflector(OMX_COMPONENTTYPE *c, const char *cname);
 
 	virtual ~omx_reflector();
 

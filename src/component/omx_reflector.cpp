@@ -11,7 +11,7 @@
 
 namespace mf {
 
-omx_reflector::omx_reflector(OMX_COMPONENTTYPE *c, OMX_STRING cname)
+omx_reflector::omx_reflector(OMX_COMPONENTTYPE *c, const char *cname)
 		: omx_comp(c), omx_name(cname) {
 	scoped_log_begin;
 

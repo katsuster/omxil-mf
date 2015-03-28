@@ -30,7 +30,7 @@ void *OMX_APIENTRY renderer_null_constructor(OMX_COMPONENTTYPE *comp, const char
 			strname.c_str());
 	}
 
-	return new mf::renderer_null(comp, (OMX_STRING)name);
+	return new mf::renderer_null(comp, name);
 }
 
 void OMX_APIENTRY renderer_null_destructor(OMX_COMPONENTTYPE *component)

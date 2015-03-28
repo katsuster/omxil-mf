@@ -3,7 +3,7 @@
 
 namespace mf {
 
-renderer_null::renderer_null(OMX_COMPONENTTYPE *c, OMX_STRING cname) 
+renderer_null::renderer_null(OMX_COMPONENTTYPE *c, const char *cname) 
 	: component(c, cname) {
 	//do nothing
 }

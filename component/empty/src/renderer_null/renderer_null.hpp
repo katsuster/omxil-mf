@@ -12,7 +12,7 @@ public:
 	//親クラス
 	typedef component super;
 
-	renderer_null(OMX_COMPONENTTYPE *c, OMX_STRING cname);
+	renderer_null(OMX_COMPONENTTYPE *c, const char *cname);
 	virtual ~renderer_null();
 };
 
