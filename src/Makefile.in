@@ -91,8 +91,8 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(omxil_mfdir)"
 LTLIBRARIES = $(omxil_mf_LTLIBRARIES)
 libomxil_mf_la_DEPENDENCIES =
-am_libomxil_mf_la_OBJECTS = libomxil_mf_la-main.lo \
-	libomxil_mf_la-entry.lo libomxil_mf_la-util.lo \
+am_libomxil_mf_la_OBJECTS = libomxil_mf_la-entry.lo \
+	libomxil_mf_la-main.lo libomxil_mf_la-util.lo \
 	libomxil_mf_la-omx_types_enum_name.lo \
 	libomxil_mf_la-omx_index_enum_name.lo \
 	libomxil_mf_la-omx_core_enum_name.lo \
@@ -260,6 +260,7 @@ top_srcdir = @top_srcdir@
 BASE_DIR = .
 HEADER_DIR = $(BASE_DIR)/../include
 MF_HEADER_DIR = $(BASE_DIR)/../include/omxil_mf
+API_DIR = $(BASE_DIR)/api
 UTIL_DIR = $(BASE_DIR)/util
 RING_DIR = $(BASE_DIR)/ring
 COMPONENT_DIR = $(BASE_DIR)/component
@@ -268,8 +269,8 @@ omxil_mfdir = $(libdir)
 omxil_mf_LTLIBRARIES = libomxil-mf.la
 libomxil_mf_ladir = $(includedir)
 libomxil_mf_la_SOURCES = \
-	$(BASE_DIR)/main.cpp \
-	$(BASE_DIR)/entry.cpp \
+	$(API_DIR)/entry.cpp \
+	$(API_DIR)/main.cpp \
 	$(UTIL_DIR)/util.cpp \
 	$(UTIL_DIR)/omx_types_enum_name.cpp \
 	$(UTIL_DIR)/omx_index_enum_name.cpp \
@@ -282,9 +283,9 @@ libomxil_mf_la_SOURCES = \
 	$(DEBUG_DIR)/dbgprint.c
 
 EXTRA_libomxil_mf_la_SOURCES = \
-	$(BASE_DIR)/consts.h \
-	$(BASE_DIR)/main.hpp \
-	$(BASE_DIR)/entry.hpp \
+	$(API_DIR)/consts.h \
+	$(API_DIR)/entry.hpp \
+	$(API_DIR)/main.hpp \
 	$(UTIL_DIR)/util.hpp \
 	$(UTIL_DIR)/omx_enum_name.hpp \
 	$(DEBUG_DIR)/dbgprint.h \
@@ -439,19 +440,19 @@ libomxil_mf_la-dbgprint.lo: $(DEBUG_DIR)/dbgprint.c
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
-libomxil_mf_la-main.lo: $(BASE_DIR)/main.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-main.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-main.Tpo -c -o libomxil_mf_la-main.lo `test -f '$(BASE_DIR)/main.cpp' || echo '$(srcdir)/'`$(BASE_DIR)/main.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libomxil_mf_la-main.Tpo $(DEPDIR)/libomxil_mf_la-main.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(BASE_DIR)/main.cpp' object='libomxil_mf_la-main.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-main.lo `test -f '$(BASE_DIR)/main.cpp' || echo '$(srcdir)/'`$(BASE_DIR)/main.cpp
-
-libomxil_mf_la-entry.lo: $(BASE_DIR)/entry.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-entry.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-entry.Tpo -c -o libomxil_mf_la-entry.lo `test -f '$(BASE_DIR)/entry.cpp' || echo '$(srcdir)/'`$(BASE_DIR)/entry.cpp
+libomxil_mf_la-entry.lo: $(API_DIR)/entry.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-entry.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-entry.Tpo -c -o libomxil_mf_la-entry.lo `test -f '$(API_DIR)/entry.cpp' || echo '$(srcdir)/'`$(API_DIR)/entry.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libomxil_mf_la-entry.Tpo $(DEPDIR)/libomxil_mf_la-entry.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(BASE_DIR)/entry.cpp' object='libomxil_mf_la-entry.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(API_DIR)/entry.cpp' object='libomxil_mf_la-entry.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-entry.lo `test -f '$(BASE_DIR)/entry.cpp' || echo '$(srcdir)/'`$(BASE_DIR)/entry.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-entry.lo `test -f '$(API_DIR)/entry.cpp' || echo '$(srcdir)/'`$(API_DIR)/entry.cpp
+
+libomxil_mf_la-main.lo: $(API_DIR)/main.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-main.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-main.Tpo -c -o libomxil_mf_la-main.lo `test -f '$(API_DIR)/main.cpp' || echo '$(srcdir)/'`$(API_DIR)/main.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/libomxil_mf_la-main.Tpo $(DEPDIR)/libomxil_mf_la-main.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(API_DIR)/main.cpp' object='libomxil_mf_la-main.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-main.lo `test -f '$(API_DIR)/main.cpp' || echo '$(srcdir)/'`$(API_DIR)/main.cpp
 
 libomxil_mf_la-util.lo: $(UTIL_DIR)/util.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-util.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-util.Tpo -c -o libomxil_mf_la-util.lo `test -f '$(UTIL_DIR)/util.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/util.cpp
