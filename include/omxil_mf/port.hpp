@@ -1,5 +1,5 @@
-#ifndef PORT_HPP__
-#define PORT_HPP__
+#ifndef OMX_MF_PORT_HPP__
+#define OMX_MF_PORT_HPP__
 
 #include <vector>
 #include <mutex>
@@ -697,4 +697,4 @@ private:
 
 } //namespace mf
 
-#endif //PORT_HPP__
+#endif //OMX_MF_PORT_HPP__

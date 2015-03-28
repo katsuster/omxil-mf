@@ -1,5 +1,5 @@
-#ifndef UTIL_HPP__
-#define UTIL_HPP__
+#ifndef OMX_MF_UTIL_HPP__
+#define OMX_MF_UTIL_HPP__
 
 #include <cstdint>
 
@@ -31,4 +31,4 @@ uint16_t rev16(uint16_t v);
 
 } //namespace mf
 
-#endif //UTIL_HPP__
+#endif //OMX_MF_UTIL_HPP__

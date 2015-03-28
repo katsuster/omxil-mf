@@ -1,5 +1,5 @@
-#ifndef COMPONENT_HPP__
-#define COMPONENT_HPP__
+#ifndef OMX_MF_COMPONENT_HPP__
+#define OMX_MF_COMPONENT_HPP__
 
 #include <cstdarg>
 #include <map>
@@ -417,4 +417,4 @@ private:
 
 } //namespace mf
 
-#endif //COMPONENT_HPP__
+#endif //OMX_MF_COMPONENT_HPP__

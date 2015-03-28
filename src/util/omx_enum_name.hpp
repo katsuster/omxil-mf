@@ -1,6 +1,6 @@
 
-#ifndef OMX_ENUM_NAME_HPP__
-#define OMX_ENUM_NAME_HPP__
+#ifndef OMX_MF_ENUM_NAME_HPP__
+#define OMX_MF_ENUM_NAME_HPP__
 
 extern "C" {
 #include <OMX_Types.h>
@@ -65,4 +65,4 @@ public:
 
 } //namespace mf
 
-#endif
+#endif //OMX_MF_ENUM_NAME_HPP__

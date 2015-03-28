@@ -1,6 +1,6 @@
 
-#ifndef DBGPRINT_H__
-#define DBGPRINT_H__
+#ifndef OMX_MF_DBGPRINT_H__
+#define OMX_MF_DBGPRINT_H__
 
 #include <unistd.h>
 #include <sys/syscall.h>
@@ -33,4 +33,4 @@ int no_printf(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
 #define dprint(fmt, ...)        dprint_cont("[% 5d]     %s:%d: " fmt, (int)gettid(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
 #define errprint(fmt, ...)    errprint_cont("[% 5d]     %s:%d: " fmt, (int)gettid(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
 
-#endif //DBGPRINT_H__
+#endif //OMX_MF_DBGPRINT_H__

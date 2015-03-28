@@ -1,5 +1,5 @@
-#ifndef OMX_REFLECTOR_HPP__
-#define OMX_REFLECTOR_HPP__
+#ifndef OMX_MF_REFLECTOR_HPP__
+#define OMX_MF_REFLECTOR_HPP__
 
 #include <string>
 
@@ -162,4 +162,4 @@ private:
 
 } //namespace mf
 
-#endif //OMX_REFLECTOR_HPP__
+#endif //OMX_MF_REFLECTOR_HPP__
