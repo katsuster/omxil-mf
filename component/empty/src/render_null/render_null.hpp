@@ -1,6 +1,6 @@
 
-#ifndef MF_COMPONENT_EMPTY__RENDER_NULL_HPP__
-#define MF_COMPONENT_EMPTY__RENDER_NULL_HPP__
+#ifndef OMX_MF_COMPONENT_EMPTY__RENDER_NULL_HPP__
+#define OMX_MF_COMPONENT_EMPTY__RENDER_NULL_HPP__
 
 #include <omxil_mf/omxil_mf.h>
 #include <omxil_mf/component.hpp>
@@ -18,4 +18,4 @@ public:
 
 } //namespace mf
 
-#endif //MF_COMPONENT_EMPTY__RENDER_NULL_HPP__
+#endif //OMX_MF_COMPONENT_EMPTY__RENDER_NULL_HPP__

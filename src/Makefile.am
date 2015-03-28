@@ -41,5 +41,7 @@ libomxil_mf_la_CXXFLAGS = \
 	-std=c++0x
 
 libomxil_mf_la_LIBADD   = \
-	-lpthread
+	-lpthread \
+	-ldl
 libomxil_mf_la_LDFLAGS  =
+

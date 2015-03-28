@@ -1,16 +1,16 @@
 
-#include "entry.hpp"
+#include <cstdio>
 
-namespace mf {
+#include "entry.h"
 
-component_empty::component_empty(OMX_COMPONENTTYPE *c, OMX_STRING cname) 
-	: component(c, cname) {
-	//do nothing
+extern "C" {
+
+OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
+{
+	printf("%s:%d\n", __func__, __LINE__);
+	return OMX_ErrorNotImplemented;
+	//return OMX_ErrorNone;
 }
 
-component_empty::~component_empty() {
-	//do nothing
-}
-
-} //namespace mf
+} //extern "C"
 

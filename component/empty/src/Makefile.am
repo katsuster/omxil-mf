@@ -14,7 +14,7 @@ libomxil_mf_empty_la_SOURCES = \
 	$(RENDER_NULL_DIR)/render_null.cpp
 
 EXTRA_libomxil_mf_empty_la_SOURCES = \
-	$(ENTRY_DIR)/entry.hpp \
+	$(ENTRY_DIR)/entry.h \
 	$(RENDER_NULL_DIR)/render_null.hpp
 
 libomxil_mf_empty_la_HEADERS = 
