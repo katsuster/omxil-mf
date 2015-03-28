@@ -594,7 +594,7 @@ PACKAGE_STRING='omxil-mf 0.1'
 PACKAGE_BUGREPORT='no-define'
 PACKAGE_URL=''
 
-ac_unique_file="src/api/entry.cpp"
+ac_unique_file="src/api/omxil.cpp"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
