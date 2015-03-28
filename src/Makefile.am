@@ -28,8 +28,6 @@ libomxil_mf_la_SOURCES = \
 	$(DEBUG_DIR)/dbgprint.c
 EXTRA_libomxil_mf_la_SOURCES = \
 	$(API_DIR)/consts.h \
-	$(API_DIR)/entry.hpp \
-	$(API_DIR)/main.hpp \
 	$(UTIL_DIR)/util.hpp \
 	$(UTIL_DIR)/omx_enum_name.hpp \
 	$(DEBUG_DIR)/dbgprint.h \

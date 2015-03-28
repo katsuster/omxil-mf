@@ -4,7 +4,6 @@ extern "C" {
 
 #include <omxil_mf/component.hpp>
 
-#include "api/entry.hpp"
 #include "debug/scoped_log.hpp"
 
 extern "C" {
