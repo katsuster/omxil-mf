@@ -66,6 +66,6 @@ TESTS = \
 	enum_components \
 	get_roles_of_component.sh \
 	get_components_of_role.sh \
-	get_handle \
+	get_handle.sh \
 	send_command
 
