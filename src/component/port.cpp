@@ -564,7 +564,7 @@ bool port::find_buffer(port_buffer *pb) {
 
 
 //----------------------------------------
-//ƒRƒ“ƒ|[ƒlƒ“ƒg—˜—pŽÒ ¨ ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ö‚Ìƒoƒbƒtƒ@‘—•t
+//ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆåˆ©ç”¨è€… â†’ ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¸ã®ãƒãƒƒãƒ•ã‚¡é€ä»˜
 //----------------------------------------
 
 OMX_ERRORTYPE port::empty_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
@@ -655,7 +655,7 @@ OMX_ERRORTYPE port::pop_buffer(port_buffer *pb) {
 
 
 //----------------------------------------
-//ƒRƒ“ƒ|[ƒlƒ“ƒg ¨ ƒRƒ“ƒ|[ƒlƒ“ƒg—˜—pŽÒ‚Ö‚Ìƒoƒbƒtƒ@•Ô‹p
+//ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ â†’ ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆåˆ©ç”¨è€…ã¸ã®ãƒãƒƒãƒ•ã‚¡è¿”å´
 //----------------------------------------
 
 OMX_ERRORTYPE port::empty_buffer_done(OMX_BUFFERHEADERTYPE *bufhead) {
@@ -732,7 +732,7 @@ OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead) {
 
 
 //----------------------------------------
-//ƒRƒ“ƒ|[ƒlƒ“ƒg—˜—pŽÒ‚Ö‚Ìƒoƒbƒtƒ@•Ô‹pƒXƒŒƒbƒh
+//ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆåˆ©ç”¨è€…ã¸ã®ãƒãƒƒãƒ•ã‚¡è¿”å´ã‚¹ãƒ¬ãƒƒãƒ‰
 //----------------------------------------
 
 void *port::buffer_done() {
@@ -781,7 +781,7 @@ void *port::buffer_done_thread_main(port *p) {
 	std::string thname;
 
 	try {
-		//ƒXƒŒƒbƒh–¼‚ð‚Â‚¯‚é
+		//ã‚¹ãƒ¬ãƒƒãƒ‰åã‚’ã¤ã‘ã‚‹
 		thname = "omx:p";
 		thname += std::to_string(p->get_index());
 		thname += ":";

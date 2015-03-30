@@ -19,7 +19,7 @@ struct register_info {
 
 class register_component {
 public:
-	//eƒNƒ‰ƒX
+	//è¦ªã‚¯ãƒ©ã‚¹
 	//typedef xxxx super;
 
 	typedef std::map<std::string, register_info *> map_component_type;
