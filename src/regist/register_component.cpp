@@ -102,10 +102,9 @@ void register_component::clear()
 {
 	scoped_log_begin;
 	std::lock_guard<std::recursive_mutex> lock(mut_map);
-	map_component_type::iterator it;
 
-	for (it = map_comp_name.begin(); it != map_comp_name.end(); it++) {
-		delete it->second;
+	for (auto& it: map_comp_name) {
+		delete it.second;
 	}
 
 	map_comp_name.clear();
