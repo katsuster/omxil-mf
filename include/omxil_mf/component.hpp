@@ -359,12 +359,7 @@ public:
 	 * @param hComponent OpenMAX コンポーネント
 	 * @return component インスタンスへのポインタ
 	 */
-	static inline component *get_instance(OMX_HANDLETYPE hComponent) {
-		OMX_COMPONENTTYPE *omx_comp = (OMX_COMPONENTTYPE *) hComponent;
-		component *comp = (component *) omx_comp->pComponentPrivate;
-
-		return comp;
-	}
+	static component *get_instance(OMX_HANDLETYPE hComponent);
 
 protected:
 	/**

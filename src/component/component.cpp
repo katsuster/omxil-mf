@@ -956,6 +956,17 @@ OMX_ERRORTYPE component::check_omx_header(const void *p, size_t size) const {
 
 
 /*
+ * static public functions
+ */
+component *component::get_instance(OMX_HANDLETYPE hComponent) {
+	OMX_COMPONENTTYPE *omx_comp = (OMX_COMPONENTTYPE *) hComponent;
+	component *comp = (component *) omx_comp->pComponentPrivate;
+
+	return comp;
+}
+
+
+/*
  * static protected functions
  */
 
