@@ -28,6 +28,7 @@ void *OMX_APIENTRY renderer_null_constructor(OMX_COMPONENTTYPE *cComponent, cons
 	if (strname.compare(RENDERER_NULL_NAME) != 0) {
 		fprintf(stderr, "Error: Wrong component name '%s'.\n", 
 			strname.c_str());
+		return nullptr;
 	}
 
 	return new mf::renderer_null(cComponent, name);
@@ -55,7 +56,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 	comp_info.destructor = renderer_null_destructor;
 	result = OMX_MF_RegisterComponent(RENDERER_NULL_NAME, &comp_info);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Error: Failed to register '%s'.\n", 
+		fprintf(stderr, "Warning: Failed to register '%s'.\n", 
 			RENDERER_NULL_NAME);
 		func_result = result; 
 	}
@@ -63,14 +64,14 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 	//alias
 	result = OMX_MF_RegisterComponentAlias(RENDERER_NULL_NAME, RENDERER_NULL_A_ALIAS);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Error: Failed to register alias '%s' of '%s'.\n", 
+		fprintf(stderr, "Warning: Failed to register alias '%s' of '%s'.\n", 
 			RENDERER_NULL_A_ALIAS, RENDERER_NULL_NAME);
 		func_result = result; 
 	}
 
 	result = OMX_MF_RegisterComponentAlias(RENDERER_NULL_NAME, RENDERER_NULL_V_ALIAS);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Error: Failed to register alias '%s' of '%s'.\n", 
+		fprintf(stderr, "Warning: Failed to register alias '%s' of '%s'.\n", 
 			RENDERER_NULL_V_ALIAS, RENDERER_NULL_NAME);
 		func_result = result; 
 	}
@@ -78,14 +79,14 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 	//role
 	result = OMX_MF_RegisterComponentRole(RENDERER_NULL_NAME, RENDERER_NULL_A_ROLE);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Error: Failed to register role '%s' of '%s'.\n", 
+		fprintf(stderr, "Warning: Failed to register role '%s' of '%s'.\n", 
 			RENDERER_NULL_A_ROLE, RENDERER_NULL_NAME);
 		func_result = result; 
 	}
 
 	result = OMX_MF_RegisterComponentRole(RENDERER_NULL_NAME, RENDERER_NULL_V_ROLE);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Error: Failed to register role '%s' of '%s'.\n", 
+		fprintf(stderr, "Warning: Failed to register role '%s' of '%s'.\n", 
 			RENDERER_NULL_V_ROLE, RENDERER_NULL_NAME);
 		func_result = result; 
 	}

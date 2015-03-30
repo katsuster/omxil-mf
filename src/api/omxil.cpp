@@ -21,7 +21,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_Init(void)
 	mf::register_component *rc = mf::register_component::get_instance();
 
 	if (rc->is_init()) {
-		//already inited
+		errprint("Already inited.\n");
 		return OMX_ErrorNone;
 	}
 	rc->init();
@@ -35,7 +35,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_Deinit(void)
 	mf::register_component *rc = mf::register_component::get_instance();
 
 	if (!rc->is_init()) {
-		//not needed
+		errprint("Already deinited.\n");
 		return OMX_ErrorNone;
 	}
 	rc->deinit();
@@ -60,41 +60,71 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(OMX_OUT OMX_HANDLETYPE* pHandle
 	scoped_log_begin;
 	mf::register_component *rc = mf::register_component::get_instance();
 	mf::register_info *rinfo = nullptr;
+	void *ptr = nullptr;
+	OMX_COMPONENTTYPE *omx_comp = nullptr;
+	OMX_ERRORTYPE result = OMX_ErrorUndefined;
 
 	if (pHandle == nullptr) {
-		//invalid handle
-		return OMX_ErrorInvalidComponent;
+		errprint("Invalid handle %p.\n", pHandle);
+		result = OMX_ErrorInvalidComponent;
+		goto err_out;
 	}
-	OMX_COMPONENTTYPE *omx_comp = nullptr;
 
 	rinfo = rc->find(cComponentName);
 	if (rinfo == nullptr) {
-		//not found
-		return OMX_ErrorInvalidComponentName;
+		errprint("Not found component '%s'.\n", cComponentName);
+		result = OMX_ErrorInvalidComponentName;
+		goto err_out;
 	}
 
 	//create component
 	omx_comp = new OMX_COMPONENTTYPE;
-	rinfo->comp_info->constructor(omx_comp, cComponentName);
+	ptr = rinfo->comp_info->constructor(omx_comp, cComponentName);
+	if (ptr == nullptr) {
+		errprint("Failed to create component '%s'.\n", cComponentName);
+		result = OMX_ErrorInvalidComponent;
+		goto err_out;
+	}
 
 	*pHandle = omx_comp;
 
 	return OMX_ErrorNone;
+
+err_out:
+	*pHandle = nullptr;
+	delete omx_comp;
+
+	return result;
 }
 
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_FreeHandle(OMX_IN OMX_HANDLETYPE hComponent)
 {
 	scoped_log_begin;
+	mf::register_component *rc = mf::register_component::get_instance();
+	mf::register_info *rinfo = nullptr;
+	OMX_COMPONENTTYPE *omx_comp = nullptr;
 
 	if (hComponent == nullptr) {
+		errprint("Invalid component %p.\n", hComponent);
 		return OMX_ErrorInvalidComponent;
 	}
-	OMX_COMPONENTTYPE *omx_comp = (OMX_COMPONENTTYPE *)hComponent;
+	omx_comp = (OMX_COMPONENTTYPE *)hComponent;
 
+	//delete component
 	if (omx_comp->pComponentPrivate != nullptr) {
 		mf::component *comp = mf::component::get_instance(hComponent);
 		comp->ComponentDeInit(hComponent);
+
+		rinfo = rc->find(comp->get_component_name().c_str());
+		if (rinfo == nullptr) {
+			//not found
+			errprint("Not found component '%p'.\n", comp->get_component_name().c_str());
+			goto err_out;
+		}
+		rinfo->comp_info->destructor(omx_comp);
 	}
+
+err_out:
 	delete(omx_comp);
 
 	return OMX_ErrorNone;
