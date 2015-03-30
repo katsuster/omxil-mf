@@ -69,7 +69,7 @@ const std::string& omx_reflector::get_component_name() const {
 
 
 /* 
- * protected functions
+ * static protected functions
  */
 omx_reflector *omx_reflector::get_instance(OMX_HANDLETYPE hComponent) {
 	OMX_COMPONENTTYPE *omx_comp = (OMX_COMPONENTTYPE *) hComponent;
