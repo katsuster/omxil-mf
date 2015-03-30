@@ -98,11 +98,10 @@ bool register_component::erase(const char *name)
 	return true;
 }
 
-void register_component::clear(const char *name)
+void register_component::clear()
 {
 	scoped_log_begin;
 	std::lock_guard<std::recursive_mutex> lock(mut_map);
-	std::string strname = name;
 	map_component_type::iterator it;
 
 	for (it = map_comp_name.begin(); it != map_comp_name.end(); it++) {

@@ -35,7 +35,7 @@ public:
 	virtual bool insert(const char *name, const OMX_MF_COMPONENT_INFO *info);
 	virtual register_info *find(const char *name);
 	virtual bool erase(const char *name);
-	virtual void clear(const char *name);
+	virtual void clear();
 
 protected:
 	static void load_components(void);
