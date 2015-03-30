@@ -14,7 +14,7 @@
 namespace mf {
 
 struct register_info {
-	const OMX_MF_COMPONENT_INFO *info;
+	const OMX_MF_COMPONENT_INFO *comp_info;
 };
 
 class register_component {
@@ -22,10 +22,14 @@ public:
 	//親クラス
 	//typedef xxxx super;
 
+	typedef std::map<std::string, void *> map_library_type;
+	typedef std::pair<std::string, void *> map_library_pair;
+	
 	typedef std::map<std::string, register_info *> map_component_type;
 	typedef std::pair<std::string, register_info *> map_component_pair;
 
 	virtual void init();
+	virtual void deinit();
 
 	virtual bool is_init();
 
@@ -38,7 +42,8 @@ public:
 	virtual void clear();
 
 protected:
-	static void load_components(void);
+	virtual void load_components(void);
+	virtual void unload_components(void);
 
 private:
 	register_component();
@@ -47,6 +52,7 @@ private:
 private:
 	bool f_init;
 	std::recursive_mutex mut_map;
+	map_library_type map_lib_name;
 	map_component_type map_comp_name;
 
 

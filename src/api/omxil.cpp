@@ -24,7 +24,6 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_Init(void)
 		//already inited
 		return OMX_ErrorNone;
 	}
-
 	rc->init();
 
 	return OMX_ErrorNone;
@@ -33,6 +32,14 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_Init(void)
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_Deinit(void)
 {
 	scoped_log_begin;
+	mf::register_component *rc = mf::register_component::get_instance();
+
+	if (!rc->is_init()) {
+		//not needed
+		return OMX_ErrorNone;
+	}
+	rc->deinit();
+
 	return OMX_ErrorNone;
 }
 
@@ -51,14 +58,24 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_ComponentNameEnum(OMX_OUT OMX_STRING cCom
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(OMX_OUT OMX_HANDLETYPE* pHandle, OMX_IN OMX_STRING cComponentName, OMX_IN OMX_PTR pAppData, OMX_IN OMX_CALLBACKTYPE* pCallBacks)
 {
 	scoped_log_begin;
+	mf::register_component *rc = mf::register_component::get_instance();
+	mf::register_info *rinfo = nullptr;
 
 	if (pHandle == nullptr) {
+		//invalid handle
 		return OMX_ErrorInvalidComponent;
 	}
 	OMX_COMPONENTTYPE *omx_comp = nullptr;
 
+	rinfo = rc->find(cComponentName);
+	if (rinfo == nullptr) {
+		//not found
+		return OMX_ErrorInvalidComponentName;
+	}
+
+	//create component
 	omx_comp = new OMX_COMPONENTTYPE;
-	new mf::component(omx_comp, (OMX_STRING)"test");
+	rinfo->comp_info->constructor(omx_comp, cComponentName);
 
 	*pHandle = omx_comp;
 

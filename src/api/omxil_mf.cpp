@@ -14,11 +14,16 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponent(const char *name, co
 {
 	scoped_log_begin;
 	mf::register_component *rc = mf::register_component::get_instance();
+	OMX_MF_COMPONENT_INFO *comp_info = new OMX_MF_COMPONENT_INFO(*info);
+	bool res;
 
-	rc->insert(name, info);
+	res = rc->insert(name, comp_info);
+	if (!res) {
+		//already existed
+		return OMX_ErrorInvalidComponentName;
+	}
 
-	return OMX_ErrorNotImplemented;
-	//return OMX_ErrorNone;
+	return OMX_ErrorNone;
 }
 
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponentAlias(const char *name, const char *alias)

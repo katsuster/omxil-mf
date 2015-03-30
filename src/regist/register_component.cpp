@@ -17,6 +17,7 @@ namespace mf {
 register_component::register_component() : f_init(false)
 {
 	scoped_log_begin;
+
 	//do nothing
 }
 
@@ -24,14 +25,26 @@ register_component::~register_component()
 {
 	scoped_log_begin;
 
-	clear();
+	deinit();
 }
 
 void register_component::init()
 {
+	std::lock_guard<std::recursive_mutex> lock(mut_map);
+
 	load_components();
 
 	f_init = true;
+}
+
+void register_component::deinit()
+{
+	std::lock_guard<std::recursive_mutex> lock(mut_map);
+
+	clear();
+	unload_components();
+
+	f_init = false;
 }
 
 bool register_component::is_init()
@@ -44,15 +57,16 @@ bool register_component::insert(const char *name, const OMX_MF_COMPONENT_INFO *i
 	scoped_log_begin;
 	std::lock_guard<std::recursive_mutex> lock(mut_map);
 	std::string strname = name;
-	register_info *reginfo = new register_info();
+	register_info *rinfo = new register_info();
 	std::pair<map_component_type::iterator, bool> pairret;
 
-	reginfo->info = info;
-	pairret = map_comp_name.insert(map_component_pair(strname, reginfo));
+	rinfo->comp_info = info;
+	pairret = map_comp_name.insert(map_component_pair(strname, rinfo));
 	if (!pairret.second) {
 		//already existed
 		errprint("Component '%s' already existed.\n", 
 			strname.c_str());
+		delete rinfo;
 		return false;
 	}
 
@@ -104,6 +118,7 @@ void register_component::clear()
 	std::lock_guard<std::recursive_mutex> lock(mut_map);
 
 	for (auto& it: map_comp_name) {
+		delete it.second->comp_info;
 		delete it.second;
 	}
 
@@ -119,6 +134,7 @@ void register_component::load_components(void)
 	scoped_log_begin;
 	const char *homedir = getenv("HOME");
 	std::string rcfilename = "/.omxilmfrc";
+	bool flag_err = false;
 
 	if (homedir != nullptr) {
 		rcfilename.insert(0, homedir);
@@ -157,7 +173,7 @@ void register_component::load_components(void)
 			errprint("Library '%s' does not have entry '%s'. "
 					"Skipped.\n", 
 				libname.c_str(), OMX_MF_ENTRY_FUNCNAME);
-			goto err_load;
+			flag_err = true;
 		}
 
 		//register component
@@ -167,20 +183,40 @@ void register_component::load_components(void)
 			errprint("Library '%s' entry '%s' was failed. "
 					"Skipped.\n", 
 				libname.c_str(), OMX_MF_ENTRY_FUNCNAME);
-			goto err_load;
+			flag_err = true;
 		}
 
-err_load:
-		//lazy close
-		result = dlclose(libhandle);
-		if (result != 0) {
-			errprint("Library '%s' cannot close. "
-					"Ignored.\n", 
-				libname.c_str());
+		if (flag_err) {
+			//success, remember it
+			map_lib_name.insert(map_library_pair(libname, libhandle));
+		} else {
+			//failed, clean up
+			result = dlclose(libhandle);
+			if (result != 0) {
+				errprint("Library '%s' cannot close. "
+						"Ignored.\n", 
+					libname.c_str());
+			}
+			flag_err = false;
+			continue;
 		}
 	}
 }
 
+void register_component::unload_components(void)
+{
+	int result;
+
+	for (auto& it: map_lib_name) {
+		result = dlclose(it.second);
+		if (result != 0) {
+			errprint("Library '%s' cannot close. "
+					"Ignored.\n", 
+				it.first.c_str());
+		}
+	}
+	map_lib_name.clear();
+}
 
 //----------------------------------------
 //static public methods
