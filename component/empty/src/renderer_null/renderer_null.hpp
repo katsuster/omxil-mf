@@ -14,6 +14,16 @@ public:
 
 	renderer_null(OMX_COMPONENTTYPE *c, const char *cname);
 	virtual ~renderer_null();
+
+public:
+	/**
+	 * OpenMAX コンポーネントのハンドルから、
+	 * renderer_null クラスのインスタンスへのポインタを取得します。
+	 *
+	 * @param hComponent OpenMAX コンポーネント
+	 * @return component インスタンスへのポインタ
+	 */
+	static renderer_null *get_instance(OMX_HANDLETYPE hComponent);
 };
 
 } //namespace mf

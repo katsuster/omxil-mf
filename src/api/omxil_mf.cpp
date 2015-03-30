@@ -5,6 +5,9 @@
 #include "regist/register_component.hpp"
 #include "debug/scoped_log.hpp"
 
+//----------------------------------------
+//external APIs
+//----------------------------------------
 extern "C" {
 
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponent(const char *name, const OMX_MF_COMPONENT_INFO *info)
@@ -12,7 +15,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponent(const char *name, co
 	scoped_log_begin;
 	mf::register_component *rc = mf::register_component::get_instance();
 
-	rc->add(name, info);
+	rc->insert(name, info);
 
 	return OMX_ErrorNotImplemented;
 	//return OMX_ErrorNone;

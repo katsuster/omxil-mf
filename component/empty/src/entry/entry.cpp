@@ -19,7 +19,7 @@
 
 extern "C" {
 
-void *OMX_APIENTRY renderer_null_constructor(OMX_COMPONENTTYPE *comp, const char *name)
+void *OMX_APIENTRY renderer_null_constructor(OMX_COMPONENTTYPE *cComponent, const char *name)
 {
 	std::string strname = name;
 
@@ -30,17 +30,20 @@ void *OMX_APIENTRY renderer_null_constructor(OMX_COMPONENTTYPE *comp, const char
 			strname.c_str());
 	}
 
-	return new mf::renderer_null(comp, name);
+	return new mf::renderer_null(cComponent, name);
 }
 
-void OMX_APIENTRY renderer_null_destructor(OMX_COMPONENTTYPE *component)
+void OMX_APIENTRY renderer_null_destructor(OMX_COMPONENTTYPE *cComponent)
 {
+	mf::renderer_null *comp = mf::renderer_null::get_instance(cComponent);
+
+	delete comp;
 }
 
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 {
 	OMX_MF_COMPONENT_INFO comp_info;
-	OMX_ERRORTYPE result;
+	OMX_ERRORTYPE result, func_result = OMX_ErrorNone;
 
 	printf("%s:%d\n", __func__, __LINE__);
 
@@ -54,6 +57,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "Error: Failed to register '%s'.\n", 
 			RENDERER_NULL_NAME);
+		func_result = result; 
 	}
 
 	//alias
@@ -61,12 +65,14 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "Error: Failed to register alias '%s' of '%s'.\n", 
 			RENDERER_NULL_A_ALIAS, RENDERER_NULL_NAME);
+		func_result = result; 
 	}
 
 	result = OMX_MF_RegisterComponentAlias(RENDERER_NULL_NAME, RENDERER_NULL_V_ALIAS);
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "Error: Failed to register alias '%s' of '%s'.\n", 
 			RENDERER_NULL_V_ALIAS, RENDERER_NULL_NAME);
+		func_result = result; 
 	}
 
 	//role
@@ -74,16 +80,17 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "Error: Failed to register role '%s' of '%s'.\n", 
 			RENDERER_NULL_A_ROLE, RENDERER_NULL_NAME);
+		func_result = result; 
 	}
 
 	result = OMX_MF_RegisterComponentRole(RENDERER_NULL_NAME, RENDERER_NULL_V_ROLE);
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "Error: Failed to register role '%s' of '%s'.\n", 
 			RENDERER_NULL_V_ROLE, RENDERER_NULL_NAME);
+		func_result = result; 
 	}
 
-	return OMX_ErrorNotImplemented;
-	//return OMX_ErrorNone;
+	return func_result;
 }
 
 } //extern "C"

@@ -23,7 +23,8 @@ register_component::register_component() : f_init(false)
 register_component::~register_component()
 {
 	scoped_log_begin;
-	//do nothing
+
+	clear();
 }
 
 void register_component::init()
@@ -37,11 +38,78 @@ bool register_component::is_init()
 {
 	return f_init;
 }
-bool register_component::add(const char *name, const OMX_MF_COMPONENT_INFO *info)
+
+bool register_component::insert(const char *name, const OMX_MF_COMPONENT_INFO *info)
 {
 	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lock(mut_map);
+	std::string strname = name;
+	register_info *reginfo = new register_info();
+	std::pair<map_component_type::iterator, bool> pairret;
 
-	return false;
+	reginfo->info = info;
+	pairret = map_comp_name.insert(map_component_pair(strname, reginfo));
+	if (!pairret.second) {
+		//already existed
+		errprint("Component '%s' already existed.\n", 
+			strname.c_str());
+		return false;
+	}
+
+	return true;
+}
+
+register_info *register_component::find(const char *name)
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lock(mut_map);
+	std::string strname = name;
+	map_component_type::iterator it;
+
+	it = map_comp_name.find(strname);
+	if (it == map_comp_name.end()) {
+		//not found
+		errprint("Component '%s' not found.\n", 
+			strname.c_str());
+		return nullptr;
+	}
+
+	return it->second;
+}
+
+bool register_component::erase(const char *name)
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lock(mut_map);
+	std::string strname = name;
+	map_component_type::iterator it;
+
+	it = map_comp_name.find(strname);
+	if (it == map_comp_name.end()) {
+		//not found
+		errprint("Component '%s' not erased.\n", 
+			strname.c_str());
+		return false;
+	}
+
+	delete it->second;
+	map_comp_name.erase(it);
+
+	return true;
+}
+
+void register_component::clear(const char *name)
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lock(mut_map);
+	std::string strname = name;
+	map_component_type::iterator it;
+
+	for (it = map_comp_name.begin(); it != map_comp_name.end(); it++) {
+		delete it->second;
+	}
+
+	map_comp_name.clear();
 }
 
 
