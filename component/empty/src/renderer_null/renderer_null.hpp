@@ -15,6 +15,8 @@ public:
 	renderer_null(OMX_COMPONENTTYPE *c, const char *cname);
 	virtual ~renderer_null();
 
+	virtual void run();
+
 public:
 	/**
 	 * OpenMAX コンポーネントのハンドルから、
