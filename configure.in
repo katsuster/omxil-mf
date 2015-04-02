@@ -70,6 +70,11 @@ dnl	[AC_MSG_ERROR([cannot find libxxxx])])
 dnl ----------------------------------------
 dnl Checks for system services.
 dnl ----------------------------------------
+AC_CHECK_PROGS([DOXYGEN], [doxygen])
+AM_CONDITIONAL([HAVE_DOXYGEN], [test x$DOXYGEN != x])
+if test x$DOXYGEN = x; then
+	AC_MSG_WARN([doxygen not found, continuing without docs])
+fi
 
 
 dnl ----------------------------------------
@@ -113,7 +118,8 @@ dnl Output the configure.
 dnl ----------------------------------------
 AC_CONFIG_FILES([Makefile include/Makefile src/Makefile 
 	component/Makefile 
-	tests/Makefile tests/basic/Makefile])
+	doc/Makefile 
+	tests/Makefile tests/basic/Makefile ])
 #doc/Makefile
 
 AC_CONFIG_SUBDIRS([component/empty ])

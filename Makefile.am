@@ -1,2 +1,2 @@
-SUBDIRS = include src tests component
+SUBDIRS = include src component doc tests 
 
