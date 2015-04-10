@@ -34,7 +34,8 @@ int main(int argc, char *argv[])
 			goto err_out2;
 		}
 		
-		printf("component %d: %s\n", (int)i, name_comp);
+		printf("OMX_ComponentNameEnum: "
+			"component %d: %s\n", (int)i, name_comp);
 	}
 	
 	result = OMX_Deinit();

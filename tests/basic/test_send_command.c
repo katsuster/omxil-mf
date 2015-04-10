@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "OMX_GetHandle failed.\n");
 		goto err_out2;
 	}
-	printf("name:%s, comp:%p\n", 
+	printf("OMX_GetHandle: name:%s, comp:%p\n", 
 		name_comp, comp);
 	
 	memset(&parm_v, 0, sizeof(parm_v));
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 			"failed.\n");
 		goto err_out3;
 	}
-	printf("video -----\n");
+	printf("OMX_GetParameter: video -----\n");
 	dump_port_param_type(&parm_v);
 	
 	memset(&parm_a, 0, sizeof(parm_a));
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 			"failed.\n");
 		goto err_out3;
 	}
-	printf("audio -----\n");
+	printf("OMX_GetParameter: audio -----\n");
 	dump_port_param_type(&parm_a);
 	
 	
@@ -125,6 +125,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "OMX_AllocateBuffer(in) failed.\n");
 		goto err_out3;
 	}
+	printf("OMX_AllocateBuffer: \n");
 	dump_port_bufferheadertype(buf_in);
 	
 	result = OMX_AllocateBuffer(comp, &buf_out, 
@@ -133,6 +134,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "OMX_AllocateBuffer(out) failed.\n");
 		goto err_out3;
 	}
+	printf("OMX_AllocateBuffer: \n");
 	dump_port_bufferheadertype(buf_out);
 	
 	result = OMX_FreeHandle(comp);
