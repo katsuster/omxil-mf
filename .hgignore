@@ -29,3 +29,4 @@ syntax: regexp
 \.la$
 \.lo$
 \.o$
+^doc/html/
