@@ -21,6 +21,12 @@ omx_reflector::omx_reflector(OMX_COMPONENTTYPE *c, const char *cname)
 		throw std::runtime_error(msg);
 	}
 
+	omx_comp->nSize = sizeof(OMX_COMPONENTTYPE);
+	omx_comp->nVersion.s.nVersionMajor = OMX_MF_IL_MAJOR;
+	omx_comp->nVersion.s.nVersionMinor = OMX_MF_IL_MINOR;
+	omx_comp->nVersion.s.nRevision     = OMX_MF_IL_REVISION;
+	omx_comp->nVersion.s.nStep         = OMX_MF_IL_STEP;
+
 	//set this component pointer
 	omx_comp->pComponentPrivate      = this;
 

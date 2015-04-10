@@ -186,9 +186,34 @@ void component::stop_running()
 OMX_ERRORTYPE component::GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRING pComponentName, OMX_VERSIONTYPE *pComponentVersion, OMX_VERSIONTYPE *pSpecVersion, OMX_UUIDTYPE *pComponentUUID)
 {
 	scoped_log_begin;
+	uint32_t uuid[4];
 
-	return OMX_ErrorNotImplemented;
-	//return OMX_ErrorNone;
+	if (pComponentName == nullptr || pComponentVersion == nullptr || 
+			pSpecVersion == nullptr || pComponentUUID == nullptr) {
+		errprint("invalid arguments\n");
+		return OMX_ErrorBadParameter;
+	}
+
+	//name
+	strncpy(pComponentName, get_component_name().c_str(), 128);
+	
+	//component version (default is 1.0.0.0)
+	pComponentVersion->s.nVersionMajor = 1;
+	pComponentVersion->s.nVersionMinor = 0;
+	pComponentVersion->s.nRevision     = 0;
+	pComponentVersion->s.nStep         = 0;
+
+	//spec version
+	*pSpecVersion = get_omx_component()->nVersion;
+	
+	//uuid
+	uuid[0] = (uint32_t)this;
+	uuid[1] = 0;
+	uuid[2] = 0;
+	uuid[3] = 0;
+	memmove(*pComponentUUID, uuid, sizeof(uuid));
+	
+	return OMX_ErrorNone;
 }
 
 OMX_ERRORTYPE component::SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE Cmd, OMX_U32 nParam, OMX_PTR pCmdData)
