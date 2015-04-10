@@ -207,8 +207,9 @@ OMX_ERRORTYPE component::GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRI
 	*pSpecVersion = get_omx_component()->nVersion;
 	
 	//uuid
-	uuid[0] = (uint32_t)this;
-	uuid[1] = 0;
+	memset(*pComponentUUID, 0, sizeof(*pComponentUUID));
+	uuid[0] = (uint64_t)this;
+	uuid[1] = getpid();
 	uuid[2] = 0;
 	uuid[3] = 0;
 	memmove(*pComponentUUID, uuid, sizeof(uuid));

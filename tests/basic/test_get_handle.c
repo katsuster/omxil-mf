@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "OMX_GetHandle failed.\n");
 		goto err_out2;
 	}
-	printf("name:%s, comp:%p\n", 
+	printf("OMX_GetHandle: name:%s, comp:%p\n", 
 		name_comp, comp);
 	
 	result = OMX_GetComponentVersion(comp, name_comp, 
@@ -73,9 +73,24 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "GetComponentVersion failed.\n");
 		goto err_out3;
 	}
-	printf("name:%s, comp ver:0x%08x, spec ver:0x%08x, uuid:0x%08x\n", 
-		name_comp, ver_comp, ver_spec, uuid_comp);
-	
+	printf("OMX_GetComponentVersion: name:%s\n"
+		"comp ver:0x%08x(v%d.%d.%d.%d)\n"
+		"spec ver:0x%08x(OpenMAX IL %d.%d.%d.%d)\n", 
+		name_comp, 
+		ver_comp, 
+		ver_comp.s.nVersionMajor, ver_comp.s.nVersionMinor, 
+		ver_comp.s.nRevision, ver_comp.s.nStep, 
+		ver_spec, 
+		ver_spec.s.nVersionMajor, ver_spec.s.nVersionMinor, 
+		ver_spec.s.nRevision, ver_spec.s.nStep);
+	printf("uuid:\n  ");
+	for (i = 0; i < sizeof(uuid_comp); i++) {
+		printf("%02x ", uuid_comp[i]);
+		if (i % 8 == 7) {
+			printf("\n  ");
+		}
+	}
+
 	result = OMX_FreeHandle(comp);
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "OMX_FreeHandle failed.\n");
