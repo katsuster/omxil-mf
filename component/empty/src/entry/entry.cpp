@@ -21,9 +21,9 @@ extern "C" {
 
 void *OMX_APIENTRY renderer_null_constructor(OMX_COMPONENTTYPE *cComponent, const char *name)
 {
-	std::string strname = name;
-
 	printf("%s:%d\n", __func__, __LINE__);
+
+	std::string strname = name;
 
 	if (strname.compare(RENDERER_NULL_NAME) != 0) {
 		fprintf(stderr, "Error: Wrong component name '%s'.\n", 
@@ -36,6 +36,8 @@ void *OMX_APIENTRY renderer_null_constructor(OMX_COMPONENTTYPE *cComponent, cons
 
 void OMX_APIENTRY renderer_null_destructor(OMX_COMPONENTTYPE *cComponent)
 {
+	printf("%s:%d\n", __func__, __LINE__);
+
 	mf::renderer_null *comp = mf::renderer_null::get_instance(cComponent);
 
 	delete comp;
