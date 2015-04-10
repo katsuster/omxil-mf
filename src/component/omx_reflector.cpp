@@ -45,7 +45,8 @@ omx_reflector::omx_reflector(OMX_COMPONENTTYPE *c, const char *cname)
 	omx_comp->ComponentRoleEnum      = comp_ComponentRoleEnum;
 }
 
-omx_reflector::~omx_reflector() {
+omx_reflector::~omx_reflector()
+{
 	scoped_log_begin;
 
 	omx_comp->pComponentPrivate = nullptr;
@@ -59,7 +60,8 @@ const OMX_COMPONENTTYPE *omx_reflector::get_omx_component() const {
 	return omx_comp;
 }
 
-OMX_COMPONENTTYPE *omx_reflector::get_omx_component() {
+OMX_COMPONENTTYPE *omx_reflector::get_omx_component()
+{
 	return omx_comp;
 }
 
@@ -71,7 +73,8 @@ const std::string& omx_reflector::get_component_name() const {
 /* 
  * static protected functions
  */
-omx_reflector *omx_reflector::get_instance(OMX_HANDLETYPE hComponent) {
+omx_reflector *omx_reflector::get_instance(OMX_HANDLETYPE hComponent)
+{
 	OMX_COMPONENTTYPE *omx_comp = (OMX_COMPONENTTYPE *) hComponent;
 	omx_reflector *comp = (omx_reflector *) omx_comp->pComponentPrivate;
 
@@ -83,7 +86,8 @@ omx_reflector *omx_reflector::get_instance(OMX_HANDLETYPE hComponent) {
 //OpenMAX member function reflectors
 //----------
 
-OMX_ERRORTYPE omx_reflector::comp_GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRING pComponentName, OMX_VERSIONTYPE *pComponentVersion, OMX_VERSIONTYPE *pSpecVersion, OMX_UUIDTYPE *pComponentUUID) {
+OMX_ERRORTYPE omx_reflector::comp_GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRING pComponentName, OMX_VERSIONTYPE *pComponentVersion, OMX_VERSIONTYPE *pSpecVersion, OMX_UUIDTYPE *pComponentUUID)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -94,7 +98,8 @@ OMX_ERRORTYPE omx_reflector::comp_GetComponentVersion(OMX_HANDLETYPE hComponent,
 	return comp->GetComponentVersion(hComponent, pComponentName, pComponentVersion, pSpecVersion, pComponentUUID);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE Cmd, OMX_U32 nParam1, OMX_PTR pCmdData) {
+OMX_ERRORTYPE omx_reflector::comp_SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE Cmd, OMX_U32 nParam1, OMX_PTR pCmdData)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -105,7 +110,8 @@ OMX_ERRORTYPE omx_reflector::comp_SendCommand(OMX_HANDLETYPE hComponent, OMX_COM
 	return comp->SendCommand(hComponent, Cmd, nParam1, pCmdData);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure) {
+OMX_ERRORTYPE omx_reflector::comp_GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -116,7 +122,8 @@ OMX_ERRORTYPE omx_reflector::comp_GetParameter(OMX_HANDLETYPE hComponent, OMX_IN
 	return comp->GetParameter(hComponent, nParamIndex, pComponentParameterStructure);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nIndex, OMX_PTR pComponentParameterStructure) {
+OMX_ERRORTYPE omx_reflector::comp_SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nIndex, OMX_PTR pComponentParameterStructure)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -127,7 +134,8 @@ OMX_ERRORTYPE omx_reflector::comp_SetParameter(OMX_HANDLETYPE hComponent, OMX_IN
 	return comp->SetParameter(hComponent, nIndex, pComponentParameterStructure);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_GetConfig(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nIndex, OMX_PTR pComponentConfigStructure) {
+OMX_ERRORTYPE omx_reflector::comp_GetConfig(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nIndex, OMX_PTR pComponentConfigStructure)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -138,7 +146,8 @@ OMX_ERRORTYPE omx_reflector::comp_GetConfig(OMX_HANDLETYPE hComponent, OMX_INDEX
 	return comp->GetConfig(hComponent, nIndex, pComponentConfigStructure);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_SetConfig(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nIndex, OMX_PTR pComponentConfigStructure) {
+OMX_ERRORTYPE omx_reflector::comp_SetConfig(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nIndex, OMX_PTR pComponentConfigStructure)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -149,7 +158,8 @@ OMX_ERRORTYPE omx_reflector::comp_SetConfig(OMX_HANDLETYPE hComponent, OMX_INDEX
 	return comp->SetConfig(hComponent, nIndex, pComponentConfigStructure);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_GetExtensionIndex(OMX_HANDLETYPE hComponent, OMX_STRING cParameterName, OMX_INDEXTYPE *pIndexType) {
+OMX_ERRORTYPE omx_reflector::comp_GetExtensionIndex(OMX_HANDLETYPE hComponent, OMX_STRING cParameterName, OMX_INDEXTYPE *pIndexType)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -160,7 +170,8 @@ OMX_ERRORTYPE omx_reflector::comp_GetExtensionIndex(OMX_HANDLETYPE hComponent, O
 	return comp->GetExtensionIndex(hComponent, cParameterName, pIndexType);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_GetState(OMX_HANDLETYPE hComponent, OMX_STATETYPE *pState) {
+OMX_ERRORTYPE omx_reflector::comp_GetState(OMX_HANDLETYPE hComponent, OMX_STATETYPE *pState)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -171,7 +182,8 @@ OMX_ERRORTYPE omx_reflector::comp_GetState(OMX_HANDLETYPE hComponent, OMX_STATET
 	return comp->GetState(hComponent, pState);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_ComponentTunnelRequest(OMX_HANDLETYPE hComponent, OMX_U32 nPort, OMX_HANDLETYPE hTunneledComp, OMX_U32 nTunneledPort, OMX_TUNNELSETUPTYPE *pTunnelSetup) {
+OMX_ERRORTYPE omx_reflector::comp_ComponentTunnelRequest(OMX_HANDLETYPE hComponent, OMX_U32 nPort, OMX_HANDLETYPE hTunneledComp, OMX_U32 nTunneledPort, OMX_TUNNELSETUPTYPE *pTunnelSetup)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -182,7 +194,8 @@ OMX_ERRORTYPE omx_reflector::comp_ComponentTunnelRequest(OMX_HANDLETYPE hCompone
 	return comp->ComponentTunnelRequest(hComponent, nPort, hTunneledComp, nTunneledPort, pTunnelSetup);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_UseBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBufferHdr, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, OMX_U32 nSizeBytes, OMX_U8 *pBuffer) {
+OMX_ERRORTYPE omx_reflector::comp_UseBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBufferHdr, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, OMX_U32 nSizeBytes, OMX_U8 *pBuffer)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -193,7 +206,8 @@ OMX_ERRORTYPE omx_reflector::comp_UseBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFE
 	return comp->UseBuffer(hComponent, ppBufferHdr, nPortIndex, pAppPrivate, nSizeBytes, pBuffer);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_AllocateBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBuffer, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, OMX_U32 nSizeBytes) {
+OMX_ERRORTYPE omx_reflector::comp_AllocateBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBuffer, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, OMX_U32 nSizeBytes)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -204,7 +218,8 @@ OMX_ERRORTYPE omx_reflector::comp_AllocateBuffer(OMX_HANDLETYPE hComponent, OMX_
 	return comp->AllocateBuffer(hComponent, ppBuffer, nPortIndex, pAppPrivate, nSizeBytes);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_FreeBuffer(OMX_HANDLETYPE hComponent, OMX_U32 nPortIndex, OMX_BUFFERHEADERTYPE *pBuffer) {
+OMX_ERRORTYPE omx_reflector::comp_FreeBuffer(OMX_HANDLETYPE hComponent, OMX_U32 nPortIndex, OMX_BUFFERHEADERTYPE *pBuffer)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -215,7 +230,8 @@ OMX_ERRORTYPE omx_reflector::comp_FreeBuffer(OMX_HANDLETYPE hComponent, OMX_U32 
 	return comp->FreeBuffer(hComponent, nPortIndex, pBuffer);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_EmptyThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE *pBuffer) {
+OMX_ERRORTYPE omx_reflector::comp_EmptyThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE *pBuffer)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -226,7 +242,8 @@ OMX_ERRORTYPE omx_reflector::comp_EmptyThisBuffer(OMX_HANDLETYPE hComponent, OMX
 	return comp->EmptyThisBuffer(hComponent, pBuffer);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_FillThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE *pBuffer) {
+OMX_ERRORTYPE omx_reflector::comp_FillThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE *pBuffer)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -237,7 +254,8 @@ OMX_ERRORTYPE omx_reflector::comp_FillThisBuffer(OMX_HANDLETYPE hComponent, OMX_
 	return comp->FillThisBuffer(hComponent, pBuffer);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_SetCallbacks(OMX_HANDLETYPE hComponent, OMX_CALLBACKTYPE *pCallbacks, OMX_PTR pAppData) {
+OMX_ERRORTYPE omx_reflector::comp_SetCallbacks(OMX_HANDLETYPE hComponent, OMX_CALLBACKTYPE *pCallbacks, OMX_PTR pAppData)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -248,7 +266,8 @@ OMX_ERRORTYPE omx_reflector::comp_SetCallbacks(OMX_HANDLETYPE hComponent, OMX_CA
 	return comp->SetCallbacks(hComponent, pCallbacks, pAppData);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_ComponentDeInit(OMX_HANDLETYPE hComponent) {
+OMX_ERRORTYPE omx_reflector::comp_ComponentDeInit(OMX_HANDLETYPE hComponent)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -269,7 +288,8 @@ OMX_ERRORTYPE omx_reflector::comp_ComponentDeInit(OMX_HANDLETYPE hComponent) {
 	return err;
 }
 
-OMX_ERRORTYPE omx_reflector::comp_UseEGLImage(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBufferHdr, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, void *eglImage) {
+OMX_ERRORTYPE omx_reflector::comp_UseEGLImage(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBufferHdr, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, void *eglImage)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {
@@ -280,7 +300,8 @@ OMX_ERRORTYPE omx_reflector::comp_UseEGLImage(OMX_HANDLETYPE hComponent, OMX_BUF
 	return comp->UseEGLImage(hComponent, ppBufferHdr, nPortIndex, pAppPrivate, eglImage);
 }
 
-OMX_ERRORTYPE omx_reflector::comp_ComponentRoleEnum(OMX_HANDLETYPE hComponent, OMX_U8 *cRole, OMX_U32 nIndex) {
+OMX_ERRORTYPE omx_reflector::comp_ComponentRoleEnum(OMX_HANDLETYPE hComponent, OMX_U8 *cRole, OMX_U32 nIndex)
+{
 	scoped_log_begin;
 
 	if (hComponent == nullptr) {

@@ -11,7 +11,8 @@ namespace mf {
  * @param v unsigned value
  * @return swapped value
  */
-uint32_t rev32(uint32_t v) {
+uint32_t rev32(uint32_t v)
+{
 #ifdef __arm__
 	asm volatile ("rev %0, %1\n\t" : "=r"(v) : "r"(v));
 #else
@@ -31,7 +32,8 @@ uint32_t rev32(uint32_t v) {
  * @param v unsigned value
  * @return swapped value
  */
-uint16_t rev16(uint16_t v) {
+uint16_t rev16(uint16_t v)
+{
 	v = ((v & 0x00ff) <<  8) | ((v & 0xff00) >>  8);
 
 	return v;

@@ -37,7 +37,8 @@ size_t port_buffer::remain() const {
 	}
 }
 
-size_t port_buffer::skip(size_t count) {
+size_t port_buffer::skip(size_t count)
+{
 	size_t n;
 
 	if (p->get_dir() != OMX_DirInput) {
@@ -51,7 +52,8 @@ size_t port_buffer::skip(size_t count) {
 	return n;
 }
 
-size_t port_buffer::read_array(uint8_t *buf, size_t count) {
+size_t port_buffer::read_array(uint8_t *buf, size_t count)
+{
 	size_t index, n;
 
 	if (p->get_dir() != OMX_DirInput) {
@@ -69,7 +71,8 @@ size_t port_buffer::read_array(uint8_t *buf, size_t count) {
 	return n;
 }
 
-size_t port_buffer::write_array(uint8_t *buf, size_t count) {
+size_t port_buffer::write_array(uint8_t *buf, size_t count)
+{
 	size_t index, n;
 
 	if (p->get_dir() != OMX_DirOutput) {
@@ -87,7 +90,8 @@ size_t port_buffer::write_array(uint8_t *buf, size_t count) {
 	return n;
 }
 
-uint8_t *port_buffer::get_ptr() {
+uint8_t *port_buffer::get_ptr()
+{
 	return &header->pBuffer[get_index()];
 }
 
@@ -104,7 +108,8 @@ size_t port_buffer::get_index() const {
 	}
 }
 
-void port_buffer::set_index(size_t new_index) {
+void port_buffer::set_index(size_t new_index)
+{
 	size_t skip_size = new_index - get_index();
 
 	if (p->get_dir() == OMX_DirInput) {
@@ -119,7 +124,8 @@ void port_buffer::set_index(size_t new_index) {
 	}
 }
 
-void port_buffer::dump(const char *msg) {
+void port_buffer::dump(const char *msg)
+{
 	dprint("port_buffer dump: %s: nFlags:0x%08x, index:%6d, remain:%6d, "
 		"nOffset:%6d, nFill:%6d, nAlloc:%d, nTime:%d.\n",
 		msg, (int)header->nFlags, (int)index, (int)remain(),
@@ -172,7 +178,8 @@ port::port(int ind, component *c)
 	}
 }
 
-port::~port() {
+port::~port()
+{
 	scoped_log_begin;
 
 	//shutdown returning OpenMAX buffers thread
@@ -204,7 +211,8 @@ const component *port::get_component() const {
 }
 
 
-component *port::get_component() {
+component *port::get_component()
+{
 	return comp;
 }
 
@@ -213,7 +221,8 @@ OMX_U32 port::get_index() const {
 	return index;
 }
 
-void port::set_index(OMX_U32 v) {
+void port::set_index(OMX_U32 v)
+{
 	index = v;
 }
 
@@ -221,7 +230,8 @@ OMX_DIRTYPE port::get_dir() const {
 	return dir;
 }
 
-void port::set_dir(OMX_DIRTYPE v) {
+void port::set_dir(OMX_DIRTYPE v)
+{
 	dir = v;
 }
 
@@ -229,7 +239,8 @@ OMX_U32 port::get_buffer_count_actual() const {
 	return buffer_count_actual;
 }
 
-void port::set_buffer_count_actual(OMX_U32 v) {
+void port::set_buffer_count_actual(OMX_U32 v)
+{
 	buffer_count_actual = v;
 }
 
@@ -237,7 +248,8 @@ OMX_U32 port::get_buffer_count_min() const {
 	return buffer_count_min;
 }
 
-void port::set_buffer_count_min(OMX_U32 v) {
+void port::set_buffer_count_min(OMX_U32 v)
+{
 	buffer_count_min = v;
 }
 
@@ -245,7 +257,8 @@ OMX_U32 port::get_buffer_size() const {
 	return buffer_size;
 }
 
-void port::set_buffer_size(OMX_U32 v) {
+void port::set_buffer_size(OMX_U32 v)
+{
 	buffer_size = v;
 }
 
@@ -253,7 +266,8 @@ OMX_BOOL port::get_enabled() const {
 	return f_enabled;
 }
 
-void port::set_enabled(OMX_BOOL v) {
+void port::set_enabled(OMX_BOOL v)
+{
 	f_enabled = v;
 }
 
@@ -261,7 +275,8 @@ OMX_BOOL port::get_populated() const {
 	return f_populated;
 }
 
-void port::set_populated(OMX_BOOL v) {
+void port::set_populated(OMX_BOOL v)
+{
 	f_populated = v;
 }
 
@@ -269,7 +284,8 @@ OMX_PORTDOMAINTYPE port::get_domain() const {
 	return domain;
 }
 
-void port::set_domain(OMX_PORTDOMAINTYPE v) {
+void port::set_domain(OMX_PORTDOMAINTYPE v)
+{
 	domain = v;
 }
 
@@ -277,7 +293,8 @@ OMX_BOOL port::get_buffers_contiguous() const {
 	return buffers_contiguous;
 }
 
-void port::set_buffers_contiguous(OMX_BOOL v) {
+void port::set_buffers_contiguous(OMX_BOOL v)
+{
 	buffers_contiguous = v;
 }
 
@@ -285,7 +302,8 @@ OMX_U32 port::get_buffer_alignment() const {
 	return buffer_alignment;
 }
 
-void port::set_buffer_alignment(OMX_U32 v) {
+void port::set_buffer_alignment(OMX_U32 v)
+{
 	buffer_alignment = v;
 }
 
@@ -313,7 +331,8 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port::get_definition() const {
 	return &definition;
 }
 
-void port::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v) {
+void port::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
+{
 	scoped_log_begin;
 
 	dir                 = v.eDir;
@@ -328,37 +347,44 @@ void port::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v) {
 	buffer_alignment    = v.nBufferAlignment;
 }
 
-void port::disable_port() {
+void port::disable_port()
+{
 	scoped_log_begin;
 	//do nothing
 }
 
-void port::enable_port() {
+void port::enable_port()
+{
 	scoped_log_begin;
 	//do nothing
 }
 
-void port::flush_buffers() {
+void port::flush_buffers()
+{
 	scoped_log_begin;
 	//do nothing
 }
 
-void port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup) {
+void port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup)
+{
 	scoped_log_begin;
 	//do nothing
 }
 
-void port::allocate_tunnel_buffer(OMX_U32 index) {
+void port::allocate_tunnel_buffer(OMX_U32 index)
+{
 	scoped_log_begin;
 	//do nothing
 }
 
-void port::free_tunnel_buffer(OMX_U32 index) {
+void port::free_tunnel_buffer(OMX_U32 index)
+{
 	scoped_log_begin;
 	//do nothing
 }
 
-OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size, OMX_U8 *buf) {
+OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size, OMX_U8 *buf)
+{
 	scoped_log_begin;
 	port_buffer *pb = nullptr;
 	OMX_BUFFERHEADERTYPE *header = nullptr;
@@ -432,7 +458,8 @@ err_out:
 	return err;
 }
 
-OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size) {
+OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size)
+{
 	scoped_log_begin;
 	OMX_U8 *backbuf = nullptr;
 	port_buffer *pb = nullptr;
@@ -511,7 +538,8 @@ err_out:
 	return err;
 }
 
-OMX_ERRORTYPE port::free_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
+OMX_ERRORTYPE port::free_buffer(OMX_BUFFERHEADERTYPE *bufhead)
+{
 	scoped_log_begin;
 	std::lock_guard<std::recursive_mutex> lk(mut_list_bufs);
 	std::vector<port_buffer *>::iterator it;
@@ -540,12 +568,14 @@ OMX_ERRORTYPE port::free_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE port::free_buffer(port_buffer *pb) {
+OMX_ERRORTYPE port::free_buffer(port_buffer *pb)
+{
 	scoped_log_begin;
 	return free_buffer(pb->header);
 }
 
-bool port::find_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
+bool port::find_buffer(OMX_BUFFERHEADERTYPE *bufhead)
+{
 	std::lock_guard<std::recursive_mutex> lk(mut_list_bufs);
 
 	for (port_buffer *pb : list_bufs) {
@@ -558,7 +588,8 @@ bool port::find_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
 	return OMX_ErrorBadParameter;
 }
 
-bool port::find_buffer(port_buffer *pb) {
+bool port::find_buffer(port_buffer *pb)
+{
 	return find_buffer(pb->header);
 }
 
@@ -567,7 +598,8 @@ bool port::find_buffer(port_buffer *pb) {
 //コンポーネント利用者 → コンポーネントへのバッファ送付
 //----------------------------------------
 
-OMX_ERRORTYPE port::empty_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
+OMX_ERRORTYPE port::empty_buffer(OMX_BUFFERHEADERTYPE *bufhead)
+{
 	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
@@ -581,7 +613,8 @@ OMX_ERRORTYPE port::empty_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
 	return err;
 }
 
-OMX_ERRORTYPE port::fill_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
+OMX_ERRORTYPE port::fill_buffer(OMX_BUFFERHEADERTYPE *bufhead)
+{
 	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
@@ -595,7 +628,8 @@ OMX_ERRORTYPE port::fill_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
 	return err;
 }
 
-OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
+OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead)
+{
 	port_buffer pb;
 	OMX_ERRORTYPE err;
 
@@ -634,7 +668,8 @@ OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead) {
 	return err;
 }
 
-OMX_ERRORTYPE port::pop_buffer(port_buffer *pb) {
+OMX_ERRORTYPE port::pop_buffer(port_buffer *pb)
+{
 	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
@@ -658,7 +693,8 @@ OMX_ERRORTYPE port::pop_buffer(port_buffer *pb) {
 //コンポーネント → コンポーネント利用者へのバッファ返却
 //----------------------------------------
 
-OMX_ERRORTYPE port::empty_buffer_done(OMX_BUFFERHEADERTYPE *bufhead) {
+OMX_ERRORTYPE port::empty_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
+{
 	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
@@ -672,7 +708,8 @@ OMX_ERRORTYPE port::empty_buffer_done(OMX_BUFFERHEADERTYPE *bufhead) {
 	return err;
 }
 
-OMX_ERRORTYPE port::empty_buffer_done(port_buffer *pb) {
+OMX_ERRORTYPE port::empty_buffer_done(port_buffer *pb)
+{
 	//scoped_log_begin;
 
 	if (!find_buffer(pb)) {
@@ -682,7 +719,8 @@ OMX_ERRORTYPE port::empty_buffer_done(port_buffer *pb) {
 	return empty_buffer_done(pb->header);
 }
 
-OMX_ERRORTYPE port::fill_buffer_done(OMX_BUFFERHEADERTYPE *bufhead) {
+OMX_ERRORTYPE port::fill_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
+{
 	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
@@ -696,7 +734,8 @@ OMX_ERRORTYPE port::fill_buffer_done(OMX_BUFFERHEADERTYPE *bufhead) {
 	return err;
 }
 
-OMX_ERRORTYPE port::fill_buffer_done(port_buffer *pb) {
+OMX_ERRORTYPE port::fill_buffer_done(port_buffer *pb)
+{
 	//scoped_log_begin;
 
 	if (!find_buffer(pb)) {
@@ -706,7 +745,8 @@ OMX_ERRORTYPE port::fill_buffer_done(port_buffer *pb) {
 	return fill_buffer_done(pb->header);
 }
 
-OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead) {
+OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
+{
 	//scoped_log_begin;
 	port_buffer pb;
 	OMX_ERRORTYPE err;
@@ -735,7 +775,8 @@ OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead) {
 //コンポーネント利用者へのバッファ返却スレッド
 //----------------------------------------
 
-void *port::buffer_done() {
+void *port::buffer_done()
+{
 	scoped_log_begin;
 	port_buffer pb;
 	component *comp;
@@ -776,7 +817,8 @@ void *port::buffer_done() {
 	return nullptr;
 }
 
-void *port::buffer_done_thread_main(port *p) {
+void *port::buffer_done_thread_main(port *p)
+{
 	scoped_log_begin;
 	std::string thname;
 

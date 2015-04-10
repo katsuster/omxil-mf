@@ -35,7 +35,8 @@ component::component(OMX_COMPONENTTYPE *c, const char *cname)
 		: omx_reflector(c, cname), broken(false),
 		state(OMX_StateInvalid), omx_cbs(nullptr), omx_cbs_priv(nullptr),
 		th_accept(nullptr), ring_accept(nullptr), bound_accept(nullptr),
-		th_main(nullptr), running_main(false) {
+		th_main(nullptr), running_main(false)
+{
 	scoped_log_begin;
 
 	try {
@@ -63,7 +64,8 @@ component::component(OMX_COMPONENTTYPE *c, const char *cname)
 	set_state(OMX_StateLoaded);
 }
 
-component::~component() {
+component::~component()
+{
 	scoped_log_begin;
 
 	//shutdown accept thread
@@ -78,29 +80,34 @@ component::~component() {
 	delete ring_accept;
 }
 
-const char *component::get_name() const {
+const char *component::get_name() const
+{
 	return "component";
 }
 
-OMX_STATETYPE component::get_state() const {
+OMX_STATETYPE component::get_state() const
+{
 	return state;
 }
 
-void component::set_state(OMX_STATETYPE s) {
+void component::set_state(OMX_STATETYPE s)
+{
 	std::unique_lock<std::mutex> lock(mut);
 
 	state = s;
 	cond.notify_all();
 }
 
-void component::wait_state(OMX_STATETYPE s) {
+void component::wait_state(OMX_STATETYPE s)
+{
 	std::unique_lock<std::mutex> lock(mut);
 
 	cond.wait(lock, [&] { return broken || state == s; });
 	error_if_broken(lock);
 }
 
-void component::wait_state_multiple(int cnt, ...) {
+void component::wait_state_multiple(int cnt, ...)
+{
 	std::unique_lock<std::mutex> lock(mut);
 	va_list ap;
 	OMX_STATETYPE states[16];
@@ -133,7 +140,8 @@ void component::wait_state_multiple(int cnt, ...) {
 	error_if_broken(lock);
 }
 
-void component::shutdown() {
+void component::shutdown()
+{
 	std::unique_lock<std::mutex> lock(mut);
 
 	broken = true;
@@ -148,7 +156,8 @@ const void *component::get_callbacks_data() const {
 	return omx_cbs_priv;
 }
 
-port *component::find_port(OMX_U32 index) {
+port *component::find_port(OMX_U32 index)
+{
 	component::portmap_t::iterator ret;
 
 	ret = map_ports.find(index);
@@ -160,11 +169,13 @@ port *component::find_port(OMX_U32 index) {
 	return &ret->second;
 }
 
-bool component::should_run() {
+bool component::should_run()
+{
 	return running_main;
 }
 
-void component::stop_running() {
+void component::stop_running()
+{
 	running_main = false;
 }
 
@@ -172,14 +183,16 @@ void component::stop_running() {
 /*
  * OpenMAX member functions
  */
-OMX_ERRORTYPE component::GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRING pComponentName, OMX_VERSIONTYPE *pComponentVersion, OMX_VERSIONTYPE *pSpecVersion, OMX_UUIDTYPE *pComponentUUID) {
+OMX_ERRORTYPE component::GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRING pComponentName, OMX_VERSIONTYPE *pComponentVersion, OMX_VERSIONTYPE *pSpecVersion, OMX_UUIDTYPE *pComponentUUID)
+{
 	scoped_log_begin;
 
 	return OMX_ErrorNotImplemented;
 	//return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE Cmd, OMX_U32 nParam, OMX_PTR pCmdData) {
+OMX_ERRORTYPE component::SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE Cmd, OMX_U32 nParam, OMX_PTR pCmdData)
+{
 	scoped_log_begin;
 	port *port_found;
 	OMX_SEND_CMD cmd;
@@ -219,7 +232,8 @@ OMX_ERRORTYPE component::SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE 
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure) {
+OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure)
+{
 	scoped_log_begin;
 	port *port_found = nullptr;
 	OMX_PARAM_PORTDEFINITIONTYPE *def = nullptr;
@@ -302,7 +316,8 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	return err;
 }
 
-OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure) {
+OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure)
+{
 	scoped_log_begin;
 	port *port_found = nullptr;
 	OMX_PARAM_PORTDEFINITIONTYPE *def = nullptr;
@@ -386,7 +401,8 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	return err;
 }
 
-OMX_ERRORTYPE component::GetConfig(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nIndex, OMX_PTR pComponentConfigStructure) {
+OMX_ERRORTYPE component::GetConfig(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nIndex, OMX_PTR pComponentConfigStructure)
+{
 	scoped_log_begin;
 
 	//do nothing
@@ -394,7 +410,8 @@ OMX_ERRORTYPE component::GetConfig(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nInd
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::SetConfig(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nIndex, OMX_PTR pComponentConfigStructure) {
+OMX_ERRORTYPE component::SetConfig(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nIndex, OMX_PTR pComponentConfigStructure)
+{
 	scoped_log_begin;
 
 	//do nothing
@@ -402,7 +419,8 @@ OMX_ERRORTYPE component::SetConfig(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nInd
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::GetExtensionIndex(OMX_HANDLETYPE hComponent, OMX_STRING cParameterName, OMX_INDEXTYPE *pIndexType) {
+OMX_ERRORTYPE component::GetExtensionIndex(OMX_HANDLETYPE hComponent, OMX_STRING cParameterName, OMX_INDEXTYPE *pIndexType)
+{
 	scoped_log_begin;
 
 	//do nothing
@@ -410,7 +428,8 @@ OMX_ERRORTYPE component::GetExtensionIndex(OMX_HANDLETYPE hComponent, OMX_STRING
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::GetState(OMX_HANDLETYPE hComponent, OMX_STATETYPE *pState) {
+OMX_ERRORTYPE component::GetState(OMX_HANDLETYPE hComponent, OMX_STATETYPE *pState)
+{
 	scoped_log_begin;
 
 	if (pState == nullptr) {
@@ -422,14 +441,16 @@ OMX_ERRORTYPE component::GetState(OMX_HANDLETYPE hComponent, OMX_STATETYPE *pSta
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::ComponentTunnelRequest(OMX_HANDLETYPE hComponent, OMX_U32 nPort, OMX_HANDLETYPE hTunneledComp, OMX_U32 nTunneledPort, OMX_TUNNELSETUPTYPE *pTunnelSetup) {
+OMX_ERRORTYPE component::ComponentTunnelRequest(OMX_HANDLETYPE hComponent, OMX_U32 nPort, OMX_HANDLETYPE hTunneledComp, OMX_U32 nTunneledPort, OMX_TUNNELSETUPTYPE *pTunnelSetup)
+{
 	scoped_log_begin;
 
 	return OMX_ErrorNotImplemented;
 	//return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::UseBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBufferHdr, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, OMX_U32 nSizeBytes, OMX_U8 *pBuffer) {
+OMX_ERRORTYPE component::UseBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBufferHdr, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, OMX_U32 nSizeBytes, OMX_U8 *pBuffer)
+{
 	scoped_log_begin;
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
@@ -452,7 +473,8 @@ OMX_ERRORTYPE component::UseBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTY
 	return err;
 }
 
-OMX_ERRORTYPE component::AllocateBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBuffer, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, OMX_U32 nSizeBytes) {
+OMX_ERRORTYPE component::AllocateBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBuffer, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, OMX_U32 nSizeBytes)
+{
 	scoped_log_begin;
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
@@ -475,7 +497,8 @@ OMX_ERRORTYPE component::AllocateBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEA
 	return err;
 }
 
-OMX_ERRORTYPE component::FreeBuffer(OMX_HANDLETYPE hComponent, OMX_U32 nPortIndex, OMX_BUFFERHEADERTYPE *pBuffer) {
+OMX_ERRORTYPE component::FreeBuffer(OMX_HANDLETYPE hComponent, OMX_U32 nPortIndex, OMX_BUFFERHEADERTYPE *pBuffer)
+{
 	scoped_log_begin;
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
@@ -491,7 +514,8 @@ OMX_ERRORTYPE component::FreeBuffer(OMX_HANDLETYPE hComponent, OMX_U32 nPortInde
 	return err;
 }
 
-OMX_ERRORTYPE component::EmptyThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE *pBuffer) {
+OMX_ERRORTYPE component::EmptyThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE *pBuffer)
+{
 	//scoped_log_begin;
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
@@ -508,7 +532,8 @@ OMX_ERRORTYPE component::EmptyThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHE
 	return err;
 }
 
-OMX_ERRORTYPE component::FillThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE *pBuffer) {
+OMX_ERRORTYPE component::FillThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE *pBuffer)
+{
 	//scoped_log_begin;
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
@@ -525,7 +550,8 @@ OMX_ERRORTYPE component::FillThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEA
 	return err;
 }
 
-OMX_ERRORTYPE component::SetCallbacks(OMX_HANDLETYPE hComponent, OMX_CALLBACKTYPE *pCallbacks, OMX_PTR pAppData) {
+OMX_ERRORTYPE component::SetCallbacks(OMX_HANDLETYPE hComponent, OMX_CALLBACKTYPE *pCallbacks, OMX_PTR pAppData)
+{
 	scoped_log_begin;
 
 	omx_cbs = pCallbacks;
@@ -534,7 +560,8 @@ OMX_ERRORTYPE component::SetCallbacks(OMX_HANDLETYPE hComponent, OMX_CALLBACKTYP
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::ComponentDeInit(OMX_HANDLETYPE hComponent) {
+OMX_ERRORTYPE component::ComponentDeInit(OMX_HANDLETYPE hComponent)
+{
 	scoped_log_begin;
 
 	//do nothing
@@ -542,14 +569,16 @@ OMX_ERRORTYPE component::ComponentDeInit(OMX_HANDLETYPE hComponent) {
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::UseEGLImage(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBufferHdr, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, void *eglImage) {
+OMX_ERRORTYPE component::UseEGLImage(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBufferHdr, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, void *eglImage)
+{
 	scoped_log_begin;
 
 	return OMX_ErrorNotImplemented;
 	//return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::ComponentRoleEnum(OMX_HANDLETYPE hComponent, OMX_U8 *cRole, OMX_U32 nIndex) {
+OMX_ERRORTYPE component::ComponentRoleEnum(OMX_HANDLETYPE hComponent, OMX_U8 *cRole, OMX_U32 nIndex)
+{
 	scoped_log_begin;
 
 	return OMX_ErrorNotImplemented;
@@ -561,7 +590,8 @@ OMX_ERRORTYPE component::ComponentRoleEnum(OMX_HANDLETYPE hComponent, OMX_U8 *cR
 //OpenMAX callback function wrappers
 //----------
 
-OMX_ERRORTYPE component::EventHandler(OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_U32 nData2, OMX_PTR pEventData) {
+OMX_ERRORTYPE component::EventHandler(OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_U32 nData2, OMX_PTR pEventData)
+{
 	scoped_log_begin;
 	OMX_ERRORTYPE err;
 
@@ -575,7 +605,8 @@ OMX_ERRORTYPE component::EventHandler(OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_
 	return err;
 }
 
-OMX_ERRORTYPE component::EmptyBufferDone(OMX_BUFFERHEADERTYPE *pBuffer) {
+OMX_ERRORTYPE component::EmptyBufferDone(OMX_BUFFERHEADERTYPE *pBuffer)
+{
 	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
@@ -585,7 +616,8 @@ OMX_ERRORTYPE component::EmptyBufferDone(OMX_BUFFERHEADERTYPE *pBuffer) {
 	return err;
 }
 
-OMX_ERRORTYPE component::EmptyBufferDone(port_buffer *pb) {
+OMX_ERRORTYPE component::EmptyBufferDone(port_buffer *pb)
+{
 	//scoped_log_begin;
 	//EOS detected
 	if (pb->header->nFlags & OMX_BUFFERFLAG_EOS) {
@@ -596,7 +628,8 @@ OMX_ERRORTYPE component::EmptyBufferDone(port_buffer *pb) {
 	return EmptyBufferDone(pb->header);
 }
 
-OMX_ERRORTYPE component::FillBufferDone(OMX_BUFFERHEADERTYPE *pBuffer) {
+OMX_ERRORTYPE component::FillBufferDone(OMX_BUFFERHEADERTYPE *pBuffer)
+{
 	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
@@ -606,7 +639,8 @@ OMX_ERRORTYPE component::FillBufferDone(OMX_BUFFERHEADERTYPE *pBuffer) {
 	return err;
 }
 
-OMX_ERRORTYPE component::FillBufferDone(port_buffer *pb) {
+OMX_ERRORTYPE component::FillBufferDone(port_buffer *pb)
+{
 	//scoped_log_begin;
 	//EOS detected
 	if (pb->header->nFlags & OMX_BUFFERFLAG_EOS) {
@@ -622,7 +656,8 @@ OMX_ERRORTYPE component::FillBufferDone(port_buffer *pb) {
  * protected functions
  */
 
-void component::error_if_broken(std::unique_lock<std::mutex>& lock) {
+void component::error_if_broken(std::unique_lock<std::mutex>& lock)
+{
 	if (broken) {
 		std::string msg(__func__);
 		msg += ": interrupted.";
@@ -630,7 +665,8 @@ void component::error_if_broken(std::unique_lock<std::mutex>& lock) {
 	}
 }
 
-void *component::accept_command() {
+void *component::accept_command()
+{
 	scoped_log_begin;
 	OMX_SEND_CMD cmd;
 	OMX_STATETYPE new_state;
@@ -727,7 +763,8 @@ void *component::accept_command() {
 	return nullptr;
 }
 
-OMX_ERRORTYPE component::command_state_set(OMX_STATETYPE new_state) {
+OMX_ERRORTYPE component::command_state_set(OMX_STATETYPE new_state)
+{
 	scoped_log_begin;
 	OMX_ERRORTYPE err;
 
@@ -763,7 +800,8 @@ OMX_ERRORTYPE component::command_state_set(OMX_STATETYPE new_state) {
 	return err;
 }
 
-OMX_ERRORTYPE component::command_state_set_to_invalid() {
+OMX_ERRORTYPE component::command_state_set_to_invalid()
+{
 	scoped_log_begin;
 
 	set_state(OMX_StateInvalid);
@@ -771,7 +809,8 @@ OMX_ERRORTYPE component::command_state_set_to_invalid() {
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::command_state_set_to_loaded() {
+OMX_ERRORTYPE component::command_state_set_to_loaded()
+{
 	scoped_log_begin;
 	OMX_ERRORTYPE err;
 
@@ -805,7 +844,8 @@ OMX_ERRORTYPE component::command_state_set_to_loaded() {
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::command_state_set_to_idle() {
+OMX_ERRORTYPE component::command_state_set_to_idle()
+{
 	scoped_log_begin;
 	OMX_ERRORTYPE err;
 
@@ -846,7 +886,8 @@ OMX_ERRORTYPE component::command_state_set_to_idle() {
 	return err;
 }
 
-OMX_ERRORTYPE component::command_state_set_to_executing() {
+OMX_ERRORTYPE component::command_state_set_to_executing()
+{
 	scoped_log_begin;
 	OMX_ERRORTYPE err;
 
@@ -876,7 +917,8 @@ OMX_ERRORTYPE component::command_state_set_to_executing() {
 	return err;
 }
 
-OMX_ERRORTYPE component::command_state_set_to_pause() {
+OMX_ERRORTYPE component::command_state_set_to_pause()
+{
 	scoped_log_begin;
 
 	set_state(OMX_StatePause);
@@ -884,7 +926,8 @@ OMX_ERRORTYPE component::command_state_set_to_pause() {
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::command_state_set_to_wait_for_resources() {
+OMX_ERRORTYPE component::command_state_set_to_wait_for_resources()
+{
 	scoped_log_begin;
 
 	set_state(OMX_StateWaitForResources);
@@ -892,31 +935,36 @@ OMX_ERRORTYPE component::command_state_set_to_wait_for_resources() {
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::command_flush(OMX_U32 port_index) {
+OMX_ERRORTYPE component::command_flush(OMX_U32 port_index)
+{
 	scoped_log_begin;
 
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::command_port_disable(OMX_U32 port_index) {
+OMX_ERRORTYPE component::command_port_disable(OMX_U32 port_index)
+{
 	scoped_log_begin;
 
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::command_port_enable(OMX_U32 port_index) {
+OMX_ERRORTYPE component::command_port_enable(OMX_U32 port_index)
+{
 	scoped_log_begin;
 
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE component::command_mark_buffer(OMX_U32 port_index) {
+OMX_ERRORTYPE component::command_mark_buffer(OMX_U32 port_index)
+{
 	scoped_log_begin;
 
 	return OMX_ErrorNone;
 }
 
-bool component::insert_port(port& p) {
+bool component::insert_port(port& p)
+{
 	std::pair<component::portmap_t::iterator, bool> ret;
 
 	ret = map_ports.insert(component::portmap_t::value_type(p.get_index(), p));
@@ -924,7 +972,8 @@ bool component::insert_port(port& p) {
 	return ret.second;
 }
 
-bool component::erase_port(OMX_U32 index) {
+bool component::erase_port(OMX_U32 index)
+{
 	size_t ret;
 
 	ret = map_ports.erase(index);
@@ -936,7 +985,8 @@ const component::portmap_t& component::get_map_ports() const {
 	return map_ports;
 }
 
-component::portmap_t& component::get_map_ports() {
+component::portmap_t& component::get_map_ports()
+{
 	return map_ports;
 }
 
@@ -958,7 +1008,8 @@ OMX_ERRORTYPE component::check_omx_header(const void *p, size_t size) const {
 /*
  * static public functions
  */
-component *component::get_instance(OMX_HANDLETYPE hComponent) {
+component *component::get_instance(OMX_HANDLETYPE hComponent)
+{
 	OMX_COMPONENTTYPE *omx_comp = (OMX_COMPONENTTYPE *) hComponent;
 	component *comp = (component *) omx_comp->pComponentPrivate;
 
@@ -970,7 +1021,8 @@ component *component::get_instance(OMX_HANDLETYPE hComponent) {
  * static protected functions
  */
 
-void *component::accept_command_thread_main(OMX_COMPONENTTYPE *arg) {
+void *component::accept_command_thread_main(OMX_COMPONENTTYPE *arg)
+{
 	scoped_log_begin;
 	std::string thname;
 	component *comp = get_instance(arg);
@@ -989,7 +1041,8 @@ void *component::accept_command_thread_main(OMX_COMPONENTTYPE *arg) {
 	return nullptr;
 }
 
-void *component::component_thread_main(OMX_COMPONENTTYPE *arg) {
+void *component::component_thread_main(OMX_COMPONENTTYPE *arg)
+{
 	scoped_log_begin;
 	std::string thname;
 	component *comp = get_instance(arg);
