@@ -129,6 +129,7 @@ void register_component::clear()
 //----------------------------------------
 //protected methods
 //----------------------------------------
+
 void register_component::load_components(void)
 {
 	scoped_log_begin;
@@ -156,7 +157,7 @@ void register_component::load_components(void)
 			continue;
 		}
 
-		//load component
+		//load library, get entry function
 		libhandle = dlopen(libname.c_str(), RTLD_LAZY);
 		if (libhandle == nullptr) {
 			//not found or error
@@ -176,7 +177,7 @@ void register_component::load_components(void)
 			flag_err = true;
 		}
 
-		//register component
+		//register components (by library)
 		libresult = entry_func();
 		if (libresult != OMX_ErrorNone) {
 			//failed to regist
@@ -229,6 +230,8 @@ register_component *register_component::get_instance(void)
 {
 	scoped_log_begin;
 
+	//1回目の呼び出し時にシングルトンを生成してポインタを返す。
+	//2回目以降の呼び出しでは 1回目で生成したポインタを返す。
 	std::call_once(once_instance, create_instance_once);
 
 	return g_reg_comp;
@@ -237,6 +240,7 @@ register_component *register_component::get_instance(void)
 //----------------------------------------
 //static private methods
 //----------------------------------------
+
 void register_component::create_instance_once(void)
 {
 	scoped_log_begin;

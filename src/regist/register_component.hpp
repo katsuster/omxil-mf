@@ -28,17 +28,56 @@ public:
 	typedef std::map<std::string, register_info *> map_component_type;
 	typedef std::pair<std::string, register_info *> map_component_pair;
 
+	/**
+	 * Initialize this instance.
+	 *
+	 * We should call this method before register the components
+	 * into this OMX IL library.
+	 */
 	virtual void init();
+
+	/**
+	 * De-initialize this instance.
+	 *
+	 * Release the all resources used by this instance.
+	 */
 	virtual void deinit();
 
+	/**
+	 * Get is this instance initialized.
+	 *
+	 * @return true if already initialized, false if not initialized.
+	 */
 	virtual bool is_init();
 
 	/**
-	 * register component to this OMX IL library.
+	 * Register new component to this OMX IL library.
+	 *
+	 * @param name  Name of new component.
+	 * @param info  Settings and parameters of new component.
+	 * @return true if successful, false if failed.
 	 */
 	virtual bool insert(const char *name, const OMX_MF_COMPONENT_INFO *info);
+
+	/**
+	 * Find the registered component by name.
+	 *
+	 * @param name  Name of component.
+	 * @return Registration info of component.
+	 */
 	virtual register_info *find(const char *name);
+
+	/**
+	 * Unregister the component from this OMX IL library.
+	 *
+	 * @param name  Name of component.
+	 * @return true if successful, false if failed.
+	 */
 	virtual bool erase(const char *name);
+
+	/**
+	 * Unregister all components from this OMX IL library.
+	 */
 	virtual void clear();
 
 protected:
@@ -58,7 +97,15 @@ private:
 
 public:
 	/**
-	 * to get the singleton instance of register_component class.
+	 * Get the singleton instance of this class.
+	 *
+	 * 1st time          : Create instance, call init() 
+	 * and return the pointer of instance.
+	 *
+	 * 2nd, 3rd, ... time: Return the pointer of instance 
+	 * created at 1st time.
+	 *
+	 * @return Pointer of singleton instance of this class.
 	 */
 	static register_component *get_instance(void);
 
