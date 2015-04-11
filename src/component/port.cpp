@@ -12,19 +12,23 @@
 
 namespace mf {
 
-bool port_buffer::size() const {
+bool port_buffer::size() const
+{
 	return header->nFilledLen;
 }
 
-bool port_buffer::empty() const {
+bool port_buffer::empty() const
+{
 	return size() == 0;
 }
 
-bool port_buffer::full() const {
+bool port_buffer::full() const
+{
 	return remain() == 0;
 }
 
-size_t port_buffer::remain() const {
+size_t port_buffer::remain() const
+{
 	if (p->get_dir() == OMX_DirInput) {
 		//input
 		return header->nFilledLen;
@@ -95,7 +99,8 @@ uint8_t *port_buffer::get_ptr()
 	return &header->pBuffer[get_index()];
 }
 
-size_t port_buffer::get_index() const {
+size_t port_buffer::get_index() const
+{
 	if (p->get_dir() == OMX_DirInput) {
 		//input
 		return index;
@@ -201,12 +206,14 @@ port::~port()
 	delete ring_send;
 }
 
-const char *port::get_name() const {
+const char *port::get_name() const
+{
 	return "port";
 }
 
 
-const component *port::get_component() const {
+const component *port::get_component() const
+{
 	return comp;
 }
 
@@ -217,7 +224,8 @@ component *port::get_component()
 }
 
 
-OMX_U32 port::get_index() const {
+OMX_U32 port::get_index() const
+{
 	return index;
 }
 
@@ -226,7 +234,8 @@ void port::set_index(OMX_U32 v)
 	index = v;
 }
 
-OMX_DIRTYPE port::get_dir() const {
+OMX_DIRTYPE port::get_dir() const
+{
 	return dir;
 }
 
@@ -235,7 +244,8 @@ void port::set_dir(OMX_DIRTYPE v)
 	dir = v;
 }
 
-OMX_U32 port::get_buffer_count_actual() const {
+OMX_U32 port::get_buffer_count_actual() const
+{
 	return buffer_count_actual;
 }
 
@@ -244,7 +254,8 @@ void port::set_buffer_count_actual(OMX_U32 v)
 	buffer_count_actual = v;
 }
 
-OMX_U32 port::get_buffer_count_min() const {
+OMX_U32 port::get_buffer_count_min() const
+{
 	return buffer_count_min;
 }
 
@@ -253,7 +264,8 @@ void port::set_buffer_count_min(OMX_U32 v)
 	buffer_count_min = v;
 }
 
-OMX_U32 port::get_buffer_size() const {
+OMX_U32 port::get_buffer_size() const
+{
 	return buffer_size;
 }
 
@@ -262,7 +274,8 @@ void port::set_buffer_size(OMX_U32 v)
 	buffer_size = v;
 }
 
-OMX_BOOL port::get_enabled() const {
+OMX_BOOL port::get_enabled() const
+{
 	return f_enabled;
 }
 
@@ -271,7 +284,8 @@ void port::set_enabled(OMX_BOOL v)
 	f_enabled = v;
 }
 
-OMX_BOOL port::get_populated() const {
+OMX_BOOL port::get_populated() const
+{
 	return f_populated;
 }
 
@@ -280,7 +294,8 @@ void port::set_populated(OMX_BOOL v)
 	f_populated = v;
 }
 
-OMX_PORTDOMAINTYPE port::get_domain() const {
+OMX_PORTDOMAINTYPE port::get_domain() const
+{
 	return domain;
 }
 
@@ -289,7 +304,8 @@ void port::set_domain(OMX_PORTDOMAINTYPE v)
 	domain = v;
 }
 
-OMX_BOOL port::get_buffers_contiguous() const {
+OMX_BOOL port::get_buffers_contiguous() const
+{
 	return buffers_contiguous;
 }
 
@@ -298,7 +314,8 @@ void port::set_buffers_contiguous(OMX_BOOL v)
 	buffers_contiguous = v;
 }
 
-OMX_U32 port::get_buffer_alignment() const {
+OMX_U32 port::get_buffer_alignment() const
+{
 	return buffer_alignment;
 }
 
@@ -307,7 +324,8 @@ void port::set_buffer_alignment(OMX_U32 v)
 	buffer_alignment = v;
 }
 
-const OMX_PARAM_PORTDEFINITIONTYPE *port::get_definition() const {
+const OMX_PARAM_PORTDEFINITIONTYPE *port::get_definition() const
+{
 	scoped_log_begin;
 
 	memset(&definition, 0, sizeof(definition));
@@ -595,7 +613,7 @@ bool port::find_buffer(port_buffer *pb)
 
 
 //----------------------------------------
-//ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆåˆ©ç”¨è€… â†’ ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¸ã®ãƒãƒƒãƒ•ã‚¡é€ä»˜
+//ƒRƒ“ƒ|[ƒlƒ“ƒg—˜—pŽÒ ¨ ƒRƒ“ƒ|[ƒlƒ“ƒg‚Ö‚Ìƒoƒbƒtƒ@‘—•t
 //----------------------------------------
 
 OMX_ERRORTYPE port::empty_buffer(OMX_BUFFERHEADERTYPE *bufhead)
@@ -690,7 +708,7 @@ OMX_ERRORTYPE port::pop_buffer(port_buffer *pb)
 
 
 //----------------------------------------
-//ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ â†’ ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆåˆ©ç”¨è€…ã¸ã®ãƒãƒƒãƒ•ã‚¡è¿”å´
+//ƒRƒ“ƒ|[ƒlƒ“ƒg ¨ ƒRƒ“ƒ|[ƒlƒ“ƒg—˜—pŽÒ‚Ö‚Ìƒoƒbƒtƒ@•Ô‹p
 //----------------------------------------
 
 OMX_ERRORTYPE port::empty_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
@@ -772,7 +790,7 @@ OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 
 
 //----------------------------------------
-//ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆåˆ©ç”¨è€…ã¸ã®ãƒãƒƒãƒ•ã‚¡è¿”å´ã‚¹ãƒ¬ãƒƒãƒ‰
+//ƒRƒ“ƒ|[ƒlƒ“ƒg—˜—pŽÒ‚Ö‚Ìƒoƒbƒtƒ@•Ô‹pƒXƒŒƒbƒh
 //----------------------------------------
 
 void *port::buffer_done()
@@ -823,7 +841,7 @@ void *port::buffer_done_thread_main(port *p)
 	std::string thname;
 
 	try {
-		//ã‚¹ãƒ¬ãƒƒãƒ‰åã‚’ã¤ã‘ã‚‹
+		//ƒXƒŒƒbƒh–¼‚ð‚Â‚¯‚é
 		thname = "omx:p";
 		thname += std::to_string(p->get_index());
 		thname += ":";

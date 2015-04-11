@@ -58,11 +58,13 @@ omx_reflector::~omx_reflector()
 	omx_comp->pComponentPrivate = nullptr;
 }
 
-const char *omx_reflector::get_name() const {
+const char *omx_reflector::get_name() const
+{
 	return "omx_reflector";
 }
 
-const OMX_COMPONENTTYPE *omx_reflector::get_omx_component() const {
+const OMX_COMPONENTTYPE *omx_reflector::get_omx_component() const
+{
 	return omx_comp;
 }
 
@@ -71,7 +73,8 @@ OMX_COMPONENTTYPE *omx_reflector::get_omx_component()
 	return omx_comp;
 }
 
-const std::string& omx_reflector::get_component_name() const {
+const std::string& omx_reflector::get_component_name() const
+{
 	return omx_name;
 }
 
@@ -284,9 +287,9 @@ OMX_ERRORTYPE omx_reflector::comp_ComponentDeInit(OMX_HANDLETYPE hComponent)
 
 	err = comp->ComponentDeInit(hComponent);
 
-	//NOTE: ComponentDeInit ãƒ¡ãƒ³ãƒé–¢æ•°å†…ã§ delete this; ã™ã‚‹ã¨ã€
-	//this ãƒã‚¤ãƒ³ã‚¿ãŒç„¡åŠ¹ã«ãªã‚Š SEGV ã®å±é™ºã‚ã‚Šã€‚
-	//å¿…ãš static é–¢æ•°å†…ã§ delete ã™ã‚‹ã“ã¨
+	//NOTE: ComponentDeInit ƒƒ“ƒoŠÖ”“à‚Å delete this; ‚·‚é‚ÆA
+	//this ƒ|ƒCƒ“ƒ^‚ª–³Œø‚É‚È‚è SEGV ‚ÌŠëŒ¯‚ ‚èB
+	//•K‚¸ static ŠÖ”“à‚Å delete ‚·‚é‚±‚Æ
 	dprint("delete component:%s, ptr:%p.\n",
 		comp->get_component_name().c_str(), comp);
 	delete comp;

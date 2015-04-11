@@ -148,11 +148,13 @@ void component::shutdown()
 	cond.notify_all();
 }
 
-const OMX_CALLBACKTYPE *component::get_callbacks() const {
+const OMX_CALLBACKTYPE *component::get_callbacks() const
+{
 	return omx_cbs;
 }
 
-const void *component::get_callbacks_data() const {
+const void *component::get_callbacks_data() const
+{
 	return omx_cbs_priv;
 }
 
@@ -1007,7 +1009,8 @@ bool component::erase_port(OMX_U32 index)
 	return (ret != 0);
 }
 
-const component::portmap_t& component::get_map_ports() const {
+const component::portmap_t& component::get_map_ports() const
+{
 	return map_ports;
 }
 
@@ -1016,7 +1019,8 @@ component::portmap_t& component::get_map_ports()
 	return map_ports;
 }
 
-OMX_ERRORTYPE component::check_omx_header(const void *p, size_t size) const {
+OMX_ERRORTYPE component::check_omx_header(const void *p, size_t size) const
+{
 	const OMX_PARAM_HEADERTYPE *h = (const OMX_PARAM_HEADERTYPE *)p;
 
 	if (h == nullptr || h->nSize != size) {
