@@ -40,6 +40,11 @@ public:
 		}
 	}
 
+	virtual OMX_HANDLETYPE get_component()
+	{
+		return comp;
+	}
+
 	virtual OMX_ERRORTYPE GetComponentVersion(OMX_STRING pComponentName, OMX_VERSIONTYPE *pComponentVersion, OMX_VERSIONTYPE *pSpecVersion, OMX_UUIDTYPE *pComponentUUID)
 	{
 		OMX_ERRORTYPE result;

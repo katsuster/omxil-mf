@@ -12,6 +12,26 @@ extern "C" {
 #include "common/omxil_utils.h"
 }
 
+class comp_test_send_cmd : public omxil_comp {
+public:
+	comp_test_send_cmd(const char *comp_name)
+		: omxil_comp(comp_name)
+	{
+		//do nothing
+	}
+
+	virtual ~comp_test_send_cmd()
+	{
+		//do nothing
+	}
+
+	virtual OMX_ERRORTYPE EventHandler(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_U32 nData2, OMX_PTR pEventData)
+	{
+		printf("!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+	}
+
+};
+
 int main(int argc, char *argv[])
 {
 	const char *arg_comp;
@@ -41,7 +61,11 @@ int main(int argc, char *argv[])
 		goto err_out1;
 	}
 
-	comp = new omxil_comp(arg_comp);
+	comp = new comp_test_send_cmd(arg_comp);
+	if (comp == nullptr || comp->get_component() == nullptr) {
+		fprintf(stderr, "OMX_GetHandle failed.\n");
+		goto err_out2;
+	}
 	printf("OMX_GetHandle: name:%s, comp:%p\n", 
 		arg_comp, comp);
 

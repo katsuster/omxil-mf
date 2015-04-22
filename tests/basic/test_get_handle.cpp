@@ -40,6 +40,10 @@ int main(int argc, char *argv[])
 	}
 
 	comp = new omxil_comp(arg_comp);
+	if (comp == nullptr || comp->get_component() == nullptr) {
+		fprintf(stderr, "OMX_GetHandle failed.\n");
+		goto err_out2;
+	}
 	printf("OMX_GetHandle: name:%s, comp:%p\n", 
 		arg_comp, comp);
 
