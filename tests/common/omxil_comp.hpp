@@ -40,6 +40,18 @@ public:
 		}
 	}
 
+	virtual OMX_ERRORTYPE GetComponentVersion(OMX_STRING pComponentName, OMX_VERSIONTYPE *pComponentVersion, OMX_VERSIONTYPE *pSpecVersion, OMX_UUIDTYPE *pComponentUUID)
+	{
+		OMX_ERRORTYPE result;
+
+		result = OMX_GetComponentVersion(comp, pComponentName, pComponentVersion, pSpecVersion, pComponentUUID);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "OMX_GetComponentVersion failed.\n");
+		}
+
+		return result;
+	}
+
 	virtual OMX_ERRORTYPE SendCommand(OMX_COMMANDTYPE Cmd, OMX_U32 nParam, OMX_PTR pCmdData)
 	{
 		OMX_ERRORTYPE result;
