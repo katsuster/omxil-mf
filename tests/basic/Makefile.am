@@ -77,5 +77,5 @@ TESTS = \
 	get_roles_of_component.sh \
 	get_components_of_role.sh \
 	get_handle.sh \
-	send_command
+	send_command.sh
 
