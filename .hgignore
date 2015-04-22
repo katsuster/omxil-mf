@@ -30,3 +30,4 @@ syntax: regexp
 \.lo$
 \.o$
 ^doc/html/
+^doc/doxygen.done
