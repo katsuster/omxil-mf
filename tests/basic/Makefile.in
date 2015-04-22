@@ -56,10 +56,12 @@ check_PROGRAMS = init_deinit$(EXEEXT) init_deinit_multi$(EXEEXT) \
 	send_command$(EXEEXT)
 @USE_BELLAGIO_TRUE@am__append_1 = -DUSE_BELLAGIO
 @USE_BELLAGIO_TRUE@am__append_2 = 
-@USE_BELLAGIO_TRUE@am__append_3 = -lomxil-bellagio
-@USE_BELLAGIO_FALSE@am__append_4 = -DUSE_MF -I$(top_srcdir)/include
-@USE_BELLAGIO_FALSE@am__append_5 = 
-@USE_BELLAGIO_FALSE@am__append_6 = $(top_builddir)/src/libomxil-mf.la
+@USE_BELLAGIO_TRUE@am__append_3 = -std=c++0x
+@USE_BELLAGIO_TRUE@am__append_4 = -lomxil-bellagio
+@USE_BELLAGIO_FALSE@am__append_5 = -DUSE_MF -I$(top_srcdir)/include
+@USE_BELLAGIO_FALSE@am__append_6 = 
+@USE_BELLAGIO_FALSE@am__append_7 = -std=c++0x
+@USE_BELLAGIO_FALSE@am__append_8 = $(top_builddir)/src/libomxil-mf.la
 TESTS = init_deinit$(EXEEXT) init_deinit_multi$(EXEEXT) \
 	enum_components$(EXEEXT) get_roles_of_component.sh \
 	get_components_of_role.sh get_handle.sh send_command$(EXEEXT)
@@ -79,7 +81,7 @@ am_enum_components_OBJECTS =  \
 	$(am__objects_1)
 enum_components_OBJECTS = $(am_enum_components_OBJECTS)
 am__DEPENDENCIES_1 =
-am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__append_6)
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__append_8)
 enum_components_DEPENDENCIES = $(am__DEPENDENCIES_2)
 enum_components_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(enum_components_CFLAGS) \
@@ -99,9 +101,9 @@ am_get_handle_OBJECTS = get_handle-test_get_handle.$(OBJEXT) \
 	$(am__objects_3)
 get_handle_OBJECTS = $(am_get_handle_OBJECTS)
 get_handle_DEPENDENCIES = $(am__DEPENDENCIES_2)
-get_handle_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(get_handle_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+get_handle_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(get_handle_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am__objects_4 = get_roles_of_component-omxil_utils.$(OBJEXT)
 am_get_roles_of_component_OBJECTS =  \
 	get_roles_of_component-test_get_roles_of_component.$(OBJEXT) \
@@ -135,9 +137,9 @@ am_send_command_OBJECTS = send_command-test_send_command.$(OBJEXT) \
 	$(am__objects_7)
 send_command_OBJECTS = $(am_send_command_OBJECTS)
 send_command_DEPENDENCIES = $(am__DEPENDENCIES_2)
-send_command_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(send_command_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+send_command_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(send_command_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -150,6 +152,15 @@ LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLD = $(CXX)
+CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(enum_components_SOURCES) $(get_components_of_role_SOURCES) \
 	$(get_handle_SOURCES) $(get_roles_of_component_SOURCES) \
@@ -292,41 +303,49 @@ top_srcdir = @top_srcdir@
 TEST_DIR = $(top_srcdir)/tests
 COMMON_DIR = $(TEST_DIR)/common
 common_SOURCES = $(COMMON_DIR)/omxil_utils.c
-common_CPPFLAGS = -I$(TEST_DIR) $(am__append_1) $(am__append_4)
-common_CFLAGS = $(am__append_2) $(am__append_5)
-common_LDADD = $(am__append_3) $(am__append_6)
+common_CPPFLAGS = -I$(TEST_DIR) $(am__append_1) $(am__append_5)
+common_CFLAGS = $(am__append_2) $(am__append_6)
+common_CXXFLAGS = $(am__append_3) $(am__append_7)
+common_LDADD = $(am__append_4) $(am__append_8)
 init_deinit_SOURCES = test_init_deinit.c $(common_SOURCES)
 init_deinit_LDADD = $(common_LDADD)
 init_deinit_CPPFLAGS = $(common_CPPFLAGS)
 init_deinit_CFLAGS = $(common_CFLAGS)
+init_deinit_CXXFLAGS = $(common_CXXFLAGS)
 init_deinit_multi_SOURCES = test_init_deinit_multi.c $(common_SOURCES)
 init_deinit_multi_LDADD = $(common_LDADD)
 init_deinit_multi_CPPFLAGS = $(common_CPPFLAGS)
 init_deinit_multi_CFLAGS = $(common_CFLAGS)
+init_deinit_multi_CXXFLAGS = $(common_CXXFLAGS)
 enum_components_SOURCES = test_enum_components.c $(common_SOURCES)
 enum_components_LDADD = $(common_LDADD)
 enum_components_CPPFLAGS = $(common_CPPFLAGS)
 enum_components_CFLAGS = $(common_CFLAGS)
+enum_components_CXXFLAGS = $(common_CXXFLAGS)
 get_roles_of_component_SOURCES = test_get_roles_of_component.c $(common_SOURCES)
 get_roles_of_component_LDADD = $(common_LDADD)
 get_roles_of_component_CPPFLAGS = $(common_CPPFLAGS)
 get_roles_of_component_CFLAGS = $(common_CFLAGS)
+get_roles_of_component_CXXFLAGS = $(common_CXXFLAGS)
 get_components_of_role_SOURCES = test_get_components_of_role.c $(common_SOURCES)
 get_components_of_role_LDADD = $(common_LDADD)
 get_components_of_role_CPPFLAGS = $(common_CPPFLAGS)
 get_components_of_role_CFLAGS = $(common_CFLAGS)
-get_handle_SOURCES = test_get_handle.c $(common_SOURCES)
+get_components_of_role_CXXFLAGS = $(common_CXXFLAGS)
+get_handle_SOURCES = test_get_handle.cpp $(common_SOURCES)
 get_handle_LDADD = $(common_LDADD)
 get_handle_CPPFLAGS = $(common_CPPFLAGS)
 get_handle_CFLAGS = $(common_CFLAGS)
-send_command_SOURCES = test_send_command.c $(common_SOURCES)
+get_handle_CXXFLAGS = $(common_CXXFLAGS)
+send_command_SOURCES = test_send_command.cpp $(common_SOURCES)
 send_command_LDADD = $(common_LDADD)
 send_command_CPPFLAGS = $(common_CPPFLAGS)
 send_command_CFLAGS = $(common_CFLAGS)
+send_command_CXXFLAGS = $(common_CXXFLAGS)
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .cpp .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -486,20 +505,6 @@ get_components_of_role-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_CFLAGS) $(CFLAGS) -c -o get_components_of_role-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
 
-get_handle-test_get_handle.o: test_get_handle.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_CPPFLAGS) $(CPPFLAGS) $(get_handle_CFLAGS) $(CFLAGS) -MT get_handle-test_get_handle.o -MD -MP -MF $(DEPDIR)/get_handle-test_get_handle.Tpo -c -o get_handle-test_get_handle.o `test -f 'test_get_handle.c' || echo '$(srcdir)/'`test_get_handle.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/get_handle-test_get_handle.Tpo $(DEPDIR)/get_handle-test_get_handle.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_get_handle.c' object='get_handle-test_get_handle.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_CPPFLAGS) $(CPPFLAGS) $(get_handle_CFLAGS) $(CFLAGS) -c -o get_handle-test_get_handle.o `test -f 'test_get_handle.c' || echo '$(srcdir)/'`test_get_handle.c
-
-get_handle-test_get_handle.obj: test_get_handle.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_CPPFLAGS) $(CPPFLAGS) $(get_handle_CFLAGS) $(CFLAGS) -MT get_handle-test_get_handle.obj -MD -MP -MF $(DEPDIR)/get_handle-test_get_handle.Tpo -c -o get_handle-test_get_handle.obj `if test -f 'test_get_handle.c'; then $(CYGPATH_W) 'test_get_handle.c'; else $(CYGPATH_W) '$(srcdir)/test_get_handle.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/get_handle-test_get_handle.Tpo $(DEPDIR)/get_handle-test_get_handle.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_get_handle.c' object='get_handle-test_get_handle.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_CPPFLAGS) $(CPPFLAGS) $(get_handle_CFLAGS) $(CFLAGS) -c -o get_handle-test_get_handle.obj `if test -f 'test_get_handle.c'; then $(CYGPATH_W) 'test_get_handle.c'; else $(CYGPATH_W) '$(srcdir)/test_get_handle.c'; fi`
-
 get_handle-omxil_utils.o: $(COMMON_DIR)/omxil_utils.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_CPPFLAGS) $(CPPFLAGS) $(get_handle_CFLAGS) $(CFLAGS) -MT get_handle-omxil_utils.o -MD -MP -MF $(DEPDIR)/get_handle-omxil_utils.Tpo -c -o get_handle-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/get_handle-omxil_utils.Tpo $(DEPDIR)/get_handle-omxil_utils.Po
@@ -598,20 +603,6 @@ init_deinit_multi-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(init_deinit_multi_CPPFLAGS) $(CPPFLAGS) $(init_deinit_multi_CFLAGS) $(CFLAGS) -c -o init_deinit_multi-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
 
-send_command-test_send_command.o: test_send_command.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CFLAGS) $(CFLAGS) -MT send_command-test_send_command.o -MD -MP -MF $(DEPDIR)/send_command-test_send_command.Tpo -c -o send_command-test_send_command.o `test -f 'test_send_command.c' || echo '$(srcdir)/'`test_send_command.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/send_command-test_send_command.Tpo $(DEPDIR)/send_command-test_send_command.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_send_command.c' object='send_command-test_send_command.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CFLAGS) $(CFLAGS) -c -o send_command-test_send_command.o `test -f 'test_send_command.c' || echo '$(srcdir)/'`test_send_command.c
-
-send_command-test_send_command.obj: test_send_command.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CFLAGS) $(CFLAGS) -MT send_command-test_send_command.obj -MD -MP -MF $(DEPDIR)/send_command-test_send_command.Tpo -c -o send_command-test_send_command.obj `if test -f 'test_send_command.c'; then $(CYGPATH_W) 'test_send_command.c'; else $(CYGPATH_W) '$(srcdir)/test_send_command.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/send_command-test_send_command.Tpo $(DEPDIR)/send_command-test_send_command.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test_send_command.c' object='send_command-test_send_command.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CFLAGS) $(CFLAGS) -c -o send_command-test_send_command.obj `if test -f 'test_send_command.c'; then $(CYGPATH_W) 'test_send_command.c'; else $(CYGPATH_W) '$(srcdir)/test_send_command.c'; fi`
-
 send_command-omxil_utils.o: $(COMMON_DIR)/omxil_utils.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CFLAGS) $(CFLAGS) -MT send_command-omxil_utils.o -MD -MP -MF $(DEPDIR)/send_command-omxil_utils.Tpo -c -o send_command-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/send_command-omxil_utils.Tpo $(DEPDIR)/send_command-omxil_utils.Po
@@ -625,6 +616,55 @@ send_command-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(COMMON_DIR)/omxil_utils.c' object='send_command-omxil_utils.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CFLAGS) $(CFLAGS) -c -o send_command-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
+
+.cpp.o:
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
+
+.cpp.obj:
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cpp.lo:
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+get_handle-test_get_handle.o: test_get_handle.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_CPPFLAGS) $(CPPFLAGS) $(get_handle_CXXFLAGS) $(CXXFLAGS) -MT get_handle-test_get_handle.o -MD -MP -MF $(DEPDIR)/get_handle-test_get_handle.Tpo -c -o get_handle-test_get_handle.o `test -f 'test_get_handle.cpp' || echo '$(srcdir)/'`test_get_handle.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/get_handle-test_get_handle.Tpo $(DEPDIR)/get_handle-test_get_handle.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_get_handle.cpp' object='get_handle-test_get_handle.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_CPPFLAGS) $(CPPFLAGS) $(get_handle_CXXFLAGS) $(CXXFLAGS) -c -o get_handle-test_get_handle.o `test -f 'test_get_handle.cpp' || echo '$(srcdir)/'`test_get_handle.cpp
+
+get_handle-test_get_handle.obj: test_get_handle.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_CPPFLAGS) $(CPPFLAGS) $(get_handle_CXXFLAGS) $(CXXFLAGS) -MT get_handle-test_get_handle.obj -MD -MP -MF $(DEPDIR)/get_handle-test_get_handle.Tpo -c -o get_handle-test_get_handle.obj `if test -f 'test_get_handle.cpp'; then $(CYGPATH_W) 'test_get_handle.cpp'; else $(CYGPATH_W) '$(srcdir)/test_get_handle.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/get_handle-test_get_handle.Tpo $(DEPDIR)/get_handle-test_get_handle.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_get_handle.cpp' object='get_handle-test_get_handle.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_handle_CPPFLAGS) $(CPPFLAGS) $(get_handle_CXXFLAGS) $(CXXFLAGS) -c -o get_handle-test_get_handle.obj `if test -f 'test_get_handle.cpp'; then $(CYGPATH_W) 'test_get_handle.cpp'; else $(CYGPATH_W) '$(srcdir)/test_get_handle.cpp'; fi`
+
+send_command-test_send_command.o: test_send_command.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CXXFLAGS) $(CXXFLAGS) -MT send_command-test_send_command.o -MD -MP -MF $(DEPDIR)/send_command-test_send_command.Tpo -c -o send_command-test_send_command.o `test -f 'test_send_command.cpp' || echo '$(srcdir)/'`test_send_command.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/send_command-test_send_command.Tpo $(DEPDIR)/send_command-test_send_command.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_send_command.cpp' object='send_command-test_send_command.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CXXFLAGS) $(CXXFLAGS) -c -o send_command-test_send_command.o `test -f 'test_send_command.cpp' || echo '$(srcdir)/'`test_send_command.cpp
+
+send_command-test_send_command.obj: test_send_command.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CXXFLAGS) $(CXXFLAGS) -MT send_command-test_send_command.obj -MD -MP -MF $(DEPDIR)/send_command-test_send_command.Tpo -c -o send_command-test_send_command.obj `if test -f 'test_send_command.cpp'; then $(CYGPATH_W) 'test_send_command.cpp'; else $(CYGPATH_W) '$(srcdir)/test_send_command.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/send_command-test_send_command.Tpo $(DEPDIR)/send_command-test_send_command.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test_send_command.cpp' object='send_command-test_send_command.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CXXFLAGS) $(CXXFLAGS) -c -o send_command-test_send_command.obj `if test -f 'test_send_command.cpp'; then $(CYGPATH_W) 'test_send_command.cpp'; else $(CYGPATH_W) '$(srcdir)/test_send_command.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
