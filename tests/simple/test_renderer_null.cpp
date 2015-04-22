@@ -5,8 +5,11 @@
 #include <OMX_Core.h>
 #include <OMX_Component.h>
 
-#include "common/test_omxil.h"
 #include "common/omxil_comp.hpp"
+
+extern "C" {
+#include "common/test_omxil.h"
+}
 
 int main(int argc, char *argv[])
 {
@@ -50,9 +53,10 @@ int main(int argc, char *argv[])
 		goto err_out3;
 	}
 
-	for (;;) {
-	}
 
+
+	//free
+	free(buffer);
 	delete comp;
 
 	result = OMX_Deinit();
