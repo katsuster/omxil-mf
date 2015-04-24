@@ -78,8 +78,14 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(OMX_OUT OMX_HANDLETYPE* pHandle
 		goto err_out;
 	}
 
-	//create component
+	//Create base component
 	omx_comp = new OMX_COMPONENTTYPE;
+
+	//Create derived component.
+	//Call original constructor of extend libraries
+	//instead of 'new comp'.
+	//It is because we need not know the class type of 
+	//derived component.
 	ptr = rinfo->comp_info->constructor(omx_comp, cComponentName);
 	if (ptr == nullptr) {
 		errprint("Failed to create component '%s'.\n", cComponentName);
@@ -111,11 +117,13 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_FreeHandle(OMX_IN OMX_HANDLETYPE hCompone
 	}
 	omx_comp = (OMX_COMPONENTTYPE *)hComponent;
 
-	//delete component
+	//Delete derived component
 	if (omx_comp->pComponentPrivate != nullptr) {
 		mf::component *comp = mf::component::get_instance(hComponent);
 		comp->ComponentDeInit(hComponent);
 
+		//Call original destructor of extend libraries 
+		//instead of 'delete comp'.
 		rinfo = rc->find(comp->get_component_name().c_str());
 		if (rinfo == nullptr) {
 			//not found
@@ -126,6 +134,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_FreeHandle(OMX_IN OMX_HANDLETYPE hCompone
 	}
 
 err_out:
+	//Delete base component
 	delete(omx_comp);
 
 	return OMX_ErrorNone;
