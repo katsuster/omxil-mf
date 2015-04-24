@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 	result = comp->GetComponentVersion((OMX_STRING)arg_comp, 
 		&ver_comp, &ver_spec, &uuid_comp);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "GetComponentVersion failed.\n");
+		fprintf(stderr, "OMX_GetComponentVersion failed.\n");
 		goto err_out3;
 	}
 	printf("OMX_GetComponentVersion: name:%s\n"
