@@ -20,6 +20,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponent(const char *name, co
 	res = rc->insert(name, comp_info);
 	if (!res) {
 		//Component has already existed
+		delete comp_info;
 		return OMX_ErrorInvalidComponentName;
 	}
 
@@ -43,10 +44,15 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponentAlias(const char *nam
 		return OMX_ErrorInvalidComponentName;
 	}
 
-	comp_info = rinfo->comp_info;
+	//Copy component info.
+	//Reason: OMX_FreeHandle() call 'delete' for all key.
+	//        If we use shallow copy of component_info, 
+	//        OMX_FreeHandle() faces double-free and SEGV.
+	comp_info = new OMX_MF_COMPONENT_INFO(*rinfo->comp_info);
 	res = rc->insert(alias, comp_info);
 	if (!res) {
 		//Alias has already existed
+		delete comp_info;
 		return OMX_ErrorInvalidComponentName;
 	}
 
