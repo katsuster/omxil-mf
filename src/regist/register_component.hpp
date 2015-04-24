@@ -80,6 +80,12 @@ public:
 	 */
 	virtual void clear();
 
+	/**
+	 * Print all components.
+	 * (for debug)
+	 */
+	virtual void dump();
+
 protected:
 	virtual void load_components(void);
 	virtual void unload_components(void);

@@ -125,6 +125,29 @@ void register_component::clear()
 	map_comp_name.clear();
 }
 
+void register_component::dump()
+{
+	std::lock_guard<std::recursive_mutex> lock(mut_map);
+
+	for (auto& it: map_comp_name) {
+		const register_info *reginfo = it.second;
+		const OMX_MF_COMPONENT_INFO *comp_info = reginfo->comp_info;
+
+		dprint("name      :%s\n"
+			"reginfo  :%p\n"
+			"  comp_info:%p\n"
+			"    version    :0x%8x\n" 
+			"    constructor:%p\n" 
+			"    destructor :%p\n", 
+			it.first.c_str(), 
+			reginfo, 
+			comp_info, 
+			(int)comp_info->version.nVersion, 
+			comp_info->constructor, 
+			comp_info->destructor);
+	}
+}
+
 
 //----------------------------------------
 //protected methods

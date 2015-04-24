@@ -23,6 +23,9 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponent(const char *name, co
 		return OMX_ErrorInvalidComponentName;
 	}
 
+	//dump all registered components
+	rc->dump();
+
 	return OMX_ErrorNone;
 }
 
