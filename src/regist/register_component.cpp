@@ -52,6 +52,14 @@ bool register_component::is_init()
 	return f_init;
 }
 
+std::size_t register_component::size() const
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lock(mut_map);
+
+	return map_comp_name.size();
+}
+
 bool register_component::insert(const char *name, const OMX_MF_COMPONENT_INFO *info)
 {
 	scoped_log_begin;
@@ -125,7 +133,7 @@ void register_component::clear()
 	map_comp_name.clear();
 }
 
-void register_component::dump()
+void register_component::dump() const
 {
 	std::lock_guard<std::recursive_mutex> lock(mut_map);
 

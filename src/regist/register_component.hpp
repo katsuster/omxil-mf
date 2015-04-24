@@ -51,6 +51,13 @@ public:
 	virtual bool is_init();
 
 	/**
+	 * Get components in this OMX IL library.
+	 *
+	 * @return counts of components.
+	 */
+	virtual std::size_t size() const;
+
+	/**
 	 * Register new component to this OMX IL library.
 	 *
 	 * @param name  Name of new component.
@@ -84,7 +91,7 @@ public:
 	 * Print all components.
 	 * (for debug)
 	 */
-	virtual void dump();
+	virtual void dump() const;
 
 protected:
 	virtual void load_components(void);
@@ -96,7 +103,7 @@ private:
 
 private:
 	bool f_init;
-	std::recursive_mutex mut_map;
+	mutable std::recursive_mutex mut_map;
 	map_library_type map_lib_name;
 	map_component_type map_comp_name;
 
