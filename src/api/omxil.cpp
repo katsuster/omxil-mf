@@ -46,14 +46,23 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_Deinit(void)
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_ComponentNameEnum(OMX_OUT OMX_STRING cComponentName, OMX_IN OMX_U32 nNameLength, OMX_IN OMX_U32 nIndex)
 {
 	scoped_log_begin;
-	OMX_U32 num_max = 0;
+	mf::register_component *rc = mf::register_component::get_instance();
+	mf::register_info *rinfo = nullptr;
 
-	if (nIndex > num_max) {
+	if (nIndex >= rc->size()) {
 		return OMX_ErrorNoMore;
 	}
 
-	return OMX_ErrorNotImplemented;
-	//return OMX_ErrorNone;
+	rinfo = rc->find_index(nIndex);
+	if (rinfo == nullptr) {
+		errprint("Invalid index %d.\n", (int)nIndex);
+		return OMX_ErrorBadParameter;
+	}
+
+	strncpy(cComponentName, rinfo->name.c_str(), nNameLength - 1);
+	cComponentName[nNameLength - 1] = '\0';
+
+	return OMX_ErrorNone;
 }
 
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(OMX_OUT OMX_HANDLETYPE* pHandle, OMX_IN OMX_STRING cComponentName, OMX_IN OMX_PTR pAppData, OMX_IN OMX_CALLBACKTYPE* pCallBacks)

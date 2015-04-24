@@ -68,6 +68,7 @@ bool register_component::insert(const char *name, const OMX_MF_COMPONENT_INFO *i
 	register_info *rinfo = new register_info();
 	std::pair<map_component_type::iterator, bool> pairret;
 
+	rinfo->name = strname;
 	rinfo->comp_info = info;
 	pairret = map_comp_name.insert(map_component_pair(strname, rinfo));
 	if (!pairret.second) {
@@ -97,6 +98,30 @@ register_info *register_component::find(const char *name)
 	}
 
 	return it->second;
+}
+
+register_info *register_component::find_index(int index)
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lock(mut_map);
+	int i = 0;
+
+	if (i < 0 || (std::size_t)i >= map_comp_name.size()) {
+		return nullptr;
+	}
+
+	for (auto& it: map_comp_name) {
+		if (i == index) {
+			return it.second;
+		}
+		i++;
+	}
+
+	//not found
+	errprint("Component index:%d not found.\n", 
+		index);
+
+	return nullptr;
 }
 
 bool register_component::erase(const char *name)

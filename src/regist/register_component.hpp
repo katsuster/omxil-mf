@@ -14,6 +14,7 @@
 namespace mf {
 
 struct register_info {
+	std::string name;
 	const OMX_MF_COMPONENT_INFO *comp_info;
 };
 
@@ -73,6 +74,14 @@ public:
 	 * @return Registration info of component.
 	 */
 	virtual register_info *find(const char *name);
+
+	/**
+	 * Find the registered component by index.
+	 *
+	 * @param index  Index of component.
+	 * @return Registration info of component.
+	 */
+	virtual register_info *find_index(int index);
 
 	/**
 	 * Unregister the component from this OMX IL library.
