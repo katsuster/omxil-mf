@@ -136,7 +136,7 @@ void register_component::dump()
 		dprint("name      :%s\n"
 			"reginfo  :%p\n"
 			"  comp_info:%p\n"
-			"    version    :0x%8x\n" 
+			"    version    :0x%08x\n" 
 			"    constructor:%p\n" 
 			"    destructor :%p\n", 
 			it.first.c_str(), 
