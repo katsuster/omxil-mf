@@ -4,7 +4,7 @@ AC_PREREQ(2.61)
 dnl ----------------------------------------
 dnl Information on this package.
 dnl ----------------------------------------
-AC_INIT([omxil-mf-empty], [0.1], [no-define])
+AC_INIT([omxil-mf-empty], [0.1])
 
 AC_ARG_PROGRAM()
 
@@ -13,7 +13,7 @@ AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([foreign])
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 LT_INIT()
 
 dnl ----------------------------------------
