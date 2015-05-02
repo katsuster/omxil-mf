@@ -98,8 +98,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__dirstamp = $(am__leading_dot)dirstamp
-am__objects_1 = $(COMMON_DIR)/renderer_null-omxil_utils.$(OBJEXT)
+am__objects_1 = renderer_null-omxil_utils.$(OBJEXT)
 am_renderer_null_OBJECTS = renderer_null-test_renderer_null.$(OBJEXT) \
 	$(am__objects_1)
 renderer_null_OBJECTS = $(am_renderer_null_OBJECTS)
@@ -573,15 +572,6 @@ clean-checkPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
-$(COMMON_DIR)/$(am__dirstamp):
-	@$(MKDIR_P) $(COMMON_DIR)
-	@: > $(COMMON_DIR)/$(am__dirstamp)
-$(COMMON_DIR)/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) $(COMMON_DIR)/$(DEPDIR)
-	@: > $(COMMON_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(COMMON_DIR)/renderer_null-omxil_utils.$(OBJEXT):  \
-	$(COMMON_DIR)/$(am__dirstamp) \
-	$(COMMON_DIR)/$(DEPDIR)/$(am__dirstamp)
 
 renderer_null$(EXEEXT): $(renderer_null_OBJECTS) $(renderer_null_DEPENDENCIES) $(EXTRA_renderer_null_DEPENDENCIES) 
 	@rm -f renderer_null$(EXEEXT)
@@ -589,72 +579,65 @@ renderer_null$(EXEEXT): $(renderer_null_OBJECTS) $(renderer_null_DEPENDENCIES) $
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
-	-rm -f $(COMMON_DIR)/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@$(COMMON_DIR)/$(DEPDIR)/renderer_null-omxil_utils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/renderer_null-omxil_utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/renderer_null-test_renderer_null.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-$(COMMON_DIR)/renderer_null-omxil_utils.o: $(COMMON_DIR)/omxil_utils.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CFLAGS) $(CFLAGS) -MT $(COMMON_DIR)/renderer_null-omxil_utils.o -MD -MP -MF $(COMMON_DIR)/$(DEPDIR)/renderer_null-omxil_utils.Tpo -c -o $(COMMON_DIR)/renderer_null-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(COMMON_DIR)/$(DEPDIR)/renderer_null-omxil_utils.Tpo $(COMMON_DIR)/$(DEPDIR)/renderer_null-omxil_utils.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(COMMON_DIR)/omxil_utils.c' object='$(COMMON_DIR)/renderer_null-omxil_utils.o' libtool=no @AMDEPBACKSLASH@
+renderer_null-omxil_utils.o: $(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CFLAGS) $(CFLAGS) -MT renderer_null-omxil_utils.o -MD -MP -MF $(DEPDIR)/renderer_null-omxil_utils.Tpo -c -o renderer_null-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/renderer_null-omxil_utils.Tpo $(DEPDIR)/renderer_null-omxil_utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(COMMON_DIR)/omxil_utils.c' object='renderer_null-omxil_utils.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CFLAGS) $(CFLAGS) -c -o $(COMMON_DIR)/renderer_null-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CFLAGS) $(CFLAGS) -c -o renderer_null-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
 
-$(COMMON_DIR)/renderer_null-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CFLAGS) $(CFLAGS) -MT $(COMMON_DIR)/renderer_null-omxil_utils.obj -MD -MP -MF $(COMMON_DIR)/$(DEPDIR)/renderer_null-omxil_utils.Tpo -c -o $(COMMON_DIR)/renderer_null-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(COMMON_DIR)/$(DEPDIR)/renderer_null-omxil_utils.Tpo $(COMMON_DIR)/$(DEPDIR)/renderer_null-omxil_utils.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(COMMON_DIR)/omxil_utils.c' object='$(COMMON_DIR)/renderer_null-omxil_utils.obj' libtool=no @AMDEPBACKSLASH@
+renderer_null-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CFLAGS) $(CFLAGS) -MT renderer_null-omxil_utils.obj -MD -MP -MF $(DEPDIR)/renderer_null-omxil_utils.Tpo -c -o renderer_null-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/renderer_null-omxil_utils.Tpo $(DEPDIR)/renderer_null-omxil_utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(COMMON_DIR)/omxil_utils.c' object='renderer_null-omxil_utils.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CFLAGS) $(CFLAGS) -c -o $(COMMON_DIR)/renderer_null-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CFLAGS) $(CFLAGS) -c -o renderer_null-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
@@ -959,8 +942,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-test -z "$(COMMON_DIR)/$(DEPDIR)/$(am__dirstamp)" || rm -f $(COMMON_DIR)/$(DEPDIR)/$(am__dirstamp)
-	-test -z "$(COMMON_DIR)/$(am__dirstamp)" || rm -f $(COMMON_DIR)/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -971,7 +952,7 @@ clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf $(COMMON_DIR)/$(DEPDIR) ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1017,7 +998,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf $(COMMON_DIR)/$(DEPDIR) ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

@@ -119,20 +119,16 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(omxil_mfdir)"
 LTLIBRARIES = $(omxil_mf_LTLIBRARIES)
 libomxil_mf_la_DEPENDENCIES =
-am__dirstamp = $(am__leading_dot)dirstamp
-am_libomxil_mf_la_OBJECTS = $(API_DIR)/libomxil_mf_la-omxil.lo \
-	$(API_DIR)/libomxil_mf_la-omxil_mf.lo \
-	$(UTIL_DIR)/libomxil_mf_la-util.lo \
-	$(UTIL_DIR)/libomxil_mf_la-omx_types_enum_name.lo \
-	$(UTIL_DIR)/libomxil_mf_la-omx_index_enum_name.lo \
-	$(UTIL_DIR)/libomxil_mf_la-omx_core_enum_name.lo \
-	$(UTIL_DIR)/libomxil_mf_la-omx_component_enum_name.lo \
-	$(UTIL_DIR)/libomxil_mf_la-omx_video_enum_name.lo \
-	$(COMPONENT_DIR)/libomxil_mf_la-omx_reflector.lo \
-	$(COMPONENT_DIR)/libomxil_mf_la-component.lo \
-	$(COMPONENT_DIR)/libomxil_mf_la-port.lo \
-	$(REGIST_DIR)/libomxil_mf_la-register_component.lo \
-	$(DEBUG_DIR)/libomxil_mf_la-dbgprint.lo
+am_libomxil_mf_la_OBJECTS = libomxil_mf_la-omxil.lo \
+	libomxil_mf_la-omxil_mf.lo libomxil_mf_la-util.lo \
+	libomxil_mf_la-omx_types_enum_name.lo \
+	libomxil_mf_la-omx_index_enum_name.lo \
+	libomxil_mf_la-omx_core_enum_name.lo \
+	libomxil_mf_la-omx_component_enum_name.lo \
+	libomxil_mf_la-omx_video_enum_name.lo \
+	libomxil_mf_la-omx_reflector.lo libomxil_mf_la-component.lo \
+	libomxil_mf_la-port.lo libomxil_mf_la-register_component.lo \
+	libomxil_mf_la-dbgprint.lo
 libomxil_mf_la_OBJECTS = $(am_libomxil_mf_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -460,253 +456,167 @@ clean-omxil_mfLTLIBRARIES:
 	  echo rm -f $${locs}; \
 	  rm -f $${locs}; \
 	}
-$(API_DIR)/$(am__dirstamp):
-	@$(MKDIR_P) $(API_DIR)
-	@: > $(API_DIR)/$(am__dirstamp)
-$(API_DIR)/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) $(API_DIR)/$(DEPDIR)
-	@: > $(API_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(API_DIR)/libomxil_mf_la-omxil.lo: $(API_DIR)/$(am__dirstamp) \
-	$(API_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(API_DIR)/libomxil_mf_la-omxil_mf.lo: $(API_DIR)/$(am__dirstamp) \
-	$(API_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(UTIL_DIR)/$(am__dirstamp):
-	@$(MKDIR_P) $(UTIL_DIR)
-	@: > $(UTIL_DIR)/$(am__dirstamp)
-$(UTIL_DIR)/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) $(UTIL_DIR)/$(DEPDIR)
-	@: > $(UTIL_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(UTIL_DIR)/libomxil_mf_la-util.lo: $(UTIL_DIR)/$(am__dirstamp) \
-	$(UTIL_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(UTIL_DIR)/libomxil_mf_la-omx_types_enum_name.lo:  \
-	$(UTIL_DIR)/$(am__dirstamp) \
-	$(UTIL_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(UTIL_DIR)/libomxil_mf_la-omx_index_enum_name.lo:  \
-	$(UTIL_DIR)/$(am__dirstamp) \
-	$(UTIL_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(UTIL_DIR)/libomxil_mf_la-omx_core_enum_name.lo:  \
-	$(UTIL_DIR)/$(am__dirstamp) \
-	$(UTIL_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(UTIL_DIR)/libomxil_mf_la-omx_component_enum_name.lo:  \
-	$(UTIL_DIR)/$(am__dirstamp) \
-	$(UTIL_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(UTIL_DIR)/libomxil_mf_la-omx_video_enum_name.lo:  \
-	$(UTIL_DIR)/$(am__dirstamp) \
-	$(UTIL_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(COMPONENT_DIR)/$(am__dirstamp):
-	@$(MKDIR_P) $(COMPONENT_DIR)
-	@: > $(COMPONENT_DIR)/$(am__dirstamp)
-$(COMPONENT_DIR)/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) $(COMPONENT_DIR)/$(DEPDIR)
-	@: > $(COMPONENT_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(COMPONENT_DIR)/libomxil_mf_la-omx_reflector.lo:  \
-	$(COMPONENT_DIR)/$(am__dirstamp) \
-	$(COMPONENT_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(COMPONENT_DIR)/libomxil_mf_la-component.lo:  \
-	$(COMPONENT_DIR)/$(am__dirstamp) \
-	$(COMPONENT_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(COMPONENT_DIR)/libomxil_mf_la-port.lo:  \
-	$(COMPONENT_DIR)/$(am__dirstamp) \
-	$(COMPONENT_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(REGIST_DIR)/$(am__dirstamp):
-	@$(MKDIR_P) $(REGIST_DIR)
-	@: > $(REGIST_DIR)/$(am__dirstamp)
-$(REGIST_DIR)/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) $(REGIST_DIR)/$(DEPDIR)
-	@: > $(REGIST_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(REGIST_DIR)/libomxil_mf_la-register_component.lo:  \
-	$(REGIST_DIR)/$(am__dirstamp) \
-	$(REGIST_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(DEBUG_DIR)/$(am__dirstamp):
-	@$(MKDIR_P) $(DEBUG_DIR)
-	@: > $(DEBUG_DIR)/$(am__dirstamp)
-$(DEBUG_DIR)/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) $(DEBUG_DIR)/$(DEPDIR)
-	@: > $(DEBUG_DIR)/$(DEPDIR)/$(am__dirstamp)
-$(DEBUG_DIR)/libomxil_mf_la-dbgprint.lo: $(DEBUG_DIR)/$(am__dirstamp) \
-	$(DEBUG_DIR)/$(DEPDIR)/$(am__dirstamp)
 
 libomxil-mf.la: $(libomxil_mf_la_OBJECTS) $(libomxil_mf_la_DEPENDENCIES) $(EXTRA_libomxil_mf_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(libomxil_mf_la_LINK) -rpath $(omxil_mfdir) $(libomxil_mf_la_OBJECTS) $(libomxil_mf_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
-	-rm -f $(API_DIR)/*.$(OBJEXT)
-	-rm -f $(API_DIR)/*.lo
-	-rm -f $(COMPONENT_DIR)/*.$(OBJEXT)
-	-rm -f $(COMPONENT_DIR)/*.lo
-	-rm -f $(DEBUG_DIR)/*.$(OBJEXT)
-	-rm -f $(DEBUG_DIR)/*.lo
-	-rm -f $(REGIST_DIR)/*.$(OBJEXT)
-	-rm -f $(REGIST_DIR)/*.lo
-	-rm -f $(UTIL_DIR)/*.$(OBJEXT)
-	-rm -f $(UTIL_DIR)/*.lo
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@$(API_DIR)/$(DEPDIR)/libomxil_mf_la-omxil.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(API_DIR)/$(DEPDIR)/libomxil_mf_la-omxil_mf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(COMPONENT_DIR)/$(DEPDIR)/libomxil_mf_la-component.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(COMPONENT_DIR)/$(DEPDIR)/libomxil_mf_la-omx_reflector.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(COMPONENT_DIR)/$(DEPDIR)/libomxil_mf_la-port.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(DEBUG_DIR)/$(DEPDIR)/libomxil_mf_la-dbgprint.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(REGIST_DIR)/$(DEPDIR)/libomxil_mf_la-register_component.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_component_enum_name.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_core_enum_name.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_index_enum_name.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_types_enum_name.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-util.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-component.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-dbgprint.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_component_enum_name.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_core_enum_name.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_index_enum_name.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_reflector.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_types_enum_name.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omxil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omxil_mf.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-port.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-register_component.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-util.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-$(DEBUG_DIR)/libomxil_mf_la-dbgprint.lo: $(DEBUG_DIR)/dbgprint.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CFLAGS) $(CFLAGS) -MT $(DEBUG_DIR)/libomxil_mf_la-dbgprint.lo -MD -MP -MF $(DEBUG_DIR)/$(DEPDIR)/libomxil_mf_la-dbgprint.Tpo -c -o $(DEBUG_DIR)/libomxil_mf_la-dbgprint.lo `test -f '$(DEBUG_DIR)/dbgprint.c' || echo '$(srcdir)/'`$(DEBUG_DIR)/dbgprint.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEBUG_DIR)/$(DEPDIR)/libomxil_mf_la-dbgprint.Tpo $(DEBUG_DIR)/$(DEPDIR)/libomxil_mf_la-dbgprint.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DEBUG_DIR)/dbgprint.c' object='$(DEBUG_DIR)/libomxil_mf_la-dbgprint.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-dbgprint.lo: $(DEBUG_DIR)/dbgprint.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CFLAGS) $(CFLAGS) -MT libomxil_mf_la-dbgprint.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-dbgprint.Tpo -c -o libomxil_mf_la-dbgprint.lo `test -f '$(DEBUG_DIR)/dbgprint.c' || echo '$(srcdir)/'`$(DEBUG_DIR)/dbgprint.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-dbgprint.Tpo $(DEPDIR)/libomxil_mf_la-dbgprint.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(DEBUG_DIR)/dbgprint.c' object='libomxil_mf_la-dbgprint.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CFLAGS) $(CFLAGS) -c -o $(DEBUG_DIR)/libomxil_mf_la-dbgprint.lo `test -f '$(DEBUG_DIR)/dbgprint.c' || echo '$(srcdir)/'`$(DEBUG_DIR)/dbgprint.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CFLAGS) $(CFLAGS) -c -o libomxil_mf_la-dbgprint.lo `test -f '$(DEBUG_DIR)/dbgprint.c' || echo '$(srcdir)/'`$(DEBUG_DIR)/dbgprint.c
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
-$(API_DIR)/libomxil_mf_la-omxil.lo: $(API_DIR)/omxil.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT $(API_DIR)/libomxil_mf_la-omxil.lo -MD -MP -MF $(API_DIR)/$(DEPDIR)/libomxil_mf_la-omxil.Tpo -c -o $(API_DIR)/libomxil_mf_la-omxil.lo `test -f '$(API_DIR)/omxil.cpp' || echo '$(srcdir)/'`$(API_DIR)/omxil.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(API_DIR)/$(DEPDIR)/libomxil_mf_la-omxil.Tpo $(API_DIR)/$(DEPDIR)/libomxil_mf_la-omxil.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(API_DIR)/omxil.cpp' object='$(API_DIR)/libomxil_mf_la-omxil.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-omxil.lo: $(API_DIR)/omxil.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-omxil.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-omxil.Tpo -c -o libomxil_mf_la-omxil.lo `test -f '$(API_DIR)/omxil.cpp' || echo '$(srcdir)/'`$(API_DIR)/omxil.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-omxil.Tpo $(DEPDIR)/libomxil_mf_la-omxil.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(API_DIR)/omxil.cpp' object='libomxil_mf_la-omxil.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o $(API_DIR)/libomxil_mf_la-omxil.lo `test -f '$(API_DIR)/omxil.cpp' || echo '$(srcdir)/'`$(API_DIR)/omxil.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omxil.lo `test -f '$(API_DIR)/omxil.cpp' || echo '$(srcdir)/'`$(API_DIR)/omxil.cpp
 
-$(API_DIR)/libomxil_mf_la-omxil_mf.lo: $(API_DIR)/omxil_mf.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT $(API_DIR)/libomxil_mf_la-omxil_mf.lo -MD -MP -MF $(API_DIR)/$(DEPDIR)/libomxil_mf_la-omxil_mf.Tpo -c -o $(API_DIR)/libomxil_mf_la-omxil_mf.lo `test -f '$(API_DIR)/omxil_mf.cpp' || echo '$(srcdir)/'`$(API_DIR)/omxil_mf.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(API_DIR)/$(DEPDIR)/libomxil_mf_la-omxil_mf.Tpo $(API_DIR)/$(DEPDIR)/libomxil_mf_la-omxil_mf.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(API_DIR)/omxil_mf.cpp' object='$(API_DIR)/libomxil_mf_la-omxil_mf.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-omxil_mf.lo: $(API_DIR)/omxil_mf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-omxil_mf.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-omxil_mf.Tpo -c -o libomxil_mf_la-omxil_mf.lo `test -f '$(API_DIR)/omxil_mf.cpp' || echo '$(srcdir)/'`$(API_DIR)/omxil_mf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-omxil_mf.Tpo $(DEPDIR)/libomxil_mf_la-omxil_mf.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(API_DIR)/omxil_mf.cpp' object='libomxil_mf_la-omxil_mf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o $(API_DIR)/libomxil_mf_la-omxil_mf.lo `test -f '$(API_DIR)/omxil_mf.cpp' || echo '$(srcdir)/'`$(API_DIR)/omxil_mf.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omxil_mf.lo `test -f '$(API_DIR)/omxil_mf.cpp' || echo '$(srcdir)/'`$(API_DIR)/omxil_mf.cpp
 
-$(UTIL_DIR)/libomxil_mf_la-util.lo: $(UTIL_DIR)/util.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT $(UTIL_DIR)/libomxil_mf_la-util.lo -MD -MP -MF $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-util.Tpo -c -o $(UTIL_DIR)/libomxil_mf_la-util.lo `test -f '$(UTIL_DIR)/util.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/util.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-util.Tpo $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-util.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(UTIL_DIR)/util.cpp' object='$(UTIL_DIR)/libomxil_mf_la-util.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-util.lo: $(UTIL_DIR)/util.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-util.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-util.Tpo -c -o libomxil_mf_la-util.lo `test -f '$(UTIL_DIR)/util.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/util.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-util.Tpo $(DEPDIR)/libomxil_mf_la-util.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(UTIL_DIR)/util.cpp' object='libomxil_mf_la-util.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o $(UTIL_DIR)/libomxil_mf_la-util.lo `test -f '$(UTIL_DIR)/util.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/util.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-util.lo `test -f '$(UTIL_DIR)/util.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/util.cpp
 
-$(UTIL_DIR)/libomxil_mf_la-omx_types_enum_name.lo: $(UTIL_DIR)/omx_types_enum_name.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT $(UTIL_DIR)/libomxil_mf_la-omx_types_enum_name.lo -MD -MP -MF $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_types_enum_name.Tpo -c -o $(UTIL_DIR)/libomxil_mf_la-omx_types_enum_name.lo `test -f '$(UTIL_DIR)/omx_types_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_types_enum_name.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_types_enum_name.Tpo $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_types_enum_name.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(UTIL_DIR)/omx_types_enum_name.cpp' object='$(UTIL_DIR)/libomxil_mf_la-omx_types_enum_name.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-omx_types_enum_name.lo: $(UTIL_DIR)/omx_types_enum_name.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-omx_types_enum_name.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-omx_types_enum_name.Tpo -c -o libomxil_mf_la-omx_types_enum_name.lo `test -f '$(UTIL_DIR)/omx_types_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_types_enum_name.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-omx_types_enum_name.Tpo $(DEPDIR)/libomxil_mf_la-omx_types_enum_name.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(UTIL_DIR)/omx_types_enum_name.cpp' object='libomxil_mf_la-omx_types_enum_name.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o $(UTIL_DIR)/libomxil_mf_la-omx_types_enum_name.lo `test -f '$(UTIL_DIR)/omx_types_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_types_enum_name.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omx_types_enum_name.lo `test -f '$(UTIL_DIR)/omx_types_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_types_enum_name.cpp
 
-$(UTIL_DIR)/libomxil_mf_la-omx_index_enum_name.lo: $(UTIL_DIR)/omx_index_enum_name.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT $(UTIL_DIR)/libomxil_mf_la-omx_index_enum_name.lo -MD -MP -MF $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_index_enum_name.Tpo -c -o $(UTIL_DIR)/libomxil_mf_la-omx_index_enum_name.lo `test -f '$(UTIL_DIR)/omx_index_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_index_enum_name.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_index_enum_name.Tpo $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_index_enum_name.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(UTIL_DIR)/omx_index_enum_name.cpp' object='$(UTIL_DIR)/libomxil_mf_la-omx_index_enum_name.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-omx_index_enum_name.lo: $(UTIL_DIR)/omx_index_enum_name.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-omx_index_enum_name.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-omx_index_enum_name.Tpo -c -o libomxil_mf_la-omx_index_enum_name.lo `test -f '$(UTIL_DIR)/omx_index_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_index_enum_name.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-omx_index_enum_name.Tpo $(DEPDIR)/libomxil_mf_la-omx_index_enum_name.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(UTIL_DIR)/omx_index_enum_name.cpp' object='libomxil_mf_la-omx_index_enum_name.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o $(UTIL_DIR)/libomxil_mf_la-omx_index_enum_name.lo `test -f '$(UTIL_DIR)/omx_index_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_index_enum_name.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omx_index_enum_name.lo `test -f '$(UTIL_DIR)/omx_index_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_index_enum_name.cpp
 
-$(UTIL_DIR)/libomxil_mf_la-omx_core_enum_name.lo: $(UTIL_DIR)/omx_core_enum_name.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT $(UTIL_DIR)/libomxil_mf_la-omx_core_enum_name.lo -MD -MP -MF $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_core_enum_name.Tpo -c -o $(UTIL_DIR)/libomxil_mf_la-omx_core_enum_name.lo `test -f '$(UTIL_DIR)/omx_core_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_core_enum_name.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_core_enum_name.Tpo $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_core_enum_name.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(UTIL_DIR)/omx_core_enum_name.cpp' object='$(UTIL_DIR)/libomxil_mf_la-omx_core_enum_name.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-omx_core_enum_name.lo: $(UTIL_DIR)/omx_core_enum_name.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-omx_core_enum_name.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-omx_core_enum_name.Tpo -c -o libomxil_mf_la-omx_core_enum_name.lo `test -f '$(UTIL_DIR)/omx_core_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_core_enum_name.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-omx_core_enum_name.Tpo $(DEPDIR)/libomxil_mf_la-omx_core_enum_name.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(UTIL_DIR)/omx_core_enum_name.cpp' object='libomxil_mf_la-omx_core_enum_name.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o $(UTIL_DIR)/libomxil_mf_la-omx_core_enum_name.lo `test -f '$(UTIL_DIR)/omx_core_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_core_enum_name.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omx_core_enum_name.lo `test -f '$(UTIL_DIR)/omx_core_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_core_enum_name.cpp
 
-$(UTIL_DIR)/libomxil_mf_la-omx_component_enum_name.lo: $(UTIL_DIR)/omx_component_enum_name.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT $(UTIL_DIR)/libomxil_mf_la-omx_component_enum_name.lo -MD -MP -MF $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_component_enum_name.Tpo -c -o $(UTIL_DIR)/libomxil_mf_la-omx_component_enum_name.lo `test -f '$(UTIL_DIR)/omx_component_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_component_enum_name.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_component_enum_name.Tpo $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_component_enum_name.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(UTIL_DIR)/omx_component_enum_name.cpp' object='$(UTIL_DIR)/libomxil_mf_la-omx_component_enum_name.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-omx_component_enum_name.lo: $(UTIL_DIR)/omx_component_enum_name.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-omx_component_enum_name.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-omx_component_enum_name.Tpo -c -o libomxil_mf_la-omx_component_enum_name.lo `test -f '$(UTIL_DIR)/omx_component_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_component_enum_name.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-omx_component_enum_name.Tpo $(DEPDIR)/libomxil_mf_la-omx_component_enum_name.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(UTIL_DIR)/omx_component_enum_name.cpp' object='libomxil_mf_la-omx_component_enum_name.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o $(UTIL_DIR)/libomxil_mf_la-omx_component_enum_name.lo `test -f '$(UTIL_DIR)/omx_component_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_component_enum_name.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omx_component_enum_name.lo `test -f '$(UTIL_DIR)/omx_component_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_component_enum_name.cpp
 
-$(UTIL_DIR)/libomxil_mf_la-omx_video_enum_name.lo: $(UTIL_DIR)/omx_video_enum_name.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT $(UTIL_DIR)/libomxil_mf_la-omx_video_enum_name.lo -MD -MP -MF $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Tpo -c -o $(UTIL_DIR)/libomxil_mf_la-omx_video_enum_name.lo `test -f '$(UTIL_DIR)/omx_video_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_video_enum_name.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Tpo $(UTIL_DIR)/$(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(UTIL_DIR)/omx_video_enum_name.cpp' object='$(UTIL_DIR)/libomxil_mf_la-omx_video_enum_name.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-omx_video_enum_name.lo: $(UTIL_DIR)/omx_video_enum_name.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-omx_video_enum_name.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Tpo -c -o libomxil_mf_la-omx_video_enum_name.lo `test -f '$(UTIL_DIR)/omx_video_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_video_enum_name.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Tpo $(DEPDIR)/libomxil_mf_la-omx_video_enum_name.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(UTIL_DIR)/omx_video_enum_name.cpp' object='libomxil_mf_la-omx_video_enum_name.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o $(UTIL_DIR)/libomxil_mf_la-omx_video_enum_name.lo `test -f '$(UTIL_DIR)/omx_video_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_video_enum_name.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omx_video_enum_name.lo `test -f '$(UTIL_DIR)/omx_video_enum_name.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/omx_video_enum_name.cpp
 
-$(COMPONENT_DIR)/libomxil_mf_la-omx_reflector.lo: $(COMPONENT_DIR)/omx_reflector.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT $(COMPONENT_DIR)/libomxil_mf_la-omx_reflector.lo -MD -MP -MF $(COMPONENT_DIR)/$(DEPDIR)/libomxil_mf_la-omx_reflector.Tpo -c -o $(COMPONENT_DIR)/libomxil_mf_la-omx_reflector.lo `test -f '$(COMPONENT_DIR)/omx_reflector.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/omx_reflector.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(COMPONENT_DIR)/$(DEPDIR)/libomxil_mf_la-omx_reflector.Tpo $(COMPONENT_DIR)/$(DEPDIR)/libomxil_mf_la-omx_reflector.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMPONENT_DIR)/omx_reflector.cpp' object='$(COMPONENT_DIR)/libomxil_mf_la-omx_reflector.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-omx_reflector.lo: $(COMPONENT_DIR)/omx_reflector.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-omx_reflector.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-omx_reflector.Tpo -c -o libomxil_mf_la-omx_reflector.lo `test -f '$(COMPONENT_DIR)/omx_reflector.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/omx_reflector.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-omx_reflector.Tpo $(DEPDIR)/libomxil_mf_la-omx_reflector.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMPONENT_DIR)/omx_reflector.cpp' object='libomxil_mf_la-omx_reflector.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o $(COMPONENT_DIR)/libomxil_mf_la-omx_reflector.lo `test -f '$(COMPONENT_DIR)/omx_reflector.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/omx_reflector.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omx_reflector.lo `test -f '$(COMPONENT_DIR)/omx_reflector.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/omx_reflector.cpp
 
-$(COMPONENT_DIR)/libomxil_mf_la-component.lo: $(COMPONENT_DIR)/component.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT $(COMPONENT_DIR)/libomxil_mf_la-component.lo -MD -MP -MF $(COMPONENT_DIR)/$(DEPDIR)/libomxil_mf_la-component.Tpo -c -o $(COMPONENT_DIR)/libomxil_mf_la-component.lo `test -f '$(COMPONENT_DIR)/component.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/component.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(COMPONENT_DIR)/$(DEPDIR)/libomxil_mf_la-component.Tpo $(COMPONENT_DIR)/$(DEPDIR)/libomxil_mf_la-component.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMPONENT_DIR)/component.cpp' object='$(COMPONENT_DIR)/libomxil_mf_la-component.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-component.lo: $(COMPONENT_DIR)/component.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-component.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-component.Tpo -c -o libomxil_mf_la-component.lo `test -f '$(COMPONENT_DIR)/component.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/component.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-component.Tpo $(DEPDIR)/libomxil_mf_la-component.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMPONENT_DIR)/component.cpp' object='libomxil_mf_la-component.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o $(COMPONENT_DIR)/libomxil_mf_la-component.lo `test -f '$(COMPONENT_DIR)/component.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/component.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-component.lo `test -f '$(COMPONENT_DIR)/component.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/component.cpp
 
-$(COMPONENT_DIR)/libomxil_mf_la-port.lo: $(COMPONENT_DIR)/port.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT $(COMPONENT_DIR)/libomxil_mf_la-port.lo -MD -MP -MF $(COMPONENT_DIR)/$(DEPDIR)/libomxil_mf_la-port.Tpo -c -o $(COMPONENT_DIR)/libomxil_mf_la-port.lo `test -f '$(COMPONENT_DIR)/port.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/port.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(COMPONENT_DIR)/$(DEPDIR)/libomxil_mf_la-port.Tpo $(COMPONENT_DIR)/$(DEPDIR)/libomxil_mf_la-port.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMPONENT_DIR)/port.cpp' object='$(COMPONENT_DIR)/libomxil_mf_la-port.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-port.lo: $(COMPONENT_DIR)/port.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-port.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-port.Tpo -c -o libomxil_mf_la-port.lo `test -f '$(COMPONENT_DIR)/port.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/port.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-port.Tpo $(DEPDIR)/libomxil_mf_la-port.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMPONENT_DIR)/port.cpp' object='libomxil_mf_la-port.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o $(COMPONENT_DIR)/libomxil_mf_la-port.lo `test -f '$(COMPONENT_DIR)/port.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/port.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-port.lo `test -f '$(COMPONENT_DIR)/port.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/port.cpp
 
-$(REGIST_DIR)/libomxil_mf_la-register_component.lo: $(REGIST_DIR)/register_component.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT $(REGIST_DIR)/libomxil_mf_la-register_component.lo -MD -MP -MF $(REGIST_DIR)/$(DEPDIR)/libomxil_mf_la-register_component.Tpo -c -o $(REGIST_DIR)/libomxil_mf_la-register_component.lo `test -f '$(REGIST_DIR)/register_component.cpp' || echo '$(srcdir)/'`$(REGIST_DIR)/register_component.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(REGIST_DIR)/$(DEPDIR)/libomxil_mf_la-register_component.Tpo $(REGIST_DIR)/$(DEPDIR)/libomxil_mf_la-register_component.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(REGIST_DIR)/register_component.cpp' object='$(REGIST_DIR)/libomxil_mf_la-register_component.lo' libtool=yes @AMDEPBACKSLASH@
+libomxil_mf_la-register_component.lo: $(REGIST_DIR)/register_component.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-register_component.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-register_component.Tpo -c -o libomxil_mf_la-register_component.lo `test -f '$(REGIST_DIR)/register_component.cpp' || echo '$(srcdir)/'`$(REGIST_DIR)/register_component.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-register_component.Tpo $(DEPDIR)/libomxil_mf_la-register_component.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(REGIST_DIR)/register_component.cpp' object='libomxil_mf_la-register_component.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o $(REGIST_DIR)/libomxil_mf_la-register_component.lo `test -f '$(REGIST_DIR)/register_component.cpp' || echo '$(srcdir)/'`$(REGIST_DIR)/register_component.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-register_component.lo `test -f '$(REGIST_DIR)/register_component.cpp' || echo '$(srcdir)/'`$(REGIST_DIR)/register_component.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
-	-rm -rf $(API_DIR)/.libs $(API_DIR)/_libs
-	-rm -rf $(COMPONENT_DIR)/.libs $(COMPONENT_DIR)/_libs
-	-rm -rf $(DEBUG_DIR)/.libs $(DEBUG_DIR)/_libs
-	-rm -rf $(REGIST_DIR)/.libs $(REGIST_DIR)/_libs
-	-rm -rf $(UTIL_DIR)/.libs $(UTIL_DIR)/_libs
 	-rm -rf .libs _libs
 
 ID: $(am__tagged_files)
@@ -824,16 +734,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-test -z "$(API_DIR)/$(DEPDIR)/$(am__dirstamp)" || rm -f $(API_DIR)/$(DEPDIR)/$(am__dirstamp)
-	-test -z "$(API_DIR)/$(am__dirstamp)" || rm -f $(API_DIR)/$(am__dirstamp)
-	-test -z "$(COMPONENT_DIR)/$(DEPDIR)/$(am__dirstamp)" || rm -f $(COMPONENT_DIR)/$(DEPDIR)/$(am__dirstamp)
-	-test -z "$(COMPONENT_DIR)/$(am__dirstamp)" || rm -f $(COMPONENT_DIR)/$(am__dirstamp)
-	-test -z "$(DEBUG_DIR)/$(DEPDIR)/$(am__dirstamp)" || rm -f $(DEBUG_DIR)/$(DEPDIR)/$(am__dirstamp)
-	-test -z "$(DEBUG_DIR)/$(am__dirstamp)" || rm -f $(DEBUG_DIR)/$(am__dirstamp)
-	-test -z "$(REGIST_DIR)/$(DEPDIR)/$(am__dirstamp)" || rm -f $(REGIST_DIR)/$(DEPDIR)/$(am__dirstamp)
-	-test -z "$(REGIST_DIR)/$(am__dirstamp)" || rm -f $(REGIST_DIR)/$(am__dirstamp)
-	-test -z "$(UTIL_DIR)/$(DEPDIR)/$(am__dirstamp)" || rm -f $(UTIL_DIR)/$(DEPDIR)/$(am__dirstamp)
-	-test -z "$(UTIL_DIR)/$(am__dirstamp)" || rm -f $(UTIL_DIR)/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -844,7 +744,7 @@ clean-am: clean-generic clean-libtool clean-omxil_mfLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf $(API_DIR)/$(DEPDIR) $(COMPONENT_DIR)/$(DEPDIR) $(DEBUG_DIR)/$(DEPDIR) $(REGIST_DIR)/$(DEPDIR) $(UTIL_DIR)/$(DEPDIR)
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -890,7 +790,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf $(API_DIR)/$(DEPDIR) $(COMPONENT_DIR)/$(DEPDIR) $(DEBUG_DIR)/$(DEPDIR) $(REGIST_DIR)/$(DEPDIR) $(UTIL_DIR)/$(DEPDIR)
+	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
