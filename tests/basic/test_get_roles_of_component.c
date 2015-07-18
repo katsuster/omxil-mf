@@ -17,22 +17,22 @@ int main(int argc, char *argv[])
 	OMX_U8 *name_roles[128] = {NULL, };
 	OMX_ERRORTYPE result;
 	OMX_U32 i;
-	
+
 	//get arguments
 	if (argc < 2) {
 		arg_comp = "OMX.st.audio_decoder.mp3";
 	} else {
 		arg_comp = argv[1];
 	}
-	
+
 	result = OMX_ErrorNone;
-	
+
 	result = OMX_Init();
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "OMX_Init failed.\n");
 		goto err_out1;
 	}
-	
+
 	snprintf(name_comp, sizeof(name_comp), arg_comp);
 	num_roles = ARRAY_SIZE(name_roles);
 	for (i = 0; i < ARRAY_SIZE(name_roles); i++) {
@@ -46,36 +46,36 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "OMX_GetRolesOfComponent failed.\n");
 		goto err_out3;
 	}
-	
+
 	printf("OMX_GetRolesOfComponent: "
 		"component:'%s', roles:%d\n", name_comp, num_roles);
 	for (i = 0; i < num_roles; i++) {
 		printf("%2d: role:'%s'\n", i, name_roles[i]);
 	}
-	
-	
+
+
 	for (i = 0; i < ARRAY_SIZE(name_roles); i++) {
 		free(name_roles[i]);
 		name_roles[i] = NULL;
 	}
-	
+
 	result = OMX_Deinit();
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "OMX_Deinit failed.\n");
 		goto err_out1;
 	}
-	
+
 	return 0;
-	
+
 err_out3:
 	for (i = 0; i < ARRAY_SIZE(name_roles); i++) {
 		free(name_roles[i]);
 		name_roles[i] = NULL;
 	}
-	
+
 //err_out2:
 	OMX_Deinit();
-	
+
 err_out1:
 	return result;
 }
