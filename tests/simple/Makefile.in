@@ -98,7 +98,8 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__objects_1 = renderer_null-omxil_utils.$(OBJEXT)
+am__objects_1 = renderer_null-omxil_utils.$(OBJEXT) \
+	renderer_null-omxil_comp.$(OBJEXT)
 am_renderer_null_OBJECTS = renderer_null-test_renderer_null.$(OBJEXT) \
 	$(am__objects_1)
 renderer_null_OBJECTS = $(am_renderer_null_OBJECTS)
@@ -519,7 +520,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 TEST_DIR = $(top_srcdir)/tests
 COMMON_DIR = $(TEST_DIR)/common
-common_SOURCES = $(COMMON_DIR)/omxil_utils.c
+common_SOURCES = $(COMMON_DIR)/omxil_utils.c $(COMMON_DIR)/omxil_comp.cpp
 common_CPPFLAGS = -I$(TEST_DIR) $(am__append_1) $(am__append_5)
 common_CFLAGS = $(am__append_2) $(am__append_6)
 common_CXXFLAGS = $(am__append_3) $(am__append_7)
@@ -583,6 +584,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/renderer_null-omxil_comp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/renderer_null-omxil_utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/renderer_null-test_renderer_null.Po@am__quote@
 
@@ -655,6 +657,20 @@ renderer_null-test_renderer_null.obj: test_renderer_null.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_renderer_null.cpp' object='renderer_null-test_renderer_null.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CXXFLAGS) $(CXXFLAGS) -c -o renderer_null-test_renderer_null.obj `if test -f 'test_renderer_null.cpp'; then $(CYGPATH_W) 'test_renderer_null.cpp'; else $(CYGPATH_W) '$(srcdir)/test_renderer_null.cpp'; fi`
+
+renderer_null-omxil_comp.o: $(COMMON_DIR)/omxil_comp.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CXXFLAGS) $(CXXFLAGS) -MT renderer_null-omxil_comp.o -MD -MP -MF $(DEPDIR)/renderer_null-omxil_comp.Tpo -c -o renderer_null-omxil_comp.o `test -f '$(COMMON_DIR)/omxil_comp.cpp' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_comp.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/renderer_null-omxil_comp.Tpo $(DEPDIR)/renderer_null-omxil_comp.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMMON_DIR)/omxil_comp.cpp' object='renderer_null-omxil_comp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CXXFLAGS) $(CXXFLAGS) -c -o renderer_null-omxil_comp.o `test -f '$(COMMON_DIR)/omxil_comp.cpp' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_comp.cpp
+
+renderer_null-omxil_comp.obj: $(COMMON_DIR)/omxil_comp.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CXXFLAGS) $(CXXFLAGS) -MT renderer_null-omxil_comp.obj -MD -MP -MF $(DEPDIR)/renderer_null-omxil_comp.Tpo -c -o renderer_null-omxil_comp.obj `if test -f '$(COMMON_DIR)/omxil_comp.cpp'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_comp.cpp'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_comp.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/renderer_null-omxil_comp.Tpo $(DEPDIR)/renderer_null-omxil_comp.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMMON_DIR)/omxil_comp.cpp' object='renderer_null-omxil_comp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(renderer_null_CPPFLAGS) $(CPPFLAGS) $(renderer_null_CXXFLAGS) $(CXXFLAGS) -c -o renderer_null-omxil_comp.obj `if test -f '$(COMMON_DIR)/omxil_comp.cpp'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_comp.cpp'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_comp.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
