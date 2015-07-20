@@ -134,7 +134,7 @@ public:
 	/**
 	 * コンポーネントのメイン処理を行います。
 	 */
-	virtual void run() = 0;
+	virtual void run();
 
 	/**
 	 * コンポーネントのメイン処理の実行を続けるべきか取得します。
@@ -147,7 +147,6 @@ public:
 	 * コンポーネントのメイン処理の中断を要求します。
 	 */
 	virtual void stop_running();
-
 
 	//----------
 	//OpenMAX member functions
@@ -389,7 +388,7 @@ private:
 	//OpenMAX コンポーネントの状態
 	OMX_STATETYPE state;
 	//OpenMAX コールバック関数
-	OMX_CALLBACKTYPE *omx_cbs;
+	OMX_CALLBACKTYPE omx_cbs;
 	//OpenMAX コールバック関数に渡すアプリケーション定義のデータ
 	void *omx_cbs_priv;
 

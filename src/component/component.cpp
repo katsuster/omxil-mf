@@ -33,7 +33,7 @@ namespace mf {
 
 component::component(OMX_COMPONENTTYPE *c, const char *cname)
 		: omx_reflector(c, cname), broken(false),
-		state(OMX_StateInvalid), omx_cbs(nullptr), omx_cbs_priv(nullptr),
+		state(OMX_StateInvalid), omx_cbs(), omx_cbs_priv(nullptr),
 		th_accept(nullptr), ring_accept(nullptr), bound_accept(nullptr),
 		th_main(nullptr), running_main(false)
 {
@@ -67,6 +67,15 @@ component::component(OMX_COMPONENTTYPE *c, const char *cname)
 component::~component()
 {
 	scoped_log_begin;
+
+	shutdown();
+
+	//shutdown main thread
+	if (th_main) {
+		stop_running();
+		th_main->join();
+	}
+	delete th_main;
 
 	//shutdown accept thread
 	if (bound_accept) {
@@ -150,7 +159,7 @@ void component::shutdown()
 
 const OMX_CALLBACKTYPE *component::get_callbacks() const
 {
-	return omx_cbs;
+	return &omx_cbs;
 }
 
 const void *component::get_callbacks_data() const
@@ -169,6 +178,12 @@ port *component::find_port(OMX_U32 index)
 	}
 
 	return &ret->second;
+}
+
+void component::run()
+{
+	scoped_log_begin;
+	//do nothing
 }
 
 bool component::should_run()
@@ -582,7 +597,11 @@ OMX_ERRORTYPE component::SetCallbacks(OMX_HANDLETYPE hComponent, OMX_CALLBACKTYP
 {
 	scoped_log_begin;
 
-	omx_cbs = pCallbacks;
+	if (pCallbacks == nullptr) {
+		return OMX_ErrorBadParameter;
+	}
+
+	omx_cbs = *pCallbacks;
 	omx_cbs_priv = pAppData;
 
 	return OMX_ErrorNone;
@@ -627,7 +646,7 @@ OMX_ERRORTYPE component::EventHandler(OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_
 		omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
 		omx_enum_name::get_OMX_COMMANDTYPE_name((OMX_COMMANDTYPE)nData1));
 
-	err = omx_cbs->EventHandler(get_omx_component(), omx_cbs_priv,
+	err = omx_cbs.EventHandler(get_omx_component(), omx_cbs_priv,
 		eEvent, nData1, nData2, pEventData);
 
 	return err;
@@ -638,7 +657,7 @@ OMX_ERRORTYPE component::EmptyBufferDone(OMX_BUFFERHEADERTYPE *pBuffer)
 	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
-	err = omx_cbs->EmptyBufferDone(get_omx_component(),
+	err = omx_cbs.EmptyBufferDone(get_omx_component(),
 		omx_cbs_priv, pBuffer);
 
 	return err;
@@ -661,7 +680,7 @@ OMX_ERRORTYPE component::FillBufferDone(OMX_BUFFERHEADERTYPE *pBuffer)
 	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
-	err = omx_cbs->FillBufferDone(get_omx_component(),
+	err = omx_cbs.FillBufferDone(get_omx_component(),
 		omx_cbs_priv, pBuffer);
 
 	return err;
@@ -940,7 +959,9 @@ OMX_ERRORTYPE component::command_state_set_to_executing()
 		break;
 	}
 
-	set_state(OMX_StateExecuting);
+	if (err == OMX_ErrorNone) {
+		set_state(OMX_StateExecuting);
+	}
 
 	return err;
 }
@@ -1077,12 +1098,12 @@ void *component::component_thread_main(OMX_COMPONENTTYPE *arg)
 	std::string thname;
 	component *comp = get_instance(arg);
 
-	try {
-		//スレッド名をつける
-		thname = "omx:run:";
-		thname += comp->get_name();
-		prctl(PR_SET_NAME, thname.c_str());
+	//スレッド名をつける
+	thname = "omx:run:";
+	thname += comp->get_name();
+	prctl(PR_SET_NAME, thname.c_str());
 
+	try {
 		//Idle 状態になってから開始する
 		comp->wait_state(OMX_StateIdle);
 
