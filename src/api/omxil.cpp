@@ -102,6 +102,10 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(OMX_OUT OMX_HANDLETYPE* pHandle
 		goto err_out;
 	}
 
+	//Set callbacks.
+	omx_comp->SetCallbacks(omx_comp, pCallBacks, pAppData);
+
+	//Return component to OpenMAX IL Client
 	*pHandle = omx_comp;
 
 	return OMX_ErrorNone;
