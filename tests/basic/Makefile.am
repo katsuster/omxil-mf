@@ -10,7 +10,7 @@ check_PROGRAMS = \
 	get_handle \
 	send_command
 
-common_SOURCES  = $(COMMON_DIR)/omxil_utils.c
+common_SOURCES  = $(COMMON_DIR)/omxil_utils.c $(COMMON_DIR)/omxil_comp.cpp
 common_CPPFLAGS = -I$(TEST_DIR)
 common_CFLAGS   = 
 common_CXXFLAGS = 

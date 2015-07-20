@@ -4,7 +4,7 @@ COMMON_DIR = $(TEST_DIR)/common
 check_PROGRAMS = \
 	renderer_null
 
-common_SOURCES  = $(COMMON_DIR)/omxil_utils.c
+common_SOURCES  = $(COMMON_DIR)/omxil_utils.c $(COMMON_DIR)/omxil_comp.cpp
 common_CPPFLAGS = -I$(TEST_DIR)
 common_CFLAGS   = 
 common_CXXFLAGS = 
