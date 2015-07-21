@@ -336,6 +336,7 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port::get_definition() const
 	definition.nVersion.s.nVersionMinor = OMX_MF_IL_MINOR;
 	definition.nVersion.s.nRevision     = OMX_MF_IL_REVISION;
 	definition.nVersion.s.nStep         = OMX_MF_IL_STEP;
+	definition.nPortIndex         = index;
 	definition.eDir               = dir;
 	definition.nBufferCountActual = buffer_count_actual;
 	definition.nBufferCountMin    = buffer_count_min;
