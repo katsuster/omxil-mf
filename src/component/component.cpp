@@ -393,6 +393,14 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
+		if (port_found->get_buffer_count_min() > def->nBufferCountActual) {
+			errprint("too few buffers:%d, min:%d\n",
+				(int)port_found->get_buffer_count_min(),
+				(int)def->nBufferCountActual);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+
 		//nBufferCountActual 以外は全て read-only
 		port_found->set_buffer_count_actual(def->nBufferCountActual);
 
