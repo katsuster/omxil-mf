@@ -1,7 +1,5 @@
 #include <vector>
 #include <mutex>
-#include <pthread.h>
-#include <sys/prctl.h>
 
 #include <omxil_mf/component.hpp>
 #include <omxil_mf/port_image.hpp>
