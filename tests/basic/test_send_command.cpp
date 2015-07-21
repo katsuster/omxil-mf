@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 	def_out.nVersion.s.nVersionMinor = 1;
 	def_out.nVersion.s.nRevision = 0;
 	def_out.nVersion.s.nStep = 0;
-	def_out.nPortIndex = 0;
+	def_out.nPortIndex = 1;
 	result = comp->GetParameter(OMX_IndexParamPortDefinition, 
 		&def_out);
 	if (result != OMX_ErrorNone) {
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 	result = comp->SendCommand(OMX_CommandStateSet, 
 		OMX_StateIdle, 0);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "OMX_SendCommand(SteteSet, Idle) failed.\n");
+		fprintf(stderr, "OMX_SendCommand(StateSet, Idle) failed.\n");
 		goto err_out2;
 	}
 
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 		buf_in.push_back(buf);
 
 		result = comp->AllocateBuffer(&buf, 
-			0, 0, 1048576);
+			0, 0, def_in.nBufferSize);
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "OMX_AllocateBuffer(in) failed.\n");
 			goto err_out2;
@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 		buf_out.push_back(buf);
 
 		result = comp->AllocateBuffer(&buf, 
-			1, 0, 1048576);
+			1, 0, def_out.nBufferSize);
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "OMX_AllocateBuffer(out) failed.\n");
 			goto err_out2;
