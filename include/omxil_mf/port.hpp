@@ -421,19 +421,19 @@ public:
 	 *
 	 * @return port definition data of OpenMAX IL
 	 */
-	virtual void set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v);
+	virtual OMX_ERRORTYPE set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v);
 
-	virtual void disable_port();
+	virtual OMX_ERRORTYPE disable_port();
 
-	virtual void enable_port();
+	virtual OMX_ERRORTYPE enable_port();
 
-	virtual void flush_buffers();
+	virtual OMX_ERRORTYPE flush_buffers();
 
-	virtual void component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup);
+	virtual OMX_ERRORTYPE component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup);
 
-	virtual void allocate_tunnel_buffer(OMX_U32 index);
+	virtual OMX_ERRORTYPE allocate_tunnel_buffer(OMX_U32 index);
 
-	virtual void free_tunnel_buffer(OMX_U32 index);
+	virtual OMX_ERRORTYPE free_tunnel_buffer(OMX_U32 index);
 
 	/**
 	 * コンポーネント外部で確保されたバッファを、

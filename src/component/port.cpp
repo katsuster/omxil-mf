@@ -349,7 +349,7 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port::get_definition() const
 	return &definition;
 }
 
-void port::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
+OMX_ERRORTYPE port::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 {
 	scoped_log_begin;
 
@@ -363,42 +363,56 @@ void port::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 	//definition.format is ignored
 	buffers_contiguous  = v.bBuffersContiguous;
 	buffer_alignment    = v.nBufferAlignment;
+
+	return OMX_ErrorNone;
 }
 
-void port::disable_port()
+OMX_ERRORTYPE port::disable_port()
 {
 	scoped_log_begin;
 	//do nothing
+
+	return OMX_ErrorNone;
 }
 
-void port::enable_port()
+OMX_ERRORTYPE port::enable_port()
 {
 	scoped_log_begin;
 	//do nothing
+
+	return OMX_ErrorNone;
 }
 
-void port::flush_buffers()
+OMX_ERRORTYPE port::flush_buffers()
 {
 	scoped_log_begin;
 	//do nothing
+
+	return OMX_ErrorNone;
 }
 
-void port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup)
+OMX_ERRORTYPE port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup)
 {
 	scoped_log_begin;
 	//do nothing
+
+	return OMX_ErrorNone;
 }
 
-void port::allocate_tunnel_buffer(OMX_U32 index)
+OMX_ERRORTYPE port::allocate_tunnel_buffer(OMX_U32 index)
 {
 	scoped_log_begin;
 	//do nothing
+
+	return OMX_ErrorNone;
 }
 
-void port::free_tunnel_buffer(OMX_U32 index)
+OMX_ERRORTYPE port::free_tunnel_buffer(OMX_U32 index)
 {
 	scoped_log_begin;
 	//do nothing
+
+	return OMX_ErrorNone;
 }
 
 OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size, OMX_U8 *buf)

@@ -1,4 +1,5 @@
 #include <map>
+#include <deque>
 #include <mutex>
 #include <condition_variable>
 #include <pthread.h>
@@ -987,6 +988,59 @@ OMX_ERRORTYPE component::command_state_set_to_wait_for_resources()
 OMX_ERRORTYPE component::command_flush(OMX_U32 port_index)
 {
 	scoped_log_begin;
+	std::deque<OMX_U32> ev_results;
+	port *port_found = nullptr;
+	bool success = true;
+	OMX_ERRORTYPE err = OMX_ErrorNone, err_handler = OMX_ErrorNone;
+
+	if (port_index == OMX_ALL) {
+		//Flushing all ports
+		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+			ev_results.push_back(it->first);
+			try {
+				err = it->second.flush_buffers();
+			} catch (const std::runtime_error& e) {
+				errprint("runtime_error: %s\n", e.what());
+				success = false;
+			}
+		}
+	} else {
+		//Flushing specify ports
+		port_found = find_port(port_index);
+		if (port_found == nullptr) {
+			errprint("invalid output port:%d\n",
+				(int)port_index);
+			return OMX_ErrorBadPortIndex;
+		}
+
+		ev_results.push_back(port_index);
+		try {
+			err = port_found->flush_buffers();
+		} catch (const std::runtime_error& e) {
+			errprint("runtime_error: %s\n", e.what());
+			success = false;
+		}
+	}
+
+	//Callback EventHandler(EventError)
+	if (!success) {
+		err_handler = EventHandler(OMX_EventError,
+			err, 0, nullptr);
+	}
+	if (err_handler != OMX_ErrorNone) {
+		errprint("event handler(error) returns error: %s\n",
+			omx_enum_name::get_OMX_ERRORTYPE_name(err_handler));
+	}
+
+	//Callback EventHandler(CmdComplete)
+	for (auto it = ev_results.begin(); it != ev_results.end(); it++) {
+		err_handler = EventHandler(OMX_EventCmdComplete,
+			OMX_CommandFlush, *it, nullptr);
+		if (err_handler != OMX_ErrorNone) {
+			errprint("event handler(complete) returns error: %s\n",
+				omx_enum_name::get_OMX_ERRORTYPE_name(err_handler));
+		}
+	}
 
 	return OMX_ErrorNone;
 }
