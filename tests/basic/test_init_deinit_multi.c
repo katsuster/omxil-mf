@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 
 	result = OMX_ErrorNone;
 
-	for (i = 0; i < 1000; i++) {
+	for (i = 0; i < 100; i++) {
 		result = OMX_Init();
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "OMX_Init i:%d failed.\n", i);
