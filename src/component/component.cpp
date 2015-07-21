@@ -338,7 +338,7 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	case OMX_IndexParamOtherInit:
 		param = (OMX_PORT_PARAM_TYPE *) ptr;
 
-		err = check_omx_header(param, sizeof(OMX_MF_HEADERTYPE));
+		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
 		if (err != OMX_ErrorNone) {
 			errprint("invalid header.\n");
 			break;
@@ -423,7 +423,7 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	case OMX_IndexParamOtherInit:
 		param = (OMX_PORT_PARAM_TYPE *) ptr;
 
-		err = check_omx_header(param, sizeof(OMX_MF_HEADERTYPE));
+		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
 		if (err != OMX_ErrorNone) {
 			errprint("invalid header.\n");
 			break;
@@ -1098,11 +1098,19 @@ OMX_ERRORTYPE component::check_omx_header(const void *p, size_t size) const
 {
 	const OMX_MF_HEADERTYPE *h = reinterpret_cast<const OMX_MF_HEADERTYPE *>(p);
 
-	if (h == nullptr || h->nSize != size) {
+	if (h == nullptr) {
+		return OMX_ErrorBadParameter;
+	}
+	if (h->nSize != size) {
+		errprint("invalid nSize(%d) != size:%d.\n", 
+			(int)h->nSize, (int)size);
 		return OMX_ErrorBadParameter;
 	}
 	if (h->nVersion.s.nVersionMajor != OMX_MF_IL_MAJOR ||
-		h->nVersion.s.nVersionMinor != OMX_MF_IL_MINOR) {
+		h->nVersion.s.nVersionMinor > OMX_MF_IL_MINOR) {
+		errprint("invalid version %d.%d required.\n", 
+			h->nVersion.s.nVersionMajor, 
+			h->nVersion.s.nVersionMinor);
 		return OMX_ErrorVersionMismatch;
 	}
 
