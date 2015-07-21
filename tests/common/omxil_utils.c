@@ -131,6 +131,8 @@ void dump_port_param_type(const OMX_PORT_PARAM_TYPE *p)
 void dump_port_definitiontype(const OMX_PARAM_PORTDEFINITIONTYPE *p)
 {
 	printf("OMX_PARAM_PORTDEFINITIONTYPE %p ----\n"
+		"  nSize             : %d\n"
+		"  nVersion          : %02d.%02d.%02d.%02d\n"
 		"  nPortIndex        : %d\n"
 		"  eDir              : %d(%s)\n"
 		"  nBufferCountActual: %d\n"
@@ -138,11 +140,16 @@ void dump_port_definitiontype(const OMX_PARAM_PORTDEFINITIONTYPE *p)
 		"  nBufferSize       : %d\n"
 		"  bEnabled          : %d\n"
 		"  bPopulated        : %d\n"
-		"  eDomain           : %d\n"
+		"  eDomain           : %d(%s)\n"
 		//"  format            : \n"
 		"  bBuffersContiguous: %d\n"
 		"  nBufferAlignment  : %d\n", 
 		p, 
+		p->nSize, 
+		p->nVersion.s.nVersionMajor, 
+		p->nVersion.s.nVersionMinor, 
+		p->nVersion.s.nRevision, 
+		p->nVersion.s.nStep, 
 		p->nPortIndex, 
 		p->eDir, get_omx_dirtype_name(p->eDir), 
 		p->nBufferCountActual, 
