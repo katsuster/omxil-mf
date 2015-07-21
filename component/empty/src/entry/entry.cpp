@@ -3,13 +3,15 @@
 #include <string>
 
 #include "entry.h"
+#include "reader_zero/reader_zero.hpp"
 #include "renderer_null/renderer_null.hpp"
+#include "filter_copy/filter_copy.hpp"
 
-#define READER_NULL_NAME       "OMX.MF.reader.null"
-#define READER_NULL_A_ALIAS    "OMX.MF.audio.reader.zero"
-#define READER_NULL_V_ALIAS    "OMX.MF.video.reader.zero"
-#define READER_NULL_A_ROLE     "audio_reader.zero"
-#define READER_NULL_V_ROLE     "video_reader.zero"
+#define READER_ZERO_NAME       "OMX.MF.reader.null"
+#define READER_ZERO_A_ALIAS    "OMX.MF.audio.reader.zero"
+#define READER_ZERO_V_ALIAS    "OMX.MF.video.reader.zero"
+#define READER_ZERO_A_ROLE     "audio_reader.zero"
+#define READER_ZERO_V_ROLE     "video_reader.zero"
 
 #define RENDERER_NULL_NAME       "OMX.MF.renderer.null"
 #define RENDERER_NULL_A_ALIAS    "OMX.MF.audio.renderer.null"
@@ -17,7 +19,37 @@
 #define RENDERER_NULL_A_ROLE     "audio_renderer.null"
 #define RENDERER_NULL_V_ROLE     "video_renderer.null"
 
+#define FILTER_COPY_NAME       "OMX.MF.filter.copy"
+#define FILTER_COPY_A_ALIAS    "OMX.MF.audio.filter.copy"
+#define FILTER_COPY_V_ALIAS    "OMX.MF.video.filter.copy"
+#define FILTER_COPY_A_ROLE     "audio_filter.copy"
+#define FILTER_COPY_V_ROLE     "video_filter.copy"
+
 extern "C" {
+
+void *OMX_APIENTRY reader_zero_constructor(OMX_COMPONENTTYPE *cComponent, const char *name)
+{
+	printf("%s:%d\n", __func__, __LINE__);
+
+	std::string strname = name;
+
+	if (strname.compare(READER_ZERO_NAME) != 0) {
+		fprintf(stderr, "Error: Wrong component name '%s'.\n", 
+			strname.c_str());
+		return nullptr;
+	}
+
+	return new mf::reader_zero(cComponent, name);
+}
+
+void OMX_APIENTRY reader_zero_destructor(OMX_COMPONENTTYPE *cComponent)
+{
+	printf("%s:%d\n", __func__, __LINE__);
+
+	mf::reader_zero *comp = mf::reader_zero::get_instance(cComponent);
+
+	delete comp;
+}
 
 void *OMX_APIENTRY renderer_null_constructor(OMX_COMPONENTTYPE *cComponent, const char *name)
 {
@@ -43,6 +75,30 @@ void OMX_APIENTRY renderer_null_destructor(OMX_COMPONENTTYPE *cComponent)
 	delete comp;
 }
 
+void *OMX_APIENTRY filter_copy_constructor(OMX_COMPONENTTYPE *cComponent, const char *name)
+{
+	printf("%s:%d\n", __func__, __LINE__);
+
+	std::string strname = name;
+
+	if (strname.compare(FILTER_COPY_NAME) != 0) {
+		fprintf(stderr, "Error: Wrong component name '%s'.\n", 
+			strname.c_str());
+		return nullptr;
+	}
+
+	return new mf::filter_copy(cComponent, name);
+}
+
+void OMX_APIENTRY filter_copy_destructor(OMX_COMPONENTTYPE *cComponent)
+{
+	printf("%s:%d\n", __func__, __LINE__);
+
+	mf::filter_copy *comp = mf::filter_copy::get_instance(cComponent);
+
+	delete comp;
+}
+
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 {
 	OMX_MF_COMPONENT_INFO comp_info;
@@ -51,6 +107,14 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 	printf("%s:%d\n", __func__, __LINE__);
 
 	//register reader_zero component
+	comp_info.constructor = reader_zero_constructor;
+	comp_info.destructor = reader_zero_destructor;
+	result = OMX_MF_RegisterComponent(READER_ZERO_NAME, &comp_info);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "Warning: Failed to register '%s'.\n", 
+			READER_ZERO_NAME);
+		func_result = result; 
+	}
 
 
 	//register render_null component
@@ -92,6 +156,18 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 			RENDERER_NULL_V_ROLE, RENDERER_NULL_NAME);
 		func_result = result; 
 	}
+
+
+	//register filter_copy component
+	comp_info.constructor = filter_copy_constructor;
+	comp_info.destructor = filter_copy_destructor;
+	result = OMX_MF_RegisterComponent(FILTER_COPY_NAME, &comp_info);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "Warning: Failed to register '%s'.\n", 
+			FILTER_COPY_NAME);
+		func_result = result; 
+	}
+
 
 	return func_result;
 }
