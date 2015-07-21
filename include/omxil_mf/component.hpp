@@ -18,19 +18,19 @@
 #include <omxil_mf/port.hpp>
 
 //コマンドを受け渡すバッファの深さ
-#define OMX_SEND_CMD_DEPTH    1
+#define OMX_MF_CMD_DEPTH    1
 
 
 namespace mf {
 
 //OpenMAX バッファのヘッダチェック用
-struct OMX_PARAM_HEADERTYPE {
+struct OMX_MF_HEADERTYPE {
 	OMX_U32 nSize;
 	OMX_VERSIONTYPE nVersion;
 };
 
 //OMX_SendCommand コマンドを受け渡すための構造体
-struct OMX_SEND_CMD {
+struct OMX_MF_CMD {
 	//OMX_SendCommand の第 2引数です
 	OMX_COMMANDTYPE cmd;
 	//OMX_SendCommand の第 3引数です
@@ -412,8 +412,8 @@ private:
 	//コマンド受理スレッド
 	std::thread *th_accept;
 	//コマンド受け渡し用リングバッファ
-	ring_buffer<OMX_SEND_CMD> *ring_accept;
-	bounded_buffer<ring_buffer<OMX_SEND_CMD>, OMX_SEND_CMD> *bound_accept;
+	ring_buffer<OMX_MF_CMD> *ring_accept;
+	bounded_buffer<ring_buffer<OMX_MF_CMD>, OMX_MF_CMD> *bound_accept;
 
 	//メイン処理スレッド
 	std::thread *th_main;

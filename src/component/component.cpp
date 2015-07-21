@@ -42,8 +42,8 @@ component::component(OMX_COMPONENTTYPE *c, const char *cname)
 
 	try {
 		//create ring buffer
-		ring_accept = new ring_buffer<OMX_SEND_CMD>(nullptr, OMX_SEND_CMD_DEPTH + 1);
-		bound_accept = new bounded_buffer<ring_buffer<OMX_SEND_CMD>, OMX_SEND_CMD>(*ring_accept);
+		ring_accept = new ring_buffer<OMX_MF_CMD>(nullptr, OMX_MF_CMD_DEPTH + 1);
+		bound_accept = new bounded_buffer<ring_buffer<OMX_MF_CMD>, OMX_MF_CMD>(*ring_accept);
 
 		//start command accept thread
 		th_accept = new std::thread(accept_command_thread_main, get_omx_component());
@@ -239,7 +239,7 @@ OMX_ERRORTYPE component::SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE 
 {
 	scoped_log_begin;
 	port *port_found;
-	OMX_SEND_CMD cmd;
+	OMX_MF_CMD cmd;
 	//OMX_ERRORTYPE err;
 
 	dprint("cmd:%s\n", omx_enum_name::get_OMX_COMMANDTYPE_name(Cmd));
@@ -338,7 +338,7 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	case OMX_IndexParamOtherInit:
 		param = (OMX_PORT_PARAM_TYPE *) ptr;
 
-		err = check_omx_header(param, sizeof(OMX_PARAM_HEADERTYPE));
+		err = check_omx_header(param, sizeof(OMX_MF_HEADERTYPE));
 		if (err != OMX_ErrorNone) {
 			errprint("invalid header.\n");
 			break;
@@ -423,7 +423,7 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	case OMX_IndexParamOtherInit:
 		param = (OMX_PORT_PARAM_TYPE *) ptr;
 
-		err = check_omx_header(param, sizeof(OMX_PARAM_HEADERTYPE));
+		err = check_omx_header(param, sizeof(OMX_MF_HEADERTYPE));
 		if (err != OMX_ErrorNone) {
 			errprint("invalid header.\n");
 			break;
@@ -716,7 +716,7 @@ void component::error_if_broken(std::unique_lock<std::mutex>& lock)
 void *component::accept_command()
 {
 	scoped_log_begin;
-	OMX_SEND_CMD cmd;
+	OMX_MF_CMD cmd;
 	OMX_STATETYPE new_state;
 	OMX_U32 port_index;
 	//callback するかしないか
@@ -1096,7 +1096,7 @@ component::portmap_t& component::get_map_ports()
 
 OMX_ERRORTYPE component::check_omx_header(const void *p, size_t size) const
 {
-	const OMX_PARAM_HEADERTYPE *h = (const OMX_PARAM_HEADERTYPE *)p;
+	const OMX_MF_HEADERTYPE *h = reinterpret_cast<const OMX_MF_HEADERTYPE *>(p);
 
 	if (h == nullptr || h->nSize != size) {
 		return OMX_ErrorBadParameter;
