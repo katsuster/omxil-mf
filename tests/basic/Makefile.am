@@ -8,6 +8,7 @@ check_PROGRAMS = \
 	get_roles_of_component \
 	get_components_of_role \
 	get_handle \
+	get_param_init \
 	send_command
 
 common_SOURCES  = $(COMMON_DIR)/omxil_utils.c $(COMMON_DIR)/omxil_comp.cpp
@@ -64,6 +65,12 @@ get_handle_CPPFLAGS  = $(common_CPPFLAGS)
 get_handle_CFLAGS    = $(common_CFLAGS)
 get_handle_CXXFLAGS  = $(common_CXXFLAGS)
 
+get_param_init_SOURCES   = test_get_param_init.cpp $(common_SOURCES)
+get_param_init_LDADD     = $(common_LDADD)
+get_param_init_CPPFLAGS  = $(common_CPPFLAGS)
+get_param_init_CFLAGS    = $(common_CFLAGS)
+get_param_init_CXXFLAGS  = $(common_CXXFLAGS)
+
 send_command_SOURCES   = test_send_command.cpp $(common_SOURCES)
 send_command_LDADD     = $(common_LDADD)
 send_command_CPPFLAGS  = $(common_CPPFLAGS)
@@ -77,5 +84,6 @@ TESTS = \
 	get_roles_of_component.sh \
 	get_components_of_role.sh \
 	get_handle.sh \
+	get_param_init.sh \
 	send_command.sh
 
