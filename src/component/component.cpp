@@ -333,8 +333,44 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		break;
 	case OMX_IndexParamAudioInit:
+		param = (OMX_PORT_PARAM_TYPE *) ptr;
+
+		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
+		if (err != OMX_ErrorNone) {
+			errprint("invalid header.\n");
+			break;
+		}
+
+		param->nPorts = get_audio_ports();
+		param->nStartPortNumber = get_audio_start_port();
+
+		break;
 	case OMX_IndexParamVideoInit:
+		param = (OMX_PORT_PARAM_TYPE *) ptr;
+
+		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
+		if (err != OMX_ErrorNone) {
+			errprint("invalid header.\n");
+			break;
+		}
+
+		param->nPorts = get_video_ports();
+		param->nStartPortNumber = get_video_start_port();
+
+		break;
 	case OMX_IndexParamImageInit:
+		param = (OMX_PORT_PARAM_TYPE *) ptr;
+
+		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
+		if (err != OMX_ErrorNone) {
+			errprint("invalid header.\n");
+			break;
+		}
+
+		param->nPorts = get_image_ports();
+		param->nStartPortNumber = get_image_start_port();
+
+		break;
 	case OMX_IndexParamOtherInit:
 		param = (OMX_PORT_PARAM_TYPE *) ptr;
 
@@ -344,8 +380,8 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
-		param->nPorts = 0;
-		param->nStartPortNumber = 0;
+		param->nPorts = get_other_ports();
+		param->nStartPortNumber = get_other_start_port();
 
 		break;
 	//case OMX_IndexParamPriorityMgmt:
@@ -719,6 +755,46 @@ void component::error_if_broken(std::unique_lock<std::mutex>& lock)
 		msg += ": interrupted.";
 		throw std::runtime_error(msg);
 	}
+}
+
+OMX_U32 component::get_audio_ports()
+{
+	return 0;
+}
+
+OMX_U32 component::get_audio_start_port()
+{
+	return 0;
+}
+
+OMX_U32 component::get_video_ports()
+{
+	return 0;
+}
+
+OMX_U32 component::get_video_start_port()
+{
+	return 0;
+}
+
+OMX_U32 component::get_image_ports()
+{
+	return 0;
+}
+
+OMX_U32 component::get_image_start_port()
+{
+	return 0;
+}
+
+OMX_U32 component::get_other_ports()
+{
+	return 0;
+}
+
+OMX_U32 component::get_other_start_port()
+{
+	return 0;
 }
 
 void *component::accept_command()
@@ -1129,6 +1205,7 @@ OMX_ERRORTYPE component::check_omx_header(const void *p, size_t size) const
 /*
  * static public functions
  */
+
 component *component::get_instance(OMX_HANDLETYPE hComponent)
 {
 	OMX_COMPONENTTYPE *omx_comp = (OMX_COMPONENTTYPE *) hComponent;

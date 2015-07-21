@@ -207,6 +207,86 @@ protected:
 	virtual void error_if_broken(std::unique_lock<std::mutex>& lock);
 
 	/**
+	 * OMX_GetParameter(OMX_IndexParamAudioInit) にて返す、
+	 * ポート数を取得します。
+	 *
+	 * 初期値は 0 個です。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 */
+	virtual OMX_U32 get_audio_ports();
+
+	/**
+	 * OMX_GetParameter(OMX_IndexParamAudioInit) にて返す、
+	 * ポートの開始インデックスを取得します。
+	 *
+	 * 初期値は 0 個です。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 */
+	virtual OMX_U32 get_audio_start_port();
+
+	/**
+	 * OMX_GetParameter(OMX_IndexParamVideoInit) にて返す、
+	 * ポート数を取得します。
+	 *
+	 * 初期値は 0 個です。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 */
+	virtual OMX_U32 get_video_ports();
+
+	/**
+	 * OMX_GetParameter(OMX_IndexParamVideoInit) にて返す、
+	 * ポートの開始インデックスを取得します。
+	 *
+	 * 初期値は 0 個です。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 */
+	virtual OMX_U32 get_video_start_port();
+
+	/**
+	 * OMX_GetParameter(OMX_IndexParamImageInit) にて返す、
+	 * ポート数を取得します。
+	 *
+	 * 初期値は 0 個です。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 */
+	virtual OMX_U32 get_image_ports();
+
+	/**
+	 * OMX_GetParameter(OMX_IndexParamImageInit) にて返す、
+	 * ポートの開始インデックスを取得します。
+	 *
+	 * 初期値は 0 個です。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 */
+	virtual OMX_U32 get_image_start_port();
+
+	/**
+	 * OMX_GetParameter(OMX_IndexParamOtherInit) にて返す、
+	 * ポート数を取得します。
+	 *
+	 * 初期値は 0 個です。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 */
+	virtual OMX_U32 get_other_ports();
+
+	/**
+	 * OMX_GetParameter(OMX_IndexParamOtherInit) にて返す、
+	 * ポートの開始インデックスを取得します。
+	 *
+	 * 初期値は 0 個です。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 */
+	virtual OMX_U32 get_other_start_port();
+
+	/**
 	 * OMX_SendCommand にて送られたコマンドを処理します。
 	 *
 	 * OpenMAX API の処理関数と別のスレッドで実行されます。

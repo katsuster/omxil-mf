@@ -26,6 +26,10 @@ libomxil_mf_la_SOURCES = \
 	$(COMPONENT_DIR)/omx_reflector.cpp \
 	$(COMPONENT_DIR)/component.cpp \
 	$(COMPONENT_DIR)/port.cpp \
+	$(COMPONENT_DIR)/port_audio.cpp \
+	$(COMPONENT_DIR)/port_video.cpp \
+	$(COMPONENT_DIR)/port_image.cpp \
+	$(COMPONENT_DIR)/port_other.cpp \
 	$(REGIST_DIR)/register_component.cpp \
 	$(DEBUG_DIR)/dbgprint.c
 EXTRA_libomxil_mf_la_SOURCES = \
