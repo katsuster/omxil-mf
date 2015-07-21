@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
 	for (i = 0; i < ARRAY_SIZE(name_comps); i++) {
 		name_comps[i] = (OMX_U8 *)malloc(OMX_MAX_STRINGNAME_SIZE);
 		if (name_comps[i] == NULL) {
+			result = OMX_ErrorInsufficientResources;
 			goto err_out3;
 		}
 	}
@@ -77,5 +78,5 @@ err_out3:
 	OMX_Deinit();
 
 err_out1:
-	return result;
+	return -1;
 }

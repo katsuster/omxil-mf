@@ -52,5 +52,5 @@ err_out2:
 	OMX_Deinit();
 
 err_out1:
-	return result;
+	return -1;
 }

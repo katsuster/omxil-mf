@@ -27,5 +27,5 @@ int main(int argc, char *argv[])
 	return 0;
 
 err_out1:
-	return result;
+	return -1;
 }

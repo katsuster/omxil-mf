@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
 	comp = new comp_test_send_cmd(arg_comp);
 	if (comp == nullptr || comp->get_component() == nullptr) {
 		fprintf(stderr, "OMX_GetHandle failed.\n");
+		result = OMX_ErrorInsufficientResources;
 		goto err_out2;
 	}
 	printf("OMX_GetHandle: name:%s, comp:%p\n", 
@@ -183,5 +184,5 @@ err_out2:
 	OMX_Deinit();
 
 err_out1:
-	return result;
+	return -1;
 }
