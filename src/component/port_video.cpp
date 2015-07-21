@@ -21,7 +21,8 @@ port_video::port_video(int ind, component *c)
 	color_format(OMX_COLOR_FormatUnused), native_window(nullptr)
 {
 	scoped_log_begin;
-	//do nothing
+
+	set_domain(OMX_PortDomainVideo);
 }
 
 port_video::~port_video()

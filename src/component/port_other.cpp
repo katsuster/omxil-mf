@@ -17,7 +17,8 @@ port_other::port_other(int ind, component *c)
 	format(OMX_OTHER_FormatBinary)
 {
 	scoped_log_begin;
-	//do nothing
+
+	set_domain(OMX_PortDomainOther);
 }
 
 port_other::~port_other()

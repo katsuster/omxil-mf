@@ -19,7 +19,8 @@ port_audio::port_audio(int ind, component *c)
 	encoding(OMX_AUDIO_CodingUnused)
 {
 	scoped_log_begin;
-	//do nothing
+
+	set_domain(OMX_PortDomainAudio);
 }
 
 port_audio::~port_audio()

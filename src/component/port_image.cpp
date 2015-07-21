@@ -21,7 +21,8 @@ port_image::port_image(int ind, component *c)
 	color_format(OMX_COLOR_FormatUnused), native_window(nullptr)
 {
 	scoped_log_begin;
-	//do nothing
+
+	set_domain(OMX_PortDomainImage);
 }
 
 port_image::~port_image()
