@@ -582,9 +582,7 @@ public:
 	 *
 	 * @return 受付中のバッファ数
 	 */
-	virtual int get_buffer_count() {
-		return bound_send->size();
-	}
+	virtual int get_buffer_count();
 
 
 	//----------------------------------------

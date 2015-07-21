@@ -719,6 +719,11 @@ OMX_ERRORTYPE port::pop_buffer(port_buffer *pb)
 	return err;
 }
 
+int port::get_buffer_count()
+{
+	return bound_send->size();
+}
+
 
 
 
