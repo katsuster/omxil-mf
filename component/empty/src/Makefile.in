@@ -128,7 +128,9 @@ am__installdirs = "$(DESTDIR)$(omxil_mf_emptydir)" \
 LTLIBRARIES = $(omxil_mf_empty_LTLIBRARIES)
 libomxil_mf_empty_la_DEPENDENCIES =
 am_libomxil_mf_empty_la_OBJECTS = libomxil_mf_empty_la-entry.lo \
-	libomxil_mf_empty_la-renderer_null.lo
+	libomxil_mf_empty_la-reader_zero.lo \
+	libomxil_mf_empty_la-renderer_null.lo \
+	libomxil_mf_empty_la-filter_copy.lo
 libomxil_mf_empty_la_OBJECTS = $(am_libomxil_mf_empty_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -343,16 +345,21 @@ BASE_DIR = .
 ENTRY_DIR = $(BASE_DIR)/entry
 READER_ZERO_DIR = $(BASE_DIR)/reader_zero
 RENDERER_NULL_DIR = $(BASE_DIR)/renderer_null
+FILTER_COPY_DIR = $(BASE_DIR)/filter_copy
 omxil_mf_emptydir = $(libdir)
 omxil_mf_empty_LTLIBRARIES = libomxil-mf-empty.la
 libomxil_mf_empty_ladir = $(includedir)
 libomxil_mf_empty_la_SOURCES = \
 	$(ENTRY_DIR)/entry.cpp \
-	$(RENDERER_NULL_DIR)/renderer_null.cpp
+	$(READER_ZERO_DIR)/reader_zero.cpp \
+	$(RENDERER_NULL_DIR)/renderer_null.cpp \
+	$(FILTER_COPY_DIR)/filter_copy.cpp
 
 EXTRA_libomxil_mf_empty_la_SOURCES = \
 	$(ENTRY_DIR)/entry.h \
-	$(RENDERER_NULL_DIR)/renderer_null.hpp
+	$(READER_ZERO_DIR)/reader_zero.hpp \
+	$(RENDERER_NULL_DIR)/renderer_null.hpp \
+	$(FILTER_COPY_DIR)/filter_copy.hpp
 
 libomxil_mf_empty_la_HEADERS = 
 libomxil_mf_empty_la_CPPFLAGS = -Wall -Werror $(am__append_1)
@@ -445,6 +452,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_empty_la-entry.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_empty_la-filter_copy.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_empty_la-reader_zero.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_empty_la-renderer_null.Plo@am__quote@
 
 .cpp.o:
@@ -475,12 +484,26 @@ libomxil_mf_empty_la-entry.lo: $(ENTRY_DIR)/entry.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_empty_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_empty_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_empty_la-entry.lo `test -f '$(ENTRY_DIR)/entry.cpp' || echo '$(srcdir)/'`$(ENTRY_DIR)/entry.cpp
 
+libomxil_mf_empty_la-reader_zero.lo: $(READER_ZERO_DIR)/reader_zero.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_empty_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_empty_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_empty_la-reader_zero.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_empty_la-reader_zero.Tpo -c -o libomxil_mf_empty_la-reader_zero.lo `test -f '$(READER_ZERO_DIR)/reader_zero.cpp' || echo '$(srcdir)/'`$(READER_ZERO_DIR)/reader_zero.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_empty_la-reader_zero.Tpo $(DEPDIR)/libomxil_mf_empty_la-reader_zero.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(READER_ZERO_DIR)/reader_zero.cpp' object='libomxil_mf_empty_la-reader_zero.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_empty_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_empty_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_empty_la-reader_zero.lo `test -f '$(READER_ZERO_DIR)/reader_zero.cpp' || echo '$(srcdir)/'`$(READER_ZERO_DIR)/reader_zero.cpp
+
 libomxil_mf_empty_la-renderer_null.lo: $(RENDERER_NULL_DIR)/renderer_null.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_empty_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_empty_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_empty_la-renderer_null.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_empty_la-renderer_null.Tpo -c -o libomxil_mf_empty_la-renderer_null.lo `test -f '$(RENDERER_NULL_DIR)/renderer_null.cpp' || echo '$(srcdir)/'`$(RENDERER_NULL_DIR)/renderer_null.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_empty_la-renderer_null.Tpo $(DEPDIR)/libomxil_mf_empty_la-renderer_null.Plo
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(RENDERER_NULL_DIR)/renderer_null.cpp' object='libomxil_mf_empty_la-renderer_null.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_empty_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_empty_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_empty_la-renderer_null.lo `test -f '$(RENDERER_NULL_DIR)/renderer_null.cpp' || echo '$(srcdir)/'`$(RENDERER_NULL_DIR)/renderer_null.cpp
+
+libomxil_mf_empty_la-filter_copy.lo: $(FILTER_COPY_DIR)/filter_copy.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_empty_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_empty_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_empty_la-filter_copy.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_empty_la-filter_copy.Tpo -c -o libomxil_mf_empty_la-filter_copy.lo `test -f '$(FILTER_COPY_DIR)/filter_copy.cpp' || echo '$(srcdir)/'`$(FILTER_COPY_DIR)/filter_copy.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_empty_la-filter_copy.Tpo $(DEPDIR)/libomxil_mf_empty_la-filter_copy.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(FILTER_COPY_DIR)/filter_copy.cpp' object='libomxil_mf_empty_la-filter_copy.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_empty_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_empty_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_empty_la-filter_copy.lo `test -f '$(FILTER_COPY_DIR)/filter_copy.cpp' || echo '$(srcdir)/'`$(FILTER_COPY_DIR)/filter_copy.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
