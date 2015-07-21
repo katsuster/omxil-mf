@@ -20,6 +20,8 @@ Makefile
 *.la
 *.lo
 *.o
+/tests/*/*.trs
+/tests/*/*.log
 /doc/html/
 /doc/doxygen.done
 /doc/doxygen_sqlite3.db
