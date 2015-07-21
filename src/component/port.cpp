@@ -149,7 +149,8 @@ port::port(int ind, component *c)
 		buffer_count_actual(0), buffer_count_min(0), buffer_size(0),
 		f_enabled(OMX_FALSE), f_populated(OMX_FALSE),
 		domain(OMX_PortDomainMax),
-		buffers_contiguous(OMX_FALSE), buffer_alignment(0) {
+		buffers_contiguous(OMX_FALSE), buffer_alignment(0)
+{
 	scoped_log_begin;
 
 	try {
