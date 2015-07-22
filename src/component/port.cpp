@@ -398,7 +398,7 @@ OMX_ERRORTYPE port::disable_port()
 	if (!get_enabled()) {
 		errprint("port %d is already disabled.\n",
 			(int)get_port_index());
-		return OMX_ErrorBadPortIndex;
+		return OMX_ErrorIncorrectStateOperation;
 	}
 
 
@@ -415,7 +415,7 @@ OMX_ERRORTYPE port::enable_port()
 	if (get_enabled()) {
 		errprint("port %d is already enabled.\n",
 			(int)get_port_index());
-		return OMX_ErrorBadPortIndex;
+		return OMX_ErrorIncorrectStateOperation;
 	}
 
 
@@ -431,7 +431,7 @@ OMX_ERRORTYPE port::flush_buffers()
 	if (!get_enabled()) {
 		errprint("port %d is disabled.\n",
 			(int)get_port_index());
-		return OMX_ErrorBadPortIndex;
+		return OMX_ErrorIncorrectStateOperation;
 	}
 
 
@@ -473,7 +473,7 @@ OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX
 	if (!get_enabled()) {
 		errprint("port %d is disabled.\n",
 			(int)get_port_index());
-		return OMX_ErrorBadPortIndex;
+		return OMX_ErrorIncorrectStateOperation;
 	}
 
 	try {
@@ -559,7 +559,7 @@ OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv
 	if (!get_enabled()) {
 		errprint("port %d is disabled.\n",
 			(int)get_port_index());
-		return OMX_ErrorBadPortIndex;
+		return OMX_ErrorIncorrectStateOperation;
 	}
 
 	try {
@@ -711,7 +711,7 @@ OMX_ERRORTYPE port::empty_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 	if (get_dir() != OMX_DirInput) {
 		errprint("port:%d is not input.\n",
 			(int)get_port_index());
-		return OMX_ErrorBadPortIndex;
+		return OMX_ErrorIncorrectStateOperation;
 	}
 
 	err = push_buffer(bufhead);
@@ -727,7 +727,7 @@ OMX_ERRORTYPE port::fill_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 	if (get_dir() != OMX_DirOutput) {
 		errprint("port:%d is not output.\n",
 			(int)get_port_index());
-		return OMX_ErrorBadPortIndex;
+		return OMX_ErrorIncorrectStateOperation;
 	}
 
 	err = push_buffer(bufhead);
@@ -751,6 +751,12 @@ OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 		errprint("invalid state:%s.\n",
 			omx_enum_name::get_OMX_STATETYPE_name(get_component()->get_state()));
 		return OMX_ErrorInvalidState;
+	}
+
+	if (!get_enabled()) {
+		errprint("port %d is disabled.\n",
+			(int)get_port_index());
+		return OMX_ErrorIncorrectStateOperation;
 	}
 
 	if (!find_buffer(bufhead)) {

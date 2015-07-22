@@ -1,5 +1,6 @@
-#include <map>
+#include <cstdarg>
 #include <deque>
+#include <map>
 #include <mutex>
 #include <condition_variable>
 #include <pthread.h>
@@ -33,10 +34,10 @@ namespace mf {
  */
 
 component::component(OMX_COMPONENTTYPE *c, const char *cname)
-		: omx_reflector(c, cname), broken(false),
-		state(OMX_StateInvalid), omx_cbs(), omx_cbs_priv(nullptr),
-		th_accept(nullptr), ring_accept(nullptr), bound_accept(nullptr),
-		th_main(nullptr), running_main(false)
+	: omx_reflector(c, cname), broken(false),
+	state(OMX_StateInvalid), omx_cbs(), omx_cbs_priv(nullptr),
+	th_accept(nullptr), ring_accept(nullptr), bound_accept(nullptr),
+	th_main(nullptr), running_main(false)
 {
 	scoped_log_begin;
 
