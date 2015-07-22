@@ -9,7 +9,6 @@ omxil_comp::omxil_comp(const char *comp_name)
 	: comp(nullptr)
 {
 	char namebuf[OMX_MAX_STRINGNAME_SIZE] = "";
-	OMX_CALLBACKTYPE callbacks;
 	OMX_ERRORTYPE result;
 
 	//save arguments

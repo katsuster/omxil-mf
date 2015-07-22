@@ -40,6 +40,7 @@ protected:
 
 private:
 	OMX_HANDLETYPE comp;
+	OMX_CALLBACKTYPE callbacks;
 	std::string name;
 
 };
