@@ -1204,14 +1204,14 @@ OMX_ERRORTYPE component::check_omx_header(const void *p, size_t size) const
 		return OMX_ErrorBadParameter;
 	}
 	if (h->nSize != size) {
-		errprint("invalid nSize(%d) != size:%d.\n", 
+		errprint("invalid nSize(%d) != size:%d.\n",
 			(int)h->nSize, (int)size);
 		return OMX_ErrorBadParameter;
 	}
 	if (h->nVersion.s.nVersionMajor != OMX_MF_IL_MAJOR ||
 		h->nVersion.s.nVersionMinor > OMX_MF_IL_MINOR) {
-		errprint("invalid version %d.%d required.\n", 
-			h->nVersion.s.nVersionMajor, 
+		errprint("invalid version %d.%d required.\n",
+			h->nVersion.s.nVersionMajor,
 			h->nVersion.s.nVersionMinor);
 		return OMX_ErrorVersionMismatch;
 	}
