@@ -723,7 +723,7 @@ OMX_ERRORTYPE component::EmptyBufferDone(port_buffer *pb)
 	//EOS detected
 	if (pb->header->nFlags & OMX_BUFFERFLAG_EOS) {
 		EventHandler(OMX_EventBufferFlag,
-			pb->p->get_index(), pb->header->nFlags, nullptr);
+			pb->p->get_port_index(), pb->header->nFlags, nullptr);
 	}
 
 	return EmptyBufferDone(pb->header);
@@ -746,7 +746,7 @@ OMX_ERRORTYPE component::FillBufferDone(port_buffer *pb)
 	//EOS detected
 	if (pb->header->nFlags & OMX_BUFFERFLAG_EOS) {
 		EventHandler(OMX_EventBufferFlag,
-			pb->p->get_index(), pb->header->nFlags, nullptr);
+			pb->p->get_port_index(), pb->header->nFlags, nullptr);
 	}
 
 	return FillBufferDone(pb->header);
@@ -1172,7 +1172,7 @@ bool component::insert_port(port& p)
 {
 	std::pair<component::portmap_t::iterator, bool> ret;
 
-	ret = map_ports.insert(component::portmap_t::value_type(p.get_index(), p));
+	ret = map_ports.insert(component::portmap_t::value_type(p.get_port_index(), p));
 
 	return ret.second;
 }

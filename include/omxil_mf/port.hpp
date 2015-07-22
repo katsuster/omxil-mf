@@ -306,6 +306,13 @@ public:
 	virtual const char *get_name() const;
 
 	/**
+	 * 全ての待機しているスレッドを強制的に解除します。
+	 *
+	 * 強制解除されたスレッドは runtime_error をスローします。
+	 */
+	virtual void shutdown();
+
+	/**
 	 * ポートが所属するコンポーネントを取得します。
 	 *
 	 * @return コンポーネントへのポインタ、属していなければ nullptr
@@ -320,25 +327,18 @@ public:
 	virtual component *get_component();
 
 	/**
-	 * 全ての待機しているスレッドを強制的に解除します。
-	 *
-	 * 強制解除されたスレッドは runtime_error をスローします。
-	 */
-	virtual void shutdown();
-
-	/**
 	 * ポートのインデックスを取得します。
 	 *
 	 * @return ポートのインデックス
 	 */
-	virtual OMX_U32 get_index() const;
+	virtual OMX_U32 get_port_index() const;
 
 	/**
 	 * ポートのインデックスを設定します。
 	 *
 	 * @param v ポートのインデックス
 	 */
-	virtual void set_index(OMX_U32 v);
+	virtual void set_port_index(OMX_U32 v);
 
 	virtual OMX_DIRTYPE get_dir() const;
 	virtual void set_dir(OMX_DIRTYPE v);
@@ -719,15 +719,29 @@ protected:
 
 
 private:
-	OMX_U32 index;
-	component *comp;
-
 	//ポートのロック
 	std::recursive_mutex mut;
 	//ポートの状態変数
 	std::condition_variable_any cond;
 	//待機の強制解除フラグ
 	bool broken;
+
+	component *comp;
+
+	//以下 OMX_PARAM_PORTDEFINITIONTYPE に基づくメンバ
+
+	OMX_U32 port_index;
+	OMX_DIRTYPE dir;
+	OMX_U32 buffer_count_actual;
+	OMX_U32 buffer_count_min;
+	OMX_U32 buffer_size;
+	OMX_BOOL f_enabled;
+	OMX_BOOL f_populated;
+	OMX_PORTDOMAINTYPE domain;
+	OMX_BOOL buffers_contiguous;
+	OMX_U32 buffer_alignment;
+
+	//以上 OMX_PARAM_PORTDEFINITIONTYPE に基づくメンバ
 
 	//使用可能バッファ登録リスト
 	std::vector<port_buffer *> list_bufs;
@@ -742,16 +756,6 @@ private:
 	bounded_buffer<ring_buffer<port_buffer>, port_buffer> *bound_ret;
 	//使用後のバッファ返却スレッド
 	std::thread *th_ret;
-
-	OMX_DIRTYPE dir;
-	OMX_U32 buffer_count_actual;
-	OMX_U32 buffer_count_min;
-	OMX_U32 buffer_size;
-	OMX_BOOL f_enabled;
-	OMX_BOOL f_populated;
-	OMX_PORTDOMAINTYPE domain;
-	OMX_BOOL buffers_contiguous;
-	OMX_U32 buffer_alignment;
 
 };
 

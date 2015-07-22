@@ -139,14 +139,14 @@ void port_buffer::dump(const char *msg)
 
 
 port::port(int ind, component *c)
-		: index(ind), comp(c), broken(false),
-		ring_send(nullptr), bound_send(nullptr),
-		ring_ret(nullptr), bound_ret(nullptr), th_ret(nullptr),
-		dir(OMX_DirMax),
-		buffer_count_actual(0), buffer_count_min(1), buffer_size(1),
-		f_enabled(OMX_TRUE), f_populated(OMX_FALSE),
-		domain(OMX_PortDomainMax),
-		buffers_contiguous(OMX_FALSE), buffer_alignment(0)
+	: broken(false), comp(c),
+	port_index(ind), dir(OMX_DirMax),
+	buffer_count_actual(0), buffer_count_min(1), buffer_size(1),
+	f_enabled(OMX_TRUE), f_populated(OMX_FALSE),
+	domain(OMX_PortDomainMax),
+	buffers_contiguous(OMX_FALSE), buffer_alignment(0),
+	ring_send(nullptr), bound_send(nullptr),
+	ring_ret(nullptr), bound_ret(nullptr), th_ret(nullptr)
 {
 	scoped_log_begin;
 
@@ -211,7 +211,6 @@ const char *port::get_name() const
 	return "port";
 }
 
-
 const component *port::get_component() const
 {
 	return comp;
@@ -231,14 +230,14 @@ void port::shutdown()
 	cond.notify_all();
 }
 
-OMX_U32 port::get_index() const
+OMX_U32 port::get_port_index() const
 {
-	return index;
+	return port_index;
 }
 
-void port::set_index(OMX_U32 v)
+void port::set_port_index(OMX_U32 v)
 {
-	index = v;
+	port_index = v;
 }
 
 OMX_DIRTYPE port::get_dir() const
@@ -356,7 +355,7 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port::get_definition() const
 	definition.nVersion.s.nVersionMinor = OMX_MF_IL_MINOR;
 	definition.nVersion.s.nRevision     = OMX_MF_IL_REVISION;
 	definition.nVersion.s.nStep         = OMX_MF_IL_STEP;
-	definition.nPortIndex         = index;
+	definition.nPortIndex         = port_index;
 	definition.eDir               = dir;
 	definition.nBufferCountActual = buffer_count_actual;
 	definition.nBufferCountMin    = buffer_count_min;
@@ -394,7 +393,8 @@ OMX_ERRORTYPE port::disable_port()
 	scoped_log_begin;
 
 	if (!get_enabled()) {
-		errprint("port %d is already disabled.\n", (int)get_index());
+		errprint("port %d is already disabled.\n",
+			(int)get_port_index());
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -410,7 +410,8 @@ OMX_ERRORTYPE port::enable_port()
 	scoped_log_begin;
 
 	if (get_enabled()) {
-		errprint("port %d is already enabled.\n", (int)get_index());
+		errprint("port %d is already enabled.\n",
+			(int)get_port_index());
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -425,7 +426,8 @@ OMX_ERRORTYPE port::flush_buffers()
 	scoped_log_begin;
 
 	if (!get_enabled()) {
-		errprint("port %d is disabled.\n", (int)get_index());
+		errprint("port %d is disabled.\n",
+			(int)get_port_index());
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -466,7 +468,8 @@ OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX
 	OMX_ERRORTYPE err;
 
 	if (!get_enabled()) {
-		errprint("port %d is disabled.\n", (int)get_index());
+		errprint("port %d is disabled.\n",
+			(int)get_port_index());
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -511,10 +514,10 @@ OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX
 		header->pPlatformPrivate     = pb;
 		if (get_dir() == OMX_DirInput) {
 			header->pInputPortPrivate  = nullptr;
-			header->nInputPortIndex    = get_index();
+			header->nInputPortIndex    = get_port_index();
 		} else if (get_dir() == OMX_DirOutput) {
 			header->pOutputPortPrivate = nullptr;
-			header->nOutputPortIndex   = get_index();
+			header->nOutputPortIndex   = get_port_index();
 		} else {
 			errprint("unknown direction.\n");
 			err = OMX_ErrorBadPortIndex;
@@ -551,7 +554,8 @@ OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv
 	OMX_ERRORTYPE err;
 
 	if (!get_enabled()) {
-		errprint("port %d is disabled.\n", (int)get_index());
+		errprint("port %d is disabled.\n",
+			(int)get_port_index());
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -599,10 +603,10 @@ OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv
 		header->pPlatformPrivate     = pb;
 		if (get_dir() == OMX_DirInput) {
 			header->pInputPortPrivate  = nullptr;
-			header->nInputPortIndex    = get_index();
+			header->nInputPortIndex    = get_port_index();
 		} else if (get_dir() == OMX_DirOutput) {
 			header->pOutputPortPrivate = nullptr;
-			header->nOutputPortIndex   = get_index();
+			header->nOutputPortIndex   = get_port_index();
 		} else {
 			errprint("unknown direction.\n");
 			err = OMX_ErrorBadPortIndex;
@@ -702,7 +706,8 @@ OMX_ERRORTYPE port::empty_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 	OMX_ERRORTYPE err;
 
 	if (get_dir() != OMX_DirInput) {
-		errprint("port:%d is not input.\n", (int)get_index());
+		errprint("port:%d is not input.\n",
+			(int)get_port_index());
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -717,7 +722,8 @@ OMX_ERRORTYPE port::fill_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 	OMX_ERRORTYPE err;
 
 	if (get_dir() != OMX_DirOutput) {
-		errprint("port:%d is not output.\n", (int)get_index());
+		errprint("port:%d is not output.\n",
+			(int)get_port_index());
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -802,7 +808,8 @@ OMX_ERRORTYPE port::empty_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 	OMX_ERRORTYPE err;
 
 	if (get_dir() != OMX_DirInput) {
-		errprint("port:%d is not input.\n", (int)get_index());
+		errprint("port:%d is not input.\n",
+			(int)get_port_index());
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -828,7 +835,8 @@ OMX_ERRORTYPE port::fill_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 	OMX_ERRORTYPE err;
 
 	if (get_dir() != OMX_DirOutput) {
-		errprint("port:%d is not output.\n", (int)get_index());
+		errprint("port:%d is not output.\n",
+			(int)get_port_index());
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -941,7 +949,7 @@ void *port::buffer_done_thread_main(port *p)
 	try {
 		//スレッド名をつける
 		thname = "omx:p";
-		thname += std::to_string(p->get_index());
+		thname += std::to_string(p->get_port_index());
 		thname += ":";
 		thname += p->get_component()->get_name();
 		prctl(PR_SET_NAME, thname.c_str());

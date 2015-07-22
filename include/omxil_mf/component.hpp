@@ -132,7 +132,7 @@ public:
 	virtual port *find_port(OMX_U32 index);
 
 	/**
-	 * 全てのポートが 'populated' になるまで待ちます。
+	 * 全ての有効なポートが 'populated' になるまで待ちます。
 	 *
 	 * @param v 待ちたい状態
 	 * 	OMX_TRUE なら populated になるまで待ち、
