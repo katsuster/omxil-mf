@@ -102,7 +102,7 @@ OMX_STATETYPE component::get_state() const
 
 void component::set_state(OMX_STATETYPE s)
 {
-	std::unique_lock<std::mutex> lock(mut);
+	std::lock_guard<std::mutex> lock(mut);
 
 	state = s;
 	cond.notify_all();
@@ -144,7 +144,7 @@ void component::wait_state_multiple(int cnt, ...)
 		for (int i = 0; i < cnt; i++) {
 			if (broken || state == states[i]) {
 				return true;
-		}
+			}
 		}
 		return false; });
 	error_if_broken(lock);
@@ -152,7 +152,7 @@ void component::wait_state_multiple(int cnt, ...)
 
 void component::shutdown()
 {
-	std::unique_lock<std::mutex> lock(mut);
+	std::lock_guard<std::mutex> lock(mut);
 
 	broken = true;
 	cond.notify_all();
@@ -179,6 +179,15 @@ port *component::find_port(OMX_U32 index)
 	}
 
 	return &ret->second;
+}
+
+void component::wait_all_port_populated(OMX_BOOL v)
+{
+	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+		if (it->second.get_enabled()) {
+			it->second.wait_populated(v);
+		}
+	}
 }
 
 void component::run()
@@ -983,6 +992,15 @@ OMX_ERRORTYPE component::command_state_set_to_idle()
 
 	switch (get_state()) {
 	case OMX_StateLoaded:
+		//Wait for all enabled port to be populated
+		try {
+			wait_all_port_populated(OMX_TRUE);
+		} catch (const std::runtime_error& e) {
+			errprint("runtime_error: %s\n", e.what());
+			err = OMX_ErrorInsufficientResources;
+			break;
+		}
+
 		try {
 			//start main thread
 			th_main = new std::thread(component_thread_main, get_omx_component());

@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <mutex>
+#include <condition_variable>
 #include <thread>
-#include <sys/prctl.h>
 
 #include <OMX_Component.h>
 #include <OMX_Core.h>
@@ -320,6 +320,13 @@ public:
 	virtual component *get_component();
 
 	/**
+	 * 全ての待機しているスレッドを強制的に解除します。
+	 *
+	 * 強制解除されたスレッドは runtime_error をスローします。
+	 */
+	virtual void shutdown();
+
+	/**
 	 * ポートのインデックスを取得します。
 	 *
 	 * @return ポートのインデックス
@@ -350,6 +357,20 @@ public:
 
 	virtual OMX_BOOL get_populated() const;
 	virtual void set_populated(OMX_BOOL v);
+
+	/**
+	 * ポートが 'populated' になるまで待ちます。
+	 *
+	 * 'populated' とはポートが enabled であり、なおかつ、
+	 * nBufferCountActual で示す数だけ、
+	 * OMX_UseBuffer または OMX_AllocateBuffer にてバッファが確保され、
+	 * OMX_StateIdle に遷移する準備ができている状態を指します。
+	 *
+	 * @param v 待ちたい状態
+	 * 	OMX_TRUE なら populated になるまで待ち、
+	 * 	OMX_FALSE なら populated ではなくなるまで待ちます。
+	 */
+	virtual void wait_populated(OMX_BOOL v);
 
 	virtual OMX_PORTDOMAINTYPE get_domain() const;
 	virtual void set_domain(OMX_PORTDOMAINTYPE v);
@@ -419,14 +440,40 @@ public:
 	 *     OMX_U32 nBufferAlignment;
 	 * }
 	 *
-	 * @return port definition data of OpenMAX IL
+	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v);
 
+	/**
+	 * ポートを無効にします。
+	 *
+	 * empty_buffer または fill_buffer によって渡されているが、
+	 * 未処理のバッファは全て返却されます。
+	 *
+	 * 確保していたバッファを全て解放します。
+	 *
+	 * @return OpenMAX エラー値
+	 */
 	virtual OMX_ERRORTYPE disable_port();
 
+	/**
+	 * ポートを有効にします。
+	 *
+	 * use_buffer または allocate_buffer によって、
+	 * 確保すべきバッファが全て確保されるまで、待機します。
+	 *
+	 * @return OpenMAX エラー値
+	 */
 	virtual OMX_ERRORTYPE enable_port();
 
+	/**
+	 * 未処理のバッファを全て返却します。
+	 *
+	 * empty_buffer または fill_buffer によって渡されているが、
+	 * 未処理のバッファは全て返却されます。
+	 *
+	 * @return OpenMAX エラー値
+	 */
 	virtual OMX_ERRORTYPE flush_buffers();
 
 	virtual OMX_ERRORTYPE component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup);
@@ -635,6 +682,14 @@ public:
 
 
 protected:
+	/**
+	 * ポートの待ちを強制キャンセルすべきか、
+	 * そうでないかをチェックし、キャンセルすべきなら例外をスローします。
+	 *
+	 * @param lock ポートのロック
+	 */
+	virtual void error_if_broken(std::unique_lock<std::recursive_mutex>& lock);
+
 	//----------------------------------------
 	// コンポーネント利用者へのバッファ返却スレッド
 	//----------------------------------------
@@ -666,6 +721,13 @@ protected:
 private:
 	OMX_U32 index;
 	component *comp;
+
+	//ポートのロック
+	std::recursive_mutex mut;
+	//ポートの状態変数
+	std::condition_variable_any cond;
+	//待機の強制解除フラグ
+	bool broken;
 
 	//使用可能バッファ登録リスト
 	std::vector<port_buffer *> list_bufs;

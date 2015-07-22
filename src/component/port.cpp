@@ -1,6 +1,3 @@
-#include <vector>
-#include <mutex>
-#include <pthread.h>
 #include <sys/prctl.h>
 
 #include <omxil_mf/component.hpp>
@@ -142,12 +139,12 @@ void port_buffer::dump(const char *msg)
 
 
 port::port(int ind, component *c)
-		: index(ind), comp(c),
+		: index(ind), comp(c), broken(false),
 		ring_send(nullptr), bound_send(nullptr),
 		ring_ret(nullptr), bound_ret(nullptr), th_ret(nullptr),
 		dir(OMX_DirMax),
-		buffer_count_actual(0), buffer_count_min(0), buffer_size(0),
-		f_enabled(OMX_FALSE), f_populated(OMX_FALSE),
+		buffer_count_actual(0), buffer_count_min(1), buffer_size(1),
+		f_enabled(OMX_TRUE), f_populated(OMX_FALSE),
 		domain(OMX_PortDomainMax),
 		buffers_contiguous(OMX_FALSE), buffer_alignment(0)
 {
@@ -188,6 +185,8 @@ port::~port()
 {
 	scoped_log_begin;
 
+	shutdown();
+
 	//shutdown returning OpenMAX buffers thread
 	if (bound_ret) {
 		bound_ret->shutdown();
@@ -224,6 +223,13 @@ component *port::get_component()
 	return comp;
 }
 
+void port::shutdown()
+{
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
+
+	broken = true;
+	cond.notify_all();
+}
 
 OMX_U32 port::get_index() const
 {
@@ -282,7 +288,10 @@ OMX_BOOL port::get_enabled() const
 
 void port::set_enabled(OMX_BOOL v)
 {
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
+
 	f_enabled = v;
+	cond.notify_all();
 }
 
 OMX_BOOL port::get_populated() const
@@ -292,7 +301,18 @@ OMX_BOOL port::get_populated() const
 
 void port::set_populated(OMX_BOOL v)
 {
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
+
 	f_populated = v;
+	cond.notify_all();
+}
+
+void port::wait_populated(OMX_BOOL v)
+{
+	std::unique_lock<std::recursive_mutex> lk_port(mut);
+
+	cond.wait(lk_port, [&] { return broken || f_populated == v; });
+	error_if_broken(lk_port);
 }
 
 OMX_PORTDOMAINTYPE port::get_domain() const
@@ -372,7 +392,15 @@ OMX_ERRORTYPE port::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 OMX_ERRORTYPE port::disable_port()
 {
 	scoped_log_begin;
-	//do nothing
+
+	if (!get_enabled()) {
+		errprint("port %d is already disabled.\n", (int)get_index());
+		return OMX_ErrorBadPortIndex;
+	}
+
+
+
+	set_enabled(OMX_FALSE);
 
 	return OMX_ErrorNone;
 }
@@ -380,7 +408,14 @@ OMX_ERRORTYPE port::disable_port()
 OMX_ERRORTYPE port::enable_port()
 {
 	scoped_log_begin;
-	//do nothing
+
+	if (get_enabled()) {
+		errprint("port %d is already enabled.\n", (int)get_index());
+		return OMX_ErrorBadPortIndex;
+	}
+
+
+	set_enabled(OMX_TRUE);
 
 	return OMX_ErrorNone;
 }
@@ -388,7 +423,13 @@ OMX_ERRORTYPE port::enable_port()
 OMX_ERRORTYPE port::flush_buffers()
 {
 	scoped_log_begin;
-	//do nothing
+
+	if (!get_enabled()) {
+		errprint("port %d is disabled.\n", (int)get_index());
+		return OMX_ErrorBadPortIndex;
+	}
+
+
 
 	return OMX_ErrorNone;
 }
@@ -424,6 +465,11 @@ OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX
 	OMX_BUFFERHEADERTYPE *header = nullptr;
 	OMX_ERRORTYPE err;
 
+	if (!get_enabled()) {
+		errprint("port %d is disabled.\n", (int)get_index());
+		return OMX_ErrorBadPortIndex;
+	}
+
 	try {
 		//allocate buffer of port
 		pb = new port_buffer();
@@ -437,7 +483,8 @@ OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX
 	}
 
 	{
-		std::lock_guard<std::recursive_mutex> lk(mut_list_bufs);
+		std::lock_guard<std::recursive_mutex> lk_port(mut);
+		std::lock_guard<std::recursive_mutex> lk_buf(mut_list_bufs);
 
 		//init buffer of port
 		pb->p           = this;
@@ -446,6 +493,9 @@ OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX
 		pb->index       = 0;
 
 		list_bufs.push_back(pb);
+		if (list_bufs.size() >= buffer_count_actual) {
+			set_populated(OMX_TRUE);
+		}
 
 		//init OpenMAX BUFFERHEADER
 		header->nSize = sizeof(OMX_BUFFERHEADERTYPE);
@@ -500,6 +550,11 @@ OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv
 	OMX_BUFFERHEADERTYPE *header = nullptr;
 	OMX_ERRORTYPE err;
 
+	if (!get_enabled()) {
+		errprint("port %d is disabled.\n", (int)get_index());
+		return OMX_ErrorBadPortIndex;
+	}
+
 	try {
 		//allocate back buffer of OpenMAX buffer
 		backbuf = new OMX_U8[size];
@@ -516,7 +571,8 @@ OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv
 	}
 
 	{
-		std::lock_guard<std::recursive_mutex> lk(mut_list_bufs);
+		std::lock_guard<std::recursive_mutex> lk_port(mut);
+		std::lock_guard<std::recursive_mutex> lk_buf(mut_list_bufs);
 
 		//init buffer of port
 		pb->p           = this;
@@ -525,6 +581,9 @@ OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv
 		pb->index       = 0;
 
 		list_bufs.push_back(pb);
+		if (list_bufs.size() >= buffer_count_actual) {
+			set_populated(OMX_TRUE);
+		}
 
 		//init OpenMAX BUFFERHEADER
 		header->nSize = sizeof(OMX_BUFFERHEADERTYPE);
@@ -575,7 +634,8 @@ err_out:
 OMX_ERRORTYPE port::free_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 {
 	scoped_log_begin;
-	std::lock_guard<std::recursive_mutex> lk(mut_list_bufs);
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
+	std::lock_guard<std::recursive_mutex> lk_buf(mut_list_bufs);
 	std::vector<port_buffer *>::iterator it;
 	port_buffer *pb;
 
@@ -588,6 +648,10 @@ OMX_ERRORTYPE port::free_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 		}
 
 		list_bufs.erase(it);
+		if (list_bufs.size() < buffer_count_actual) {
+			set_populated(OMX_FALSE);
+		}
+
 		if (pb->f_allocate) {
 			delete[] pb->header->pBuffer;
 			pb->header->pBuffer = nullptr;
@@ -610,7 +674,7 @@ OMX_ERRORTYPE port::free_buffer(port_buffer *pb)
 
 bool port::find_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 {
-	std::lock_guard<std::recursive_mutex> lk(mut_list_bufs);
+	std::lock_guard<std::recursive_mutex> lk_buf(mut_list_bufs);
 
 	for (port_buffer *pb : list_bufs) {
 		if (pb->header->pBuffer == bufhead->pBuffer) {
@@ -809,6 +873,19 @@ OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 
 
 
+
+/*
+ * protected functions
+ */
+
+void port::error_if_broken(std::unique_lock<std::recursive_mutex>& lk_port)
+{
+	if (broken) {
+		std::string msg(__func__);
+		msg += ": interrupted.";
+		throw std::runtime_error(msg);
+	}
+}
 
 //----------------------------------------
 //コンポーネント利用者へのバッファ返却スレッド

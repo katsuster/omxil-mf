@@ -132,6 +132,15 @@ public:
 	virtual port *find_port(OMX_U32 index);
 
 	/**
+	 * 全てのポートが 'populated' になるまで待ちます。
+	 *
+	 * @param v 待ちたい状態
+	 * 	OMX_TRUE なら populated になるまで待ち、
+	 * 	OMX_FALSE なら populated ではなくなるまで待ちます。
+	 */
+	virtual void wait_all_port_populated(OMX_BOOL v);
+
+	/**
 	 * コンポーネントのメイン処理を行います。
 	 *
 	 * FIXME: このメンバ関数は純粋仮想関数にしないでください。

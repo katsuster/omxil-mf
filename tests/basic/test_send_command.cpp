@@ -102,6 +102,7 @@ int main(int argc, char *argv[])
 	printf("OMX_GetHandle: name:%s, comp:%p\n", 
 		arg_comp, comp);
 
+	//Get port definition(before)
 	memset(&def_in, 0, sizeof(def_in));
 	def_in.nSize = sizeof(def_in);
 	def_in.nVersion.s.nVersionMajor = 1;
@@ -116,7 +117,7 @@ int main(int argc, char *argv[])
 			"failed.\n");
 		goto err_out2;
 	}
-	printf("OMX_GetParameter: in %d -----\n", def_in.nPortIndex);
+	printf("OMX_GetParameter: before in %d -----\n", def_in.nPortIndex);
 	dump_port_definitiontype(&def_in);
 
 	memset(&def_out, 0, sizeof(def_out));
@@ -133,7 +134,7 @@ int main(int argc, char *argv[])
 			"failed.\n");
 		goto err_out2;
 	}
-	printf("OMX_GetParameter: out %d -----\n", def_out.nPortIndex);
+	printf("OMX_GetParameter: before out %d -----\n", def_out.nPortIndex);
 	dump_port_definitiontype(&def_out);
 
 	/*
@@ -187,7 +188,44 @@ int main(int argc, char *argv[])
 	}
 
 	//Wait for StatusIdle
+	printf("wait for StateIdle...\n");
 	comp->wait_event();
+	printf("wait for StateIdle... Done!\n");
+
+	//Get port definition(after)
+	memset(&def_in, 0, sizeof(def_in));
+	def_in.nSize = sizeof(def_in);
+	def_in.nVersion.s.nVersionMajor = 1;
+	def_in.nVersion.s.nVersionMinor = 1;
+	def_in.nVersion.s.nRevision = 0;
+	def_in.nVersion.s.nStep = 0;
+	def_in.nPortIndex = 0;
+	result = comp->GetParameter(OMX_IndexParamPortDefinition, 
+		&def_in);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(IndexParamPortDefinition) "
+			"failed.\n");
+		goto err_out2;
+	}
+	printf("OMX_GetParameter: after in %d -----\n", def_in.nPortIndex);
+	dump_port_definitiontype(&def_in);
+
+	memset(&def_out, 0, sizeof(def_out));
+	def_out.nSize = sizeof(def_out);
+	def_out.nVersion.s.nVersionMajor = 1;
+	def_out.nVersion.s.nVersionMinor = 1;
+	def_out.nVersion.s.nRevision = 0;
+	def_out.nVersion.s.nStep = 0;
+	def_out.nPortIndex = 1;
+	result = comp->GetParameter(OMX_IndexParamPortDefinition, 
+		&def_out);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(IndexParamPortDefinition) "
+			"failed.\n");
+		goto err_out2;
+	}
+	printf("OMX_GetParameter: after out %d -----\n", def_out.nPortIndex);
+	dump_port_definitiontype(&def_out);
 
 	//Terminate
 	for (auto it = buf_out.begin(); it != buf_out.end(); it++) {
