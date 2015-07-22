@@ -7,6 +7,9 @@
 #include "util/omx_enum_name.hpp"
 #include "debug/scoped_log.hpp"
 
+//前半: port_buffer クラス
+//後半: port クラス
+
 namespace mf {
 
 bool port_buffer::size() const

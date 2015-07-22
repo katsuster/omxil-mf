@@ -9,10 +9,13 @@
 #include "util/omx_enum_name.hpp"
 #include "debug/scoped_log.hpp"
 
+//日本語コメントあり
+
 namespace mf {
 
 omx_reflector::omx_reflector(OMX_COMPONENTTYPE *c, const char *cname)
-		: omx_comp(c), omx_name(cname) {
+		: omx_comp(c), omx_name(cname)
+{
 	scoped_log_begin;
 
 	if (c == NULL) {
