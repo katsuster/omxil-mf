@@ -631,6 +631,19 @@ OMX_ERRORTYPE component::EmptyThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHE
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
 
+	switch (get_state()) {
+	case OMX_StateIdle:
+	case OMX_StateExecuting:
+	case OMX_StatePause:
+		//OK
+		break;
+	default:
+		//NG
+		errprint("invalid state:%s.\n",
+			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
+		return OMX_ErrorInvalidState;
+	}
+
 	port_found = find_port(pBuffer->nInputPortIndex);
 	if (port_found == nullptr) {
 		errprint("invalid input port:%d\n",
@@ -649,6 +662,19 @@ OMX_ERRORTYPE component::FillThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEA
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
 
+	switch (get_state()) {
+	case OMX_StateIdle:
+	case OMX_StateExecuting:
+	case OMX_StatePause:
+		//OK
+		break;
+	default:
+		//NG
+		errprint("invalid state:%s.\n",
+			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
+		return OMX_ErrorInvalidState;
+	}
+
 	port_found = find_port(pBuffer->nOutputPortIndex);
 	if (port_found == nullptr) {
 		errprint("invalid output port:%d\n",
@@ -664,6 +690,17 @@ OMX_ERRORTYPE component::FillThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEA
 OMX_ERRORTYPE component::SetCallbacks(OMX_HANDLETYPE hComponent, OMX_CALLBACKTYPE *pCallbacks, OMX_PTR pAppData)
 {
 	scoped_log_begin;
+
+	switch (get_state()) {
+	case OMX_StateLoaded:
+		//OK
+		break;
+	default:
+		//NG
+		errprint("invalid state:%s.\n",
+			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
+		return OMX_ErrorInvalidState;
+	}
 
 	if (pCallbacks == nullptr) {
 		return OMX_ErrorBadParameter;

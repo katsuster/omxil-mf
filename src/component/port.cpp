@@ -785,19 +785,6 @@ OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 	port_buffer pb;
 	OMX_ERRORTYPE err;
 
-	switch (get_component()->get_state()) {
-	case OMX_StateIdle:
-	case OMX_StateExecuting:
-	case OMX_StatePause:
-		//OK
-		break;
-	default:
-		//NG
-		errprint("invalid state:%s.\n",
-			omx_enum_name::get_OMX_STATETYPE_name(get_component()->get_state()));
-		return OMX_ErrorInvalidState;
-	}
-
 	if (!get_enabled()) {
 		errprint("port %d is disabled.\n",
 			(int)get_port_index());
