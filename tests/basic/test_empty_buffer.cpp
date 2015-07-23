@@ -14,32 +14,67 @@
 #include "common/omxil_utils.h"
 #include "common/omxil_comp.hpp"
 
-class comp_test_send_cmd : public omxil_comp {
+struct buffer_attr {
+	bool used;
+};
+
+class comp_test_empty_buffer : public omxil_comp {
 public:
-	comp_test_send_cmd(const char *comp_name)
+	comp_test_empty_buffer(const char *comp_name)
 		: omxil_comp(comp_name), state_done(OMX_StateInvalid)
 	{
 		//do nothing
 	}
 
-	virtual ~comp_test_send_cmd()
+	virtual ~comp_test_empty_buffer()
 	{
 		//do nothing
 	}
 
+	virtual void push_back_buffer(OMX_BUFFERHEADERTYPE *buf)
+	{
+		buf_in.push_back(buf);
+	}
+
+	virtual OMX_BUFFERHEADERTYPE *find_free_buffer() const
+	{
+		for (OMX_BUFFERHEADERTYPE *buf : buf_in) {
+			buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
+
+			if (!pbattr->used) {
+				return buf;
+			}
+		}
+
+		return nullptr;
+	}
+
 	virtual OMX_ERRORTYPE EventHandler(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_U32 nData2, OMX_PTR pEventData)
 	{
-		if (eEvent == OMX_EventCmdComplete && 
+		if (eEvent == OMX_EventCmdComplete &&
 			nData1 == OMX_CommandStateSet) {
 			std::unique_lock<std::mutex> lock(mut_command);
 
-			printf("comp_test_empty_buffer::EventHandler state '%s' set.\n", 
+			printf("comp_test_empty_buffer::EventHandler state '%s' set.\n",
 				get_omx_statetype_name((OMX_STATETYPE)nData2));
 			state_done = static_cast<OMX_STATETYPE>(nData2);
 			cond_command.notify_all();
 		} else {
-			printf("comp_test_send_cmd::EventHandler ignored.\n");
+			printf("comp_test_empty_buffer::EventHandler ignored.\n");
 		}
+
+		return OMX_ErrorNone;
+	}
+
+	virtual OMX_ERRORTYPE EmptyBufferDone(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_BUFFERHEADERTYPE* pBuffer)
+	{
+		buffer_attr *pbattr;
+
+		printf("comp_test_empty_buffer::EmptyBufferDone.\n");
+
+		pbattr = static_cast<buffer_attr *>(pBuffer->pAppPrivate);
+
+		pbattr->used = false;
 
 		return OMX_ErrorNone;
 	}
@@ -55,16 +90,16 @@ private:
 	std::mutex mut_command;
 	std::condition_variable cond_command;
 	OMX_STATETYPE state_done;
+	std::vector<OMX_BUFFERHEADERTYPE *>buf_in;
 
 };
 
 int main(int argc, char *argv[])
 {
 	const char *arg_comp;
-	comp_test_send_cmd *comp;
-	OMX_PARAM_PORTDEFINITIONTYPE def_in, def_out;
+	comp_test_empty_buffer *comp;
+	OMX_PARAM_PORTDEFINITIONTYPE def_in;
 	std::vector<OMX_BUFFERHEADERTYPE *> buf_in;
-	std::vector<OMX_BUFFERHEADERTYPE *> buf_out;
 	OMX_ERRORTYPE result;
 	OMX_U32 i;
 
@@ -77,9 +112,8 @@ int main(int argc, char *argv[])
 
 	//Reference:
 	//    OpenMAX IL specification version 1.1.2
-	//    3.4.1.1 Non-tunneled Initialization
-	//    3.2.2.8 OMX_GetParameter
-	//    8.2 Mandatory Port Parameters
+	//    3.4.2.1 Non-tunneled Data Flow
+	//    3.2.2.17 OMX_EmptyThisBuffer
 
 	comp = nullptr;
 	result = OMX_ErrorNone;
@@ -90,13 +124,13 @@ int main(int argc, char *argv[])
 		goto err_out1;
 	}
 
-	comp = new comp_test_send_cmd(arg_comp);
+	comp = new comp_test_empty_buffer(arg_comp);
 	if (comp == nullptr || comp->get_component() == nullptr) {
 		fprintf(stderr, "OMX_GetHandle failed.\n");
 		result = OMX_ErrorInsufficientResources;
 		goto err_out2;
 	}
-	printf("OMX_GetHandle: name:%s, comp:%p\n", 
+	printf("OMX_GetHandle: name:%s, comp:%p\n",
 		arg_comp, comp);
 
 	//Get port definition(before)
@@ -108,23 +142,6 @@ int main(int argc, char *argv[])
 	printf("IndexParamPortDefinition: before in %d -----\n", (int)def_in.nPortIndex);
 	dump_port_definitiontype(&def_in);
 
-	result = comp->get_param_port_definition(1, &def_out);
-	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_port_definition(before) failed.\n");
-		goto err_out2;
-	}
-	printf("IndexParamPortDefinition: before out %d -----\n", (int)def_out.nPortIndex);
-	dump_port_definitiontype(&def_out);
-
-	/*
-	OMX_VIDEO_PARAM_AVCTYPE
-	result = OMX_SetParameter(comp, OMX_IndexParamVideoAvc, );
-	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "OMX_SetParameter() failed.\n");
-		goto err_out2;
-	}
-	*/
-
 	//Set StateIdle
 	result = comp->SendCommand(OMX_CommandStateSet, OMX_StateIdle, 0);
 	if (result != OMX_ErrorNone) {
@@ -132,37 +149,26 @@ int main(int argc, char *argv[])
 		goto err_out2;
 	}
 
-	//Allocate buffer
 	buf_in.clear();
 	for (i = 0; i < def_in.nBufferCountActual; i++) {
 		OMX_BUFFERHEADERTYPE *buf;
+		OMX_U8 *pb = nullptr;
+		buffer_attr *pbattr = nullptr;
 
-		result = comp->AllocateBuffer(&buf, 
-			0, 0, def_in.nBufferSize);
+		pb = new OMX_U8[def_in.nBufferSize];
+		pbattr = new buffer_attr;
+
+		result = comp->UseBuffer(&buf,
+			0, pbattr, def_in.nBufferSize, pb);
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "OMX_AllocateBuffer(in) failed.\n");
 			goto err_out2;
 		}
-		printf("OMX_AllocateBuffer: in \n");
+		printf("OMX_UseBuffer: in \n");
 		dump_port_bufferheadertype(buf);
 
+		comp->push_back_buffer(buf);
 		buf_in.push_back(buf);
-	}
-
-	buf_out.clear();
-	for (i = 0; i < def_out.nBufferCountActual; i++) {
-		OMX_BUFFERHEADERTYPE *buf;
-
-		result = comp->AllocateBuffer(&buf, 
-			1, 0, def_out.nBufferSize);
-		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "OMX_AllocateBuffer(out) failed.\n");
-			goto err_out2;
-		}
-		printf("OMX_AllocateBuffer: out \n");
-		dump_port_bufferheadertype(buf);
-
-		buf_out.push_back(buf);
 	}
 
 	//Wait for StatusIdle
@@ -171,22 +177,35 @@ int main(int argc, char *argv[])
 	printf("wait for StateIdle... Done!\n");
 
 
-	//Get port definition(after)
-	result = comp->get_param_port_definition(0, &def_in);
+	//Set StateExecuting
+	result = comp->SendCommand(OMX_CommandStateSet, OMX_StateExecuting, 0);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_port_definition(after) failed.\n");
+		fprintf(stderr, "OMX_SendCommand(StateSet, Executing) failed.\n");
 		goto err_out2;
 	}
-	printf("IndexParamPortDefinition: after in %d -----\n", (int)def_in.nPortIndex);
-	dump_port_definitiontype(&def_in);
 
-	result = comp->get_param_port_definition(1, &def_out);
-	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_port_definition(after) failed.\n");
-		goto err_out2;
+	//Wait for StatusExecuting
+	printf("wait for StateExecuting...\n");
+	comp->wait_state_done(OMX_StateExecuting);
+	printf("wait for StateExecuting... Done!\n");
+
+
+	//EmptyThisBuffer
+	for (i = 0; i < 32768; i++) {
+		OMX_BUFFERHEADERTYPE *buf;
+
+		buf = comp->find_free_buffer();
+		if (buf == nullptr) {
+			fprintf(stderr, "find_free_buffer() failed.\n");
+			goto err_out2;
+		}
+
+		result = comp->EmptyThisBuffer(buf);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "EmptyThisBuffer() failed.\n");
+			goto err_out2;
+		}
 	}
-	printf("IndexParamPortDefinition: after out %d -----\n", (int)def_out.nPortIndex);
-	dump_port_definitiontype(&def_out);
 
 
 	//Set StateLoaded
@@ -197,29 +216,20 @@ int main(int argc, char *argv[])
 	}
 
 	//Free buffer
-	for (auto it = buf_out.begin(); it != buf_out.end(); it++) {
-		result = comp->FreeBuffer(1, *it);
-		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "OMX_FreeBuffer(out) failed.\n");
-			goto err_out2;
-		}
-	}
-	buf_out.clear();
-
 	for (auto it = buf_in.begin(); it != buf_in.end(); it++) {
+		OMX_U8 *pb = (*it)->pBuffer;
+		buffer_attr *pbattr = static_cast<buffer_attr *>((*it)->pAppPrivate);
+
 		result = comp->FreeBuffer(0, *it);
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "OMX_FreeBuffer(in) failed.\n");
 			goto err_out2;
 		}
+
+		delete pbattr;
+		delete[] pb;
 	}
 	buf_in.clear();
-
-	//Wait for StatusLoaded
-	printf("wait for StateLoaded...\n");
-	comp->wait_state_done(OMX_StateLoaded);
-	printf("wait for StateLoaded... Done!\n");
-
 
 	//Terminate
 	delete comp;
@@ -233,10 +243,13 @@ int main(int argc, char *argv[])
 	return 0;
 
 err_out2:
-	for (auto it = buf_out.begin(); it != buf_out.end(); it++) {
-		comp->FreeBuffer(1, *it);
-	}
 	for (auto it = buf_in.begin(); it != buf_in.end(); it++) {
+		OMX_U8 *pb = (*it)->pBuffer;
+		buffer_attr *pbattr = static_cast<buffer_attr *>((*it)->pAppPrivate);
+
+		delete pbattr;
+		delete[] pb;
+
 		comp->FreeBuffer(0, *it);
 	}
 

@@ -9,7 +9,8 @@ check_PROGRAMS = \
 	get_components_of_role \
 	get_handle \
 	get_param_init \
-	send_command
+	send_command \
+	empty_buffer
 
 common_SOURCES  = $(COMMON_DIR)/omxil_utils.c $(COMMON_DIR)/omxil_comp.cpp
 common_CPPFLAGS = -Wall -Werror \
@@ -78,6 +79,12 @@ send_command_CPPFLAGS  = $(common_CPPFLAGS)
 send_command_CFLAGS    = $(common_CFLAGS)
 send_command_CXXFLAGS  = $(common_CXXFLAGS)
 
+empty_buffer_SOURCES   = test_empty_buffer.cpp $(common_SOURCES)
+empty_buffer_LDADD     = $(common_LDADD)
+empty_buffer_CPPFLAGS  = $(common_CPPFLAGS)
+empty_buffer_CFLAGS    = $(common_CFLAGS)
+empty_buffer_CXXFLAGS  = $(common_CXXFLAGS)
+
 TESTS = \
 	init_deinit \
 	init_deinit_multi \
@@ -86,5 +93,6 @@ TESTS = \
 	get_components_of_role.sh \
 	get_handle.sh \
 	get_param_init.sh \
-	send_command.sh
+	send_command.sh \
+	empty_buffer.sh
 

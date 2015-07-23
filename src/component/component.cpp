@@ -1029,7 +1029,6 @@ OMX_ERRORTYPE component::command_state_set_to_loaded()
 		}
 
 		err = OMX_ErrorNone;
-
 		break;
 	default:
 		errprint("invalid state:%s.\n",
@@ -1071,7 +1070,6 @@ OMX_ERRORTYPE component::command_state_set_to_idle()
 		}
 
 		err = OMX_ErrorNone;
-
 		break;
 	case OMX_StateIdle:
 		err = OMX_ErrorSameState;
@@ -1080,11 +1078,11 @@ OMX_ERRORTYPE component::command_state_set_to_idle()
 		//FIXME: flush not implemented yet
 
 		err = OMX_ErrorNone;
-
 		break;
 	default:
 		errprint("invalid state:%s.\n",
 			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
+
 		err = OMX_ErrorInvalidState;
 		break;
 	}
@@ -1118,6 +1116,7 @@ OMX_ERRORTYPE component::command_state_set_to_executing()
 	default:
 		errprint("invalid state:%s.\n",
 			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
+
 		err = OMX_ErrorInvalidState;
 		break;
 	}
