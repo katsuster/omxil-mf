@@ -6,9 +6,7 @@
 
 #include <common/omxil_comp.hpp>
 
-extern "C" {
 #include "common/omxil_utils.h"
-}
 
 omxil_comp::omxil_comp(const char *comp_name)
 	: comp(nullptr)

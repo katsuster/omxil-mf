@@ -10,12 +10,9 @@
 #include <OMX_Core.h>
 #include <OMX_Component.h>
 
-#include "common/omxil_comp.hpp"
-
-extern "C" {
 #include "common/test_omxil.h"
 #include "common/omxil_utils.h"
-}
+#include "common/omxil_comp.hpp"
 
 class comp_test_send_cmd : public omxil_comp {
 public:

@@ -4,11 +4,8 @@
 #include <OMX_Core.h>
 #include <OMX_Component.h>
 
-#include "common/omxil_comp.hpp"
-
-extern "C" {
 #include "common/test_omxil.h"
-}
+#include "common/omxil_comp.hpp"
 
 int main(int argc, char *argv[])
 {
