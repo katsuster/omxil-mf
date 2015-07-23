@@ -31,13 +31,13 @@ libomxil_mf_la_SOURCES = \
 	$(COMPONENT_DIR)/port_image.cpp \
 	$(COMPONENT_DIR)/port_other.cpp \
 	$(REGIST_DIR)/register_component.cpp \
-	$(DEBUG_DIR)/dbgprint.c
+	$(DEBUG_DIR)/dbgprint.cpp
 EXTRA_libomxil_mf_la_SOURCES = \
-	$(API_DIR)/consts.h \
+	$(API_DIR)/consts.hpp \
 	$(UTIL_DIR)/util.hpp \
 	$(UTIL_DIR)/omx_enum_name.hpp \
 	$(REGIST_DIR)/register_component.hpp \
-	$(DEBUG_DIR)/dbgprint.h \
+	$(DEBUG_DIR)/dbgprint.hpp \
 	$(DEBUG_DIR)/scoped_log.hpp
 
 libomxil_mf_la_CPPFLAGS = \

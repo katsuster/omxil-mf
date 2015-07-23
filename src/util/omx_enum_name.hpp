@@ -2,11 +2,9 @@
 #ifndef OMX_MF_ENUM_NAME_HPP__
 #define OMX_MF_ENUM_NAME_HPP__
 
-extern "C" {
 #include <OMX_Types.h>
 #include <OMX_Core.h>
 #include <OMX_Component.h>
-}
 
 namespace mf {
 

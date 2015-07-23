@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <cstdint>
 
-#include "debug/dbgprint.h"
+#include "debug/dbgprint.hpp"
 
 #define scoped_log_begin    mf::scoped_log __tmp_scoped_log__(DPRINT_FUNC, __LINE__)
 

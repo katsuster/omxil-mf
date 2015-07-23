@@ -1,5 +1,5 @@
 
-#include "debug/dbgprint.h"
+#include "debug/dbgprint.hpp"
 
 int no_printf(const char *fmt, ...)
 {

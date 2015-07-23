@@ -1,6 +1,6 @@
 
-#ifndef OMX_MF_DBGPRINT_H__
-#define OMX_MF_DBGPRINT_H__
+#ifndef OMX_MF_DBGPRINT_HPP__
+#define OMX_MF_DBGPRINT_HPP__
 
 #include <unistd.h>
 #include <sys/syscall.h>
@@ -20,13 +20,7 @@
 #define dprint_cont(fmt, ...)    errprint_cont(fmt, ##__VA_ARGS__)
 #else
 #define dprint_cont(fmt, ...)    no_printf(fmt, ##__VA_ARGS__)
-#ifdef __cplusplus
-extern "C" {
-#endif //__cplusplus
 int no_printf(const char *fmt, ...) __attribute__((format(printf, 1, 2)));
-#ifdef __cplusplus
-}
-#endif //__cplusplus
 #endif
 
 #ifdef __GNUC__

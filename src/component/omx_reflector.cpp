@@ -5,7 +5,7 @@
 
 #include <omxil_mf/omx_reflector.hpp>
 
-#include "api/consts.h"
+#include "api/consts.hpp"
 #include "util/omx_enum_name.hpp"
 #include "debug/scoped_log.hpp"
 
