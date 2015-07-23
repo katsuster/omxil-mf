@@ -144,10 +144,11 @@ void port_buffer::dump(const char *msg)
 port::port(int ind, component *c)
 	: broken(false), comp(c),
 	port_index(ind), dir(OMX_DirMax),
-	buffer_count_actual(0), buffer_count_min(1), buffer_size(1),
+	buffer_count_actual(0), buffer_count_min(0), buffer_size(0),
 	f_enabled(OMX_TRUE), f_populated(OMX_FALSE),
 	domain(OMX_PortDomainMax),
 	buffers_contiguous(OMX_FALSE), buffer_alignment(0),
+	f_no_buffer(OMX_TRUE),
 	ring_send(nullptr), bound_send(nullptr),
 	ring_ret(nullptr), bound_ret(nullptr), th_ret(nullptr)
 {
@@ -232,6 +233,10 @@ void port::shutdown()
 	broken = true;
 	cond.notify_all();
 }
+
+
+//以下 OMX_PARAM_PORTDEFINITIONTYPE に基づくメンバ
+
 
 OMX_U32 port::get_port_index() const
 {
@@ -345,6 +350,46 @@ OMX_U32 port::get_buffer_alignment() const
 void port::set_buffer_alignment(OMX_U32 v)
 {
 	buffer_alignment = v;
+}
+
+
+//以上 OMX_PARAM_PORTDEFINITIONTYPE に基づくメンバ
+
+
+OMX_BOOL port::get_no_buffer() const
+{
+	return f_no_buffer;
+}
+
+void port::set_no_buffer(OMX_BOOL v)
+{
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
+
+	f_no_buffer = v;
+	cond.notify_all();
+}
+
+void port::wait_no_buffer(OMX_BOOL v)
+{
+	std::unique_lock<std::recursive_mutex> lk_port(mut);
+
+	cond.wait(lk_port, [&] { return broken || f_no_buffer == v; });
+	error_if_broken(lk_port);
+}
+
+void port::update_buffer_status()
+{
+	if (list_bufs.size() >= buffer_count_actual) {
+		set_populated(OMX_TRUE);
+	} else {
+		set_populated(OMX_FALSE);
+	}
+
+	if (list_bufs.size() == 0) {
+		set_no_buffer(OMX_TRUE);
+	} else {
+		set_no_buffer(OMX_FALSE);
+	}
 }
 
 const OMX_PARAM_PORTDEFINITIONTYPE *port::get_definition() const
@@ -499,9 +544,7 @@ OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX
 		pb->index       = 0;
 
 		list_bufs.push_back(pb);
-		if (list_bufs.size() >= buffer_count_actual) {
-			set_populated(OMX_TRUE);
-		}
+		update_buffer_status();
 
 		//init OpenMAX BUFFERHEADER
 		header->nSize = sizeof(OMX_BUFFERHEADERTYPE);
@@ -588,9 +631,7 @@ OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv
 		pb->index       = 0;
 
 		list_bufs.push_back(pb);
-		if (list_bufs.size() >= buffer_count_actual) {
-			set_populated(OMX_TRUE);
-		}
+		update_buffer_status();
 
 		//init OpenMAX BUFFERHEADER
 		header->nSize = sizeof(OMX_BUFFERHEADERTYPE);
@@ -645,6 +686,7 @@ OMX_ERRORTYPE port::free_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 	std::lock_guard<std::recursive_mutex> lk_buf(mut_list_bufs);
 	std::vector<port_buffer *>::iterator it;
 	port_buffer *pb;
+	bool deleted = false;
 
 	for (it = list_bufs.begin(); it != list_bufs.end(); it++) {
 		pb = *it;
@@ -655,9 +697,7 @@ OMX_ERRORTYPE port::free_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 		}
 
 		list_bufs.erase(it);
-		if (list_bufs.size() < buffer_count_actual) {
-			set_populated(OMX_FALSE);
-		}
+		update_buffer_status();
 
 		if (pb->f_allocate) {
 			delete[] pb->header->pBuffer;
@@ -666,11 +706,16 @@ OMX_ERRORTYPE port::free_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 		delete pb->header;
 		pb->header = nullptr;
 		delete pb;
+		deleted = true;
 
 		break;
 	}
 
-	return OMX_ErrorNone;
+	if (!deleted) {
+		return OMX_ErrorBadParameter;
+	} else {
+		return OMX_ErrorNone;
+	}
 }
 
 OMX_ERRORTYPE port::free_buffer(port_buffer *pb)

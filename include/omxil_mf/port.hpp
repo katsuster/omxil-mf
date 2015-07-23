@@ -366,6 +366,15 @@ public:
 	 * OMX_UseBuffer または OMX_AllocateBuffer にてバッファが確保され、
 	 * OMX_StateIdle に遷移する準備ができている状態を指します。
 	 *
+	 * <pre>
+	 * バッファ確保数        | populated | no buffer | 状態
+	 * ----------------------+-----------+-----------+---------------------
+	 * 0                     | No        | Yes       | StateLoaded 遷移可能
+	 * < nBufferCountActual  | No        | No        |
+	 * >= nBufferCountActual | Yes       | No        | StateIdle 遷移可能
+	 * ----------------------+-----------+-----------+---------------------
+	 * </pre>
+	 *
 	 * @param v 待ちたい状態
 	 * 	OMX_TRUE なら populated になるまで待ち、
 	 * 	OMX_FALSE なら populated ではなくなるまで待ちます。
@@ -380,6 +389,65 @@ public:
 
 	virtual OMX_U32 get_buffer_alignment() const;
 	virtual void set_buffer_alignment(OMX_U32 v);
+
+
+	virtual OMX_BOOL get_no_buffer() const;
+	virtual void set_no_buffer(OMX_BOOL v);
+
+	/**
+	 * ポートのバッファが全てなくなるまで待ちます。
+	 *
+	 * 注: 'no buffer' はこのライブラリ独自の用語です。
+	 * OpenMAX IL の用語ではありません。
+	 *
+	 * 'no buffer' とはポートが enabled であり、なおかつ、
+	 * OMX_FreeBuffer にて全てのバッファが解放され、
+	 * OMX_StateLoaded に遷移する準備ができている状態を指します。
+	 *
+	 * <pre>
+	 * バッファ確保数        | populated | no buffer | 状態
+	 * ----------------------+-----------+-----------+---------------------
+	 * 0                     | No        | Yes       | StateLoaded 遷移可能
+	 * < nBufferCountActual  | No        | No        |
+	 * >= nBufferCountActual | Yes       | No        | StateIdle 遷移可能
+	 * ----------------------+-----------+-----------+---------------------
+	 * </pre>
+	 *
+	 * @param v 待ちたい状態
+	 * 	OMX_TRUE なら no buffer になるまで待ち、
+	 * 	OMX_FALSE なら no buffer ではなくなるまで待ちます。
+	 */
+	virtual void wait_no_buffer(OMX_BOOL v);
+
+	/**
+	 * ポートの 'populated', 'no buffer' 状態を更新します。
+	 *
+	 * 注: 'no buffer' はこのライブラリ独自の用語です。
+	 * OpenMAX IL の用語ではありません。
+	 *
+	 * 'populated' とはポートが enabled であり、なおかつ、
+	 * nBufferCountActual で示す数だけ、
+	 * OMX_UseBuffer または OMX_AllocateBuffer にてバッファが確保され、
+	 * OMX_StateIdle に遷移する準備ができている状態を指します。
+	 *
+	 * 'no buffer' とはポートが enabled であり、なおかつ、
+	 * OMX_FreeBuffer にて全てのバッファが解放され、
+	 * OMX_StateLoaded に遷移する準備ができている状態を指します。
+	 *
+	 * <pre>
+	 * バッファ確保数        | populated | no buffer | 状態
+	 * ----------------------+-----------+-----------+---------------------
+	 * 0                     | No        | Yes       | StateLoaded 遷移可能
+	 * < nBufferCountActual  | No        | No        |
+	 * >= nBufferCountActual | Yes       | No        | StateIdle 遷移可能
+	 * ----------------------+-----------+-----------+---------------------
+	 * </pre>
+	 *
+	 * @param v 待ちたい状態
+	 * 	OMX_TRUE なら populated になるまで待ち、
+	 * 	OMX_FALSE なら populated ではなくなるまで待ちます。
+	 */
+	virtual void update_buffer_status();
 
 	/**
 	 * Get OpenMAX IL definition data of this port.
@@ -742,6 +810,8 @@ private:
 	OMX_U32 buffer_alignment;
 
 	//以上 OMX_PARAM_PORTDEFINITIONTYPE に基づくメンバ
+
+	OMX_BOOL f_no_buffer;
 
 	//使用可能バッファ登録リスト
 	std::vector<port_buffer *> list_bufs;

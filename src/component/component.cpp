@@ -184,9 +184,22 @@ port *component::find_port(OMX_U32 index)
 
 void component::wait_all_port_populated(OMX_BOOL v)
 {
+	scoped_log_begin;
+
 	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
 		if (it->second.get_enabled()) {
 			it->second.wait_populated(v);
+		}
+	}
+}
+
+void component::wait_all_port_no_buffer(OMX_BOOL v)
+{
+	scoped_log_begin;
+
+	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+		if (it->second.get_enabled()) {
+			it->second.wait_no_buffer(v);
 		}
 	}
 }
@@ -968,6 +981,15 @@ OMX_ERRORTYPE component::command_state_set_to_loaded()
 		th_main->join();
 		delete th_main;
 		th_main = nullptr;
+
+		//Wait for all enabled port to be not populated
+		try {
+			wait_all_port_no_buffer(OMX_TRUE);
+		} catch (const std::runtime_error& e) {
+			errprint("runtime_error: %s\n", e.what());
+			err = OMX_ErrorInsufficientResources;
+			break;
+		}
 
 		err = OMX_ErrorNone;
 

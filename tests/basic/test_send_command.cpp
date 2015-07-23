@@ -17,7 +17,7 @@
 class comp_test_send_cmd : public omxil_comp {
 public:
 	comp_test_send_cmd(const char *comp_name)
-		: omxil_comp(comp_name), event_done(false)
+		: omxil_comp(comp_name), state_done(OMX_StateInvalid)
 	{
 		//do nothing
 	}
@@ -30,12 +30,12 @@ public:
 	virtual OMX_ERRORTYPE EventHandler(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_U32 nData2, OMX_PTR pEventData)
 	{
 		if (eEvent == OMX_EventCmdComplete && 
-			nData1 == OMX_CommandStateSet && 
-			nData2 == OMX_StateIdle) {
+			nData1 == OMX_CommandStateSet) {
 			std::unique_lock<std::mutex> lock(mut_command);
 
-			printf("comp_test_send_cmd::EventHandler idle state.\n");
-			event_done = true;
+			printf("comp_test_empty_buffer::EventHandler state '%s' set.\n", 
+				get_omx_statetype_name((OMX_STATETYPE)state_done));
+			state_done = static_cast<OMX_STATETYPE>(nData2);
 			cond_command.notify_all();
 		} else {
 			printf("comp_test_send_cmd::EventHandler ignored.\n");
@@ -44,17 +44,17 @@ public:
 		return OMX_ErrorNone;
 	}
 
-	void wait_event()
+	void wait_state_done(OMX_STATETYPE s)
 	{
 		std::unique_lock<std::mutex> lock(mut_command);
 
-		cond_command.wait(lock, [&] { return event_done; });
+		cond_command.wait(lock, [&] { return state_done == s; });
 	}
 
 private:
 	std::mutex mut_command;
 	std::condition_variable cond_command;
-	bool event_done;
+	OMX_STATETYPE state_done;
 
 };
 
@@ -125,19 +125,17 @@ int main(int argc, char *argv[])
 	}
 	*/
 
-	result = comp->SendCommand(OMX_CommandStateSet, 
-		OMX_StateIdle, 0);
+	//Set StateIdle
+	result = comp->SendCommand(OMX_CommandStateSet, OMX_StateIdle, 0);
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "OMX_SendCommand(StateSet, Idle) failed.\n");
 		goto err_out2;
 	}
 
+	//Allocate buffer
 	buf_in.clear();
 	for (i = 0; i < def_in.nBufferCountActual; i++) {
 		OMX_BUFFERHEADERTYPE *buf;
-
-		buf = new OMX_BUFFERHEADERTYPE();
-		buf_in.push_back(buf);
 
 		result = comp->AllocateBuffer(&buf, 
 			0, 0, def_in.nBufferSize);
@@ -147,14 +145,13 @@ int main(int argc, char *argv[])
 		}
 		printf("OMX_AllocateBuffer: in \n");
 		dump_port_bufferheadertype(buf);
+
+		buf_in.push_back(buf);
 	}
 
 	buf_out.clear();
 	for (i = 0; i < def_out.nBufferCountActual; i++) {
 		OMX_BUFFERHEADERTYPE *buf;
-
-		buf = new OMX_BUFFERHEADERTYPE();
-		buf_out.push_back(buf);
 
 		result = comp->AllocateBuffer(&buf, 
 			1, 0, def_out.nBufferSize);
@@ -164,12 +161,15 @@ int main(int argc, char *argv[])
 		}
 		printf("OMX_AllocateBuffer: out \n");
 		dump_port_bufferheadertype(buf);
+
+		buf_out.push_back(buf);
 	}
 
 	//Wait for StatusIdle
 	printf("wait for StateIdle...\n");
-	comp->wait_event();
+	comp->wait_state_done(OMX_StateIdle);
 	printf("wait for StateIdle... Done!\n");
+
 
 	//Get port definition(after)
 	result = comp->get_param_port_definition(0, &def_in);
@@ -188,14 +188,40 @@ int main(int argc, char *argv[])
 	printf("IndexParamPortDefinition: after out %d -----\n", def_out.nPortIndex);
 	dump_port_definitiontype(&def_out);
 
-	//Terminate
-	for (auto it = buf_out.begin(); it != buf_out.end(); it++) {
-		delete *it;
-	}
-	for (auto it = buf_in.begin(); it != buf_in.end(); it++) {
-		delete *it;
+
+	//Set StateLoaded
+	result = comp->SendCommand(OMX_CommandStateSet, OMX_StateLoaded, 0);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_SendCommand(StateSet, Loaded) failed.\n");
+		goto err_out2;
 	}
 
+	//Free buffer
+	for (auto it = buf_out.begin(); it != buf_out.end(); it++) {
+		result = comp->FreeBuffer(1, *it);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "OMX_FreeBuffer(out) failed.\n");
+			goto err_out2;
+		}
+	}
+	buf_out.clear();
+
+	for (auto it = buf_in.begin(); it != buf_in.end(); it++) {
+		result = comp->FreeBuffer(0, *it);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "OMX_FreeBuffer(in) failed.\n");
+			goto err_out2;
+		}
+	}
+	buf_in.clear();
+
+	//Wait for StatusLoaded
+	printf("wait for StateLoaded...\n");
+	comp->wait_state_done(OMX_StateLoaded);
+	printf("wait for StateLoaded... Done!\n");
+
+
+	//Terminate
 	delete comp;
 
 	result = OMX_Deinit();

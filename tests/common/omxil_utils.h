@@ -10,6 +10,7 @@ extern "C" {
 #include <OMX_Types.h>
 #include <OMX_Component.h>
 
+const char *get_omx_statetype_name(OMX_STATETYPE v);
 const char *get_omx_dirtype_name(OMX_DIRTYPE v);
 const char *get_omx_portdomaintype_name(OMX_PORTDOMAINTYPE v);
 

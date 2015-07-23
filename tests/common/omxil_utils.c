@@ -3,10 +3,50 @@
 
 #include "omxil_utils.h"
 
+const char *get_omx_statetype_name(OMX_STATETYPE v)
+{
+	const char *name = "????";
+
+	switch (v) {
+	case OMX_StateInvalid:
+		name = "OMX_StateInvalid";
+		break;
+	case OMX_StateLoaded:
+		name = "OMX_StateLoaded";
+		break;
+	case OMX_StateIdle:
+		name = "OMX_StateIdle";
+		break;
+	case OMX_StateExecuting:
+		name = "OMX_StateExecuting";
+		break;
+	case OMX_StatePause:
+		name = "OMX_StatePause";
+		break;
+	case OMX_StateWaitForResources:
+		name = "OMX_StateWaitForResources";
+		break;
+	default:
+		name = "unknown";
+		break;
+	}
+
+	if (OMX_StateKhronosExtensions <= v &&
+		v < OMX_StateVendorStartUnused) {
+		name = "OMX_StateKhronosExtensions";
+	}
+	if (OMX_StateVendorStartUnused <= v &&
+		v < OMX_StateMax) {
+		name = "OMX_StateVendorStartUnused";
+	}
+
+	return name;
+}
+
 const char *get_omx_dirtype_name(OMX_DIRTYPE v)
 {
 	const char *name = "????";
-	
+
 	switch (v) {
 	case OMX_DirInput:
 		name = "OMX_DirInput";
@@ -21,14 +61,14 @@ const char *get_omx_dirtype_name(OMX_DIRTYPE v)
 		name = "unknown";
 		break;
 	}
-	
+
 	return name;
 }
 
 const char *get_omx_portdomaintype_name(OMX_PORTDOMAINTYPE v)
 {
 	const char *name = "????";
-	
+
 	switch (v) {
 	case OMX_PortDomainAudio:
 		name = "OMX_PortDomainAudio";
@@ -49,7 +89,7 @@ const char *get_omx_portdomaintype_name(OMX_PORTDOMAINTYPE v)
 		name = "unknown";
 		break;
 	}
-	
+
 	if (OMX_PortDomainKhronosExtensions <= v &&
 		v < OMX_PortDomainVendorStartUnused) {
 		name = "OMX_PortDomainKhronosExtensions";
@@ -58,7 +98,7 @@ const char *get_omx_portdomaintype_name(OMX_PORTDOMAINTYPE v)
 		v < OMX_PortDomainMax) {
 		name = "OMX_PortDomainVendorStartUnused";
 	}
-	
+
 	return name;
 }
 
