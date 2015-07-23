@@ -521,7 +521,8 @@ top_srcdir = @top_srcdir@
 TEST_DIR = $(top_srcdir)/tests
 COMMON_DIR = $(TEST_DIR)/common
 common_SOURCES = $(COMMON_DIR)/omxil_utils.c $(COMMON_DIR)/omxil_comp.cpp
-common_CPPFLAGS = -I$(TEST_DIR) $(am__append_1) $(am__append_5)
+common_CPPFLAGS = -Wall -Werror -I$(TEST_DIR) $(am__append_1) \
+	$(am__append_5)
 common_CFLAGS = $(am__append_2) $(am__append_6)
 common_CXXFLAGS = $(am__append_3) $(am__append_7)
 common_LDADD = $(am__append_4) $(am__append_8)
