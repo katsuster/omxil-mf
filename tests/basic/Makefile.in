@@ -80,7 +80,8 @@ host_triplet = @host@
 check_PROGRAMS = init_deinit$(EXEEXT) init_deinit_multi$(EXEEXT) \
 	enum_components$(EXEEXT) get_roles_of_component$(EXEEXT) \
 	get_components_of_role$(EXEEXT) get_handle$(EXEEXT) \
-	get_param_init$(EXEEXT) send_command$(EXEEXT)
+	get_param_init$(EXEEXT) send_command$(EXEEXT) \
+	empty_buffer$(EXEEXT)
 @USE_BELLAGIO_TRUE@am__append_1 = -DUSE_BELLAGIO
 @USE_BELLAGIO_TRUE@am__append_2 = 
 @USE_BELLAGIO_TRUE@am__append_3 = -std=c++0x
@@ -92,7 +93,7 @@ check_PROGRAMS = init_deinit$(EXEEXT) init_deinit_multi$(EXEEXT) \
 TESTS = init_deinit$(EXEEXT) init_deinit_multi$(EXEEXT) \
 	enum_components$(EXEEXT) get_roles_of_component.sh \
 	get_components_of_role.sh get_handle.sh get_param_init.sh \
-	send_command.sh
+	send_command.sh empty_buffer.sh
 subdir = tests/basic
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp $(top_srcdir)/test-driver
@@ -104,88 +105,97 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__objects_1 = enum_components-omxil_utils.$(OBJEXT) \
-	enum_components-omxil_comp.$(OBJEXT)
-am_enum_components_OBJECTS =  \
-	enum_components-test_enum_components.$(OBJEXT) \
+am__objects_1 = empty_buffer-omxil_utils.$(OBJEXT) \
+	empty_buffer-omxil_comp.$(OBJEXT)
+am_empty_buffer_OBJECTS = empty_buffer-test_empty_buffer.$(OBJEXT) \
 	$(am__objects_1)
-enum_components_OBJECTS = $(am_enum_components_OBJECTS)
+empty_buffer_OBJECTS = $(am_empty_buffer_OBJECTS)
 am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__append_8)
-enum_components_DEPENDENCIES = $(am__DEPENDENCIES_2)
+empty_buffer_DEPENDENCIES = $(am__DEPENDENCIES_2)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+empty_buffer_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(empty_buffer_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am__objects_2 = enum_components-omxil_utils.$(OBJEXT) \
+	enum_components-omxil_comp.$(OBJEXT)
+am_enum_components_OBJECTS =  \
+	enum_components-test_enum_components.$(OBJEXT) \
+	$(am__objects_2)
+enum_components_OBJECTS = $(am_enum_components_OBJECTS)
+enum_components_DEPENDENCIES = $(am__DEPENDENCIES_2)
 enum_components_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(enum_components_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am__objects_2 = get_components_of_role-omxil_utils.$(OBJEXT) \
+am__objects_3 = get_components_of_role-omxil_utils.$(OBJEXT) \
 	get_components_of_role-omxil_comp.$(OBJEXT)
 am_get_components_of_role_OBJECTS =  \
 	get_components_of_role-test_get_components_of_role.$(OBJEXT) \
-	$(am__objects_2)
+	$(am__objects_3)
 get_components_of_role_OBJECTS = $(am_get_components_of_role_OBJECTS)
 get_components_of_role_DEPENDENCIES = $(am__DEPENDENCIES_2)
 get_components_of_role_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(get_components_of_role_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am__objects_3 = get_handle-omxil_utils.$(OBJEXT) \
+am__objects_4 = get_handle-omxil_utils.$(OBJEXT) \
 	get_handle-omxil_comp.$(OBJEXT)
 am_get_handle_OBJECTS = get_handle-test_get_handle.$(OBJEXT) \
-	$(am__objects_3)
+	$(am__objects_4)
 get_handle_OBJECTS = $(am_get_handle_OBJECTS)
 get_handle_DEPENDENCIES = $(am__DEPENDENCIES_2)
 get_handle_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(get_handle_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_4 = get_param_init-omxil_utils.$(OBJEXT) \
+am__objects_5 = get_param_init-omxil_utils.$(OBJEXT) \
 	get_param_init-omxil_comp.$(OBJEXT)
 am_get_param_init_OBJECTS =  \
-	get_param_init-test_get_param_init.$(OBJEXT) $(am__objects_4)
+	get_param_init-test_get_param_init.$(OBJEXT) $(am__objects_5)
 get_param_init_OBJECTS = $(am_get_param_init_OBJECTS)
 get_param_init_DEPENDENCIES = $(am__DEPENDENCIES_2)
 get_param_init_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(get_param_init_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am__objects_5 = get_roles_of_component-omxil_utils.$(OBJEXT) \
+am__objects_6 = get_roles_of_component-omxil_utils.$(OBJEXT) \
 	get_roles_of_component-omxil_comp.$(OBJEXT)
 am_get_roles_of_component_OBJECTS =  \
 	get_roles_of_component-test_get_roles_of_component.$(OBJEXT) \
-	$(am__objects_5)
+	$(am__objects_6)
 get_roles_of_component_OBJECTS = $(am_get_roles_of_component_OBJECTS)
 get_roles_of_component_DEPENDENCIES = $(am__DEPENDENCIES_2)
 get_roles_of_component_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(get_roles_of_component_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am__objects_6 = init_deinit-omxil_utils.$(OBJEXT) \
+am__objects_7 = init_deinit-omxil_utils.$(OBJEXT) \
 	init_deinit-omxil_comp.$(OBJEXT)
 am_init_deinit_OBJECTS = init_deinit-test_init_deinit.$(OBJEXT) \
-	$(am__objects_6)
+	$(am__objects_7)
 init_deinit_OBJECTS = $(am_init_deinit_OBJECTS)
 init_deinit_DEPENDENCIES = $(am__DEPENDENCIES_2)
 init_deinit_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(init_deinit_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_7 = init_deinit_multi-omxil_utils.$(OBJEXT) \
+am__objects_8 = init_deinit_multi-omxil_utils.$(OBJEXT) \
 	init_deinit_multi-omxil_comp.$(OBJEXT)
 am_init_deinit_multi_OBJECTS =  \
 	init_deinit_multi-test_init_deinit_multi.$(OBJEXT) \
-	$(am__objects_7)
+	$(am__objects_8)
 init_deinit_multi_OBJECTS = $(am_init_deinit_multi_OBJECTS)
 init_deinit_multi_DEPENDENCIES = $(am__DEPENDENCIES_2)
 init_deinit_multi_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(init_deinit_multi_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-am__objects_8 = send_command-omxil_utils.$(OBJEXT) \
+am__objects_9 = send_command-omxil_utils.$(OBJEXT) \
 	send_command-omxil_comp.$(OBJEXT)
 am_send_command_OBJECTS = send_command-test_send_command.$(OBJEXT) \
-	$(am__objects_8)
+	$(am__objects_9)
 send_command_OBJECTS = $(am_send_command_OBJECTS)
 send_command_DEPENDENCIES = $(am__DEPENDENCIES_2)
 send_command_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -243,11 +253,12 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(enum_components_SOURCES) $(get_components_of_role_SOURCES) \
-	$(get_handle_SOURCES) $(get_param_init_SOURCES) \
-	$(get_roles_of_component_SOURCES) $(init_deinit_SOURCES) \
-	$(init_deinit_multi_SOURCES) $(send_command_SOURCES)
-DIST_SOURCES = $(enum_components_SOURCES) \
+SOURCES = $(empty_buffer_SOURCES) $(enum_components_SOURCES) \
+	$(get_components_of_role_SOURCES) $(get_handle_SOURCES) \
+	$(get_param_init_SOURCES) $(get_roles_of_component_SOURCES) \
+	$(init_deinit_SOURCES) $(init_deinit_multi_SOURCES) \
+	$(send_command_SOURCES)
+DIST_SOURCES = $(empty_buffer_SOURCES) $(enum_components_SOURCES) \
 	$(get_components_of_role_SOURCES) $(get_handle_SOURCES) \
 	$(get_param_init_SOURCES) $(get_roles_of_component_SOURCES) \
 	$(init_deinit_SOURCES) $(init_deinit_multi_SOURCES) \
@@ -650,6 +661,11 @@ send_command_LDADD = $(common_LDADD)
 send_command_CPPFLAGS = $(common_CPPFLAGS)
 send_command_CFLAGS = $(common_CFLAGS)
 send_command_CXXFLAGS = $(common_CXXFLAGS)
+empty_buffer_SOURCES = test_empty_buffer.cpp $(common_SOURCES)
+empty_buffer_LDADD = $(common_LDADD)
+empty_buffer_CPPFLAGS = $(common_CPPFLAGS)
+empty_buffer_CFLAGS = $(common_CFLAGS)
+empty_buffer_CXXFLAGS = $(common_CXXFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -694,6 +710,10 @@ clean-checkPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+empty_buffer$(EXEEXT): $(empty_buffer_OBJECTS) $(empty_buffer_DEPENDENCIES) $(EXTRA_empty_buffer_DEPENDENCIES) 
+	@rm -f empty_buffer$(EXEEXT)
+	$(AM_V_CXXLD)$(empty_buffer_LINK) $(empty_buffer_OBJECTS) $(empty_buffer_LDADD) $(LIBS)
+
 enum_components$(EXEEXT): $(enum_components_OBJECTS) $(enum_components_DEPENDENCIES) $(EXTRA_enum_components_DEPENDENCIES) 
 	@rm -f enum_components$(EXEEXT)
 	$(AM_V_CXXLD)$(enum_components_LINK) $(enum_components_OBJECTS) $(enum_components_LDADD) $(LIBS)
@@ -732,6 +752,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/empty_buffer-omxil_comp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/empty_buffer-omxil_utils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/empty_buffer-test_empty_buffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/enum_components-omxil_comp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/enum_components-omxil_utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/enum_components-test_enum_components.Po@am__quote@
@@ -777,6 +800,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
+empty_buffer-omxil_utils.o: $(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(empty_buffer_CPPFLAGS) $(CPPFLAGS) $(empty_buffer_CFLAGS) $(CFLAGS) -MT empty_buffer-omxil_utils.o -MD -MP -MF $(DEPDIR)/empty_buffer-omxil_utils.Tpo -c -o empty_buffer-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/empty_buffer-omxil_utils.Tpo $(DEPDIR)/empty_buffer-omxil_utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(COMMON_DIR)/omxil_utils.c' object='empty_buffer-omxil_utils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(empty_buffer_CPPFLAGS) $(CPPFLAGS) $(empty_buffer_CFLAGS) $(CFLAGS) -c -o empty_buffer-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
+
+empty_buffer-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(empty_buffer_CPPFLAGS) $(CPPFLAGS) $(empty_buffer_CFLAGS) $(CFLAGS) -MT empty_buffer-omxil_utils.obj -MD -MP -MF $(DEPDIR)/empty_buffer-omxil_utils.Tpo -c -o empty_buffer-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/empty_buffer-omxil_utils.Tpo $(DEPDIR)/empty_buffer-omxil_utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(COMMON_DIR)/omxil_utils.c' object='empty_buffer-omxil_utils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(empty_buffer_CPPFLAGS) $(CPPFLAGS) $(empty_buffer_CFLAGS) $(CFLAGS) -c -o empty_buffer-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
 
 enum_components-test_enum_components.o: test_enum_components.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_CPPFLAGS) $(CPPFLAGS) $(enum_components_CFLAGS) $(CFLAGS) -MT enum_components-test_enum_components.o -MD -MP -MF $(DEPDIR)/enum_components-test_enum_components.Tpo -c -o enum_components-test_enum_components.o `test -f 'test_enum_components.c' || echo '$(srcdir)/'`test_enum_components.c
@@ -980,6 +1017,34 @@ send_command-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
+
+empty_buffer-test_empty_buffer.o: test_empty_buffer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(empty_buffer_CPPFLAGS) $(CPPFLAGS) $(empty_buffer_CXXFLAGS) $(CXXFLAGS) -MT empty_buffer-test_empty_buffer.o -MD -MP -MF $(DEPDIR)/empty_buffer-test_empty_buffer.Tpo -c -o empty_buffer-test_empty_buffer.o `test -f 'test_empty_buffer.cpp' || echo '$(srcdir)/'`test_empty_buffer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/empty_buffer-test_empty_buffer.Tpo $(DEPDIR)/empty_buffer-test_empty_buffer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_empty_buffer.cpp' object='empty_buffer-test_empty_buffer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(empty_buffer_CPPFLAGS) $(CPPFLAGS) $(empty_buffer_CXXFLAGS) $(CXXFLAGS) -c -o empty_buffer-test_empty_buffer.o `test -f 'test_empty_buffer.cpp' || echo '$(srcdir)/'`test_empty_buffer.cpp
+
+empty_buffer-test_empty_buffer.obj: test_empty_buffer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(empty_buffer_CPPFLAGS) $(CPPFLAGS) $(empty_buffer_CXXFLAGS) $(CXXFLAGS) -MT empty_buffer-test_empty_buffer.obj -MD -MP -MF $(DEPDIR)/empty_buffer-test_empty_buffer.Tpo -c -o empty_buffer-test_empty_buffer.obj `if test -f 'test_empty_buffer.cpp'; then $(CYGPATH_W) 'test_empty_buffer.cpp'; else $(CYGPATH_W) '$(srcdir)/test_empty_buffer.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/empty_buffer-test_empty_buffer.Tpo $(DEPDIR)/empty_buffer-test_empty_buffer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_empty_buffer.cpp' object='empty_buffer-test_empty_buffer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(empty_buffer_CPPFLAGS) $(CPPFLAGS) $(empty_buffer_CXXFLAGS) $(CXXFLAGS) -c -o empty_buffer-test_empty_buffer.obj `if test -f 'test_empty_buffer.cpp'; then $(CYGPATH_W) 'test_empty_buffer.cpp'; else $(CYGPATH_W) '$(srcdir)/test_empty_buffer.cpp'; fi`
+
+empty_buffer-omxil_comp.o: $(COMMON_DIR)/omxil_comp.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(empty_buffer_CPPFLAGS) $(CPPFLAGS) $(empty_buffer_CXXFLAGS) $(CXXFLAGS) -MT empty_buffer-omxil_comp.o -MD -MP -MF $(DEPDIR)/empty_buffer-omxil_comp.Tpo -c -o empty_buffer-omxil_comp.o `test -f '$(COMMON_DIR)/omxil_comp.cpp' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_comp.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/empty_buffer-omxil_comp.Tpo $(DEPDIR)/empty_buffer-omxil_comp.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMMON_DIR)/omxil_comp.cpp' object='empty_buffer-omxil_comp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(empty_buffer_CPPFLAGS) $(CPPFLAGS) $(empty_buffer_CXXFLAGS) $(CXXFLAGS) -c -o empty_buffer-omxil_comp.o `test -f '$(COMMON_DIR)/omxil_comp.cpp' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_comp.cpp
+
+empty_buffer-omxil_comp.obj: $(COMMON_DIR)/omxil_comp.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(empty_buffer_CPPFLAGS) $(CPPFLAGS) $(empty_buffer_CXXFLAGS) $(CXXFLAGS) -MT empty_buffer-omxil_comp.obj -MD -MP -MF $(DEPDIR)/empty_buffer-omxil_comp.Tpo -c -o empty_buffer-omxil_comp.obj `if test -f '$(COMMON_DIR)/omxil_comp.cpp'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_comp.cpp'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_comp.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/empty_buffer-omxil_comp.Tpo $(DEPDIR)/empty_buffer-omxil_comp.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMMON_DIR)/omxil_comp.cpp' object='empty_buffer-omxil_comp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(empty_buffer_CPPFLAGS) $(CPPFLAGS) $(empty_buffer_CXXFLAGS) $(CXXFLAGS) -c -o empty_buffer-omxil_comp.obj `if test -f '$(COMMON_DIR)/omxil_comp.cpp'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_comp.cpp'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_comp.cpp'; fi`
 
 enum_components-omxil_comp.o: $(COMMON_DIR)/omxil_comp.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(enum_components_CPPFLAGS) $(CPPFLAGS) $(enum_components_CXXFLAGS) $(CXXFLAGS) -MT enum_components-omxil_comp.o -MD -MP -MF $(DEPDIR)/enum_components-omxil_comp.Tpo -c -o enum_components-omxil_comp.o `test -f '$(COMMON_DIR)/omxil_comp.cpp' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_comp.cpp
@@ -1386,6 +1451,13 @@ get_param_init.sh.log: get_param_init.sh
 send_command.sh.log: send_command.sh
 	@p='send_command.sh'; \
 	b='send_command.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+empty_buffer.sh.log: empty_buffer.sh
+	@p='empty_buffer.sh'; \
+	b='empty_buffer.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
