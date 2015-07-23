@@ -37,8 +37,10 @@ int main(int argc, char *argv[])
 {
 	const char *arg_comp;
 	comp_test_get_param_init *comp;
-	OMX_PORT_PARAM_TYPE parm_a, parm_i, parm_v, parm_o;
+	OMX_PORT_PARAM_TYPE param_a, param_i, param_v, param_o;
+	OMX_PARAM_PORTDEFINITIONTYPE def;
 	OMX_ERRORTYPE result;
+	OMX_U32 i;
 
 	//get arguments
 	if (argc < 2) {
@@ -70,69 +72,81 @@ int main(int argc, char *argv[])
 	printf("OMX_GetHandle: name:%s, comp:%p\n", 
 		arg_comp, comp);
 
-	memset(&parm_a, 0, sizeof(parm_a));
-	parm_a.nSize = sizeof(parm_a);
-	parm_a.nVersion.s.nVersionMajor = 1;
-	parm_a.nVersion.s.nVersionMinor = 1;
-	parm_a.nVersion.s.nRevision = 0;
-	parm_a.nVersion.s.nStep = 0;
-	result = comp->GetParameter(OMX_IndexParamAudioInit, 
-		&parm_a);
-	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "OMX_GetParameter(IndexParamAudioInit) "
-			"failed.\n");
-		goto err_out3;
-	}
-	printf("OMX_GetParameter: audio -----\n");
-	dump_port_param_type(&parm_a);
 
-	memset(&parm_i, 0, sizeof(parm_i));
-	parm_i.nSize = sizeof(parm_i);
-	parm_i.nVersion.s.nVersionMajor = 1;
-	parm_i.nVersion.s.nVersionMinor = 1;
-	parm_i.nVersion.s.nRevision = 0;
-	parm_i.nVersion.s.nStep = 0;
-	result = comp->GetParameter(OMX_IndexParamImageInit, 
-		&parm_i);
+	//OMX_PORT_PARAM_TYPE
+	result = comp->get_param_audio_init(&param_a);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "OMX_GetParameter(IndexParamImageInit) "
-			"failed.\n");
+		fprintf(stderr, "get_audio_init() failed.\n");
 		goto err_out3;
 	}
-	printf("OMX_GetParameter: image -----\n");
-	dump_port_param_type(&parm_i);
+	printf("IndexParamAudioInit: -----\n");
+	dump_port_param_type(&param_a);
 
-	memset(&parm_v, 0, sizeof(parm_v));
-	parm_v.nSize = sizeof(parm_v);
-	parm_v.nVersion.s.nVersionMajor = 1;
-	parm_v.nVersion.s.nVersionMinor = 1;
-	parm_v.nVersion.s.nRevision = 0;
-	parm_v.nVersion.s.nStep = 0;
-	result = comp->GetParameter(OMX_IndexParamVideoInit, 
-		&parm_v);
+	result = comp->get_param_image_init(&param_i);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "OMX_GetParameter(IndexParamVideoInit) "
-			"failed.\n");
+		fprintf(stderr, "get_image_init() failed.\n");
 		goto err_out3;
 	}
-	printf("OMX_GetParameter: video -----\n");
-	dump_port_param_type(&parm_v);
+	printf("IndexParamImageInit: -----\n");
+	dump_port_param_type(&param_i);
 
-	memset(&parm_o, 0, sizeof(parm_o));
-	parm_o.nSize = sizeof(parm_o);
-	parm_o.nVersion.s.nVersionMajor = 1;
-	parm_o.nVersion.s.nVersionMinor = 1;
-	parm_o.nVersion.s.nRevision = 0;
-	parm_o.nVersion.s.nStep = 0;
-	result = comp->GetParameter(OMX_IndexParamOtherInit, 
-		&parm_o);
+	result = comp->get_param_video_init(&param_v);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "OMX_GetParameter(IndexParamOtherInit) "
-			"failed.\n");
+		fprintf(stderr, "get_video_init() failed.\n");
 		goto err_out3;
 	}
-	printf("OMX_GetParameter: other -----\n");
-	dump_port_param_type(&parm_o);
+	printf("IndexParamVideoInit: -----\n");
+	dump_port_param_type(&param_v);
+
+	result = comp->get_param_other_init(&param_o);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "get_other_init() failed.\n");
+		goto err_out3;
+	}
+	printf("IndexParamOtherInit: -----\n");
+	dump_port_param_type(&param_o);
+
+
+	//OMX_PARAM_PORTDEFINITIONTYPE
+	for (i = param_a.nStartPortNumber; i < param_a.nPorts; i++) {
+		result = comp->get_param_port_definition(i, &def);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "get_port_definition(audio) failed.\n");
+			goto err_out3;
+		}
+		printf("IndexParamPortDefinition: audio %d -----\n", def.nPortIndex);
+		dump_port_definitiontype(&def);
+	}
+
+	for (i = param_i.nStartPortNumber; i < param_i.nPorts; i++) {
+		result = comp->get_param_port_definition(i, &def);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "get_port_definition(image) failed.\n");
+			goto err_out3;
+		}
+		printf("IndexParamPortDefinition: image %d -----\n", def.nPortIndex);
+		dump_port_definitiontype(&def);
+	}
+
+	for (i = param_v.nStartPortNumber; i < param_v.nPorts; i++) {
+		result = comp->get_param_port_definition(i, &def);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "get_port_definition(video) failed.\n");
+			goto err_out3;
+		}
+		printf("IndexParamPortDefinition: video %d -----\n", def.nPortIndex);
+		dump_port_definitiontype(&def);
+	}
+
+	for (i = param_o.nStartPortNumber; i < param_o.nPorts; i++) {
+		result = comp->get_param_port_definition(i, &def);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "get_port_definition(other) failed.\n");
+			goto err_out3;
+		}
+		printf("IndexParamPortDefinition: other %d -----\n", def.nPortIndex);
+		dump_port_definitiontype(&def);
+	}
 
 	delete comp;
 

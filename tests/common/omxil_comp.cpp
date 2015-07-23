@@ -1,9 +1,14 @@
 
+#include <cstring>
 #include <string>
 
 #include <OMX_Component.h>
 
 #include <common/omxil_comp.hpp>
+
+extern "C" {
+#include "common/omxil_utils.h"
+}
 
 omxil_comp::omxil_comp(const char *comp_name)
 	: comp(nullptr)
@@ -41,7 +46,7 @@ OMX_HANDLETYPE omxil_comp::get_component()
 	return comp;
 }
 
-OMX_ERRORTYPE omxil_comp::GetComponentVersion(OMX_STRING pComponentName, OMX_VERSIONTYPE *pComponentVersion, OMX_VERSIONTYPE *pSpecVersion, OMX_UUIDTYPE *pComponentUUID)
+OMX_ERRORTYPE omxil_comp::GetComponentVersion(OMX_STRING pComponentName, OMX_VERSIONTYPE *pComponentVersion, OMX_VERSIONTYPE *pSpecVersion, OMX_UUIDTYPE *pComponentUUID) const
 {
 	OMX_ERRORTYPE result;
 
@@ -65,7 +70,7 @@ OMX_ERRORTYPE omxil_comp::SendCommand(OMX_COMMANDTYPE Cmd, OMX_U32 nParam, OMX_P
 	return result;
 }
 
-OMX_ERRORTYPE omxil_comp::GetParameter(OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure)
+OMX_ERRORTYPE omxil_comp::GetParameter(OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure) const
 {
 	OMX_ERRORTYPE result;
 
@@ -89,7 +94,7 @@ OMX_ERRORTYPE omxil_comp::SetParameter(OMX_INDEXTYPE nParamIndex, OMX_PTR pCompo
 	return result;
 }
 
-OMX_ERRORTYPE omxil_comp::GetConfig(OMX_INDEXTYPE nIndex, OMX_PTR pComponentConfigStructure)
+OMX_ERRORTYPE omxil_comp::GetConfig(OMX_INDEXTYPE nIndex, OMX_PTR pComponentConfigStructure) const
 {
 	OMX_ERRORTYPE result;
 
@@ -113,7 +118,7 @@ OMX_ERRORTYPE omxil_comp::SetConfig(OMX_INDEXTYPE nIndex, OMX_PTR pComponentConf
 	return result;
 }
 
-OMX_ERRORTYPE omxil_comp::GetExtensionIndex(OMX_STRING cParameterName, OMX_INDEXTYPE *pIndexType)
+OMX_ERRORTYPE omxil_comp::GetExtensionIndex(OMX_STRING cParameterName, OMX_INDEXTYPE *pIndexType) const
 {
 	OMX_ERRORTYPE result;
 
@@ -125,7 +130,7 @@ OMX_ERRORTYPE omxil_comp::GetExtensionIndex(OMX_STRING cParameterName, OMX_INDEX
 	return result;
 }
 
-OMX_ERRORTYPE omxil_comp::GetState(OMX_STATETYPE *pState)
+OMX_ERRORTYPE omxil_comp::GetState(OMX_STATETYPE *pState) const
 {
 	OMX_ERRORTYPE result;
 
@@ -235,3 +240,103 @@ OMX_ERRORTYPE omxil_comp::gate_FillBufferDone(OMX_HANDLETYPE hComponent, OMX_PTR
 	return c->FillBufferDone(hComponent, pAppData, pBuffer);
 }
 
+OMX_ERRORTYPE omxil_comp::get_param_audio_init(OMX_PORT_PARAM_TYPE *param) const
+{
+	OMX_ERRORTYPE result;
+
+	memset(param, 0, sizeof(OMX_PORT_PARAM_TYPE));
+	param->nSize = sizeof(OMX_PORT_PARAM_TYPE);
+	fill_version(&param->nVersion);
+	result = GetParameter(OMX_IndexParamAudioInit, param);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(IndexParamAudioInit) "
+			"failed.\n");
+		return result;
+	}
+
+	return result;
+}
+
+OMX_ERRORTYPE omxil_comp::get_param_image_init(OMX_PORT_PARAM_TYPE *param) const
+{
+	OMX_ERRORTYPE result;
+
+	memset(param, 0, sizeof(OMX_PORT_PARAM_TYPE));
+	param->nSize = sizeof(OMX_PORT_PARAM_TYPE);
+	fill_version(&param->nVersion);
+	result = GetParameter(OMX_IndexParamImageInit, param);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(IndexParamImageInit) "
+			"failed.\n");
+		return result;
+	}
+
+	return result;
+}
+
+OMX_ERRORTYPE omxil_comp::get_param_video_init(OMX_PORT_PARAM_TYPE *param) const
+{
+	OMX_ERRORTYPE result;
+
+	memset(param, 0, sizeof(OMX_PORT_PARAM_TYPE));
+	param->nSize = sizeof(OMX_PORT_PARAM_TYPE);
+	fill_version(&param->nVersion);
+	result = GetParameter(OMX_IndexParamVideoInit, param);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(IndexParamVideoInit) "
+			"failed.\n");
+		return result;
+	}
+
+	return result;
+}
+
+OMX_ERRORTYPE omxil_comp::get_param_other_init(OMX_PORT_PARAM_TYPE *param) const
+{
+	OMX_ERRORTYPE result;
+
+	memset(param, 0, sizeof(OMX_PORT_PARAM_TYPE));
+	param->nSize = sizeof(OMX_PORT_PARAM_TYPE);
+	fill_version(&param->nVersion);
+	result = GetParameter(OMX_IndexParamOtherInit, param);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(IndexParamOtherInit) "
+			"failed.\n");
+		return result;
+	}
+
+	return result;
+}
+
+OMX_ERRORTYPE omxil_comp::get_param_port_definition(OMX_U32 port_index, OMX_PARAM_PORTDEFINITIONTYPE *def) const
+{
+	OMX_ERRORTYPE result;
+
+	memset(def, 0, sizeof(OMX_PARAM_PORTDEFINITIONTYPE));
+	def->nSize = sizeof(OMX_PARAM_PORTDEFINITIONTYPE);
+	fill_version(&def->nVersion);
+	def->nPortIndex = port_index;
+	result = GetParameter(OMX_IndexParamPortDefinition, def);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(IndexParamPortDefinition) "
+			"failed.\n");
+		return result;
+	}
+
+	return result;
+}
+
+/*
+ * public static function
+ */
+
+OMX_ERRORTYPE omxil_comp::fill_version(OMX_VERSIONTYPE *v)
+{
+	memset(v, 0, sizeof(OMX_VERSIONTYPE));
+	v->s.nVersionMajor = 1;
+	v->s.nVersionMinor = 1;
+	v->s.nRevision = 0;
+	v->s.nStep = 0;
+
+	return OMX_ErrorNone;
+}
