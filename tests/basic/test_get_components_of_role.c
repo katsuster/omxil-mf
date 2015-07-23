@@ -49,9 +49,9 @@ int main(int argc, char *argv[])
 	}
 
 	printf("OMX_GetComponentsOfRole: "
-		"role:'%s', comps:%d\n", name_role, num_comps);
+		"role:'%s', comps:%d\n", name_role, (int)num_comps);
 	for (i = 0; i < num_comps; i++) {
-		printf("%2d: comp:'%s'\n", i, name_comps[i]);
+		printf("%2d: comp:'%s'\n", (int)i, name_comps[i]);
 	}
 
 

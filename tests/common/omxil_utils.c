@@ -123,32 +123,32 @@ void dump_port_bufferheadertype(const OMX_BUFFERHEADERTYPE *p)
 		"  nTimeStamp          : %lld\n"
 		"  nFlags              : %d\n"
 		"  nOutputPortIndex    : %d\n"
-		"  nInputPortIndex     : %d\n", 
-		p, 
-		p->nSize, 
-		p->nVersion.s.nVersionMajor, 
-		p->nVersion.s.nVersionMinor, 
-		p->nVersion.s.nRevision, 
-		p->nVersion.s.nStep, 
-		p->pBuffer, 
-		p->nAllocLen, 
-		p->nFilledLen, 
-		p->nOffset, 
-		p->pAppPrivate, 
-		p->pPlatformPrivate, 
-		p->pInputPortPrivate, 
-		p->pOutputPortPrivate, 
-		p->hMarkTargetComponent, 
-		p->pMarkData, 
-		p->nTickCount, 
+		"  nInputPortIndex     : %d\n",
+		p,
+		(int)p->nSize,
+		(int)p->nVersion.s.nVersionMajor,
+		(int)p->nVersion.s.nVersionMinor,
+		(int)p->nVersion.s.nRevision,
+		(int)p->nVersion.s.nStep,
+		p->pBuffer,
+		(int)p->nAllocLen,
+		(int)p->nFilledLen,
+		(int)p->nOffset,
+		p->pAppPrivate,
+		p->pPlatformPrivate,
+		p->pInputPortPrivate,
+		p->pOutputPortPrivate,
+		p->hMarkTargetComponent,
+		p->pMarkData,
+		(int)p->nTickCount,
 #ifndef OMX_SKIP64BIT
-		p->nTimeStamp, 
+		p->nTimeStamp,
 #else
-		(uint64_t)(nTimeStamp.nHighPart << 32) | nTimeStamp.nLowPart, 
+		(uint64_t)(nTimeStamp.nHighPart << 32) | nTimeStamp.nLowPart,
 #endif
-		p->nFlags, 
-		p->nOutputPortIndex, 
-		p->nInputPortIndex);
+		(int)p->nFlags,
+		(int)p->nOutputPortIndex,
+		(int)p->nInputPortIndex);
 }
 
 void dump_port_param_type(const OMX_PORT_PARAM_TYPE *p)
@@ -157,15 +157,15 @@ void dump_port_param_type(const OMX_PORT_PARAM_TYPE *p)
 		"  nSize           : %d\n"
 		"  nVersion        : %02d.%02d.%02d.%02d\n"
 		"  nPorts          : %d\n"
-		"  nStartPortNumber: %d\n", 
-		p, 
-		p->nSize, 
-		p->nVersion.s.nVersionMajor, 
-		p->nVersion.s.nVersionMinor, 
-		p->nVersion.s.nRevision, 
-		p->nVersion.s.nStep, 
-		p->nPorts, 
-		p->nStartPortNumber);
+		"  nStartPortNumber: %d\n",
+		p,
+		(int)p->nSize,
+		(int)p->nVersion.s.nVersionMajor,
+		(int)p->nVersion.s.nVersionMinor,
+		(int)p->nVersion.s.nRevision,
+		(int)p->nVersion.s.nStep,
+		(int)p->nPorts,
+		(int)p->nStartPortNumber);
 }
 
 void dump_port_definitiontype(const OMX_PARAM_PORTDEFINITIONTYPE *p)
@@ -183,29 +183,29 @@ void dump_port_definitiontype(const OMX_PARAM_PORTDEFINITIONTYPE *p)
 		"  eDomain           : %d(%s)\n"
 		//"  format            : \n"
 		"  bBuffersContiguous: %d\n"
-		"  nBufferAlignment  : %d\n", 
-		p, 
-		p->nSize, 
-		p->nVersion.s.nVersionMajor, 
-		p->nVersion.s.nVersionMinor, 
-		p->nVersion.s.nRevision, 
-		p->nVersion.s.nStep, 
-		p->nPortIndex, 
-		p->eDir, get_omx_dirtype_name(p->eDir), 
-		p->nBufferCountActual, 
-		p->nBufferCountMin, 
-		p->nBufferSize, 
-		p->bEnabled, 
-		p->bPopulated, 
-		p->eDomain, get_omx_portdomaintype_name(p->eDomain), 
+		"  nBufferAlignment  : %d\n",
+		p,
+		(int)p->nSize,
+		(int)p->nVersion.s.nVersionMajor,
+		(int)p->nVersion.s.nVersionMinor,
+		(int)p->nVersion.s.nRevision,
+		(int)p->nVersion.s.nStep,
+		(int)p->nPortIndex,
+		p->eDir, get_omx_dirtype_name(p->eDir),
+		(int)p->nBufferCountActual,
+		(int)p->nBufferCountMin,
+		(int)p->nBufferSize,
+		p->bEnabled,
+		p->bPopulated,
+		(int)p->eDomain, get_omx_portdomaintype_name(p->eDomain),
 		//TODO: need to dump 'format' member...
 		//union {
 		//	OMX_AUDIO_PORTDEFINITIONTYPE audio
 		//	OMX_VIDEO_PORTDEFINITIONTYPE video
 		//	OMX_IMAGE_PORTDEFINITIONTYPE image
 		//	OMX_OTHER_PORTDEFINITIONTYPE other
-		//} pp->format, 
-		p->bBuffersContiguous, 
-		p->nBufferAlignment);
+		//} pp->format,
+		p->bBuffersContiguous,
+		(int)(int)p->nBufferAlignment);
 }
 

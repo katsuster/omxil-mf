@@ -5,7 +5,8 @@ check_PROGRAMS = \
 	renderer_null
 
 common_SOURCES  = $(COMMON_DIR)/omxil_utils.c $(COMMON_DIR)/omxil_comp.cpp
-common_CPPFLAGS = -I$(TEST_DIR)
+common_CPPFLAGS = -Wall -Werror \
+	-I$(TEST_DIR)
 common_CFLAGS   = 
 common_CXXFLAGS = 
 common_LDADD    = 

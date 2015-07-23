@@ -7,7 +7,6 @@
 
 int main(int argc, char *argv[])
 {
-	char name_comp[OMX_MAX_STRINGNAME_SIZE];
 	OMX_ERRORTYPE result;
 	int i;
 

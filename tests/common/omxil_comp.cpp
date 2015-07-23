@@ -220,7 +220,7 @@ OMX_ERRORTYPE omxil_comp::gate_EventHandler(OMX_HANDLETYPE hComponent, OMX_PTR p
 {
 	omxil_comp *c = static_cast<omxil_comp *>(pAppData);
 
-	return c->EventHandler(hComponent, pAppData, eEvent, 
+	return c->EventHandler(hComponent, pAppData, eEvent,
 			nData1, nData2, pEventData);
 }
 

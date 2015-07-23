@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "get_port_definition(audio) failed.\n");
 			goto err_out3;
 		}
-		printf("IndexParamPortDefinition: audio %d -----\n", def.nPortIndex);
+		printf("IndexParamPortDefinition: audio %d -----\n", (int)def.nPortIndex);
 		dump_port_definitiontype(&def);
 	}
 
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "get_port_definition(image) failed.\n");
 			goto err_out3;
 		}
-		printf("IndexParamPortDefinition: image %d -----\n", def.nPortIndex);
+		printf("IndexParamPortDefinition: image %d -----\n", (int)def.nPortIndex);
 		dump_port_definitiontype(&def);
 	}
 
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "get_port_definition(video) failed.\n");
 			goto err_out3;
 		}
-		printf("IndexParamPortDefinition: video %d -----\n", def.nPortIndex);
+		printf("IndexParamPortDefinition: video %d -----\n", (int)def.nPortIndex);
 		dump_port_definitiontype(&def);
 	}
 
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "get_port_definition(other) failed.\n");
 			goto err_out3;
 		}
-		printf("IndexParamPortDefinition: other %d -----\n", def.nPortIndex);
+		printf("IndexParamPortDefinition: other %d -----\n", (int)def.nPortIndex);
 		dump_port_definitiontype(&def);
 	}
 

@@ -42,10 +42,10 @@ int main(int argc, char *argv[])
 		result = OMX_ErrorInsufficientResources;
 		goto err_out2;
 	}
-	printf("OMX_GetHandle: name:%s, comp:%p\n", 
+	printf("OMX_GetHandle: name:%s, comp:%p\n",
 		arg_comp, comp);
 
-	result = comp->GetComponentVersion((OMX_STRING)arg_comp, 
+	result = comp->GetComponentVersion((OMX_STRING)arg_comp,
 		&ver_comp, &ver_spec, &uuid_comp);
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "OMX_GetComponentVersion failed.\n");
@@ -53,14 +53,14 @@ int main(int argc, char *argv[])
 	}
 	printf("OMX_GetComponentVersion: name:%s\n"
 		"comp ver:0x%08x(v%d.%d.%d.%d)\n"
-		"spec ver:0x%08x(OpenMAX IL %d.%d.%d.%d)\n", 
-		arg_comp, 
-		ver_comp, 
-		ver_comp.s.nVersionMajor, ver_comp.s.nVersionMinor, 
-		ver_comp.s.nRevision, ver_comp.s.nStep, 
-		ver_spec, 
-		ver_spec.s.nVersionMajor, ver_spec.s.nVersionMinor, 
-		ver_spec.s.nRevision, ver_spec.s.nStep);
+		"spec ver:0x%08x(OpenMAX IL %d.%d.%d.%d)\n",
+		arg_comp,
+		(int)ver_comp.nVersion,
+		(int)ver_comp.s.nVersionMajor, (int)ver_comp.s.nVersionMinor,
+		(int)ver_comp.s.nRevision, (int)ver_comp.s.nStep,
+		(int)ver_spec.nVersion,
+		(int)ver_spec.s.nVersionMajor, (int)ver_spec.s.nVersionMinor,
+		(int)ver_spec.s.nRevision, (int)ver_spec.s.nStep);
 	printf("uuid:\n  ");
 	for (i = 0; i < sizeof(uuid_comp); i++) {
 		printf("%02x ", uuid_comp[i]);

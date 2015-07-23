@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "get_port_definition(before) failed.\n");
 		goto err_out2;
 	}
-	printf("IndexParamPortDefinition: before in %d -----\n", def_in.nPortIndex);
+	printf("IndexParamPortDefinition: before in %d -----\n", (int)def_in.nPortIndex);
 	dump_port_definitiontype(&def_in);
 
 	result = comp->get_param_port_definition(1, &def_out);
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "get_port_definition(before) failed.\n");
 		goto err_out2;
 	}
-	printf("IndexParamPortDefinition: before out %d -----\n", def_out.nPortIndex);
+	printf("IndexParamPortDefinition: before out %d -----\n", (int)def_out.nPortIndex);
 	dump_port_definitiontype(&def_out);
 
 	/*
@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "get_port_definition(after) failed.\n");
 		goto err_out2;
 	}
-	printf("IndexParamPortDefinition: after in %d -----\n", def_in.nPortIndex);
+	printf("IndexParamPortDefinition: after in %d -----\n", (int)def_in.nPortIndex);
 	dump_port_definitiontype(&def_in);
 
 	result = comp->get_param_port_definition(1, &def_out);
@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "get_port_definition(after) failed.\n");
 		goto err_out2;
 	}
-	printf("IndexParamPortDefinition: after out %d -----\n", def_out.nPortIndex);
+	printf("IndexParamPortDefinition: after out %d -----\n", (int)def_out.nPortIndex);
 	dump_port_definitiontype(&def_out);
 
 
@@ -234,10 +234,10 @@ int main(int argc, char *argv[])
 
 err_out2:
 	for (auto it = buf_out.begin(); it != buf_out.end(); it++) {
-		delete *it;
+		comp->FreeBuffer(1, *it);
 	}
 	for (auto it = buf_in.begin(); it != buf_in.end(); it++) {
-		delete *it;
+		comp->FreeBuffer(0, *it);
 	}
 
 	delete comp;
