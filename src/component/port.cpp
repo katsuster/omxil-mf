@@ -543,9 +543,6 @@ OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX
 		pb->header      = header;
 		pb->index       = 0;
 
-		list_bufs.push_back(pb);
-		update_buffer_status();
-
 		//init OpenMAX BUFFERHEADER
 		header->nSize = sizeof(OMX_BUFFERHEADERTYPE);
 		header->nVersion.s.nVersionMajor = OMX_MF_IL_MAJOR;
@@ -574,6 +571,9 @@ OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX
 		header->nTickCount           = 0;
 		header->nTimeStamp           = 0;
 		header->nFlags               = 0;
+
+		list_bufs.push_back(pb);
+		update_buffer_status();
 	}
 
 	//return result
@@ -630,9 +630,6 @@ OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv
 		pb->header      = header;
 		pb->index       = 0;
 
-		list_bufs.push_back(pb);
-		update_buffer_status();
-
 		//init OpenMAX BUFFERHEADER
 		header->nSize = sizeof(OMX_BUFFERHEADERTYPE);
 		header->nVersion.s.nVersionMajor = OMX_MF_IL_MAJOR;
@@ -661,6 +658,9 @@ OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv
 		header->nTickCount           = 0;
 		header->nTimeStamp           = 0;
 		header->nFlags               = 0;
+
+		list_bufs.push_back(pb);
+		update_buffer_status();
 	}
 
 	//return result
@@ -731,11 +731,11 @@ bool port::find_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 	for (port_buffer *pb : list_bufs) {
 		if (pb->header->pBuffer == bufhead->pBuffer) {
 			//found
-			return OMX_ErrorNone;
+			return true;
 		}
 	}
 
-	return OMX_ErrorBadParameter;
+	return false;
 }
 
 bool port::find_buffer(port_buffer *pb)

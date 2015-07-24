@@ -191,8 +191,9 @@ int main(int argc, char *argv[])
 
 
 	//EmptyThisBuffer
-	for (i = 0; i < 32768; i++) {
+	for (i = 0; i < 100; i++) {
 		OMX_BUFFERHEADERTYPE *buf;
+		buffer_attr *pbattr;
 
 		buf = comp->find_free_buffer();
 		if (buf == nullptr) {
@@ -200,12 +201,28 @@ int main(int argc, char *argv[])
 			goto err_out2;
 		}
 
+		pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
+		pbattr->used = true;
+
 		result = comp->EmptyThisBuffer(buf);
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "EmptyThisBuffer() failed.\n");
 			goto err_out2;
 		}
 	}
+
+
+	//Set StateIdle
+	result = comp->SendCommand(OMX_CommandStateSet, OMX_StateIdle, 0);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_SendCommand(StateSet, Idle) failed.\n");
+		goto err_out2;
+	}
+
+	//Wait for StatusIdle
+	printf("wait for StateIdle...\n");
+	comp->wait_state_done(OMX_StateIdle);
+	printf("wait for StateIdle... Done!\n");
 
 
 	//Set StateLoaded
@@ -231,6 +248,12 @@ int main(int argc, char *argv[])
 	}
 	buf_in.clear();
 
+	//Wait for StatusLoaded
+	printf("wait for StateLoaded...\n");
+	comp->wait_state_done(OMX_StateLoaded);
+	printf("wait for StateLoaded... Done!\n");
+
+
 	//Terminate
 	delete comp;
 
@@ -247,10 +270,10 @@ err_out2:
 		OMX_U8 *pb = (*it)->pBuffer;
 		buffer_attr *pbattr = static_cast<buffer_attr *>((*it)->pAppPrivate);
 
+		comp->FreeBuffer(0, *it);
+
 		delete pbattr;
 		delete[] pb;
-
-		comp->FreeBuffer(0, *it);
 	}
 
 	delete comp;

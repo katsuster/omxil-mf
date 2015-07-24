@@ -32,7 +32,20 @@ renderer_null::~renderer_null()
 
 void renderer_null::run()
 {
-	//do nothing
+	OMX_ERRORTYPE result;
+	port_buffer pb_in;
+
+	while (should_run()) {
+		result = in_port_video->pop_buffer(&pb_in);
+		if (result != OMX_ErrorNone) {
+			printf("in_port_video.pop_buffer().\n");
+			break;
+		}
+
+		//NOTE: gst-openmax は nOffset を戻さないとおかしな挙動をする？？
+		pb_in.header->nOffset = 0;
+		in_port_video->empty_buffer_done(&pb_in);
+	}
 }
 
 

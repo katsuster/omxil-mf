@@ -14,7 +14,7 @@
 
 
 //OpenMAX バッファを受け渡すバッファの深さ
-#define OMX_MF_BUFS_DEPTH    1
+#define OMX_MF_BUFS_DEPTH    10
 
 
 namespace mf {
@@ -631,8 +631,7 @@ public:
 	 * このポートに登録されているかどうかを調べます。
 	 *
 	 * @param bufhead OpenMAX バッファヘッダ
-	 * @return OpenMAX エラー値、
-	 * 指定したバッファが見つかれば OMX_ErrorNone、見つからなければそれ以外
+	 * @return 指定したバッファが見つかれば true、見つからなければ false
 	 */
 	virtual bool find_buffer(OMX_BUFFERHEADERTYPE *bufhead);
 
@@ -643,8 +642,7 @@ public:
 	 * このポートに登録されているかどうかを調べます。
 	 *
 	 * @param pb ポートバッファ
-	 * @return OpenMAX エラー値、
-	 * 指定したバッファが見つかれば OMX_ErrorNone、見つからなければそれ以外
+	 * @return 指定したバッファが見つかれば true、見つからなければ false
 	 */
 	virtual bool find_buffer(port_buffer *pb);
 
