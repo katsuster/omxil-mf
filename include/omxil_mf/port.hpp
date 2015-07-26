@@ -306,11 +306,48 @@ public:
 	virtual const char *get_name() const;
 
 	/**
-	 * 全ての待機しているスレッドを強制的に解除します。
+	 * ポートからの読み出し、または書き込みを禁止し、
+	 * 全ての待機しているスレッドを強制的に解除（シャットダウン）します。
 	 *
 	 * 強制解除されたスレッドは runtime_error をスローします。
+	 *
+	 * @param rd 以降の読み出しを禁止し、
+	 * 	読み出しの待機状態を解除する場合は true、
+	 * 	変更しない場合は false を指定します
+	 * @param wr 以降の書き込みを禁止し、
+	 * 	書き込みの待機状態を解除する場合は true、
+	 * 	変更しない場合は false を指定します
 	 */
-	virtual void shutdown();
+	virtual void shutdown(bool rd, bool wr);
+
+	/**
+	 * シャットダウン処理を中止し、
+	 * ポートからの読み出し、または書き込みを許可します。
+	 *
+	 * FIXME: シャットダウン処理の中止後、
+	 * ポートがシャットダウン前と同様に動作するかどうかは、
+	 * 各ポートの実装に依存します。
+	 *
+	 * @param rd 以降の読み出しを許可する場合は true、
+	 * 	変更しない場合は false を指定します
+	 * @param wr 以降の書き込みを許可する場合は true、
+	 * 	変更しない場合は false を指定します
+	 */
+	virtual void abort_shutdown(bool rd, bool wr);
+
+	/**
+	 * 読み出し側のシャットダウン処理中かどうかを取得します。
+	 *
+	 * @return 処理中ならば true、そうでなければ false
+	 */
+	virtual bool is_shutting_read();
+
+	/**
+	 * 書き込み側のシャットダウン処理中かどうかを取得します。
+	 *
+	 * @return 処理中ならば true、そうでなければ false
+	 */
+	virtual bool is_shutting_write();
 
 	/**
 	 * ポートが所属するコンポーネントを取得します。
@@ -442,10 +479,6 @@ public:
 	 * >= nBufferCountActual | Yes       | No        | StateIdle 遷移可能
 	 * ----------------------+-----------+-----------+---------------------
 	 * </pre>
-	 *
-	 * @param v 待ちたい状態
-	 * 	OMX_TRUE なら populated になるまで待ち、
-	 * 	OMX_FALSE なら populated ではなくなるまで待ちます。
 	 */
 	virtual void update_buffer_status();
 
@@ -535,7 +568,18 @@ public:
 	virtual OMX_ERRORTYPE enable_port();
 
 	/**
-	 * 未処理のバッファを全て返却します。
+	 * 一時的にポートへのバッファ処理要求を禁止し、
+	 * 未処理のバッファを全て返却（フラッシュ）する準備をします。
+	 *
+	 * empty_buffer または fill_buffer によって渡されているが、
+	 * 未処理のバッファは全て返却されます。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE begin_flush();
+
+	/**
+	 * 未処理のバッファを全て返却（フラッシュ）します。
 	 *
 	 * empty_buffer または fill_buffer によって渡されているが、
 	 * 未処理のバッファは全て返却されます。
@@ -543,6 +587,15 @@ public:
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE flush_buffers();
+
+	/**
+	 * ポートへのバッファ処理要求を許可します。
+	 *
+	 * 未処理のバッファを全て返却（フラッシュ）した後に呼び出します。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE end_flush();
 
 	virtual OMX_ERRORTYPE component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup);
 
@@ -756,6 +809,16 @@ protected:
 	 */
 	virtual void error_if_broken(std::unique_lock<std::recursive_mutex>& lock);
 
+	/**
+	 * ポートの待ちを強制キャンセルすべきかを取得します。
+	 *
+	 * shutdown_read または shutdown_write により、
+	 * 強制キャンセルが発生します。
+	 *
+	 * @return 強制キャンセルすべきであれば true、そうでなければ false
+	 */
+	virtual bool is_broken();
+
 	//----------------------------------------
 	// コンポーネント利用者へのバッファ返却スレッド
 	//----------------------------------------
@@ -790,7 +853,7 @@ private:
 	//ポートの状態変数
 	std::condition_variable_any cond;
 	//待機の強制解除フラグ
-	bool broken;
+	bool shutting_read, shutting_write;
 
 	component *comp;
 

@@ -142,7 +142,7 @@ void port_buffer::dump(const char *msg)
 
 
 port::port(int ind, component *c)
-	: broken(false), comp(c),
+	: shutting_read(false), shutting_write(false), comp(c),
 	port_index(ind), dir(OMX_DirMax),
 	buffer_count_actual(0), buffer_count_min(0), buffer_size(0),
 	f_enabled(OMX_TRUE), f_populated(OMX_FALSE),
@@ -189,7 +189,7 @@ port::~port()
 {
 	scoped_log_begin;
 
-	shutdown();
+	shutdown(true, true);
 
 	//shutdown returning OpenMAX buffers thread
 	if (bound_ret) {
@@ -226,12 +226,42 @@ component *port::get_component()
 	return comp;
 }
 
-void port::shutdown()
+void port::shutdown(bool rd, bool wr)
 {
+	scoped_log_begin;
 	std::lock_guard<std::recursive_mutex> lk_port(mut);
 
-	broken = true;
+	if (rd) {
+		shutting_read = true;
+	}
+	if (wr) {
+		shutting_write = true;
+	}
 	cond.notify_all();
+}
+
+void port::abort_shutdown(bool rd, bool wr)
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
+
+	if (rd) {
+		shutting_read = false;
+	}
+	if (wr) {
+		shutting_write = false;
+	}
+	cond.notify_all();
+}
+
+bool port::is_shutting_read()
+{
+	return shutting_read;
+}
+
+bool port::is_shutting_write()
+{
+	return shutting_write;
 }
 
 
@@ -308,6 +338,7 @@ OMX_BOOL port::get_populated() const
 
 void port::set_populated(OMX_BOOL v)
 {
+	scoped_log_begin;
 	std::lock_guard<std::recursive_mutex> lk_port(mut);
 
 	f_populated = v;
@@ -316,9 +347,10 @@ void port::set_populated(OMX_BOOL v)
 
 void port::wait_populated(OMX_BOOL v)
 {
+	scoped_log_begin;
 	std::unique_lock<std::recursive_mutex> lk_port(mut);
 
-	cond.wait(lk_port, [&] { return broken || f_populated == v; });
+	cond.wait(lk_port, [&] { return is_broken() || f_populated == v; });
 	error_if_broken(lk_port);
 }
 
@@ -363,6 +395,7 @@ OMX_BOOL port::get_no_buffer() const
 
 void port::set_no_buffer(OMX_BOOL v)
 {
+	scoped_log_begin;
 	std::lock_guard<std::recursive_mutex> lk_port(mut);
 
 	f_no_buffer = v;
@@ -371,9 +404,10 @@ void port::set_no_buffer(OMX_BOOL v)
 
 void port::wait_no_buffer(OMX_BOOL v)
 {
+	scoped_log_begin;
 	std::unique_lock<std::recursive_mutex> lk_port(mut);
 
-	cond.wait(lk_port, [&] { return broken || f_no_buffer == v; });
+	cond.wait(lk_port, [&] { return is_broken() || f_no_buffer == v; });
 	error_if_broken(lk_port);
 }
 
@@ -469,9 +503,10 @@ OMX_ERRORTYPE port::enable_port()
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE port::flush_buffers()
+OMX_ERRORTYPE port::begin_flush()
 {
 	scoped_log_begin;
+	std::unique_lock<std::recursive_mutex> lk_port(mut);
 
 	if (!get_enabled()) {
 		errprint("port %d is disabled.\n",
@@ -479,7 +514,60 @@ OMX_ERRORTYPE port::flush_buffers()
 		return OMX_ErrorIncorrectStateOperation;
 	}
 
+	//フラッシュ開始、ポートへの読み書き禁止
+	shutdown(true, true);
+	bound_send->shutdown(true, true);
 
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port::flush_buffers()
+{
+	scoped_log_begin;
+	std::unique_lock<std::recursive_mutex> lk_port(mut);
+
+	if (!get_enabled()) {
+		errprint("port %d is disabled.\n",
+			(int)get_port_index());
+		return OMX_ErrorIncorrectStateOperation;
+	}
+
+	//NOTE: flush の前に shutdown し、
+	//バッファ処理要求の read/write を停止させる必要があります。
+	//コンポーネントのメインスレッドなど、
+	//別スレッドとの間に race condition が存在するため、
+	//別スレッドが同時に bound_send から read した場合、
+	//入力順と出力順が入れ替わったり、デッドロックする可能性があります。
+	while (bound_send->size() > 0) {
+		port_buffer pb;
+		size_t cnt;
+
+		//NOTE: shutdown 中に read_fully を使うと
+		//runtime_error がスローされるため、
+		//代わりに read_array を使います。
+		cnt = bound_send->read_array(&pb, 1);
+		if (cnt != 0) {
+			bound_ret->write_fully(&pb, 1);
+		}
+	}
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port::end_flush()
+{
+	scoped_log_begin;
+	std::unique_lock<std::recursive_mutex> lk_port(mut);
+
+	if (!get_enabled()) {
+		errprint("port %d is disabled.\n",
+			(int)get_port_index());
+		return OMX_ErrorIncorrectStateOperation;
+	}
+
+	//フラッシュ終了、ポートへの読み書き許可
+	bound_send->abort_shutdown(true, true);
+	abort_shutdown(true, true);
 
 	return OMX_ErrorNone;
 }
@@ -750,7 +838,6 @@ bool port::find_buffer(port_buffer *pb)
 
 OMX_ERRORTYPE port::empty_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 {
-	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
 	if (get_dir() != OMX_DirInput) {
@@ -766,7 +853,6 @@ OMX_ERRORTYPE port::empty_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 
 OMX_ERRORTYPE port::fill_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 {
-	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
 	if (get_dir() != OMX_DirOutput) {
@@ -787,6 +873,11 @@ OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 
 	if (!get_enabled()) {
 		errprint("port %d is disabled.\n",
+			(int)get_port_index());
+		return OMX_ErrorIncorrectStateOperation;
+	}
+	if (is_shutting_write()) {
+		errprint("port %d is flushing.\n",
 			(int)get_port_index());
 		return OMX_ErrorIncorrectStateOperation;
 	}
@@ -815,7 +906,6 @@ OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 
 OMX_ERRORTYPE port::pop_buffer(port_buffer *pb)
 {
-	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
 	try {
@@ -845,7 +935,6 @@ int port::get_buffer_count()
 
 OMX_ERRORTYPE port::empty_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 {
-	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
 	if (get_dir() != OMX_DirInput) {
@@ -861,8 +950,6 @@ OMX_ERRORTYPE port::empty_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 
 OMX_ERRORTYPE port::empty_buffer_done(port_buffer *pb)
 {
-	//scoped_log_begin;
-
 	if (!find_buffer(pb)) {
 		dprint("port_buffer:%p is not registered.\n", pb);
 	}
@@ -872,7 +959,6 @@ OMX_ERRORTYPE port::empty_buffer_done(port_buffer *pb)
 
 OMX_ERRORTYPE port::fill_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 {
-	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
 	if (get_dir() != OMX_DirOutput) {
@@ -888,8 +974,6 @@ OMX_ERRORTYPE port::fill_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 
 OMX_ERRORTYPE port::fill_buffer_done(port_buffer *pb)
 {
-	//scoped_log_begin;
-
 	if (!find_buffer(pb)) {
 		dprint("port_buffer:%p is not registered.\n", pb);
 	}
@@ -899,7 +983,6 @@ OMX_ERRORTYPE port::fill_buffer_done(port_buffer *pb)
 
 OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 {
-	//scoped_log_begin;
 	port_buffer pb;
 	OMX_ERRORTYPE err;
 
@@ -929,11 +1012,16 @@ OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 
 void port::error_if_broken(std::unique_lock<std::recursive_mutex>& lk_port)
 {
-	if (broken) {
+	if (is_broken()) {
 		std::string msg(__func__);
-		msg += ": interrupted.";
+		msg += ": interrupted by shutdown.";
 		throw std::runtime_error(msg);
 	}
+}
+
+bool port::is_broken()
+{
+	return is_shutting_read() && is_shutting_write();
 }
 
 //----------------------------------------

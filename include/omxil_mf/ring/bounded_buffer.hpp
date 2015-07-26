@@ -40,7 +40,8 @@ public:
 	typedef int (* transform_func_t)(T *dest, const T *src, size_type n, size_type *ntrans);
 
 	bounded_buffer(Container& buffer)
-	: bound(buffer), cnt_rd(0), cnt_wr(0), broken(false) {
+		: bound(buffer), cnt_rd(0), cnt_wr(0),
+		shutting_read(false), shutting_write(false) {
 		//do nothing
 	}
 
@@ -249,11 +250,11 @@ public:
 	 * @param transform 変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
-	/*size_type read_array(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	size_type read_array(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
 		std::unique_lock<std::mutex> lock(mut);
 
 		return read_array_with_lock(buf, count, rdtrans, wrtrans);
-	}*/
+	}
 
 	/**
 	 * 任意の要素をリングバッファに書き込みます。
@@ -439,8 +440,8 @@ public:
 	/*void wait_element(size_type n) {
 		std::unique_lock<std::mutex> lock(mut);
 
-		cond_not_empty.wait(lock, [&] { return broken || bound.size() >= n; });
-		if (broken) {
+		cond_not_empty.wait(lock, [&] { return shutting_read || bound.size() >= n; });
+		if (shutting_read) {
 			std::string msg(__func__);
 			msg += ": interrupted.";
 			throw std::runtime_error(msg);
@@ -458,8 +459,8 @@ public:
 	/*void wait_space(size_type n) {
 		std::unique_lock<std::mutex> lock(mut);
 
-		cond_not_full.wait(lock, [&] { return broken || bound.reserve() >= n; });
-		if (broken) {
+		cond_not_full.wait(lock, [&] { return shutting_write || bound.reserve() >= n; });
+		if (shutting_write) {
 			std::string msg(__func__);
 			msg += ": interrupted.";
 			throw std::runtime_error(msg);
@@ -467,14 +468,62 @@ public:
 	}*/
 
 	/**
-	 * 全ての待機しているスレッドを強制的に解除します。
+	 * 以降の読み出しと書き込みを禁止し、
+	 * 全ての待機しているスレッドを強制的に解除（シャットダウン）します。
 	 *
 	 * 強制解除されたスレッドは runtime_error をスローします。
+	 *
+	 * 下記の呼び出しと等価です。
+	 *
+	 * shutdown(true, true);
 	 */
 	void shutdown() {
+		shutdown(true, true);
+	}
+
+	/**
+	 * 以降の読み出し、または書き込みを禁止し、
+	 * 全ての待機しているスレッドを強制的に解除（シャットダウン）します。
+	 *
+	 * 強制解除されたスレッドは runtime_error をスローします。
+	 *
+	 * @param rd 以降の読み出しを禁止し、
+	 * 	読み出しの待機状態を解除する場合は true、
+	 * 	変更しない場合は false を指定します
+	 * @param wr 以降の書き込みを禁止し、
+	 * 	書き込みの待機状態を解除する場合は true、
+	 * 	変更しない場合は false を指定します
+	 */
+	void shutdown(bool rd, bool wr) {
 		std::unique_lock<std::mutex> lock(mut);
 
-		broken = true;
+		if (rd) {
+			shutting_read = true;
+		}
+		if (wr) {
+			shutting_write = true;
+		}
+		notify_with_lock();
+	}
+
+	/**
+	 * シャットダウン処理を中止し、
+	 * ポートからの読み出し、または書き込みを許可します。
+	 *
+	 * @param rd 以降の読み出しを許可する場合は true、
+	 * 	変更しない場合は false を指定します
+	 * @param wr 以降の書き込みを許可する場合は true、
+	 * 	変更しない場合は false を指定します
+	 */
+	void abort_shutdown(bool rd, bool wr) {
+		std::unique_lock<std::mutex> lock(mut);
+
+		if (rd) {
+			shutting_read = false;
+		}
+		if (wr) {
+			shutting_write = false;
+		}
 		notify_with_lock();
 	}
 
@@ -564,13 +613,14 @@ protected:
 	 *
 	 * ロックを確保してから呼び出します。
 	 *
-	 * シャットダウンされた場合は runtime_error をスローします。
+	 * 読み出し側をシャットダウンされた場合は、
+	 * runtime_error をスローします。
 	 *
 	 * @param lock リングバッファのロックへの参照
 	 */
 	void wait_element_with_lock(std::unique_lock<std::mutex>& lock) {
-		cond_not_empty.wait(lock, [&] { return broken || !bound.empty(); });
-		if (broken) {
+		cond_not_empty.wait(lock, [&] { return shutting_read || !bound.empty(); });
+		if (shutting_read) {
 			std::string msg(__func__);
 			msg += ": interrupted.";
 			throw std::runtime_error(msg);
@@ -583,13 +633,14 @@ protected:
 	 *
 	 * ロックを確保してから呼び出します。
 	 *
-	 * シャットダウンされた場合は runtime_error をスローします。
+	 * 書き込み側をシャットダウンされた場合は、
+	 * runtime_error をスローします。
 	 *
 	 * @param lock リングバッファのロックへの参照
 	 */
 	void wait_space_with_lock(std::unique_lock<std::mutex>& lock) {
-		cond_not_full.wait(lock, [&] { return broken || !bound.full(); });
-		if (broken) {
+		cond_not_full.wait(lock, [&] { return shutting_write || !bound.full(); });
+		if (shutting_write) {
 			std::string msg(__func__);
 			msg += ": interrupted.";
 			throw std::runtime_error(msg);
@@ -603,7 +654,7 @@ protected:
 		if (!bound.empty()) {
 			cond_not_empty.notify_all();
 		}
-		if (broken) {
+		if (shutting_read || shutting_write) {
 			cond_not_full.notify_all();
 			cond_not_empty.notify_all();
 		}
@@ -615,7 +666,7 @@ private:
 	std::condition_variable cond_not_full;
 	std::condition_variable cond_not_empty;
 	uint64_t cnt_rd, cnt_wr;
-	bool broken;
+	bool shutting_read, shutting_write;
 };
 
 } //namespace mf

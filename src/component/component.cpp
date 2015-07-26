@@ -260,7 +260,6 @@ OMX_ERRORTYPE component::GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRI
 
 OMX_ERRORTYPE component::SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE Cmd, OMX_U32 nParam, OMX_PTR pCmdData)
 {
-	scoped_log_begin;
 	port *port_found;
 	OMX_MF_CMD cmd;
 	//OMX_ERRORTYPE err;
@@ -627,7 +626,6 @@ OMX_ERRORTYPE component::FreeBuffer(OMX_HANDLETYPE hComponent, OMX_U32 nPortInde
 
 OMX_ERRORTYPE component::EmptyThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE *pBuffer)
 {
-	//scoped_log_begin;
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
 
@@ -658,7 +656,6 @@ OMX_ERRORTYPE component::EmptyThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHE
 
 OMX_ERRORTYPE component::FillThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE *pBuffer)
 {
-	//scoped_log_begin;
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
 
@@ -759,7 +756,6 @@ OMX_ERRORTYPE component::EventHandler(OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_
 
 OMX_ERRORTYPE component::EmptyBufferDone(OMX_BUFFERHEADERTYPE *pBuffer)
 {
-	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
 	err = omx_cbs.EmptyBufferDone(get_omx_component(),
@@ -770,7 +766,6 @@ OMX_ERRORTYPE component::EmptyBufferDone(OMX_BUFFERHEADERTYPE *pBuffer)
 
 OMX_ERRORTYPE component::EmptyBufferDone(port_buffer *pb)
 {
-	//scoped_log_begin;
 	//EOS detected
 	if (pb->header->nFlags & OMX_BUFFERFLAG_EOS) {
 		EventHandler(OMX_EventBufferFlag,
@@ -782,7 +777,6 @@ OMX_ERRORTYPE component::EmptyBufferDone(port_buffer *pb)
 
 OMX_ERRORTYPE component::FillBufferDone(OMX_BUFFERHEADERTYPE *pBuffer)
 {
-	//scoped_log_begin;
 	OMX_ERRORTYPE err;
 
 	err = omx_cbs.FillBufferDone(get_omx_component(),
@@ -793,7 +787,6 @@ OMX_ERRORTYPE component::FillBufferDone(OMX_BUFFERHEADERTYPE *pBuffer)
 
 OMX_ERRORTYPE component::FillBufferDone(port_buffer *pb)
 {
-	//scoped_log_begin;
 	//EOS detected
 	if (pb->header->nFlags & OMX_BUFFERFLAG_EOS) {
 		EventHandler(OMX_EventBufferFlag,
@@ -1011,13 +1004,34 @@ OMX_ERRORTYPE component::command_state_set_to_loaded()
 		err = OMX_ErrorSameState;
 		break;
 	case OMX_StateIdle:
-		//FIXME: port flush not implemented yet
+		//prepare to flush all ports
+		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+			try {
+				it->second.begin_flush();
+			} catch (const std::runtime_error& e) {
+				errprint("runtime_error: %s\n", e.what());
+				err = OMX_ErrorInsufficientResources;
+				break;
+			}
+		}
 
 		//stop & wait main thread
 		stop_running();
 		th_main->join();
 		delete th_main;
 		th_main = nullptr;
+
+		//flush all ports
+		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+			try {
+				it->second.flush_buffers();
+				it->second.end_flush();
+			} catch (const std::runtime_error& e) {
+				errprint("runtime_error: %s\n", e.what());
+				err = OMX_ErrorInsufficientResources;
+				break;
+			}
+		}
 
 		//Wait for all enabled port to be not populated
 		try {
@@ -1159,7 +1173,9 @@ OMX_ERRORTYPE component::command_flush(OMX_U32 port_index)
 		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
 			ev_results.push_back(it->first);
 			try {
+				it->second.begin_flush();
 				err = it->second.flush_buffers();
+				it->second.end_flush();
 			} catch (const std::runtime_error& e) {
 				errprint("runtime_error: %s\n", e.what());
 				success = false;
@@ -1176,7 +1192,9 @@ OMX_ERRORTYPE component::command_flush(OMX_U32 port_index)
 
 		ev_results.push_back(port_index);
 		try {
+			port_found->begin_flush();
 			err = port_found->flush_buffers();
+			port_found->end_flush();
 		} catch (const std::runtime_error& e) {
 			errprint("runtime_error: %s\n", e.what());
 			success = false;
