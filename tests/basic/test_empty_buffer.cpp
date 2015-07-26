@@ -33,19 +33,20 @@ public:
 
 	virtual void push_back_buffer(OMX_BUFFERHEADERTYPE *buf)
 	{
-		std::unique_lock<std::mutex> lock(mut_command);
+		std::unique_lock<std::recursive_mutex> lock(mut_command);
 
 		buf_in.push_back(buf);
 	}
 
-	virtual OMX_BUFFERHEADERTYPE *find_free_buffer() const
+	virtual OMX_BUFFERHEADERTYPE *use_free_buffer() const
 	{
-		std::unique_lock<std::mutex> lock(mut_command);
+		std::unique_lock<std::recursive_mutex> lock(mut_command);
 
 		for (OMX_BUFFERHEADERTYPE *buf : buf_in) {
 			buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
 
 			if (!pbattr->used) {
+				pbattr->used = true;
 				return buf;
 			}
 		}
@@ -71,7 +72,7 @@ public:
 	 */
 	virtual bool is_used_all_buffer() const
 	{
-		std::unique_lock<std::mutex> lock(mut_command);
+		std::unique_lock<std::recursive_mutex> lock(mut_command);
 
 		for (OMX_BUFFERHEADERTYPE *buf : buf_in) {
 			buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
@@ -102,7 +103,7 @@ public:
 	 */
 	virtual bool is_free_all_buffer() const
 	{
-		std::unique_lock<std::mutex> lock(mut_command);
+		std::unique_lock<std::recursive_mutex> lock(mut_command);
 
 		for (OMX_BUFFERHEADERTYPE *buf : buf_in) {
 			buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
@@ -115,11 +116,23 @@ public:
 		return true;
 	}
 
+	virtual void dump_all_buffer() const
+	{
+		std::unique_lock<std::recursive_mutex> lock(mut_command);
+
+		for (OMX_BUFFERHEADERTYPE *buf : buf_in) {
+			buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
+
+			printf("%p:%s ", buf, (pbattr->used) ? "true " : "false");
+		}
+		printf("\n");
+	}
+
 	virtual OMX_ERRORTYPE EventHandler(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_U32 nData2, OMX_PTR pEventData)
 	{
 		if (eEvent == OMX_EventCmdComplete &&
 			nData1 == OMX_CommandStateSet) {
-			std::unique_lock<std::mutex> lock(mut_command);
+			std::unique_lock<std::recursive_mutex> lock(mut_command);
 
 			printf("comp_test_empty_buffer::EventHandler state '%s' set.\n",
 				get_omx_statetype_name((OMX_STATETYPE)nData2));
@@ -134,7 +147,7 @@ public:
 
 	virtual OMX_ERRORTYPE EmptyBufferDone(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_BUFFERHEADERTYPE* pBuffer)
 	{
-		std::unique_lock<std::mutex> lock(mut_command);
+		std::unique_lock<std::recursive_mutex> lock(mut_command);
 		buffer_attr *pbattr;
 
 		printf("comp_test_empty_buffer::EmptyBufferDone.\n");
@@ -154,7 +167,7 @@ public:
 	 */
 	virtual void wait_state_changed(OMX_STATETYPE s) const
 	{
-		std::unique_lock<std::mutex> lock(mut_command);
+		std::unique_lock<std::recursive_mutex> lock(mut_command);
 
 		cond_command.wait(lock, [&] { return state_done == s; });
 	}
@@ -164,7 +177,7 @@ public:
 	 */
 	virtual void wait_buffer_free() const
 	{
-		std::unique_lock<std::mutex> lock(mut_command);
+		std::unique_lock<std::recursive_mutex> lock(mut_command);
 
 		cond_command.wait(lock, [&] { return !is_used_all_buffer(); });
 	}
@@ -174,14 +187,14 @@ public:
 	 */
 	virtual void wait_all_buffer_free() const
 	{
-		std::unique_lock<std::mutex> lock(mut_command);
+		std::unique_lock<std::recursive_mutex> lock(mut_command);
 
 		cond_command.wait(lock, [&] { return is_free_all_buffer(); });
 	}
 
 private:
-	mutable std::mutex mut_command;
-	mutable std::condition_variable cond_command;
+	mutable std::recursive_mutex mut_command;
+	mutable std::condition_variable_any cond_command;
 	OMX_STATETYPE state_done;
 	std::vector<OMX_BUFFERHEADERTYPE *>buf_in;
 
@@ -250,6 +263,7 @@ int main(int argc, char *argv[])
 
 		pb = new OMX_U8[def_in.nBufferSize];
 		pbattr = new buffer_attr;
+		memset(pbattr, 0, sizeof(buffer_attr));
 
 		result = comp->UseBuffer(&buf,
 			0, pbattr, def_in.nBufferSize, pb);
@@ -286,18 +300,14 @@ int main(int argc, char *argv[])
 	//EmptyThisBuffer
 	for (i = 0; i < 100; i++) {
 		OMX_BUFFERHEADERTYPE *buf;
-		buffer_attr *pbattr;
 
 		comp->wait_buffer_free();
 
-		buf = comp->find_free_buffer();
+		buf = comp->use_free_buffer();
 		if (buf == nullptr) {
 			fprintf(stderr, "find_free_buffer() failed.\n");
 			goto err_out2;
 		}
-
-		pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
-		pbattr->used = true;
 
 		result = comp->EmptyThisBuffer(buf);
 		if (result != OMX_ErrorNone) {
