@@ -304,15 +304,6 @@ const char *omx_enum_name::get_OMX_VIDEO_PICTURETYPE_name(OMX_VIDEO_PICTURETYPE 
 		break;
 	}
 
-	if (OMX_VIDEO_PictureTypeKhronosExtensions <= id && 
-		id < OMX_VIDEO_PictureTypeVendorStartUnused) {
-		name = "(OMX_VIDEO_PictureTypeKhronosExtensions)";
-	}
-	if (OMX_VIDEO_PictureTypeVendorStartUnused <= id && 
-		id < OMX_VIDEO_PictureTypeMax) {
-		name = "(OMX_VIDEO_PictureTypeVendorStartUnused)";
-	}
-
 	return name;
 }
 
