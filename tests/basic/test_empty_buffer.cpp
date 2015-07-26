@@ -33,11 +33,15 @@ public:
 
 	virtual void push_back_buffer(OMX_BUFFERHEADERTYPE *buf)
 	{
+		std::unique_lock<std::mutex> lock(mut_command);
+
 		buf_in.push_back(buf);
 	}
 
 	virtual OMX_BUFFERHEADERTYPE *find_free_buffer() const
 	{
+		std::unique_lock<std::mutex> lock(mut_command);
+
 		for (OMX_BUFFERHEADERTYPE *buf : buf_in) {
 			buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
 
@@ -47,6 +51,68 @@ public:
 		}
 
 		return nullptr;
+	}
+
+	/**
+	 * 全てのバッファが利用中かどうかを取得します。
+	 *
+	 * N 個のバッファがあったとき、
+         *
+	 * 利用中の
+	 * バッファ数  | is_used_all | is_free_all |
+	 * ------------+-------------+-------------+
+	 * 0           | false       | true        |
+	 * 1 ... N - 1 | false       | false       |
+	 * N           | true        | false       |
+	 * ------------+-------------+-------------+
+	 *
+	 * @return 全てのバッファが利用中ならば true、
+	 * 1つでもバッファが利用可能ならば false
+	 */
+	virtual bool is_used_all_buffer() const
+	{
+		std::unique_lock<std::mutex> lock(mut_command);
+
+		for (OMX_BUFFERHEADERTYPE *buf : buf_in) {
+			buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
+
+			if (!pbattr->used) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * 全てのバッファが利用可能かどうかを取得します。
+	 *
+	 * N 個のバッファがあったとき、
+         *
+	 * 利用中の
+	 * バッファ数  | is_used_all | is_free_all |
+	 * ------------+-------------+-------------+
+	 * 0           | false       | true        |
+	 * 1 ... N - 1 | false       | false       |
+	 * N           | true        | false       |
+	 * ------------+-------------+-------------+
+	 *
+	 * @return 全てのバッファが利用可能ならば true、
+	 * 1つでもバッファが利用中ならば false
+	 */
+	virtual bool is_free_all_buffer() const
+	{
+		std::unique_lock<std::mutex> lock(mut_command);
+
+		for (OMX_BUFFERHEADERTYPE *buf : buf_in) {
+			buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
+
+			if (pbattr->used) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	virtual OMX_ERRORTYPE EventHandler(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_U32 nData2, OMX_PTR pEventData)
@@ -68,6 +134,7 @@ public:
 
 	virtual OMX_ERRORTYPE EmptyBufferDone(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_BUFFERHEADERTYPE* pBuffer)
 	{
+		std::unique_lock<std::mutex> lock(mut_command);
 		buffer_attr *pbattr;
 
 		printf("comp_test_empty_buffer::EmptyBufferDone.\n");
@@ -75,20 +142,46 @@ public:
 		pbattr = static_cast<buffer_attr *>(pBuffer->pAppPrivate);
 
 		pbattr->used = false;
+		cond_command.notify_all();
 
 		return OMX_ErrorNone;
 	}
 
-	void wait_state_done(OMX_STATETYPE s)
+	/**
+	 * コンポーネントが指定した状態に変化するまで待ちます。
+	 *
+	 * @param s コンポーネントの状態
+	 */
+	virtual void wait_state_changed(OMX_STATETYPE s) const
 	{
 		std::unique_lock<std::mutex> lock(mut_command);
 
 		cond_command.wait(lock, [&] { return state_done == s; });
 	}
 
+	/**
+	 * 1つ以上のバッファが利用可能になるまで待ちます。
+	 */
+	virtual void wait_buffer_free() const
+	{
+		std::unique_lock<std::mutex> lock(mut_command);
+
+		cond_command.wait(lock, [&] { return !is_used_all_buffer(); });
+	}
+
+	/**
+	 * 全てのバッファが利用可能になるまで待ちます。
+	 */
+	virtual void wait_all_buffer_free() const
+	{
+		std::unique_lock<std::mutex> lock(mut_command);
+
+		cond_command.wait(lock, [&] { return is_free_all_buffer(); });
+	}
+
 private:
-	std::mutex mut_command;
-	std::condition_variable cond_command;
+	mutable std::mutex mut_command;
+	mutable std::condition_variable cond_command;
 	OMX_STATETYPE state_done;
 	std::vector<OMX_BUFFERHEADERTYPE *>buf_in;
 
@@ -173,7 +266,7 @@ int main(int argc, char *argv[])
 
 	//Wait for StatusIdle
 	printf("wait for StateIdle...\n");
-	comp->wait_state_done(OMX_StateIdle);
+	comp->wait_state_changed(OMX_StateIdle);
 	printf("wait for StateIdle... Done!\n");
 
 
@@ -186,7 +279,7 @@ int main(int argc, char *argv[])
 
 	//Wait for StatusExecuting
 	printf("wait for StateExecuting...\n");
-	comp->wait_state_done(OMX_StateExecuting);
+	comp->wait_state_changed(OMX_StateExecuting);
 	printf("wait for StateExecuting... Done!\n");
 
 
@@ -194,6 +287,8 @@ int main(int argc, char *argv[])
 	for (i = 0; i < 100; i++) {
 		OMX_BUFFERHEADERTYPE *buf;
 		buffer_attr *pbattr;
+
+		comp->wait_buffer_free();
 
 		buf = comp->find_free_buffer();
 		if (buf == nullptr) {
@@ -221,7 +316,7 @@ int main(int argc, char *argv[])
 
 	//Wait for StatusIdle
 	printf("wait for StateIdle...\n");
-	comp->wait_state_done(OMX_StateIdle);
+	comp->wait_state_changed(OMX_StateIdle);
 	printf("wait for StateIdle... Done!\n");
 
 
@@ -231,6 +326,10 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "OMX_SendCommand(StateSet, Loaded) failed.\n");
 		goto err_out2;
 	}
+
+	printf("wait for EmptyDone of all buffers...\n");
+	comp->wait_all_buffer_free();
+	printf("wait for EmptyDone of all buffers... Done!\n");
 
 	//Free buffer
 	for (auto it = buf_in.begin(); it != buf_in.end(); it++) {
@@ -250,7 +349,7 @@ int main(int argc, char *argv[])
 
 	//Wait for StatusLoaded
 	printf("wait for StateLoaded...\n");
-	comp->wait_state_done(OMX_StateLoaded);
+	comp->wait_state_changed(OMX_StateLoaded);
 	printf("wait for StateLoaded... Done!\n");
 
 

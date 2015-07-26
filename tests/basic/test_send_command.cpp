@@ -44,7 +44,7 @@ public:
 		return OMX_ErrorNone;
 	}
 
-	void wait_state_done(OMX_STATETYPE s)
+	virtual void wait_state_changed(OMX_STATETYPE s)
 	{
 		std::unique_lock<std::mutex> lock(mut_command);
 
@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
 
 	//Wait for StatusIdle
 	printf("wait for StateIdle...\n");
-	comp->wait_state_done(OMX_StateIdle);
+	comp->wait_state_changed(OMX_StateIdle);
 	printf("wait for StateIdle... Done!\n");
 
 
@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
 
 	//Wait for StatusLoaded
 	printf("wait for StateLoaded...\n");
-	comp->wait_state_done(OMX_StateLoaded);
+	comp->wait_state_changed(OMX_StateLoaded);
 	printf("wait for StateLoaded... Done!\n");
 
 
