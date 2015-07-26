@@ -76,7 +76,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(OMX_OUT OMX_HANDLETYPE* pHandle
 
 	if (pHandle == nullptr) {
 		errprint("Invalid handle %p.\n", pHandle);
-		result = OMX_ErrorInvalidComponent;
+		result = OMX_ErrorBadParameter;
 		goto err_out;
 	}
 
@@ -98,7 +98,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetHandle(OMX_OUT OMX_HANDLETYPE* pHandle
 	ptr = rinfo->comp_info->constructor(omx_comp, cComponentName);
 	if (ptr == nullptr) {
 		errprint("Failed to create component '%s'.\n", cComponentName);
-		result = OMX_ErrorInvalidComponent;
+		result = OMX_ErrorInsufficientResources;
 		goto err_out;
 	}
 
@@ -126,7 +126,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_FreeHandle(OMX_IN OMX_HANDLETYPE hCompone
 
 	if (hComponent == nullptr) {
 		errprint("Invalid component %p.\n", hComponent);
-		return OMX_ErrorInvalidComponent;
+		return OMX_ErrorBadParameter;
 	}
 	omx_comp = (OMX_COMPONENTTYPE *)hComponent;
 
@@ -158,7 +158,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_SetupTunnel(OMX_IN OMX_HANDLETYPE hOutput
 	scoped_log_begin;
 
 	if (hOutput == nullptr || hInput == nullptr) {
-		return OMX_ErrorInvalidComponent;
+		return OMX_ErrorBadParameter;
 	}
 
 	return OMX_ErrorNotImplemented;
@@ -170,7 +170,7 @@ OMX_API OMX_ERRORTYPE OMX_GetContentPipe(OMX_OUT OMX_HANDLETYPE *hPipe, OMX_IN O
 	scoped_log_begin;
 
 	if (hPipe == nullptr) {
-		return OMX_ErrorInvalidComponent;
+		return OMX_ErrorBadParameter;
 	}
 
 	return OMX_ErrorNotImplemented;
