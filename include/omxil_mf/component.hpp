@@ -47,7 +47,7 @@ public:
 	//親クラス
 	typedef omx_reflector super;
 	//ポート一覧表の型
-	typedef std::map<OMX_U32, port&> portmap_t;
+	typedef typename std::map<OMX_U32, port&> portmap_t;
 
 	//disable default constructor
 	component() = delete;
@@ -241,7 +241,7 @@ protected:
 	 * OMX_GetParameter(OMX_IndexParamAudioInit) にて返す、
 	 * ポートの開始インデックスを取得します。
 	 *
-	 * 初期値は 0 個です。
+	 * 初期値は 0 です。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
 	 */
@@ -261,7 +261,7 @@ protected:
 	 * OMX_GetParameter(OMX_IndexParamVideoInit) にて返す、
 	 * ポートの開始インデックスを取得します。
 	 *
-	 * 初期値は 0 個です。
+	 * 初期値は 0 です。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
 	 */
@@ -281,7 +281,7 @@ protected:
 	 * OMX_GetParameter(OMX_IndexParamImageInit) にて返す、
 	 * ポートの開始インデックスを取得します。
 	 *
-	 * 初期値は 0 個です。
+	 * 初期値は 0 です。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
 	 */
@@ -301,7 +301,7 @@ protected:
 	 * OMX_GetParameter(OMX_IndexParamOtherInit) にて返す、
 	 * ポートの開始インデックスを取得します。
 	 *
-	 * 初期値は 0 個です。
+	 * 初期値は 0 です。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
 	 */
