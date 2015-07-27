@@ -10,7 +10,8 @@ check_PROGRAMS = \
 	get_handle \
 	get_param_init \
 	send_command \
-	empty_buffer
+	empty_buffer \
+	fill_buffer
 
 common_SOURCES  = $(COMMON_DIR)/omxil_utils.c $(COMMON_DIR)/omxil_comp.cpp
 common_CPPFLAGS = -Wall -Werror \
@@ -85,6 +86,12 @@ empty_buffer_CPPFLAGS  = $(common_CPPFLAGS)
 empty_buffer_CFLAGS    = $(common_CFLAGS)
 empty_buffer_CXXFLAGS  = $(common_CXXFLAGS)
 
+fill_buffer_SOURCES   = test_fill_buffer.cpp $(common_SOURCES)
+fill_buffer_LDADD     = $(common_LDADD)
+fill_buffer_CPPFLAGS  = $(common_CPPFLAGS)
+fill_buffer_CFLAGS    = $(common_CFLAGS)
+fill_buffer_CXXFLAGS  = $(common_CXXFLAGS)
+
 TESTS = \
 	init_deinit \
 	init_deinit_multi \
@@ -94,5 +101,6 @@ TESTS = \
 	get_handle.sh \
 	get_param_init.sh \
 	send_command.sh \
-	empty_buffer.sh
+	empty_buffer.sh \
+	fill_buffer.sh
 
