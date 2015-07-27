@@ -8,7 +8,7 @@ reader_zero::reader_zero(OMX_COMPONENTTYPE *c, const char *cname)
 	out_port_video(nullptr)
 {
 	try {
-		out_port_video = new port_video(0, this);
+		out_port_video = new port_video(2, this);
 		out_port_video->set_dir(OMX_DirOutput);
 		out_port_video->set_buffer_count_actual(4);
 		out_port_video->set_buffer_count_min(1);
@@ -34,7 +34,37 @@ reader_zero::~reader_zero()
 
 void reader_zero::run()
 {
-	//do nothing
+	OMX_ERRORTYPE result;
+	port_buffer pb_out;
+	OMX_U32 len;
+	OMX_TICKS stamp = 0;
+	int i = 0;
+
+	while (should_run()) {
+		result = out_port_video->pop_buffer(&pb_out);
+		if (result != OMX_ErrorNone) {
+			printf("out_port_video.pop_buffer().\n");
+			break;
+		}
+
+		if (i % 100 < 50) {
+			len = pb_out.header->nAllocLen;
+		} else {
+			len = pb_out.header->nAllocLen / 2;
+		}
+
+		memset(pb_out.header->pBuffer, 0, len);
+		pb_out.header->nFilledLen = len;
+		pb_out.header->nOffset    = 0;
+		pb_out.header->nTimeStamp = stamp;
+		pb_out.header->nFlags     = 0;
+		out_port_video->fill_buffer_done(&pb_out);
+
+		//next one
+		i++;
+		//16ms
+		stamp += 16000;
+	}
 }
 
 
@@ -49,7 +79,7 @@ OMX_U32 reader_zero::get_video_ports()
 
 OMX_U32 reader_zero::get_video_start_port()
 {
-	return 0;
+	return 2;
 }
 
 
