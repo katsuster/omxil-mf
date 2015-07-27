@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 		result = comp->UseBuffer(&buf,
 			pnum_in, pbattr, def_in.nBufferSize, pb);
 		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "OMX_AllocateBuffer(in) failed.\n");
+			fprintf(stderr, "OMX_UseBuffer(in) failed.\n");
 			goto err_out2;
 		}
 		printf("OMX_UseBuffer: in \n");
