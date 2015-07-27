@@ -9,15 +9,15 @@
 #include "common/omxil_utils.h"
 
 omxil_comp::omxil_comp(const char *comp_name)
-	: comp(nullptr)
+	: comp(nullptr), state_done(OMX_StateInvalid)
 {
 	char namebuf[OMX_MAX_STRINGNAME_SIZE] = "";
 	OMX_ERRORTYPE result;
 
-	//save arguments
+	//Save arguments
 	name = comp_name;
 
-	//get handle
+	//Get handle
 	snprintf(namebuf, sizeof(namebuf) - 1, "%s", name.c_str());
 	namebuf[sizeof(namebuf) - 1] = '\0';
 	callbacks.EventHandler    = gate_EventHandler;
@@ -32,6 +32,11 @@ omxil_comp::omxil_comp(const char *comp_name)
 omxil_comp::~omxil_comp()
 {
 	OMX_ERRORTYPE result;
+
+	//Remove buffer list
+	for (auto& it : map_buflist) {
+		delete it.second;
+	}
 
 	result = OMX_FreeHandle(comp);
 	if (result != OMX_ErrorNone) {
@@ -202,16 +207,46 @@ OMX_ERRORTYPE omxil_comp::FillThisBuffer(OMX_BUFFERHEADERTYPE *pBuffer)
 
 OMX_ERRORTYPE omxil_comp::EventHandler(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_U32 nData2, OMX_PTR pEventData)
 {
+	if (eEvent == OMX_EventCmdComplete &&
+		nData1 == OMX_CommandStateSet) {
+		std::unique_lock<std::recursive_mutex> lock(mut_comp);
+
+		printf("omxil_comp::EventHandler state '%s' set.\n",
+			get_omx_statetype_name((OMX_STATETYPE)nData2));
+			state_done = static_cast<OMX_STATETYPE>(nData2);
+		cond_comp.notify_all();
+	}
+
 	return OMX_ErrorNone;
 }
 
 OMX_ERRORTYPE omxil_comp::EmptyBufferDone(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_BUFFERHEADERTYPE* pBuffer)
 {
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+	buffer_attr *pbattr;
+
+	printf("omxil_comp::EmptyBufferDone.\n");
+
+	pbattr = static_cast<buffer_attr *>(pBuffer->pAppPrivate);
+
+	pbattr->used = false;
+	cond_comp.notify_all();
+
 	return OMX_ErrorNone;
 }
 
 OMX_ERRORTYPE omxil_comp::FillBufferDone(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_BUFFERHEADERTYPE* pBuffer)
 {
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+	buffer_attr *pbattr;
+
+	printf("omxil_comp::FillBufferDone.\n");
+
+	pbattr = static_cast<buffer_attr *>(pBuffer->pAppPrivate);
+
+	pbattr->used = false;
+	cond_comp.notify_all();
+
 	return OMX_ErrorNone;
 }
 
@@ -237,6 +272,155 @@ OMX_ERRORTYPE omxil_comp::gate_FillBufferDone(OMX_HANDLETYPE hComponent, OMX_PTR
 
 	return c->FillBufferDone(hComponent, pAppData, pBuffer);
 }
+
+
+void omxil_comp::wait_state_changed(OMX_STATETYPE s) const
+{
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+
+	cond_comp.wait(lock, [&] { return state_done == s; });
+}
+
+omxil_comp::buflist_type *omxil_comp::find_buflist(OMX_U32 port)
+{
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+	std::map<OMX_U32, omxil_comp::buflist_type *>::iterator it;
+
+	it = map_buflist.find(port);
+	if (it == map_buflist.end()) {
+		return nullptr;
+	}
+
+	return it->second;
+}
+
+const omxil_comp::buflist_type *omxil_comp::find_buflist(OMX_U32 port) const
+{
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+	std::map<OMX_U32, omxil_comp::buflist_type *>::const_iterator it;
+
+	it = map_buflist.find(port);
+	if (it == map_buflist.end()) {
+		return nullptr;
+	}
+
+	return it->second;
+}
+
+void omxil_comp::push_back_buffer(OMX_U32 port, OMX_BUFFERHEADERTYPE *buf)
+{
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+	omxil_comp::buflist_type *bl;
+
+	bl = find_buflist(port);
+	if (bl == nullptr) {
+		//add new port
+		bl = new buflist_type();
+		map_buflist.insert(
+			std::map<OMX_U32, buflist_type *>::value_type(port, bl));
+	}
+	bl->push_back(buf);
+}
+
+OMX_BUFFERHEADERTYPE *omxil_comp::use_free_buffer(OMX_U32 port) const
+{
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+	const omxil_comp::buflist_type *bl;
+
+	bl = find_buflist(port);
+	if (bl == nullptr) {
+		return nullptr;
+	}
+
+	for (OMX_BUFFERHEADERTYPE *buf : *bl) {
+		buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
+
+		if (!pbattr->used) {
+			pbattr->used = true;
+			return buf;
+		}
+	}
+
+	return nullptr;
+}
+
+bool omxil_comp::is_used_all_buffer(OMX_U32 port) const
+{
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+	const omxil_comp::buflist_type *bl;
+
+	bl = find_buflist(port);
+	if (bl == nullptr) {
+		return true;
+	}
+
+	for (OMX_BUFFERHEADERTYPE *buf : *bl) {
+		buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
+
+		if (!pbattr->used) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool omxil_comp::is_free_all_buffer(OMX_U32 port) const
+{
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+	const omxil_comp::buflist_type *bl;
+
+	bl = find_buflist(port);
+	if (bl == nullptr) {
+		return false;
+	}
+
+	for (OMX_BUFFERHEADERTYPE *buf : *bl) {
+		buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
+
+		if (pbattr->used) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void omxil_comp::wait_buffer_free(OMX_U32 port) const
+{
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+
+	cond_comp.wait(lock, [&] { return !is_used_all_buffer(port); });
+}
+
+void omxil_comp::wait_all_buffer_free(OMX_U32 port) const
+{
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+
+	cond_comp.wait(lock, [&] { return is_free_all_buffer(port); });
+}
+
+void omxil_comp::dump_all_buffer(OMX_U32 port) const
+{
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+	const omxil_comp::buflist_type *bl;
+
+	printf("port %d:: ", (int)port);
+
+	bl = find_buflist(port);
+	if (bl == nullptr) {
+		printf("not found\n");
+		return;
+	}
+
+	for (OMX_BUFFERHEADERTYPE *buf : *bl) {
+		buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
+
+		printf("%p:%s ", buf, (pbattr->used) ? "true " : "false");
+	}
+	printf("\n");
+}
+
 
 OMX_ERRORTYPE omxil_comp::get_param_audio_init(OMX_PORT_PARAM_TYPE *param) const
 {

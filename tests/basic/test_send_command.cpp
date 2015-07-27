@@ -2,8 +2,6 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
-#include <mutex>
-#include <condition_variable>
 
 #include <unistd.h>
 
@@ -16,8 +14,10 @@
 
 class comp_test_send_cmd : public omxil_comp {
 public:
+	typedef omxil_comp super;
+
 	comp_test_send_cmd(const char *comp_name)
-		: omxil_comp(comp_name), state_done(OMX_StateInvalid)
+		: omxil_comp(comp_name)
 	{
 		//do nothing
 	}
@@ -27,34 +27,7 @@ public:
 		//do nothing
 	}
 
-	virtual OMX_ERRORTYPE EventHandler(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_U32 nData2, OMX_PTR pEventData)
-	{
-		if (eEvent == OMX_EventCmdComplete && 
-			nData1 == OMX_CommandStateSet) {
-			std::unique_lock<std::mutex> lock(mut_command);
-
-			printf("comp_test_empty_buffer::EventHandler state '%s' set.\n", 
-				get_omx_statetype_name((OMX_STATETYPE)nData2));
-			state_done = static_cast<OMX_STATETYPE>(nData2);
-			cond_command.notify_all();
-		} else {
-			printf("comp_test_send_cmd::EventHandler ignored.\n");
-		}
-
-		return OMX_ErrorNone;
-	}
-
-	virtual void wait_state_changed(OMX_STATETYPE s)
-	{
-		std::unique_lock<std::mutex> lock(mut_command);
-
-		cond_command.wait(lock, [&] { return state_done == s; });
-	}
-
 private:
-	std::mutex mut_command;
-	std::condition_variable cond_command;
-	OMX_STATETYPE state_done;
 
 };
 
@@ -96,7 +69,7 @@ int main(int argc, char *argv[])
 		result = OMX_ErrorInsufficientResources;
 		goto err_out2;
 	}
-	printf("OMX_GetHandle: name:%s, comp:%p\n", 
+	printf("OMX_GetHandle: name:%s, comp:%p\n",
 		arg_comp, comp);
 
 	//Get port definition(before)
@@ -137,7 +110,7 @@ int main(int argc, char *argv[])
 	for (i = 0; i < def_in.nBufferCountActual; i++) {
 		OMX_BUFFERHEADERTYPE *buf;
 
-		result = comp->AllocateBuffer(&buf, 
+		result = comp->AllocateBuffer(&buf,
 			0, 0, def_in.nBufferSize);
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "OMX_AllocateBuffer(in) failed.\n");
@@ -153,7 +126,7 @@ int main(int argc, char *argv[])
 	for (i = 0; i < def_out.nBufferCountActual; i++) {
 		OMX_BUFFERHEADERTYPE *buf;
 
-		result = comp->AllocateBuffer(&buf, 
+		result = comp->AllocateBuffer(&buf,
 			1, 0, def_out.nBufferSize);
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "OMX_AllocateBuffer(out) failed.\n");

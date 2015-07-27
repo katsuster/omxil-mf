@@ -2,8 +2,6 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
-#include <mutex>
-#include <condition_variable>
 
 #include <unistd.h>
 
@@ -14,14 +12,12 @@
 #include "common/omxil_utils.h"
 #include "common/omxil_comp.hpp"
 
-struct buffer_attr {
-	bool used;
-};
-
 class comp_test_empty_buffer : public omxil_comp {
 public:
+	typedef omxil_comp super;
+
 	comp_test_empty_buffer(const char *comp_name)
-		: omxil_comp(comp_name), state_done(OMX_StateInvalid)
+		: omxil_comp(comp_name)
 	{
 		//do nothing
 	}
@@ -31,172 +27,17 @@ public:
 		//do nothing
 	}
 
-	virtual void push_back_buffer(OMX_BUFFERHEADERTYPE *buf)
-	{
-		std::unique_lock<std::recursive_mutex> lock(mut_command);
-
-		buf_in.push_back(buf);
-	}
-
-	virtual OMX_BUFFERHEADERTYPE *use_free_buffer() const
-	{
-		std::unique_lock<std::recursive_mutex> lock(mut_command);
-
-		for (OMX_BUFFERHEADERTYPE *buf : buf_in) {
-			buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
-
-			if (!pbattr->used) {
-				pbattr->used = true;
-				return buf;
-			}
-		}
-
-		return nullptr;
-	}
-
-	/**
-	 * 全てのバッファが利用中かどうかを取得します。
-	 *
-	 * N 個のバッファがあったとき、
-         *
-	 * 利用中の
-	 * バッファ数  | is_used_all | is_free_all |
-	 * ------------+-------------+-------------+
-	 * 0           | false       | true        |
-	 * 1 ... N - 1 | false       | false       |
-	 * N           | true        | false       |
-	 * ------------+-------------+-------------+
-	 *
-	 * @return 全てのバッファが利用中ならば true、
-	 * 1つでもバッファが利用可能ならば false
-	 */
-	virtual bool is_used_all_buffer() const
-	{
-		std::unique_lock<std::recursive_mutex> lock(mut_command);
-
-		for (OMX_BUFFERHEADERTYPE *buf : buf_in) {
-			buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
-
-			if (!pbattr->used) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * 全てのバッファが利用可能かどうかを取得します。
-	 *
-	 * N 個のバッファがあったとき、
-         *
-	 * 利用中の
-	 * バッファ数  | is_used_all | is_free_all |
-	 * ------------+-------------+-------------+
-	 * 0           | false       | true        |
-	 * 1 ... N - 1 | false       | false       |
-	 * N           | true        | false       |
-	 * ------------+-------------+-------------+
-	 *
-	 * @return 全てのバッファが利用可能ならば true、
-	 * 1つでもバッファが利用中ならば false
-	 */
-	virtual bool is_free_all_buffer() const
-	{
-		std::unique_lock<std::recursive_mutex> lock(mut_command);
-
-		for (OMX_BUFFERHEADERTYPE *buf : buf_in) {
-			buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
-
-			if (pbattr->used) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	virtual void dump_all_buffer() const
-	{
-		std::unique_lock<std::recursive_mutex> lock(mut_command);
-
-		for (OMX_BUFFERHEADERTYPE *buf : buf_in) {
-			buffer_attr *pbattr = static_cast<buffer_attr *>(buf->pAppPrivate);
-
-			printf("%p:%s ", buf, (pbattr->used) ? "true " : "false");
-		}
-		printf("\n");
-	}
-
 	virtual OMX_ERRORTYPE EventHandler(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_U32 nData2, OMX_PTR pEventData)
 	{
-		if (eEvent == OMX_EventCmdComplete &&
-			nData1 == OMX_CommandStateSet) {
-			std::unique_lock<std::recursive_mutex> lock(mut_command);
-
-			printf("comp_test_empty_buffer::EventHandler state '%s' set.\n",
-				get_omx_statetype_name((OMX_STATETYPE)nData2));
-			state_done = static_cast<OMX_STATETYPE>(nData2);
-			cond_command.notify_all();
-		} else {
-			printf("comp_test_empty_buffer::EventHandler ignored.\n");
+		/* if (1) {
+		} else*/ {
+			//default handler
+			return super::EventHandler(hComponent, pAppData, eEvent,
+				nData1, nData2, pEventData);
 		}
 
 		return OMX_ErrorNone;
 	}
-
-	virtual OMX_ERRORTYPE EmptyBufferDone(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_BUFFERHEADERTYPE* pBuffer)
-	{
-		std::unique_lock<std::recursive_mutex> lock(mut_command);
-		buffer_attr *pbattr;
-
-		printf("comp_test_empty_buffer::EmptyBufferDone.\n");
-
-		pbattr = static_cast<buffer_attr *>(pBuffer->pAppPrivate);
-
-		pbattr->used = false;
-		cond_command.notify_all();
-
-		return OMX_ErrorNone;
-	}
-
-	/**
-	 * コンポーネントが指定した状態に変化するまで待ちます。
-	 *
-	 * @param s コンポーネントの状態
-	 */
-	virtual void wait_state_changed(OMX_STATETYPE s) const
-	{
-		std::unique_lock<std::recursive_mutex> lock(mut_command);
-
-		cond_command.wait(lock, [&] { return state_done == s; });
-	}
-
-	/**
-	 * 1つ以上のバッファが利用可能になるまで待ちます。
-	 */
-	virtual void wait_buffer_free() const
-	{
-		std::unique_lock<std::recursive_mutex> lock(mut_command);
-
-		cond_command.wait(lock, [&] { return !is_used_all_buffer(); });
-	}
-
-	/**
-	 * 全てのバッファが利用可能になるまで待ちます。
-	 */
-	virtual void wait_all_buffer_free() const
-	{
-		std::unique_lock<std::recursive_mutex> lock(mut_command);
-
-		cond_command.wait(lock, [&] { return is_free_all_buffer(); });
-	}
-
-private:
-	mutable std::recursive_mutex mut_command;
-	mutable std::condition_variable_any cond_command;
-	OMX_STATETYPE state_done;
-	std::vector<OMX_BUFFERHEADERTYPE *>buf_in;
 
 };
 
@@ -206,6 +47,7 @@ int main(int argc, char *argv[])
 	comp_test_empty_buffer *comp;
 	OMX_PARAM_PORTDEFINITIONTYPE def_in;
 	std::vector<OMX_BUFFERHEADERTYPE *> buf_in;
+	OMX_U32 pnum_in;
 	OMX_ERRORTYPE result;
 	OMX_U32 i;
 
@@ -223,6 +65,8 @@ int main(int argc, char *argv[])
 
 	comp = nullptr;
 	result = OMX_ErrorNone;
+	//port 0
+	pnum_in = 0;
 
 	result = OMX_Init();
 	if (result != OMX_ErrorNone) {
@@ -240,7 +84,7 @@ int main(int argc, char *argv[])
 		arg_comp, comp);
 
 	//Get port definition(before)
-	result = comp->get_param_port_definition(0, &def_in);
+	result = comp->get_param_port_definition(pnum_in, &def_in);
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "get_port_definition(before) failed.\n");
 		goto err_out2;
@@ -266,7 +110,7 @@ int main(int argc, char *argv[])
 		memset(pbattr, 0, sizeof(buffer_attr));
 
 		result = comp->UseBuffer(&buf,
-			0, pbattr, def_in.nBufferSize, pb);
+			pnum_in, pbattr, def_in.nBufferSize, pb);
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "OMX_AllocateBuffer(in) failed.\n");
 			goto err_out2;
@@ -274,7 +118,7 @@ int main(int argc, char *argv[])
 		printf("OMX_UseBuffer: in \n");
 		dump_port_bufferheadertype(buf);
 
-		comp->push_back_buffer(buf);
+		comp->push_back_buffer(pnum_in, buf);
 		buf_in.push_back(buf);
 	}
 
@@ -301,17 +145,19 @@ int main(int argc, char *argv[])
 	for (i = 0; i < 100; i++) {
 		OMX_BUFFERHEADERTYPE *buf;
 
-		comp->wait_buffer_free();
+		comp->wait_buffer_free(pnum_in);
 
-		buf = comp->use_free_buffer();
+		buf = comp->use_free_buffer(pnum_in);
 		if (buf == nullptr) {
-			fprintf(stderr, "find_free_buffer() failed.\n");
+			fprintf(stderr, "find_free_buffer(%d) failed.\n",
+				(int)pnum_in);
 			goto err_out2;
 		}
 
 		result = comp->EmptyThisBuffer(buf);
 		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "EmptyThisBuffer() failed.\n");
+			fprintf(stderr, "EmptyThisBuffer(%d) failed.\n",
+				(int)pnum_in);
 			goto err_out2;
 		}
 	}
@@ -338,7 +184,7 @@ int main(int argc, char *argv[])
 	}
 
 	printf("wait for EmptyDone of all buffers...\n");
-	comp->wait_all_buffer_free();
+	comp->wait_all_buffer_free(pnum_in);
 	printf("wait for EmptyDone of all buffers... Done!\n");
 
 	//Free buffer
@@ -346,9 +192,10 @@ int main(int argc, char *argv[])
 		OMX_U8 *pb = (*it)->pBuffer;
 		buffer_attr *pbattr = static_cast<buffer_attr *>((*it)->pAppPrivate);
 
-		result = comp->FreeBuffer(0, *it);
+		result = comp->FreeBuffer(pnum_in, *it);
 		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "OMX_FreeBuffer(in) failed.\n");
+			fprintf(stderr, "OMX_FreeBuffer(%d) failed.\n",
+				(int)pnum_in);
 			goto err_out2;
 		}
 
@@ -379,7 +226,7 @@ err_out2:
 		OMX_U8 *pb = (*it)->pBuffer;
 		buffer_attr *pbattr = static_cast<buffer_attr *>((*it)->pAppPrivate);
 
-		comp->FreeBuffer(0, *it);
+		comp->FreeBuffer(pnum_in, *it);
 
 		delete pbattr;
 		delete[] pb;

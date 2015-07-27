@@ -3,11 +3,22 @@
 #define OMXIL_COMP_HPP__
 
 #include <string>
+#include <vector>
+#include <map>
+#include <condition_variable>
+#include <mutex>
 
 #include <OMX_Core.h>
+#include <OMX_Component.h>
+
+struct buffer_attr {
+	bool used;
+};
 
 class omxil_comp {
 public:
+	typedef typename std::vector<OMX_BUFFERHEADERTYPE *> buflist_type;
+
 	omxil_comp(const char *comp_name);
 	virtual ~omxil_comp();
 
@@ -37,6 +48,72 @@ public:
 
 	//Utilities
 
+	/**
+	 * コンポーネントが指定した状態に変化するまで待ちます。
+	 *
+	 * @param s コンポーネントの状態
+	 */
+	virtual void wait_state_changed(OMX_STATETYPE s) const;
+
+	virtual buflist_type *find_buflist(OMX_U32 port);
+	virtual const buflist_type *find_buflist(OMX_U32 port) const;
+	virtual void push_back_buffer(OMX_U32 port, OMX_BUFFERHEADERTYPE *buf);
+	virtual OMX_BUFFERHEADERTYPE *use_free_buffer(OMX_U32 port) const;
+
+	/**
+	 * 全てのバッファが利用中かどうかを取得します。
+	 *
+	 * N 個のバッファがあったとき、
+         *
+	 * 利用中の
+	 * バッファ数  | is_used_all | is_free_all |
+	 * ------------+-------------+-------------+
+	 * 0           | false       | true        |
+	 * 1 ... N - 1 | false       | false       |
+	 * N           | true        | false       |
+	 * ------------+-------------+-------------+
+	 *
+	 * @param port ポート番号
+	 * @return 全てのバッファが利用中ならば true、
+	 * 1つでもバッファが利用可能ならば false
+	 */
+	virtual bool is_used_all_buffer(OMX_U32 port) const;
+
+	/**
+	 * 全てのバッファが利用可能かどうかを取得します。
+	 *
+	 * N 個のバッファがあったとき、
+         *
+	 * 利用中の
+	 * バッファ数  | is_used_all | is_free_all |
+	 * ------------+-------------+-------------+
+	 * 0           | false       | true        |
+	 * 1 ... N - 1 | false       | false       |
+	 * N           | true        | false       |
+	 * ------------+-------------+-------------+
+	 *
+	 * @param port ポート番号
+	 * @return 全てのバッファが利用可能ならば true、
+	 * 1つでもバッファが利用中ならば false
+	 */
+	virtual bool is_free_all_buffer(OMX_U32 port) const;
+
+	/**
+	 * 1つ以上のバッファが利用可能になるまで待ちます。
+	 *
+	 * @param port ポート番号
+	 */
+	virtual void wait_buffer_free(OMX_U32 port) const;
+
+	/**
+	 * 全てのバッファが利用可能になるまで待ちます。
+	 *
+	 * @param port ポート番号
+	 */
+	virtual void wait_all_buffer_free(OMX_U32 port) const;
+
+	virtual void dump_all_buffer(OMX_U32 port) const;
+
 	virtual OMX_ERRORTYPE get_param_audio_init(OMX_PORT_PARAM_TYPE *param) const;
 	virtual OMX_ERRORTYPE get_param_image_init(OMX_PORT_PARAM_TYPE *param) const;
 	virtual OMX_ERRORTYPE get_param_video_init(OMX_PORT_PARAM_TYPE *param) const;
@@ -59,7 +136,11 @@ private:
 	OMX_CALLBACKTYPE callbacks;
 	std::string name;
 
+	mutable std::recursive_mutex mut_comp;
+	mutable std::condition_variable_any cond_comp;
+	OMX_STATETYPE state_done;
+	std::map<OMX_U32, buflist_type *> map_buflist;
+
 };
 
 #endif //OMXIL_COMP_HPP__
-
