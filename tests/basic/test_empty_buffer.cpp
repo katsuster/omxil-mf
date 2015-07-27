@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 {
 	const char *arg_comp;
 	comp_test_empty_buffer *comp;
+	OMX_PORT_PARAM_TYPE param_v;
 	OMX_PARAM_PORTDEFINITIONTYPE def_in;
 	std::vector<OMX_BUFFERHEADERTYPE *> buf_in;
 	OMX_U32 pnum_in;
@@ -84,6 +85,16 @@ int main(int argc, char *argv[])
 		arg_comp, comp);
 
 	//Get port definition(before)
+	result = comp->get_param_video_init(&param_v);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "get_video_init() failed.\n");
+		goto err_out2;
+	}
+	printf("IndexParamVideoInit: -----\n");
+	dump_port_param_type(&param_v);
+
+	pnum_in = param_v.nStartPortNumber;
+
 	result = comp->get_param_port_definition(pnum_in, &def_in);
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "get_port_definition(before) failed.\n");
