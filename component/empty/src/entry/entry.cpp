@@ -7,7 +7,7 @@
 #include "renderer_null/renderer_null.hpp"
 #include "filter_copy/filter_copy.hpp"
 
-#define READER_ZERO_NAME       "OMX.MF.reader.null"
+#define READER_ZERO_NAME       "OMX.MF.reader.zero"
 #define READER_ZERO_A_ALIAS    "OMX.MF.audio.reader.zero"
 #define READER_ZERO_V_ALIAS    "OMX.MF.video.reader.zero"
 #define READER_ZERO_A_ROLE     "audio_reader.zero"
