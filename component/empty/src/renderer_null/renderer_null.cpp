@@ -8,7 +8,7 @@ renderer_null::renderer_null(OMX_COMPONENTTYPE *c, const char *cname)
 	in_port_video(nullptr)
 {
 	try {
-		in_port_video = new port_video(0, this);
+		in_port_video = new port_video(3, this);
 		in_port_video->set_dir(OMX_DirInput);
 		in_port_video->set_buffer_count_actual(4);
 		in_port_video->set_buffer_count_min(1);
@@ -60,7 +60,7 @@ OMX_U32 renderer_null::get_video_ports()
 
 OMX_U32 renderer_null::get_video_start_port()
 {
-	return 0;
+	return 3;
 }
 
 
