@@ -57,15 +57,32 @@ public:
 
 	virtual buflist_type *find_buflist(OMX_U32 port);
 	virtual const buflist_type *find_buflist(OMX_U32 port) const;
+
+	/**
+	 * ポートとバッファを関連付けます。
+	 *
+	 * @param port ポート番号
+	 * @param buf  OpenMAX IL バッファ
+	 */
 	virtual void push_back_buffer(OMX_U32 port, OMX_BUFFERHEADERTYPE *buf);
+
+	/**
+	 * 指定したポートに関連付けられているバッファのうち、
+	 * 未使用のバッファを取得します。
+	 *
+	 * バッファには使用中の印が付けられます。
+	 *
+	 * @param port ポート番号
+	 * @param buf  OpenMAX IL バッファ
+	 */
 	virtual OMX_BUFFERHEADERTYPE *use_free_buffer(OMX_U32 port) const;
 
 	/**
-	 * 全てのバッファが利用中かどうかを取得します。
+	 * 全てのバッファが使用中かどうかを取得します。
 	 *
 	 * N 個のバッファがあったとき、
          *
-	 * 利用中の
+	 * 使用中の
 	 * バッファ数  | is_used_all | is_free_all |
 	 * ------------+-------------+-------------+
 	 * 0           | false       | true        |
@@ -74,17 +91,17 @@ public:
 	 * ------------+-------------+-------------+
 	 *
 	 * @param port ポート番号
-	 * @return 全てのバッファが利用中ならば true、
-	 * 1つでもバッファが利用可能ならば false
+	 * @return 全てのバッファが使用中ならば true、
+	 * 1つでもバッファが使用可能ならば false
 	 */
 	virtual bool is_used_all_buffer(OMX_U32 port) const;
 
 	/**
-	 * 全てのバッファが利用可能かどうかを取得します。
+	 * 全てのバッファが使用可能かどうかを取得します。
 	 *
 	 * N 個のバッファがあったとき、
          *
-	 * 利用中の
+	 * 使用中の
 	 * バッファ数  | is_used_all | is_free_all |
 	 * ------------+-------------+-------------+
 	 * 0           | false       | true        |
@@ -93,25 +110,30 @@ public:
 	 * ------------+-------------+-------------+
 	 *
 	 * @param port ポート番号
-	 * @return 全てのバッファが利用可能ならば true、
-	 * 1つでもバッファが利用中ならば false
+	 * @return 全てのバッファが使用可能ならば true、
+	 * 1つでもバッファが使用中ならば false
 	 */
 	virtual bool is_free_all_buffer(OMX_U32 port) const;
 
 	/**
-	 * 1つ以上のバッファが利用可能になるまで待ちます。
+	 * 1つ以上のバッファが使用可能になるまで待ちます。
 	 *
 	 * @param port ポート番号
 	 */
 	virtual void wait_buffer_free(OMX_U32 port) const;
 
 	/**
-	 * 全てのバッファが利用可能になるまで待ちます。
+	 * 全てのバッファが使用可能になるまで待ちます。
 	 *
 	 * @param port ポート番号
 	 */
 	virtual void wait_all_buffer_free(OMX_U32 port) const;
 
+	/**
+	 * 全バッファの使用状況を表示します。
+	 *
+	 * @param port ポート番号
+	 */
 	virtual void dump_all_buffer(OMX_U32 port) const;
 
 	virtual OMX_ERRORTYPE get_param_audio_init(OMX_PORT_PARAM_TYPE *param) const;

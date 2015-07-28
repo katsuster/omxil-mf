@@ -315,7 +315,7 @@ void omxil_comp::push_back_buffer(OMX_U32 port, OMX_BUFFERHEADERTYPE *buf)
 	bl = find_buflist(port);
 	if (bl == nullptr) {
 		//add new port
-		bl = new buflist_type();
+		bl = new omxil_comp::buflist_type();
 		map_buflist.insert(
 			std::map<OMX_U32, buflist_type *>::value_type(port, bl));
 	}
