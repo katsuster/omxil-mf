@@ -6,9 +6,9 @@
 
 #include <omxil_mf/omxil_mf.h>
 #include <omxil_mf/component.hpp>
+#include <omxil_mf/scoped_log.hpp>
 
 #include "regist/register_component.hpp"
-#include "debug/scoped_log.hpp"
 
 //----------------------------------------
 //external APIs

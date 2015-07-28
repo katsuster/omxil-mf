@@ -2,10 +2,10 @@
 
 #include <omxil_mf/component.hpp>
 #include <omxil_mf/port.hpp>
+#include <omxil_mf/scoped_log.hpp>
 
 #include "api/consts.hpp"
 #include "util/omx_enum_name.hpp"
-#include "debug/scoped_log.hpp"
 
 //前半: port_buffer クラス
 //後半: port クラス

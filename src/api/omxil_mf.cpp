@@ -2,8 +2,9 @@
 #define __OMX_EXPORTS
 #include <OMX_Core.h>
 
+#include <omxil_mf/scoped_log.hpp>
+
 #include "regist/register_component.hpp"
-#include "debug/scoped_log.hpp"
 
 //----------------------------------------
 //external APIs

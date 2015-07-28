@@ -1,10 +1,7 @@
-#ifndef SCOPED_LOG_HPP__
-#define SCOPED_LOG_HPP__
+#ifndef OMX_MF_SCOPED_LOG_HPP__
+#define OMX_MF_SCOPED_LOG_HPP__
 
-#include <cstdio>
-#include <cstdint>
-
-#include "debug/dbgprint.hpp"
+#include <omxil_mf/dprint.hpp>
 
 #define scoped_log_begin    mf::scoped_log __tmp_scoped_log__(DPRINT_FUNC, __LINE__)
 
@@ -30,4 +27,4 @@ private:
 
 } //namespace mf
 
-#endif //SCOPED_LOG_HPP__
+#endif //OMX_MF_SCOPED_LOG_HPP__

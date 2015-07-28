@@ -4,10 +4,10 @@
 #include <OMX_Core.h>
 
 #include <omxil_mf/omx_reflector.hpp>
+#include <omxil_mf/scoped_log.hpp>
 
 #include "api/consts.hpp"
 #include "util/omx_enum_name.hpp"
-#include "debug/scoped_log.hpp"
 
 //日本語コメントあり
 
