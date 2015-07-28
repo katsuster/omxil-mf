@@ -38,7 +38,7 @@ void renderer_null::run()
 	while (should_run()) {
 		result = in_port_video->pop_buffer(&pb_in);
 		if (result != OMX_ErrorNone) {
-			printf("in_port_video.pop_buffer().\n");
+			errprint("in_port_video.pop_buffer().\n");
 			break;
 		}
 

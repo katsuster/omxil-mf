@@ -43,7 +43,7 @@ void reader_zero::run()
 	while (should_run()) {
 		result = out_port_video->pop_buffer(&pb_out);
 		if (result != OMX_ErrorNone) {
-			printf("out_port_video.pop_buffer().\n");
+			errprint("out_port_video.pop_buffer().\n");
 			break;
 		}
 

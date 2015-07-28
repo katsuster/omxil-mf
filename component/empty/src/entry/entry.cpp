@@ -2,6 +2,8 @@
 #include <cstdio>
 #include <string>
 
+#include <omxil_mf/scoped_log.hpp>
+
 #include "entry.h"
 #include "reader_zero/reader_zero.hpp"
 #include "renderer_null/renderer_null.hpp"
@@ -29,12 +31,11 @@ extern "C" {
 
 void *OMX_APIENTRY reader_zero_constructor(OMX_COMPONENTTYPE *cComponent, const char *name)
 {
-	printf("%s:%d\n", __func__, __LINE__);
-
+	scoped_log_begin;
 	std::string strname = name;
 
 	if (strname.compare(READER_ZERO_NAME) != 0) {
-		fprintf(stderr, "Error: Wrong component name '%s'.\n", 
+		errprint("Error: Wrong component name '%s'.\n", 
 			strname.c_str());
 		return nullptr;
 	}
@@ -44,7 +45,7 @@ void *OMX_APIENTRY reader_zero_constructor(OMX_COMPONENTTYPE *cComponent, const 
 
 void OMX_APIENTRY reader_zero_destructor(OMX_COMPONENTTYPE *cComponent)
 {
-	printf("%s:%d\n", __func__, __LINE__);
+	scoped_log_begin;
 
 	mf::reader_zero *comp = mf::reader_zero::get_instance(cComponent);
 
@@ -53,12 +54,11 @@ void OMX_APIENTRY reader_zero_destructor(OMX_COMPONENTTYPE *cComponent)
 
 void *OMX_APIENTRY renderer_null_constructor(OMX_COMPONENTTYPE *cComponent, const char *name)
 {
-	printf("%s:%d\n", __func__, __LINE__);
-
+	scoped_log_begin;
 	std::string strname = name;
 
 	if (strname.compare(RENDERER_NULL_NAME) != 0) {
-		fprintf(stderr, "Error: Wrong component name '%s'.\n", 
+		errprint("Error: Wrong component name '%s'.\n", 
 			strname.c_str());
 		return nullptr;
 	}
@@ -68,7 +68,7 @@ void *OMX_APIENTRY renderer_null_constructor(OMX_COMPONENTTYPE *cComponent, cons
 
 void OMX_APIENTRY renderer_null_destructor(OMX_COMPONENTTYPE *cComponent)
 {
-	printf("%s:%d\n", __func__, __LINE__);
+	scoped_log_begin;
 
 	mf::renderer_null *comp = mf::renderer_null::get_instance(cComponent);
 
@@ -77,12 +77,11 @@ void OMX_APIENTRY renderer_null_destructor(OMX_COMPONENTTYPE *cComponent)
 
 void *OMX_APIENTRY filter_copy_constructor(OMX_COMPONENTTYPE *cComponent, const char *name)
 {
-	printf("%s:%d\n", __func__, __LINE__);
-
+	scoped_log_begin;
 	std::string strname = name;
 
 	if (strname.compare(FILTER_COPY_NAME) != 0) {
-		fprintf(stderr, "Error: Wrong component name '%s'.\n", 
+		errprint("Error: Wrong component name '%s'.\n", 
 			strname.c_str());
 		return nullptr;
 	}
@@ -92,7 +91,7 @@ void *OMX_APIENTRY filter_copy_constructor(OMX_COMPONENTTYPE *cComponent, const 
 
 void OMX_APIENTRY filter_copy_destructor(OMX_COMPONENTTYPE *cComponent)
 {
-	printf("%s:%d\n", __func__, __LINE__);
+	scoped_log_begin;
 
 	mf::filter_copy *comp = mf::filter_copy::get_instance(cComponent);
 
@@ -101,17 +100,16 @@ void OMX_APIENTRY filter_copy_destructor(OMX_COMPONENTTYPE *cComponent)
 
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 {
+	scoped_log_begin;
 	OMX_MF_COMPONENT_INFO comp_info;
 	OMX_ERRORTYPE result, func_result = OMX_ErrorNone;
-
-	printf("%s:%d\n", __func__, __LINE__);
 
 	//register reader_zero component
 	comp_info.constructor = reader_zero_constructor;
 	comp_info.destructor = reader_zero_destructor;
 	result = OMX_MF_RegisterComponent(READER_ZERO_NAME, &comp_info);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Warning: Failed to register '%s'.\n", 
+		errprint("Warning: Failed to register '%s'.\n", 
 			READER_ZERO_NAME);
 		func_result = result; 
 	}
@@ -122,7 +120,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 	comp_info.destructor = renderer_null_destructor;
 	result = OMX_MF_RegisterComponent(RENDERER_NULL_NAME, &comp_info);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Warning: Failed to register '%s'.\n", 
+		errprint("Warning: Failed to register '%s'.\n", 
 			RENDERER_NULL_NAME);
 		func_result = result; 
 	}
@@ -130,14 +128,14 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 	//alias
 	result = OMX_MF_RegisterComponentAlias(RENDERER_NULL_NAME, RENDERER_NULL_A_ALIAS);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Warning: Failed to register alias '%s' of '%s'.\n", 
+		errprint("Warning: Failed to register alias '%s' of '%s'.\n", 
 			RENDERER_NULL_A_ALIAS, RENDERER_NULL_NAME);
 		func_result = result; 
 	}
 
 	result = OMX_MF_RegisterComponentAlias(RENDERER_NULL_NAME, RENDERER_NULL_V_ALIAS);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Warning: Failed to register alias '%s' of '%s'.\n", 
+		errprint("Warning: Failed to register alias '%s' of '%s'.\n", 
 			RENDERER_NULL_V_ALIAS, RENDERER_NULL_NAME);
 		func_result = result; 
 	}
@@ -145,14 +143,14 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 	//role
 	result = OMX_MF_RegisterComponentRole(RENDERER_NULL_NAME, RENDERER_NULL_A_ROLE);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Warning: Failed to register role '%s' of '%s'.\n", 
+		errprint("Warning: Failed to register role '%s' of '%s'.\n", 
 			RENDERER_NULL_A_ROLE, RENDERER_NULL_NAME);
 		func_result = result; 
 	}
 
 	result = OMX_MF_RegisterComponentRole(RENDERER_NULL_NAME, RENDERER_NULL_V_ROLE);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Warning: Failed to register role '%s' of '%s'.\n", 
+		errprint("Warning: Failed to register role '%s' of '%s'.\n", 
 			RENDERER_NULL_V_ROLE, RENDERER_NULL_NAME);
 		func_result = result; 
 	}
@@ -163,7 +161,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 	comp_info.destructor = filter_copy_destructor;
 	result = OMX_MF_RegisterComponent(FILTER_COPY_NAME, &comp_info);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Warning: Failed to register '%s'.\n", 
+		errprint("Warning: Failed to register '%s'.\n", 
 			FILTER_COPY_NAME);
 		func_result = result; 
 	}
