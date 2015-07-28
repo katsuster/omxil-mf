@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <cstdarg>
 
-#include <omxil_mf/dprint.hpp>
+#include <omxil_mf/dprint.h>
 
 #include "config.h"
 

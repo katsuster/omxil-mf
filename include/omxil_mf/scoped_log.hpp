@@ -1,7 +1,7 @@
 #ifndef OMX_MF_SCOPED_LOG_HPP__
 #define OMX_MF_SCOPED_LOG_HPP__
 
-#include <omxil_mf/dprint.hpp>
+#include <omxil_mf/dprint.h>
 
 #define scoped_log_begin    mf::scoped_log __tmp_scoped_log__(DPRINT_FUNC, __LINE__)
 

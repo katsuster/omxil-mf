@@ -6,6 +6,10 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Debug print level.
  *
@@ -31,7 +35,7 @@ int OMX_MF_print_cont(int level, const char *fmt, ...) __attribute__((format(pri
 
 #ifdef __GNUC__
 #define DPRINT_FUNC    __func__
-//#define DPRINT_FUNC    __PRETTY_FUNCTION__
+/* #define DPRINT_FUNC    __PRETTY_FUNCTION__ */
 #else
 #define DPRINT_FUNC    __func__
 #endif
@@ -42,4 +46,8 @@ int OMX_MF_print_cont(int level, const char *fmt, ...) __attribute__((format(pri
 #define dprint_out(fmt, ...)    dprint_cont("[% 5d] out %s:%d: " fmt, (int)gettid(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
 #define dprint(fmt, ...)        dprint_cont("[% 5d]     %s:%d: " fmt, (int)gettid(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
 
-#endif //OMX_MF_DPRINT_H__
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+#endif /* OMX_MF_DPRINT_H__ */
