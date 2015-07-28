@@ -4,8 +4,16 @@
 
 #include <omxil_mf/dprint.hpp>
 
-//Debug print level.
-static int debug_level = DPRINT_LEVEL_DEBUG;
+#include "config.h"
+
+#ifdef ENABLE_DEBUG
+#define DPRINT_LEVEL_DEFAULT    DPRINT_LEVEL_DEBUG
+#else
+#define DPRINT_LEVEL_DEFAULT    DPRINT_LEVEL_ERROR
+#endif
+
+//Debug print level
+static int debug_level = DPRINT_LEVEL_DEFAULT;
 
 int OMX_MF_set_debug_level(int level)
 {
@@ -19,7 +27,7 @@ int OMX_MF_print_cont(int level, const char *fmt, ...)
 	va_list ap;
 	int result;
 
-	if (level <= debug_level) {
+	if (level > debug_level) {
 		return 0;
 	}
 
