@@ -35,9 +35,11 @@ int main(int argc, char *argv[])
 {
 	const char *arg_comp;
 	comp_test_send_cmd *comp;
+	OMX_PORT_PARAM_TYPE param_v;
 	OMX_PARAM_PORTDEFINITIONTYPE def_in, def_out;
 	std::vector<OMX_BUFFERHEADERTYPE *> buf_in;
 	std::vector<OMX_BUFFERHEADERTYPE *> buf_out;
+	OMX_U32 pnum_in, pnum_out;
 	OMX_ERRORTYPE result;
 	OMX_U32 i;
 
@@ -56,6 +58,8 @@ int main(int argc, char *argv[])
 
 	comp = nullptr;
 	result = OMX_ErrorNone;
+	pnum_in = 0;
+	pnum_out = 0;
 
 	result = OMX_Init();
 	if (result != OMX_ErrorNone) {
@@ -72,18 +76,32 @@ int main(int argc, char *argv[])
 	printf("OMX_GetHandle: name:%s, comp:%p\n",
 		arg_comp, comp);
 
-	//Get port definition(before)
-	result = comp->get_param_port_definition(0, &def_in);
+	//Get port definition(port number)
+	result = comp->get_param_video_init(&param_v);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_port_definition(before) failed.\n");
+		fprintf(stderr, "get_video_init() failed.\n");
+		goto err_out2;
+	}
+	printf("IndexParamVideoInit: -----\n");
+	dump_port_param_type(&param_v);
+
+	pnum_in = param_v.nStartPortNumber;
+	pnum_out = param_v.nStartPortNumber + 1;
+
+	//Get port definition(before)
+	result = comp->get_param_port_definition(pnum_in, &def_in);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "get_port_definition(before, in:%d) failed.\n",
+			(int)pnum_in);
 		goto err_out2;
 	}
 	printf("IndexParamPortDefinition: before in %d -----\n", (int)def_in.nPortIndex);
 	dump_port_definitiontype(&def_in);
 
-	result = comp->get_param_port_definition(1, &def_out);
+	result = comp->get_param_port_definition(pnum_out, &def_out);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_port_definition(before) failed.\n");
+		fprintf(stderr, "get_port_definition(before, out:%d) failed.\n",
+			(int)pnum_out);
 		goto err_out2;
 	}
 	printf("IndexParamPortDefinition: before out %d -----\n", (int)def_out.nPortIndex);
@@ -111,9 +129,10 @@ int main(int argc, char *argv[])
 		OMX_BUFFERHEADERTYPE *buf;
 
 		result = comp->AllocateBuffer(&buf,
-			0, 0, def_in.nBufferSize);
+			pnum_in, 0, def_in.nBufferSize);
 		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "OMX_AllocateBuffer(in) failed.\n");
+			fprintf(stderr, "OMX_AllocateBuffer(in:%d) failed.\n",
+				(int)pnum_in);
 			goto err_out2;
 		}
 		printf("OMX_AllocateBuffer: in \n");
@@ -127,9 +146,10 @@ int main(int argc, char *argv[])
 		OMX_BUFFERHEADERTYPE *buf;
 
 		result = comp->AllocateBuffer(&buf,
-			1, 0, def_out.nBufferSize);
+			pnum_out, 0, def_out.nBufferSize);
 		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "OMX_AllocateBuffer(out) failed.\n");
+			fprintf(stderr, "OMX_AllocateBuffer(out:%d) failed.\n",
+				(int)pnum_out);
 			goto err_out2;
 		}
 		printf("OMX_AllocateBuffer: out \n");
@@ -145,17 +165,19 @@ int main(int argc, char *argv[])
 
 
 	//Get port definition(after)
-	result = comp->get_param_port_definition(0, &def_in);
+	result = comp->get_param_port_definition(pnum_in, &def_in);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_port_definition(after) failed.\n");
+		fprintf(stderr, "get_port_definition(after, in:%d) failed.\n",
+			(int)pnum_in);
 		goto err_out2;
 	}
 	printf("IndexParamPortDefinition: after in %d -----\n", (int)def_in.nPortIndex);
 	dump_port_definitiontype(&def_in);
 
-	result = comp->get_param_port_definition(1, &def_out);
+	result = comp->get_param_port_definition(pnum_out, &def_out);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_port_definition(after) failed.\n");
+		fprintf(stderr, "get_port_definition(after, out:%d) failed.\n",
+			(int)pnum_out);
 		goto err_out2;
 	}
 	printf("IndexParamPortDefinition: after out %d -----\n", (int)def_out.nPortIndex);
@@ -171,18 +193,20 @@ int main(int argc, char *argv[])
 
 	//Free buffer
 	for (auto it = buf_out.begin(); it != buf_out.end(); it++) {
-		result = comp->FreeBuffer(1, *it);
+		result = comp->FreeBuffer(pnum_out, *it);
 		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "OMX_FreeBuffer(out) failed.\n");
+			fprintf(stderr, "OMX_FreeBuffer(out:%d) failed.\n",
+				(int)pnum_out);
 			goto err_out2;
 		}
 	}
 	buf_out.clear();
 
 	for (auto it = buf_in.begin(); it != buf_in.end(); it++) {
-		result = comp->FreeBuffer(0, *it);
+		result = comp->FreeBuffer(pnum_in, *it);
 		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "OMX_FreeBuffer(in) failed.\n");
+			fprintf(stderr, "OMX_FreeBuffer(in:%d) failed.\n",
+				(int)pnum_in);
 			goto err_out2;
 		}
 	}
