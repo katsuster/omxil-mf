@@ -4,6 +4,7 @@
 #include <OMX_Core.h>
 
 #include "common/test_omxil.h"
+#include "common/omxil_utils.h"
 
 int main(int argc, char *argv[])
 {
@@ -26,5 +27,8 @@ int main(int argc, char *argv[])
 	return 0;
 
 err_out1:
+	fprintf(stderr, "ErrorCode:0x%08x(%s).\n",
+		result, get_omx_errortype_name(result));
+
 	return -1;
 }

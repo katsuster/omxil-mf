@@ -4,6 +4,7 @@
 #include <OMX_Core.h>
 
 #include "common/test_omxil.h"
+#include "common/omxil_utils.h"
 
 int main(int argc, char *argv[])
 {
@@ -24,7 +25,7 @@ int main(int argc, char *argv[])
 	}
 
 	for (i = 0; ; i++) {
-		result = OMX_ComponentNameEnum(name_comp, 
+		result = OMX_ComponentNameEnum(name_comp,
 			sizeof(name_comp) - 1, i);
 		if (result == OMX_ErrorNone) {
 			//OK, continued
@@ -52,5 +53,8 @@ err_out2:
 	OMX_Deinit();
 
 err_out1:
+	fprintf(stderr, "ErrorCode:0x%08x(%s).\n",
+		result, get_omx_errortype_name(result));
+
 	return -1;
 }

@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 		result = OMX_ErrorInsufficientResources;
 		goto err_out2;
 	}
-	printf("OMX_GetHandle: name:%s, comp:%p\n", 
+	printf("OMX_GetHandle: name:%s, comp:%p\n",
 		arg_comp, comp);
 
 
@@ -156,11 +156,11 @@ int main(int argc, char *argv[])
 		do {
 			result = comp->get_param_audio_format(i, j, &format_a);
 			if (result != OMX_ErrorNone && result != OMX_ErrorNoMore) {
-				fprintf(stderr, "get_param_audio_format(port:%d, fmt:%d) failed.\n", 
+				fprintf(stderr, "get_param_audio_format(port:%d, fmt:%d) failed.\n",
 					(int)i, (int)j);
 				goto err_out3;
 			}
-			printf("IndexParamAudioPortFormat: port:%d, fmt:%d -----\n", 
+			printf("IndexParamAudioPortFormat: port:%d, fmt:%d -----\n",
 				(int)format_a.nPortIndex, (int)format_a.nIndex);
 			dump_audio_param_portformattype(&format_a);
 
@@ -173,11 +173,11 @@ int main(int argc, char *argv[])
 		do {
 			result = comp->get_param_image_format(i, j, &format_i);
 			if (result != OMX_ErrorNone && result != OMX_ErrorNoMore) {
-				fprintf(stderr, "get_param_image_format(port:%d, fmt:%d) failed.\n", 
+				fprintf(stderr, "get_param_image_format(port:%d, fmt:%d) failed.\n",
 					(int)i, (int)j);
 				goto err_out3;
 			}
-			printf("IndexParamImagePortFormat: port:%d, fmt:%d -----\n", 
+			printf("IndexParamImagePortFormat: port:%d, fmt:%d -----\n",
 				(int)format_i.nPortIndex, (int)format_i.nIndex);
 			dump_image_param_portformattype(&format_i);
 
@@ -190,11 +190,11 @@ int main(int argc, char *argv[])
 		do {
 			result = comp->get_param_video_format(i, j, &format_v);
 			if (result != OMX_ErrorNone && result != OMX_ErrorNoMore) {
-				fprintf(stderr, "get_param_video_format(port:%d, fmt:%d) failed.\n", 
+				fprintf(stderr, "get_param_video_format(port:%d, fmt:%d) failed.\n",
 					(int)i, (int)j);
 				goto err_out3;
 			}
-			printf("IndexParamVideoPortFormat: port:%d, fmt:%d -----\n", 
+			printf("IndexParamVideoPortFormat: port:%d, fmt:%d -----\n",
 				(int)format_v.nPortIndex, (int)format_v.nIndex);
 			dump_video_param_portformattype(&format_v);
 
@@ -207,11 +207,11 @@ int main(int argc, char *argv[])
 		do {
 			result = comp->get_param_other_format(i, j, &format_o);
 			if (result != OMX_ErrorNone && result != OMX_ErrorNoMore) {
-				fprintf(stderr, "get_param_other_format(port:%d, fmt:%d) failed.\n", 
+				fprintf(stderr, "get_param_other_format(port:%d, fmt:%d) failed.\n",
 					(int)i, (int)j);
 				goto err_out3;
 			}
-			printf("IndexParamOtherPortFormat: port:%d, fmt:%d -----\n", 
+			printf("IndexParamOtherPortFormat: port:%d, fmt:%d -----\n",
 				(int)format_o.nPortIndex, (int)format_o.nIndex);
 			dump_other_param_portformattype(&format_o);
 
@@ -237,5 +237,8 @@ err_out2:
 	OMX_Deinit();
 
 err_out1:
+	fprintf(stderr, "ErrorCode:0x%08x(%s).\n",
+		result, get_omx_errortype_name(result));
+
 	return -1;
 }

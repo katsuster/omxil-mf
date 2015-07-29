@@ -3,6 +3,142 @@
 
 #include "omxil_utils.h"
 
+const char *get_omx_errortype_name(OMX_ERRORTYPE v)
+{
+	const char *name = "????";
+
+	switch (v) {
+	case OMX_ErrorNone:
+		name = "OMX_ErrorNone";
+		break;
+	case OMX_ErrorInsufficientResources:
+		name = "OMX_ErrorInsufficientResources";
+		break;
+	case OMX_ErrorUndefined:
+		name = "OMX_ErrorUndefined";
+		break;
+	case OMX_ErrorInvalidComponentName:
+		name = "OMX_ErrorInvalidComponentName";
+		break;
+	case OMX_ErrorComponentNotFound:
+		name = "OMX_ErrorComponentNotFound";
+		break;
+	case OMX_ErrorInvalidComponent:
+		name = "OMX_ErrorInvalidComponent";
+		break;
+	case OMX_ErrorBadParameter:
+		name = "OMX_ErrorBadParameter";
+		break;
+	case OMX_ErrorNotImplemented:
+		name = "OMX_ErrorNotImplemented";
+		break;
+	case OMX_ErrorUnderflow:
+		name = "OMX_ErrorUnderflow";
+		break;
+	case OMX_ErrorOverflow:
+		name = "OMX_ErrorOverflow";
+		break;
+	case OMX_ErrorHardware:
+		name = "OMX_ErrorHardware";
+		break;
+	case OMX_ErrorInvalidState:
+		name = "OMX_ErrorInvalidState";
+		break;
+	case OMX_ErrorStreamCorrupt:
+		name = "OMX_ErrorStreamCorrupt";
+		break;
+	case OMX_ErrorPortsNotCompatible:
+		name = "OMX_ErrorPortsNotCompatible";
+		break;
+	case OMX_ErrorResourcesLost:
+		name = "OMX_ErrorResourcesLost";
+		break;
+	case OMX_ErrorNoMore:
+		name = "OMX_ErrorNoMore";
+		break;
+	case OMX_ErrorVersionMismatch:
+		name = "OMX_ErrorVersionMismatch";
+		break;
+	case OMX_ErrorNotReady:
+		name = "OMX_ErrorNotReady";
+		break;
+	case OMX_ErrorTimeout:
+		name = "OMX_ErrorTimeout";
+		break;
+	case OMX_ErrorSameState:
+		name = "OMX_ErrorSameState";
+		break;
+	case OMX_ErrorResourcesPreempted:
+		name = "OMX_ErrorResourcesPreempted";
+		break;
+	case OMX_ErrorPortUnresponsiveDuringAllocation:
+		name = "OMX_ErrorPortUnresponsiveDuringAllocation";
+		break;
+	case OMX_ErrorPortUnresponsiveDuringDeallocation:
+		name = "OMX_ErrorPortUnresponsiveDuringDeallocation";
+		break;
+	case OMX_ErrorPortUnresponsiveDuringStop:
+		name = "OMX_ErrorPortUnresponsiveDuringStop";
+		break;
+	case OMX_ErrorIncorrectStateTransition:
+		name = "OMX_ErrorIncorrectStateTransition";
+		break;
+	case OMX_ErrorIncorrectStateOperation:
+		name = "OMX_ErrorIncorrectStateOperation";
+		break;
+	case OMX_ErrorUnsupportedSetting:
+		name = "OMX_ErrorUnsupportedSetting";
+		break;
+	case OMX_ErrorUnsupportedIndex:
+		name = "OMX_ErrorUnsupportedIndex";
+		break;
+	case OMX_ErrorBadPortIndex:
+		name = "OMX_ErrorBadPortIndex";
+		break;
+	case OMX_ErrorPortUnpopulated:
+		name = "OMX_ErrorPortUnpopulated";
+		break;
+	case OMX_ErrorComponentSuspended:
+		name = "OMX_ErrorComponentSuspended";
+		break;
+	case OMX_ErrorDynamicResourcesUnavailable:
+		name = "OMX_ErrorDynamicResourcesUnavailable";
+		break;
+	case OMX_ErrorMbErrorsInFrame:
+		name = "OMX_ErrorMbErrorsInFrame";
+		break;
+	case OMX_ErrorFormatNotDetected:
+		name = "OMX_ErrorFormatNotDetected";
+		break;
+	case OMX_ErrorContentPipeOpenFailed:
+		name = "OMX_ErrorContentPipeOpenFailed";
+		break;
+	case OMX_ErrorContentPipeCreationFailed:
+		name = "OMX_ErrorContentPipeCreationFailed";
+		break;
+	case OMX_ErrorSeperateTablesUsed:
+		name = "OMX_ErrorSeperateTablesUsed";
+		break;
+	case OMX_ErrorTunnelingUnsupported:
+		name = "OMX_ErrorTunnelingUnsupported";
+		break;
+	default:
+		name = "unknown";
+		break;
+	}
+
+	if (OMX_ErrorKhronosExtensions <= v &&
+		v < OMX_ErrorVendorStartUnused) {
+		name = "OMX_ErrorKhronosExtensions";
+	}
+	if (OMX_ErrorVendorStartUnused <= v &&
+		v < OMX_ErrorMax) {
+		name = "OMX_ErrorVendorStartUnused";
+	}
+
+	return name;
+}
+
 const char *get_omx_statetype_name(OMX_STATETYPE v)
 {
 	const char *name = "????";
@@ -688,4 +824,3 @@ void dump_other_param_portformattype(const OMX_OTHER_PARAM_PORTFORMATTYPE *p)
 		(int)p->nIndex,
 		p->eFormat, get_omx_other_formattype_name(p->eFormat));
 }
-

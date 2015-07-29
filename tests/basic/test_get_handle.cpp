@@ -5,6 +5,7 @@
 #include <OMX_Component.h>
 
 #include "common/test_omxil.h"
+#include "common/omxil_utils.h"
 #include "common/omxil_comp.hpp"
 
 int main(int argc, char *argv[])
@@ -86,5 +87,8 @@ err_out2:
 	OMX_Deinit();
 
 err_out1:
+	fprintf(stderr, "ErrorCode:0x%08x(%s).\n",
+		result, get_omx_errortype_name(result));
+
 	return -1;
 }

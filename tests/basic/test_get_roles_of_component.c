@@ -5,6 +5,7 @@
 #include <OMX_Core.h>
 
 #include "common/test_omxil.h"
+#include "common/omxil_utils.h"
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
@@ -78,5 +79,8 @@ err_out3:
 	OMX_Deinit();
 
 err_out1:
+	fprintf(stderr, "ErrorCode:0x%08x(%s).\n",
+		result, get_omx_errortype_name(result));
+
 	return -1;
 }
