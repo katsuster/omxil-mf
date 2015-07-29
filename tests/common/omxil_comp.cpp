@@ -422,6 +422,24 @@ void omxil_comp::dump_all_buffer(OMX_U32 port) const
 }
 
 
+OMX_ERRORTYPE omxil_comp::get_param_port_definition(OMX_U32 port_index, OMX_PARAM_PORTDEFINITIONTYPE *def) const
+{
+	OMX_ERRORTYPE result;
+
+	memset(def, 0, sizeof(OMX_PARAM_PORTDEFINITIONTYPE));
+	def->nSize = sizeof(OMX_PARAM_PORTDEFINITIONTYPE);
+	fill_version(&def->nVersion);
+	def->nPortIndex = port_index;
+	result = GetParameter(OMX_IndexParamPortDefinition, def);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(IndexParamPortDefinition) "
+			"failed.\n");
+		return result;
+	}
+
+	return result;
+}
+
 OMX_ERRORTYPE omxil_comp::get_param_audio_init(OMX_PORT_PARAM_TYPE *param) const
 {
 	OMX_ERRORTYPE result;
@@ -490,23 +508,82 @@ OMX_ERRORTYPE omxil_comp::get_param_other_init(OMX_PORT_PARAM_TYPE *param) const
 	return result;
 }
 
-OMX_ERRORTYPE omxil_comp::get_param_port_definition(OMX_U32 port_index, OMX_PARAM_PORTDEFINITIONTYPE *def) const
+OMX_ERRORTYPE omxil_comp::get_param_audio_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_AUDIO_PARAM_PORTFORMATTYPE *format) const
 {
 	OMX_ERRORTYPE result;
 
-	memset(def, 0, sizeof(OMX_PARAM_PORTDEFINITIONTYPE));
-	def->nSize = sizeof(OMX_PARAM_PORTDEFINITIONTYPE);
-	fill_version(&def->nVersion);
-	def->nPortIndex = port_index;
-	result = GetParameter(OMX_IndexParamPortDefinition, def);
+	memset(format, 0, sizeof(OMX_AUDIO_PARAM_PORTFORMATTYPE));
+	format->nSize = sizeof(OMX_AUDIO_PARAM_PORTFORMATTYPE);
+	fill_version(&format->nVersion);
+	format->nPortIndex = port_index;
+	format->nIndex     = fmt_index;
+	result = GetParameter(OMX_IndexParamAudioPortFormat, format);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "OMX_GetParameter(IndexParamPortDefinition) "
+		fprintf(stderr, "OMX_GetParameter(IndexParamAudioPortFormat) "
 			"failed.\n");
 		return result;
 	}
 
 	return result;
 }
+
+OMX_ERRORTYPE omxil_comp::get_param_image_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_IMAGE_PARAM_PORTFORMATTYPE *format) const
+{
+	OMX_ERRORTYPE result;
+
+	memset(format, 0, sizeof(OMX_IMAGE_PARAM_PORTFORMATTYPE));
+	format->nSize = sizeof(OMX_IMAGE_PARAM_PORTFORMATTYPE);
+	fill_version(&format->nVersion);
+	format->nPortIndex = port_index;
+	format->nIndex     = fmt_index;
+	result = GetParameter(OMX_IndexParamImagePortFormat, format);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(IndexParamImagePortFormat) "
+			"failed.\n");
+		return result;
+	}
+
+	return result;
+}
+
+OMX_ERRORTYPE omxil_comp::get_param_video_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_VIDEO_PARAM_PORTFORMATTYPE *format) const
+{
+	OMX_ERRORTYPE result;
+
+	memset(format, 0, sizeof(OMX_VIDEO_PARAM_PORTFORMATTYPE));
+	format->nSize = sizeof(OMX_VIDEO_PARAM_PORTFORMATTYPE);
+	fill_version(&format->nVersion);
+	format->nPortIndex = port_index;
+	format->nIndex     = fmt_index;
+	result = GetParameter(OMX_IndexParamVideoPortFormat, format);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(IndexParamVideoPortFormat) "
+			"failed.\n");
+		return result;
+	}
+
+	return result;
+}
+
+OMX_ERRORTYPE omxil_comp::get_param_other_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_OTHER_PARAM_PORTFORMATTYPE *format) const
+{
+	OMX_ERRORTYPE result;
+
+	memset(format, 0, sizeof(OMX_OTHER_PARAM_PORTFORMATTYPE));
+	format->nSize = sizeof(OMX_OTHER_PARAM_PORTFORMATTYPE);
+	fill_version(&format->nVersion);
+	format->nPortIndex = port_index;
+	format->nIndex     = fmt_index;
+	result = GetParameter(OMX_IndexParamOtherPortFormat, format);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(OMX_IndexParamOtherPortFormat) "
+			"failed.\n");
+		return result;
+	}
+
+	return result;
+}
+
 
 /*
  * public static function

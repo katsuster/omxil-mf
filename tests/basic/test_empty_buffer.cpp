@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 		goto err_out2;
 	}
 	printf("IndexParamPortDefinition: in %d -----\n", (int)def_in.nPortIndex);
-	dump_port_definitiontype(&def_in);
+	dump_param_portdefinitiontype(&def_in);
 
 	//Set StateIdle
 	result = comp->SendCommand(OMX_CommandStateSet, OMX_StateIdle, 0);
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
 			goto err_out2;
 		}
 		printf("OMX_UseBuffer: in \n");
-		dump_port_bufferheadertype(buf);
+		dump_bufferheadertype(buf);
 
 		comp->push_back_buffer(pnum_in, buf);
 		buf_in.push_back(buf);

@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 		goto err_out2;
 	}
 	printf("IndexParamPortDefinition: before in %d -----\n", (int)def_in.nPortIndex);
-	dump_port_definitiontype(&def_in);
+	dump_param_portdefinitiontype(&def_in);
 
 	result = comp->get_param_port_definition(pnum_out, &def_out);
 	if (result != OMX_ErrorNone) {
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 		goto err_out2;
 	}
 	printf("IndexParamPortDefinition: before out %d -----\n", (int)def_out.nPortIndex);
-	dump_port_definitiontype(&def_out);
+	dump_param_portdefinitiontype(&def_out);
 
 	/*
 	OMX_VIDEO_PARAM_AVCTYPE
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
 			goto err_out2;
 		}
 		printf("OMX_AllocateBuffer: in \n");
-		dump_port_bufferheadertype(buf);
+		dump_bufferheadertype(buf);
 
 		buf_in.push_back(buf);
 	}
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
 			goto err_out2;
 		}
 		printf("OMX_AllocateBuffer: out \n");
-		dump_port_bufferheadertype(buf);
+		dump_bufferheadertype(buf);
 
 		buf_out.push_back(buf);
 	}
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
 		goto err_out2;
 	}
 	printf("IndexParamPortDefinition: after in %d -----\n", (int)def_in.nPortIndex);
-	dump_port_definitiontype(&def_in);
+	dump_param_portdefinitiontype(&def_in);
 
 	result = comp->get_param_port_definition(pnum_out, &def_out);
 	if (result != OMX_ErrorNone) {
@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
 		goto err_out2;
 	}
 	printf("IndexParamPortDefinition: after out %d -----\n", (int)def_out.nPortIndex);
-	dump_port_definitiontype(&def_out);
+	dump_param_portdefinitiontype(&def_out);
 
 
 	//Set StateLoaded

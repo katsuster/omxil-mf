@@ -10,6 +10,10 @@
 
 #include <OMX_Core.h>
 #include <OMX_Component.h>
+#include <OMX_Audio.h>
+#include <OMX_Image.h>
+#include <OMX_Video.h>
+#include <OMX_Other.h>
 
 struct buffer_attr {
 	bool used;
@@ -136,11 +140,15 @@ public:
 	 */
 	virtual void dump_all_buffer(OMX_U32 port) const;
 
+	virtual OMX_ERRORTYPE get_param_port_definition(OMX_U32 port_index, OMX_PARAM_PORTDEFINITIONTYPE *def) const;
 	virtual OMX_ERRORTYPE get_param_audio_init(OMX_PORT_PARAM_TYPE *param) const;
 	virtual OMX_ERRORTYPE get_param_image_init(OMX_PORT_PARAM_TYPE *param) const;
 	virtual OMX_ERRORTYPE get_param_video_init(OMX_PORT_PARAM_TYPE *param) const;
 	virtual OMX_ERRORTYPE get_param_other_init(OMX_PORT_PARAM_TYPE *param) const;
-	virtual OMX_ERRORTYPE get_param_port_definition(OMX_U32 port_index, OMX_PARAM_PORTDEFINITIONTYPE *def) const;
+	virtual OMX_ERRORTYPE get_param_audio_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_AUDIO_PARAM_PORTFORMATTYPE *format) const;
+	virtual OMX_ERRORTYPE get_param_image_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_IMAGE_PARAM_PORTFORMATTYPE *format) const;
+	virtual OMX_ERRORTYPE get_param_video_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_VIDEO_PARAM_PORTFORMATTYPE *format) const;
+	virtual OMX_ERRORTYPE get_param_other_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_OTHER_PARAM_PORTFORMATTYPE *format) const;
 
 public:
 	//Utilities

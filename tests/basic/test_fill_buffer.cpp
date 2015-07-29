@@ -42,7 +42,7 @@ public:
 	virtual OMX_ERRORTYPE FillBufferDone(OMX_HANDLETYPE hComponent, OMX_PTR pAppData, OMX_BUFFERHEADERTYPE* pBuffer)
 	{
 		//printf("comp_test_fill_buffer::FillBufferDone\n");
-		//dump_port_bufferheadertype(pBuffer);
+		//dump_bufferheadertype(pBuffer);
 		
 		return super::FillBufferDone(hComponent, pAppData, pBuffer);
 	}
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 		goto err_out2;
 	}
 	printf("IndexParamPortDefinition: out %d -----\n", (int)def_out.nPortIndex);
-	dump_port_definitiontype(&def_out);
+	dump_param_portdefinitiontype(&def_out);
 
 	//Set StateIdle
 	result = comp->SendCommand(OMX_CommandStateSet, OMX_StateIdle, 0);
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 			goto err_out2;
 		}
 		printf("OMX_UseBuffer: out \n");
-		dump_port_bufferheadertype(buf);
+		dump_bufferheadertype(buf);
 
 		comp->push_back_buffer(pnum_out, buf);
 		buf_out.push_back(buf);
