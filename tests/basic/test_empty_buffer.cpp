@@ -66,7 +66,6 @@ int main(int argc, char *argv[])
 
 	comp = nullptr;
 	result = OMX_ErrorNone;
-	//port 0
 	pnum_in = 0;
 
 	result = OMX_Init();
@@ -84,7 +83,7 @@ int main(int argc, char *argv[])
 	printf("OMX_GetHandle: name:%s, comp:%p\n",
 		arg_comp, comp);
 
-	//Get port definition(before)
+	//Get port definition
 	result = comp->get_param_video_init(&param_v);
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "get_video_init() failed.\n");
@@ -97,10 +96,10 @@ int main(int argc, char *argv[])
 
 	result = comp->get_param_port_definition(pnum_in, &def_in);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_port_definition(before) failed.\n");
+		fprintf(stderr, "get_port_definition(in) failed.\n");
 		goto err_out2;
 	}
-	printf("IndexParamPortDefinition: before in %d -----\n", (int)def_in.nPortIndex);
+	printf("IndexParamPortDefinition: in %d -----\n", (int)def_in.nPortIndex);
 	dump_port_definitiontype(&def_in);
 
 	//Set StateIdle
