@@ -314,31 +314,15 @@ int main(int argc, char *argv[])
 		goto err_out2;
 	}
 
-	printf("wait for FillDone of all buffers...\n");
-	comp->wait_all_buffer_free(pnum_out);
-	printf("wait for FillDone of all buffers... Done!\n");
-
 	printf("wait for EmptyDone of all buffers...\n");
 	comp->wait_all_buffer_free(pnum_in);
 	printf("wait for EmptyDone of all buffers... Done!\n");
 
+	printf("wait for FillDone of all buffers...\n");
+	comp->wait_all_buffer_free(pnum_out);
+	printf("wait for FillDone of all buffers... Done!\n");
+
 	//Free buffer
-	for (auto it = buf_out.begin(); it != buf_out.end(); it++) {
-		OMX_U8 *pb = (*it)->pBuffer;
-		buffer_attr *pbattr = static_cast<buffer_attr *>((*it)->pAppPrivate);
-
-		result = comp->FreeBuffer(pnum_out, *it);
-		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "OMX_FreeBuffer(%d) failed.\n",
-				(int)pnum_out);
-			goto err_out2;
-		}
-
-		delete pbattr;
-		delete[] pb;
-	}
-	buf_out.clear();
-
 	for (auto it = buf_in.begin(); it != buf_in.end(); it++) {
 		OMX_U8 *pb = (*it)->pBuffer;
 		buffer_attr *pbattr = static_cast<buffer_attr *>((*it)->pAppPrivate);
@@ -354,6 +338,22 @@ int main(int argc, char *argv[])
 		delete[] pb;
 	}
 	buf_in.clear();
+
+	for (auto it = buf_out.begin(); it != buf_out.end(); it++) {
+		OMX_U8 *pb = (*it)->pBuffer;
+		buffer_attr *pbattr = static_cast<buffer_attr *>((*it)->pAppPrivate);
+
+		result = comp->FreeBuffer(pnum_out, *it);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "OMX_FreeBuffer(%d) failed.\n",
+				(int)pnum_out);
+			goto err_out2;
+		}
+
+		delete pbattr;
+		delete[] pb;
+	}
+	buf_out.clear();
 
 	//Wait for StatusLoaded
 	printf("wait for StateLoaded...\n");
