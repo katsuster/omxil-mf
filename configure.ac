@@ -119,7 +119,8 @@ dnl ----------------------------------------
 AC_CONFIG_FILES([Makefile include/Makefile src/Makefile 
 	component/Makefile 
 	doc/Makefile 
-	tests/Makefile tests/basic/Makefile tests/simple/Makefile ])
+	tests/Makefile tests/basic/Makefile tests/interop/Makefile
+	tests/simple/Makefile ])
 #doc/Makefile
 
 AC_CONFIG_SUBDIRS([component/empty ])
