@@ -16512,7 +16512,7 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile include/Makefile src/Makefile component/Makefile doc/Makefile tests/Makefile tests/basic/Makefile tests/simple/Makefile"
+ac_config_files="$ac_config_files Makefile include/Makefile src/Makefile component/Makefile doc/Makefile tests/Makefile tests/basic/Makefile tests/interop/Makefile tests/simple/Makefile"
 
 #doc/Makefile
 
@@ -17651,6 +17651,7 @@ do
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "tests/Makefile") CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
     "tests/basic/Makefile") CONFIG_FILES="$CONFIG_FILES tests/basic/Makefile" ;;
+    "tests/interop/Makefile") CONFIG_FILES="$CONFIG_FILES tests/interop/Makefile" ;;
     "tests/simple/Makefile") CONFIG_FILES="$CONFIG_FILES tests/simple/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
