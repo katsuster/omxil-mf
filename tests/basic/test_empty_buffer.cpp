@@ -116,8 +116,7 @@ int main(int argc, char *argv[])
 		buffer_attr *pbattr = nullptr;
 
 		pb = new OMX_U8[def_in.nBufferSize];
-		pbattr = new buffer_attr;
-		memset(pbattr, 0, sizeof(buffer_attr));
+		pbattr = new buffer_attr{0, };
 
 		result = comp->UseBuffer(&buf,
 			pnum_in, pbattr, def_in.nBufferSize, pb);
