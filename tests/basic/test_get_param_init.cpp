@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	//OMX_PORT_PARAM_TYPE
 	result = comp->get_param_audio_init(&param_a);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_audio_init() failed.\n");
+		fprintf(stderr, "get_param_audio_init() failed.\n");
 		goto err_out3;
 	}
 	printf("IndexParamAudioInit: -----\n");
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 
 	result = comp->get_param_image_init(&param_i);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_image_init() failed.\n");
+		fprintf(stderr, "get_param_image_init() failed.\n");
 		goto err_out3;
 	}
 	printf("IndexParamImageInit: -----\n");
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 
 	result = comp->get_param_video_init(&param_v);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_video_init() failed.\n");
+		fprintf(stderr, "get_param_video_init() failed.\n");
 		goto err_out3;
 	}
 	printf("IndexParamVideoInit: -----\n");
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 
 	result = comp->get_param_other_init(&param_o);
 	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_other_init() failed.\n");
+		fprintf(stderr, "get_param_other_init() failed.\n");
 		goto err_out3;
 	}
 	printf("IndexParamOtherInit: -----\n");
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 	for (i = param_a.nStartPortNumber; i < param_a.nStartPortNumber + param_a.nPorts; i++) {
 		result = comp->get_param_port_definition(i, &def);
 		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "get_port_definition(audio) failed.\n");
+			fprintf(stderr, "get_param_port_definition(audio) failed.\n");
 			goto err_out3;
 		}
 		printf("IndexParamPortDefinition: audio %d -----\n", (int)def.nPortIndex);
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 	for (i = param_i.nStartPortNumber; i < param_i.nStartPortNumber + param_i.nPorts; i++) {
 		result = comp->get_param_port_definition(i, &def);
 		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "get_port_definition(image) failed.\n");
+			fprintf(stderr, "get_param_port_definition(image) failed.\n");
 			goto err_out3;
 		}
 		printf("IndexParamPortDefinition: image %d -----\n", (int)def.nPortIndex);
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 	for (i = param_v.nStartPortNumber; i < param_v.nStartPortNumber + param_v.nPorts; i++) {
 		result = comp->get_param_port_definition(i, &def);
 		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "get_port_definition(video) failed.\n");
+			fprintf(stderr, "get_param_port_definition(video) failed.\n");
 			goto err_out3;
 		}
 		printf("IndexParamPortDefinition: video %d -----\n", (int)def.nPortIndex);
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 	for (i = param_o.nStartPortNumber; i < param_o.nStartPortNumber + param_o.nPorts; i++) {
 		result = comp->get_param_port_definition(i, &def);
 		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "get_port_definition(other) failed.\n");
+			fprintf(stderr, "get_param_port_definition(other) failed.\n");
 			goto err_out3;
 		}
 		printf("IndexParamPortDefinition: other %d -----\n", (int)def.nPortIndex);
