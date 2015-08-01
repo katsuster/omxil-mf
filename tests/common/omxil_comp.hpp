@@ -68,7 +68,7 @@ public:
 	 * @param port ポート番号
 	 * @param buf  OpenMAX IL バッファ
 	 */
-	virtual void push_back_buffer(OMX_U32 port, OMX_BUFFERHEADERTYPE *buf);
+	virtual void register_buffer(OMX_U32 port, OMX_BUFFERHEADERTYPE *buf);
 
 	/**
 	 * 指定したポートに関連付けられているバッファのうち、
@@ -79,7 +79,7 @@ public:
 	 * @param port ポート番号
 	 * @param buf  OpenMAX IL バッファ
 	 */
-	virtual OMX_BUFFERHEADERTYPE *use_free_buffer(OMX_U32 port) const;
+	virtual OMX_BUFFERHEADERTYPE *get_free_buffer(OMX_U32 port) const;
 
 	/**
 	 * 全てのバッファが使用中かどうかを取得します。

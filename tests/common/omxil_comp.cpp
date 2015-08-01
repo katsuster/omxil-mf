@@ -307,7 +307,7 @@ const omxil_comp::buflist_type *omxil_comp::find_buflist(OMX_U32 port) const
 	return it->second;
 }
 
-void omxil_comp::push_back_buffer(OMX_U32 port, OMX_BUFFERHEADERTYPE *buf)
+void omxil_comp::register_buffer(OMX_U32 port, OMX_BUFFERHEADERTYPE *buf)
 {
 	std::unique_lock<std::recursive_mutex> lock(mut_comp);
 	omxil_comp::buflist_type *bl;
@@ -322,7 +322,7 @@ void omxil_comp::push_back_buffer(OMX_U32 port, OMX_BUFFERHEADERTYPE *buf)
 	bl->push_back(buf);
 }
 
-OMX_BUFFERHEADERTYPE *omxil_comp::use_free_buffer(OMX_U32 port) const
+OMX_BUFFERHEADERTYPE *omxil_comp::get_free_buffer(OMX_U32 port) const
 {
 	std::unique_lock<std::recursive_mutex> lock(mut_comp);
 	const omxil_comp::buflist_type *bl;

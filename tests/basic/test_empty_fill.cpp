@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
 		printf("OMX_UseBuffer: in \n");
 		dump_bufferheadertype(buf);
 
-		comp->push_back_buffer(pnum_in, buf);
+		comp->register_buffer(pnum_in, buf);
 		buf_in.push_back(buf);
 	}
 
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
 		printf("OMX_UseBuffer: out \n");
 		dump_bufferheadertype(buf);
 
-		comp->push_back_buffer(pnum_out, buf);
+		comp->register_buffer(pnum_out, buf);
 		buf_out.push_back(buf);
 	}
 
@@ -229,9 +229,9 @@ int main(int argc, char *argv[])
 
 			comp->wait_buffer_free(pnum_in);
 
-			buf = comp->use_free_buffer(pnum_in);
+			buf = comp->get_free_buffer(pnum_in);
 			if (buf == nullptr) {
-				fprintf(stderr, "find_free_buffer(%d) failed.\n",
+				fprintf(stderr, "get_free_buffer(%d) failed.\n",
 					(int)pnum_in);
 				return -1;
 			}
@@ -259,9 +259,9 @@ int main(int argc, char *argv[])
 
 			comp->wait_buffer_free(pnum_out);
 
-			buf = comp->use_free_buffer(pnum_out);
+			buf = comp->get_free_buffer(pnum_out);
 			if (buf == nullptr) {
-				fprintf(stderr, "find_free_buffer(%d) failed.\n",
+				fprintf(stderr, "get_free_buffer(%d) failed.\n",
 					(int)pnum_out);
 				return -1;
 			}
