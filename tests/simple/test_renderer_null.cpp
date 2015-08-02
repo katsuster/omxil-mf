@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 	omxil_comp *comp;
 	char *buffer;
 	OMX_ERRORTYPE result;
-	OMX_U32 i;
+	//OMX_U32 i;
 
 	//get arguments
 	if (argc < 2) {
