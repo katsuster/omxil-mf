@@ -656,12 +656,12 @@ enum_components_LDADD = $(common_LDADD)
 enum_components_CPPFLAGS = $(common_CPPFLAGS)
 enum_components_CFLAGS = $(common_CFLAGS)
 enum_components_CXXFLAGS = $(common_CXXFLAGS)
-get_roles_of_component_SOURCES = test_get_roles_of_component.c $(common_SOURCES)
+get_roles_of_component_SOURCES = test_get_roles_of_component.cpp $(common_SOURCES)
 get_roles_of_component_LDADD = $(common_LDADD)
 get_roles_of_component_CPPFLAGS = $(common_CPPFLAGS)
 get_roles_of_component_CFLAGS = $(common_CFLAGS)
 get_roles_of_component_CXXFLAGS = $(common_CXXFLAGS)
-get_components_of_role_SOURCES = test_get_components_of_role.c $(common_SOURCES)
+get_components_of_role_SOURCES = test_get_components_of_role.cpp $(common_SOURCES)
 get_components_of_role_LDADD = $(common_LDADD)
 get_components_of_role_CPPFLAGS = $(common_CPPFLAGS)
 get_components_of_role_CFLAGS = $(common_CFLAGS)
@@ -915,20 +915,6 @@ fill_buffer-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(fill_buffer_CPPFLAGS) $(CPPFLAGS) $(fill_buffer_CFLAGS) $(CFLAGS) -c -o fill_buffer-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
 
-get_components_of_role-test_get_components_of_role.o: test_get_components_of_role.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_CFLAGS) $(CFLAGS) -MT get_components_of_role-test_get_components_of_role.o -MD -MP -MF $(DEPDIR)/get_components_of_role-test_get_components_of_role.Tpo -c -o get_components_of_role-test_get_components_of_role.o `test -f 'test_get_components_of_role.c' || echo '$(srcdir)/'`test_get_components_of_role.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/get_components_of_role-test_get_components_of_role.Tpo $(DEPDIR)/get_components_of_role-test_get_components_of_role.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_get_components_of_role.c' object='get_components_of_role-test_get_components_of_role.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_CFLAGS) $(CFLAGS) -c -o get_components_of_role-test_get_components_of_role.o `test -f 'test_get_components_of_role.c' || echo '$(srcdir)/'`test_get_components_of_role.c
-
-get_components_of_role-test_get_components_of_role.obj: test_get_components_of_role.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_CFLAGS) $(CFLAGS) -MT get_components_of_role-test_get_components_of_role.obj -MD -MP -MF $(DEPDIR)/get_components_of_role-test_get_components_of_role.Tpo -c -o get_components_of_role-test_get_components_of_role.obj `if test -f 'test_get_components_of_role.c'; then $(CYGPATH_W) 'test_get_components_of_role.c'; else $(CYGPATH_W) '$(srcdir)/test_get_components_of_role.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/get_components_of_role-test_get_components_of_role.Tpo $(DEPDIR)/get_components_of_role-test_get_components_of_role.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_get_components_of_role.c' object='get_components_of_role-test_get_components_of_role.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_CFLAGS) $(CFLAGS) -c -o get_components_of_role-test_get_components_of_role.obj `if test -f 'test_get_components_of_role.c'; then $(CYGPATH_W) 'test_get_components_of_role.c'; else $(CYGPATH_W) '$(srcdir)/test_get_components_of_role.c'; fi`
-
 get_components_of_role-omxil_utils.o: $(COMMON_DIR)/omxil_utils.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_CFLAGS) $(CFLAGS) -MT get_components_of_role-omxil_utils.o -MD -MP -MF $(DEPDIR)/get_components_of_role-omxil_utils.Tpo -c -o get_components_of_role-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/get_components_of_role-omxil_utils.Tpo $(DEPDIR)/get_components_of_role-omxil_utils.Po
@@ -970,20 +956,6 @@ get_param_init-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(COMMON_DIR)/omxil_utils.c' object='get_param_init-omxil_utils.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_param_init_CPPFLAGS) $(CPPFLAGS) $(get_param_init_CFLAGS) $(CFLAGS) -c -o get_param_init-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
-
-get_roles_of_component-test_get_roles_of_component.o: test_get_roles_of_component.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_CFLAGS) $(CFLAGS) -MT get_roles_of_component-test_get_roles_of_component.o -MD -MP -MF $(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Tpo -c -o get_roles_of_component-test_get_roles_of_component.o `test -f 'test_get_roles_of_component.c' || echo '$(srcdir)/'`test_get_roles_of_component.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Tpo $(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_get_roles_of_component.c' object='get_roles_of_component-test_get_roles_of_component.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_CFLAGS) $(CFLAGS) -c -o get_roles_of_component-test_get_roles_of_component.o `test -f 'test_get_roles_of_component.c' || echo '$(srcdir)/'`test_get_roles_of_component.c
-
-get_roles_of_component-test_get_roles_of_component.obj: test_get_roles_of_component.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_CFLAGS) $(CFLAGS) -MT get_roles_of_component-test_get_roles_of_component.obj -MD -MP -MF $(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Tpo -c -o get_roles_of_component-test_get_roles_of_component.obj `if test -f 'test_get_roles_of_component.c'; then $(CYGPATH_W) 'test_get_roles_of_component.c'; else $(CYGPATH_W) '$(srcdir)/test_get_roles_of_component.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Tpo $(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_get_roles_of_component.c' object='get_roles_of_component-test_get_roles_of_component.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_CFLAGS) $(CFLAGS) -c -o get_roles_of_component-test_get_roles_of_component.obj `if test -f 'test_get_roles_of_component.c'; then $(CYGPATH_W) 'test_get_roles_of_component.c'; else $(CYGPATH_W) '$(srcdir)/test_get_roles_of_component.c'; fi`
 
 get_roles_of_component-omxil_utils.o: $(COMMON_DIR)/omxil_utils.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_CFLAGS) $(CFLAGS) -MT get_roles_of_component-omxil_utils.o -MD -MP -MF $(DEPDIR)/get_roles_of_component-omxil_utils.Tpo -c -o get_roles_of_component-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
@@ -1188,6 +1160,20 @@ fill_buffer-omxil_comp.obj: $(COMMON_DIR)/omxil_comp.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(fill_buffer_CPPFLAGS) $(CPPFLAGS) $(fill_buffer_CXXFLAGS) $(CXXFLAGS) -c -o fill_buffer-omxil_comp.obj `if test -f '$(COMMON_DIR)/omxil_comp.cpp'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_comp.cpp'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_comp.cpp'; fi`
 
+get_components_of_role-test_get_components_of_role.o: test_get_components_of_role.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_CXXFLAGS) $(CXXFLAGS) -MT get_components_of_role-test_get_components_of_role.o -MD -MP -MF $(DEPDIR)/get_components_of_role-test_get_components_of_role.Tpo -c -o get_components_of_role-test_get_components_of_role.o `test -f 'test_get_components_of_role.cpp' || echo '$(srcdir)/'`test_get_components_of_role.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/get_components_of_role-test_get_components_of_role.Tpo $(DEPDIR)/get_components_of_role-test_get_components_of_role.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_get_components_of_role.cpp' object='get_components_of_role-test_get_components_of_role.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_CXXFLAGS) $(CXXFLAGS) -c -o get_components_of_role-test_get_components_of_role.o `test -f 'test_get_components_of_role.cpp' || echo '$(srcdir)/'`test_get_components_of_role.cpp
+
+get_components_of_role-test_get_components_of_role.obj: test_get_components_of_role.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_CXXFLAGS) $(CXXFLAGS) -MT get_components_of_role-test_get_components_of_role.obj -MD -MP -MF $(DEPDIR)/get_components_of_role-test_get_components_of_role.Tpo -c -o get_components_of_role-test_get_components_of_role.obj `if test -f 'test_get_components_of_role.cpp'; then $(CYGPATH_W) 'test_get_components_of_role.cpp'; else $(CYGPATH_W) '$(srcdir)/test_get_components_of_role.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/get_components_of_role-test_get_components_of_role.Tpo $(DEPDIR)/get_components_of_role-test_get_components_of_role.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_get_components_of_role.cpp' object='get_components_of_role-test_get_components_of_role.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_CXXFLAGS) $(CXXFLAGS) -c -o get_components_of_role-test_get_components_of_role.obj `if test -f 'test_get_components_of_role.cpp'; then $(CYGPATH_W) 'test_get_components_of_role.cpp'; else $(CYGPATH_W) '$(srcdir)/test_get_components_of_role.cpp'; fi`
+
 get_components_of_role-omxil_comp.o: $(COMMON_DIR)/omxil_comp.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_components_of_role_CPPFLAGS) $(CPPFLAGS) $(get_components_of_role_CXXFLAGS) $(CXXFLAGS) -MT get_components_of_role-omxil_comp.o -MD -MP -MF $(DEPDIR)/get_components_of_role-omxil_comp.Tpo -c -o get_components_of_role-omxil_comp.o `test -f '$(COMMON_DIR)/omxil_comp.cpp' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_comp.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/get_components_of_role-omxil_comp.Tpo $(DEPDIR)/get_components_of_role-omxil_comp.Po
@@ -1257,6 +1243,20 @@ get_param_init-omxil_comp.obj: $(COMMON_DIR)/omxil_comp.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMMON_DIR)/omxil_comp.cpp' object='get_param_init-omxil_comp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_param_init_CPPFLAGS) $(CPPFLAGS) $(get_param_init_CXXFLAGS) $(CXXFLAGS) -c -o get_param_init-omxil_comp.obj `if test -f '$(COMMON_DIR)/omxil_comp.cpp'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_comp.cpp'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_comp.cpp'; fi`
+
+get_roles_of_component-test_get_roles_of_component.o: test_get_roles_of_component.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_CXXFLAGS) $(CXXFLAGS) -MT get_roles_of_component-test_get_roles_of_component.o -MD -MP -MF $(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Tpo -c -o get_roles_of_component-test_get_roles_of_component.o `test -f 'test_get_roles_of_component.cpp' || echo '$(srcdir)/'`test_get_roles_of_component.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Tpo $(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_get_roles_of_component.cpp' object='get_roles_of_component-test_get_roles_of_component.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_CXXFLAGS) $(CXXFLAGS) -c -o get_roles_of_component-test_get_roles_of_component.o `test -f 'test_get_roles_of_component.cpp' || echo '$(srcdir)/'`test_get_roles_of_component.cpp
+
+get_roles_of_component-test_get_roles_of_component.obj: test_get_roles_of_component.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_CXXFLAGS) $(CXXFLAGS) -MT get_roles_of_component-test_get_roles_of_component.obj -MD -MP -MF $(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Tpo -c -o get_roles_of_component-test_get_roles_of_component.obj `if test -f 'test_get_roles_of_component.cpp'; then $(CYGPATH_W) 'test_get_roles_of_component.cpp'; else $(CYGPATH_W) '$(srcdir)/test_get_roles_of_component.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Tpo $(DEPDIR)/get_roles_of_component-test_get_roles_of_component.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_get_roles_of_component.cpp' object='get_roles_of_component-test_get_roles_of_component.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_CXXFLAGS) $(CXXFLAGS) -c -o get_roles_of_component-test_get_roles_of_component.obj `if test -f 'test_get_roles_of_component.cpp'; then $(CYGPATH_W) 'test_get_roles_of_component.cpp'; else $(CYGPATH_W) '$(srcdir)/test_get_roles_of_component.cpp'; fi`
 
 get_roles_of_component-omxil_comp.o: $(COMMON_DIR)/omxil_comp.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(get_roles_of_component_CPPFLAGS) $(CPPFLAGS) $(get_roles_of_component_CXXFLAGS) $(CXXFLAGS) -MT get_roles_of_component-omxil_comp.o -MD -MP -MF $(DEPDIR)/get_roles_of_component-omxil_comp.Tpo -c -o get_roles_of_component-omxil_comp.o `test -f '$(COMMON_DIR)/omxil_comp.cpp' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_comp.cpp
