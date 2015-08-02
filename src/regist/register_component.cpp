@@ -111,9 +111,9 @@ register_info *register_component::find_index(int index)
 		return nullptr;
 	}
 
-	for (auto& it : map_comp_name) {
+	for (auto& elem : map_comp_name) {
 		if (i == index) {
-			return it.second;
+			return elem.second;
 		}
 		i++;
 	}
@@ -151,9 +151,9 @@ void register_component::clear()
 	scoped_log_begin;
 	std::lock_guard<std::recursive_mutex> lock(mut_map);
 
-	for (auto& it : map_comp_name) {
-		delete it.second->comp_info;
-		delete it.second;
+	for (auto& elem : map_comp_name) {
+		delete elem.second->comp_info;
+		delete elem.second;
 	}
 
 	map_comp_name.clear();
@@ -182,18 +182,46 @@ bool register_component::insert_role(const char *name, const char *role)
 	return true;
 }
 
+bool register_component::erase_role(const char *name, const char *role)
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lock(mut_map);
+	std::string strname = name;
+	std::string strrole = role;
+	map_component_type::iterator it;
+	register_info *reginfo;
+
+	it = map_comp_name.find(strname);
+	if (it == map_comp_name.end()) {
+		//not found
+		errprint("Component '%s' not found. role '%s'.\n",
+			strname.c_str(), strrole.c_str());
+		return false;
+	}
+
+	reginfo = it->second;
+	for (auto it = reginfo->roles.begin(); it != reginfo->roles.end(); it++) {
+		if (*it == name) {
+			reginfo->roles.erase(it);
+			break;
+		}
+	}
+
+	return false;
+}
+
 void register_component::dump() const
 {
 	std::lock_guard<std::recursive_mutex> lock(mut_map);
 
-	for (auto& it : map_comp_name) {
-		const register_info *reginfo = it.second;
+	for (auto& elem : map_comp_name) {
+		const register_info *reginfo = elem.second;
 		const OMX_MF_COMPONENT_INFO *comp_info = reginfo->comp_info;
 		std::string roles;
 
 		//Enum roles
-		for (auto& it_r : reginfo->roles) {
-			roles += it_r + ", ";
+		for (auto& elem_r : reginfo->roles) {
+			roles += elem_r + ", ";
 		}
 		if (roles.size() == 0) {
 			roles = "(empty)";
@@ -210,7 +238,7 @@ void register_component::dump() const
 			"    constructor: %p\n"
 			"    destructor : %p\n"
 			" roles     : %s\n",
-			it.first.c_str(),
+			elem.first.c_str(),
 			reginfo,
 			reginfo->name.c_str(),
 			reginfo->cano_name.c_str(),
@@ -305,12 +333,12 @@ void register_component::unload_components(void)
 {
 	int result;
 
-	for (auto& it: map_lib_name) {
-		result = dlclose(it.second);
+	for (auto& elem: map_lib_name) {
+		result = dlclose(elem.second);
 		if (result != 0) {
 			errprint("Library '%s' cannot close. "
 					"Ignored.\n",
-				it.first.c_str());
+				elem.first.c_str());
 		}
 	}
 	map_lib_name.clear();

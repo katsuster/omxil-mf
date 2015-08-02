@@ -34,8 +34,8 @@ omxil_comp::~omxil_comp()
 	OMX_ERRORTYPE result;
 
 	//Remove buffer list
-	for (auto& it : map_buflist) {
-		delete it.second;
+	for (auto& elem : map_buflist) {
+		delete elem.second;
 	}
 
 	result = OMX_FreeHandle(comp);

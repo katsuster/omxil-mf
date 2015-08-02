@@ -83,8 +83,8 @@ public:
 
 	virtual ~comp_test_tunnel_setup()
 	{
-		for (auto& it : def_all) {
-			delete it.second;
+		for (auto& elem : def_all) {
+			delete elem.second;
 		}
 	}
 
