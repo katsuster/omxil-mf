@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
 	}
 
 	snprintf(name_comp, sizeof(name_comp), arg_comp);
-	for (auto& it : name_roles) {
-		it = new OMX_U8[OMX_MAX_STRINGNAME_SIZE];
+	for (auto& elem : name_roles) {
+		elem = new OMX_U8[OMX_MAX_STRINGNAME_SIZE];
 	}
 
 	num_roles = name_roles.size();
@@ -53,8 +53,8 @@ int main(int argc, char *argv[])
 	}
 
 
-	for (auto& it : name_roles) {
-		free(it);
+	for (auto& elem : name_roles) {
+		delete[] elem;
 	}
 	name_roles.fill(nullptr);
 
@@ -67,8 +67,8 @@ int main(int argc, char *argv[])
 	return 0;
 
 err_out3:
-	for (auto& it : name_roles) {
-		free(it);
+	for (auto& elem : name_roles) {
+		delete[] elem;
 	}
 	name_roles.fill(nullptr);
 
