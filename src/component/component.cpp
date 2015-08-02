@@ -236,7 +236,7 @@ OMX_ERRORTYPE component::GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRI
 	}
 
 	//name
-	strncpy(pComponentName, get_component_name().c_str(), 128);
+	strncpy(pComponentName, get_component_name().c_str(), OMX_MAX_STRINGNAME_SIZE);
 	
 	//component version (default is 1.0.0.0)
 	pComponentVersion->s.nVersionMajor = 1;

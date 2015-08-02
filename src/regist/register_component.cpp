@@ -60,7 +60,7 @@ std::size_t register_component::size() const
 	return map_comp_name.size();
 }
 
-bool register_component::insert(const char *name, const OMX_MF_COMPONENT_INFO *info)
+bool register_component::insert(const char *name, const char *cano, const OMX_MF_COMPONENT_INFO *info)
 {
 	scoped_log_begin;
 	std::lock_guard<std::recursive_mutex> lock(mut_map);
@@ -69,11 +69,12 @@ bool register_component::insert(const char *name, const OMX_MF_COMPONENT_INFO *i
 	std::pair<map_component_type::iterator, bool> pairret;
 
 	rinfo->name = strname;
+	rinfo->cano_name = cano;
 	rinfo->comp_info = info;
-	pairret = map_comp_name.insert(map_component_pair(strname, rinfo));
+	pairret = map_comp_name.insert(map_component_type::value_type(strname, rinfo));
 	if (!pairret.second) {
 		//already existed
-		errprint("Component '%s' already existed.\n", 
+		errprint("Component '%s' already existed.\n",
 			strname.c_str());
 		delete rinfo;
 		return false;
@@ -92,7 +93,7 @@ register_info *register_component::find(const char *name)
 	it = map_comp_name.find(strname);
 	if (it == map_comp_name.end()) {
 		//not found
-		errprint("Component '%s' not found.\n", 
+		errprint("Component '%s' not found.\n",
 			strname.c_str());
 		return nullptr;
 	}
@@ -110,7 +111,7 @@ register_info *register_component::find_index(int index)
 		return nullptr;
 	}
 
-	for (auto& it: map_comp_name) {
+	for (auto& it : map_comp_name) {
 		if (i == index) {
 			return it.second;
 		}
@@ -118,7 +119,7 @@ register_info *register_component::find_index(int index)
 	}
 
 	//not found
-	errprint("Component index:%d not found.\n", 
+	errprint("Component index:%d not found.\n",
 		index);
 
 	return nullptr;
@@ -134,7 +135,7 @@ bool register_component::erase(const char *name)
 	it = map_comp_name.find(strname);
 	if (it == map_comp_name.end()) {
 		//not found
-		errprint("Component '%s' not erased.\n", 
+		errprint("Component '%s' not erased.\n",
 			strname.c_str());
 		return false;
 	}
@@ -150,7 +151,7 @@ void register_component::clear()
 	scoped_log_begin;
 	std::lock_guard<std::recursive_mutex> lock(mut_map);
 
-	for (auto& it: map_comp_name) {
+	for (auto& it : map_comp_name) {
 		delete it.second->comp_info;
 		delete it.second;
 	}
@@ -158,26 +159,66 @@ void register_component::clear()
 	map_comp_name.clear();
 }
 
+bool register_component::insert_role(const char *name, const char *role)
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lock(mut_map);
+	std::string strname = name;
+	std::string strrole = role;
+	map_component_type::iterator it;
+	register_info *reginfo;
+
+	it = map_comp_name.find(strname);
+	if (it == map_comp_name.end()) {
+		//not found
+		errprint("Component '%s' not found. role '%s'.\n",
+			strname.c_str(), strrole.c_str());
+		return false;
+	}
+
+	reginfo = it->second;
+	reginfo->roles.push_back(strrole);
+
+	return true;
+}
+
 void register_component::dump() const
 {
 	std::lock_guard<std::recursive_mutex> lock(mut_map);
 
-	for (auto& it: map_comp_name) {
+	for (auto& it : map_comp_name) {
 		const register_info *reginfo = it.second;
 		const OMX_MF_COMPONENT_INFO *comp_info = reginfo->comp_info;
+		std::string roles;
 
-		dprint("name      :%s\n"
-			"reginfo  :%p\n"
-			"  comp_info:%p\n"
-			"    version    :0x%08x\n" 
-			"    constructor:%p\n" 
-			"    destructor :%p\n", 
-			it.first.c_str(), 
-			reginfo, 
-			comp_info, 
-			(int)comp_info->version.nVersion, 
-			comp_info->constructor, 
-			comp_info->destructor);
+		//Enum roles
+		for (auto& it_r : reginfo->roles) {
+			roles += it_r + ", ";
+		}
+		if (roles.size() == 0) {
+			roles = "(empty)";
+		} else if (roles.size() > 2) {
+			roles = roles.substr(0, roles.size() - 2);
+		}
+
+		dprint("name      : %s\n"
+			"reginfo  : %p\n"
+			"  name     : %s\n"
+			"  cano_name: %s\n"
+			"  comp_info: %p\n"
+			"    version    : 0x%08x\n"
+			"    constructor: %p\n"
+			"    destructor : %p\n"
+			" roles     : %s\n",
+			it.first.c_str(),
+			reginfo,
+			reginfo->name.c_str(),
+			reginfo->cano_name.c_str(),
+			comp_info,
+			(int)comp_info->version.nVersion,
+			comp_info->constructor,
+			comp_info->destructor,
+			roles.c_str());
 	}
 }
 
@@ -218,7 +259,7 @@ void register_component::load_components(void)
 		if (libhandle == nullptr) {
 			//not found or error
 			errprint("Library '%s' is not found. "
-					"Skipped.\n", 
+					"Skipped.\n",
 				libname.c_str());
 			continue;
 		}
@@ -228,7 +269,7 @@ void register_component::load_components(void)
 		if (entry_func == nullptr) {
 			//not have entry func
 			errprint("Library '%s' does not have entry '%s'. "
-					"Skipped.\n", 
+					"Skipped.\n",
 				libname.c_str(), OMX_MF_ENTRY_FUNCNAME);
 			flag_err = true;
 		}
@@ -238,20 +279,20 @@ void register_component::load_components(void)
 		if (libresult != OMX_ErrorNone) {
 			//failed to regist
 			errprint("Library '%s' entry '%s' was failed. "
-					"Skipped.\n", 
+					"Skipped.\n",
 				libname.c_str(), OMX_MF_ENTRY_FUNCNAME);
 			flag_err = true;
 		}
 
-		if (flag_err) {
+		if (!flag_err) {
 			//success, remember it
-			map_lib_name.insert(map_library_pair(libname, libhandle));
+			map_lib_name.insert(map_library_type::value_type(libname, libhandle));
 		} else {
 			//failed, clean up
 			result = dlclose(libhandle);
 			if (result != 0) {
 				errprint("Library '%s' cannot close. "
-						"Ignored.\n", 
+						"Ignored.\n",
 					libname.c_str());
 			}
 			flag_err = false;
@@ -268,7 +309,7 @@ void register_component::unload_components(void)
 		result = dlclose(it.second);
 		if (result != 0) {
 			errprint("Library '%s' cannot close. "
-					"Ignored.\n", 
+					"Ignored.\n",
 				it.first.c_str());
 		}
 	}

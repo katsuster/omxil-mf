@@ -15,7 +15,9 @@ namespace mf {
 
 struct register_info {
 	std::string name;
+	std::string cano_name;
 	const OMX_MF_COMPONENT_INFO *comp_info;
+	std::vector<std::string> roles;
 };
 
 class register_component {
@@ -24,10 +26,7 @@ public:
 	//typedef xxxx super;
 
 	typedef std::map<std::string, void *> map_library_type;
-	typedef std::pair<std::string, void *> map_library_pair;
-	
 	typedef std::map<std::string, register_info *> map_component_type;
-	typedef std::pair<std::string, register_info *> map_component_pair;
 
 	/**
 	 * Initialize this instance.
@@ -61,11 +60,12 @@ public:
 	/**
 	 * Register new component to this OMX IL library.
 	 *
-	 * @param name  Name of new component.
+	 * @param name  Name or Alias name of new component.
+	 * @param cano  Canonical name of new component.
 	 * @param info  Settings and parameters of new component.
 	 * @return true if successful, false if failed.
 	 */
-	virtual bool insert(const char *name, const OMX_MF_COMPONENT_INFO *info);
+	virtual bool insert(const char *name, const char *cano, const OMX_MF_COMPONENT_INFO *info);
 
 	/**
 	 * Find the registered component by name.
@@ -92,6 +92,15 @@ public:
 	virtual bool erase(const char *name);
 
 	/**
+	 * Register new role of component.
+	 *
+	 * @param role  Name of new role.
+	 * @param name  Name or Alias name of component.
+	 * @return true if successful, false if failed.
+	 */
+	virtual bool insert_role(const char *name, const char *role);
+
+	/**
 	 * Unregister all components from this OMX IL library.
 	 */
 	virtual void clear();
@@ -116,15 +125,17 @@ private:
 	map_library_type map_lib_name;
 	map_component_type map_comp_name;
 
+	std::map<std::string, std::vector<std::string>> map_role;
+
 
 public:
 	/**
 	 * Get the singleton instance of this class.
 	 *
-	 * 1st time          : Create instance, call init() 
+	 * 1st time          : Create instance, call init()
 	 * and return the pointer of instance.
 	 *
-	 * 2nd, 3rd, ... time: Return the pointer of instance 
+	 * 2nd, 3rd, ... time: Return the pointer of instance
 	 * created at 1st time.
 	 *
 	 * @return Pointer of singleton instance of this class.

@@ -23,17 +23,17 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void);
 
 /**
  * Constructor method of component.
- * 
+ *
  * @param cComponent: Pointer of OMX_COMPONENTTYPE allocated by OpenMAX MF lib.
  * @param name      : Name of component. ex: "OMX.CompanyName.XXX.YYY"
- * @return Casted (void *) pointer component class or inherited class instance, 
+ * @return Casted (void *) pointer component class or inherited class instance,
  * nullptr if failed.
  */
 typedef void *OMX_APIENTRY (*OMX_MF_CONSTRUCTOR_FUNC)(OMX_COMPONENTTYPE *cComponent, const char *name);
 
 /**
  * Destructor method of component.
- * 
+ *
  * @param cComponent: Pointer of OMX_COMPONENTTYPE allocated by OpenMAX MF lib.
  */
 typedef void OMX_APIENTRY (*OMX_MF_DESTRUCTOR_FUNC)(OMX_COMPONENTTYPE *cComponent);

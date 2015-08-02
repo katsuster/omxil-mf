@@ -18,7 +18,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponent(const char *name, co
 	OMX_MF_COMPONENT_INFO *comp_info = new OMX_MF_COMPONENT_INFO(*info);
 	bool res;
 
-	res = rc->insert(name, comp_info);
+	res = rc->insert(name, name, comp_info);
 	if (!res) {
 		//Component has already existed
 		delete comp_info;
@@ -47,10 +47,10 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponentAlias(const char *nam
 
 	//Copy component info.
 	//Reason: OMX_FreeHandle() call 'delete' for all key.
-	//        If we use shallow copy of component_info, 
+	//        If we use shallow copy of component_info,
 	//        OMX_FreeHandle() faces double-free and SEGV.
 	comp_info = new OMX_MF_COMPONENT_INFO(*rinfo->comp_info);
-	res = rc->insert(alias, comp_info);
+	res = rc->insert(alias, rinfo->cano_name.c_str(), comp_info);
 	if (!res) {
 		//Alias has already existed
 		delete comp_info;
@@ -66,8 +66,16 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponentAlias(const char *nam
 OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_RegisterComponentRole(const char *name, const char *role)
 {
 	scoped_log_begin;
-	return OMX_ErrorNotImplemented;
-	//return OMX_ErrorNone;
+	mf::register_component *rc = mf::register_component::get_instance();
+	bool res;
+
+	res = rc->insert_role(name, role);
+	if (!res) {
+		//Not found component
+		return OMX_ErrorInvalidComponentName;
+	}
+
+	return OMX_ErrorNone;
 }
 
 } //extern "C"
