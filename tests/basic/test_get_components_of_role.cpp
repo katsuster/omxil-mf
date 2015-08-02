@@ -1,21 +1,19 @@
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
+#include <array>
 
 #include <OMX_Core.h>
 
 #include "common/test_omxil.h"
 #include "common/omxil_utils.h"
 
-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-
-
 int main(int argc, char *argv[])
 {
 	const char *arg_role;
 	char name_role[OMX_MAX_STRINGNAME_SIZE];
-	OMX_U32 num_comps;
-	OMX_U8 *name_comps[128] = {NULL, };
+	OMX_U32 num_comps, acc_comps;
+	std::array<OMX_U8 *, 128> name_comps = {nullptr, };
 	OMX_ERRORTYPE result;
 	OMX_U32 i;
 
@@ -35,19 +33,18 @@ int main(int argc, char *argv[])
 	}
 
 	snprintf(name_role, sizeof(name_role), arg_role);
-	num_comps = ARRAY_SIZE(name_comps);
-	for (i = 0; i < ARRAY_SIZE(name_comps); i++) {
-		name_comps[i] = (OMX_U8 *)malloc(OMX_MAX_STRINGNAME_SIZE);
-		if (name_comps[i] == NULL) {
-			result = OMX_ErrorInsufficientResources;
-			goto err_out3;
-		}
+	for (auto& it : name_comps) {
+		it = new OMX_U8[OMX_MAX_STRINGNAME_SIZE];
 	}
-	result = OMX_GetComponentsOfRole(name_role, &num_comps, name_comps);
+
+	num_comps = name_comps.size();
+	acc_comps = name_comps.size();
+	result = OMX_GetComponentsOfRole(name_role, &acc_comps, &name_comps.front());
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "OMX_GetComponentsOfRole failed.\n");
 		goto err_out3;
 	}
+	num_comps = std::min(num_comps, acc_comps);
 
 	printf("OMX_GetComponentsOfRole: "
 		"role:'%s', comps:%d\n", name_role, (int)num_comps);
@@ -56,10 +53,10 @@ int main(int argc, char *argv[])
 	}
 
 
-	for (i = 0; i < ARRAY_SIZE(name_comps); i++) {
-		free(name_comps[i]);
-		name_comps[i] = NULL;
+	for (auto& it : name_comps) {
+		free(it);
 	}
+	name_comps.fill(nullptr);
 
 	result = OMX_Deinit();
 	if (result != OMX_ErrorNone) {
@@ -70,10 +67,10 @@ int main(int argc, char *argv[])
 	return 0;
 
 err_out3:
-	for (i = 0; i < ARRAY_SIZE(name_comps); i++) {
-		free(name_comps[i]);
-		name_comps[i] = NULL;
+	for (auto& it : name_comps) {
+		free(it);
 	}
+	name_comps.fill(nullptr);
 
 //err_out2:
 	OMX_Deinit();

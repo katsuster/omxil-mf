@@ -1,21 +1,19 @@
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
+#include <array>
 
 #include <OMX_Core.h>
 
 #include "common/test_omxil.h"
 #include "common/omxil_utils.h"
 
-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-
-
 int main(int argc, char *argv[])
 {
 	const char *arg_comp;
 	char name_comp[OMX_MAX_STRINGNAME_SIZE];
-	OMX_U32 num_roles;
-	OMX_U8 *name_roles[128] = {NULL, };
+	OMX_U32 num_roles, acc_roles;
+	std::array<OMX_U8 *, 128> name_roles = {nullptr, };
 	OMX_ERRORTYPE result;
 	OMX_U32 i;
 
@@ -35,19 +33,18 @@ int main(int argc, char *argv[])
 	}
 
 	snprintf(name_comp, sizeof(name_comp), arg_comp);
-	num_roles = ARRAY_SIZE(name_roles);
-	for (i = 0; i < ARRAY_SIZE(name_roles); i++) {
-		name_roles[i] = (OMX_U8 *)malloc(OMX_MAX_STRINGNAME_SIZE);
-		if (name_roles[i] == NULL) {
-			result = OMX_ErrorInsufficientResources;
-			goto err_out3;
-		}
+	for (auto& it : name_roles) {
+		it = new OMX_U8[OMX_MAX_STRINGNAME_SIZE];
 	}
-	result = OMX_GetRolesOfComponent(name_comp, &num_roles, name_roles);
+
+	num_roles = name_roles.size();
+	acc_roles = name_roles.size();
+	result = OMX_GetRolesOfComponent(name_comp, &acc_roles, &name_roles.front());
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "OMX_GetRolesOfComponent failed.\n");
 		goto err_out3;
 	}
+	num_roles = std::min(num_roles, acc_roles);
 
 	printf("OMX_GetRolesOfComponent: "
 		"component:'%s', roles:%d\n", name_comp, (int)num_roles);
@@ -56,10 +53,10 @@ int main(int argc, char *argv[])
 	}
 
 
-	for (i = 0; i < ARRAY_SIZE(name_roles); i++) {
-		free(name_roles[i]);
-		name_roles[i] = NULL;
+	for (auto& it : name_roles) {
+		free(it);
 	}
+	name_roles.fill(nullptr);
 
 	result = OMX_Deinit();
 	if (result != OMX_ErrorNone) {
@@ -70,10 +67,10 @@ int main(int argc, char *argv[])
 	return 0;
 
 err_out3:
-	for (i = 0; i < ARRAY_SIZE(name_roles); i++) {
-		free(name_roles[i]);
-		name_roles[i] = NULL;
+	for (auto& it : name_roles) {
+		free(it);
 	}
+	name_roles.fill(nullptr);
 
 //err_out2:
 	OMX_Deinit();
