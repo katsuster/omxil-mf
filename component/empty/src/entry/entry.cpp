@@ -120,6 +120,21 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 		func_result = result;
 	}
 
+	//role
+	result = OMX_MF_RegisterComponentRole(READER_ZERO_NAME, READER_ZERO_A_ROLE);
+	if (result != OMX_ErrorNone) {
+		errprint("Warning: Failed to register role '%s' of '%s'.\n",
+			READER_ZERO_A_ROLE, READER_ZERO_NAME);
+		func_result = result;
+	}
+
+	result = OMX_MF_RegisterComponentRole(READER_ZERO_NAME, READER_ZERO_V_ROLE);
+	if (result != OMX_ErrorNone) {
+		errprint("Warning: Failed to register role '%s' of '%s'.\n",
+			READER_ZERO_V_ROLE, READER_ZERO_NAME);
+		func_result = result;
+	}
+
 
 	//register render_null component
 	comp_info.constructor = renderer_null_constructor;
@@ -172,6 +187,20 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_MF_LibEntry(void)
 		func_result = result;
 	}
 
+	//role
+	result = OMX_MF_RegisterComponentRole(FILTER_COPY_NAME, FILTER_COPY_A_ROLE);
+	if (result != OMX_ErrorNone) {
+		errprint("Warning: Failed to register role '%s' of '%s'.\n",
+			FILTER_COPY_A_ROLE, FILTER_COPY_NAME);
+		func_result = result;
+	}
+
+	result = OMX_MF_RegisterComponentRole(FILTER_COPY_NAME, FILTER_COPY_V_ROLE);
+	if (result != OMX_ErrorNone) {
+		errprint("Warning: Failed to register role '%s' of '%s'.\n",
+			FILTER_COPY_V_ROLE, FILTER_COPY_NAME);
+		func_result = result;
+	}
 
 	return func_result;
 }

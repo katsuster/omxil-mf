@@ -181,8 +181,27 @@ OMX_API OMX_ERRORTYPE OMX_GetContentPipe(OMX_OUT OMX_HANDLETYPE *hPipe, OMX_IN O
 OMX_API OMX_ERRORTYPE OMX_ComponentOfRoleEnum(OMX_OUT OMX_STRING compName, OMX_IN OMX_STRING role, OMX_IN OMX_U32 nIndex)
 {
 	scoped_log_begin;
-	return OMX_ErrorNotImplemented;
-	//return OMX_ErrorNone;
+	mf::register_component *rc = mf::register_component::get_instance();
+	const std::vector<std::string> *comps = nullptr;
+
+	if (role == nullptr) {
+		return OMX_ErrorBadParameter;
+	}
+
+	comps = rc->find_by_role(role);
+	if (comps == nullptr) {
+		errprint("Invalid role name '%s'.\n", role);
+		return OMX_ErrorBadParameter;
+	}
+
+	if (nIndex >= comps->size()) {
+		return OMX_ErrorNoMore;
+	}
+
+	strncpy(compName, comps->at(nIndex).c_str(), OMX_MAX_STRINGNAME_SIZE - 1);
+	role[OMX_MAX_STRINGNAME_SIZE - 1] = '\0';
+
+	return OMX_ErrorNone;
 }
 
 //OpenMAX 1.2.0
@@ -216,8 +235,35 @@ OMX_API OMX_ERRORTYPE OMX_RoleOfComponentEnum(OMX_OUT OMX_STRING role, OMX_IN OM
 OMX_API OMX_ERRORTYPE OMX_GetComponentsOfRole(OMX_IN OMX_STRING role, OMX_INOUT OMX_U32 *pNumComps, OMX_INOUT OMX_U8 **compNames)
 {
 	scoped_log_begin;
-	return OMX_ErrorNotImplemented;
-	//return OMX_ErrorNone;
+	char comp_name[OMX_MAX_STRINGNAME_SIZE];
+	OMX_U32 size;
+	OMX_ERRORTYPE result = OMX_ErrorBadParameter;
+	OMX_U32 i;
+
+	if (role == nullptr || pNumComps == nullptr || compNames == nullptr) {
+		return OMX_ErrorBadParameter;
+	}
+
+	size = *pNumComps;
+	i = 0;
+	*pNumComps = 0;
+	for (i = 0; ; i++) {
+		result = OMX_ComponentOfRoleEnum(comp_name, role, i);
+		if (result == OMX_ErrorNoMore) {
+			result = OMX_ErrorNone;
+			*pNumComps = i;
+			break;
+		} else if (result != OMX_ErrorNone) {
+			break;
+		}
+
+		if (i < size) {
+			strncpy((char *)compNames[i], comp_name, OMX_MAX_STRINGNAME_SIZE - 1);
+			compNames[i][OMX_MAX_STRINGNAME_SIZE - 1] = '\0';
+		}
+	}
+
+	return result;
 }
 
 //OpenMAX 1.1.2
@@ -226,7 +272,7 @@ OMX_API OMX_ERRORTYPE OMX_GetRolesOfComponent(OMX_IN OMX_STRING compName, OMX_IN
 	scoped_log_begin;
 	char role_name[OMX_MAX_STRINGNAME_SIZE];
 	OMX_U32 size;
-	OMX_ERRORTYPE result;
+	OMX_ERRORTYPE result = OMX_ErrorBadParameter;
 	OMX_U32 i;
 
 	if (compName == nullptr || pNumRoles == nullptr || roles == nullptr) {
@@ -239,7 +285,10 @@ OMX_API OMX_ERRORTYPE OMX_GetRolesOfComponent(OMX_IN OMX_STRING compName, OMX_IN
 	for (i = 0; ; i++) {
 		result = OMX_RoleOfComponentEnum(role_name, compName, i);
 		if (result == OMX_ErrorNoMore) {
+			result = OMX_ErrorNone;
 			*pNumRoles = i;
+			break;
+		} else if (result != OMX_ErrorNone) {
 			break;
 		}
 
@@ -249,7 +298,7 @@ OMX_API OMX_ERRORTYPE OMX_GetRolesOfComponent(OMX_IN OMX_STRING compName, OMX_IN
 		}
 	}
 
-	return OMX_ErrorNone;
+	return result;
 }
 
 } //extern "C"

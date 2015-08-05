@@ -27,6 +27,7 @@ public:
 
 	typedef std::map<std::string, void *> map_library_type;
 	typedef std::map<std::string, register_info *> map_component_type;
+	typedef std::map<std::string, std::vector<std::string>> map_role_type;
 
 	/**
 	 * Initialize this instance.
@@ -101,6 +102,23 @@ public:
 	virtual bool insert_role(const char *name, const char *role);
 
 	/**
+	 * Unregister the role from component.
+	 *
+	 * @param role  Name of role.
+	 * @param name  Name or Alias name of component.
+	 * @return true if successful, false if failed.
+	 */
+	virtual bool erase_role(const char *name, const char *role);
+
+	/**
+	 * Find the registered component by role.
+	 *
+	 * @param role  Name of role.
+	 * @return Pointer of component name list.
+	 */
+	virtual const std::vector<std::string> *find_by_role(const char *role);
+
+	/**
 	 * Unregister all components from this OMX IL library.
 	 */
 	virtual void clear();
@@ -124,8 +142,7 @@ private:
 	mutable std::recursive_mutex mut_map;
 	map_library_type map_lib_name;
 	map_component_type map_comp_name;
-
-	std::map<std::string, std::vector<std::string>> map_role;
+	map_role_type map_role_name;
 
 
 public:

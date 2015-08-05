@@ -1,4 +1,5 @@
 
+#include <algorithm>
 #include <fstream>
 #include <mutex>
 
@@ -165,19 +166,29 @@ bool register_component::insert_role(const char *name, const char *role)
 	std::lock_guard<std::recursive_mutex> lock(mut_map);
 	std::string strname = name;
 	std::string strrole = role;
-	map_component_type::iterator it;
 	register_info *reginfo;
+	map_role_type::iterator itr;
+	std::pair<map_role_type::iterator, bool> pairret;
 
-	it = map_comp_name.find(strname);
-	if (it == map_comp_name.end()) {
+	//Insert role of component
+	auto itc = map_comp_name.find(strname);
+	if (itc == map_comp_name.end()) {
 		//not found
 		errprint("Component '%s' not found. role '%s'.\n",
 			strname.c_str(), strrole.c_str());
 		return false;
 	}
 
-	reginfo = it->second;
+	reginfo = itc->second;
 	reginfo->roles.push_back(strrole);
+
+	//Insert component of role
+	itr = map_role_name.find(strrole);
+	if (itr == map_role_name.end()) {
+		pairret = map_role_name.insert(map_role_type::value_type(strrole, std::vector<std::string>()));
+		itr = pairret.first;
+	}
+	itr->second.push_back(strname);
 
 	return true;
 }
@@ -188,26 +199,58 @@ bool register_component::erase_role(const char *name, const char *role)
 	std::lock_guard<std::recursive_mutex> lock(mut_map);
 	std::string strname = name;
 	std::string strrole = role;
-	map_component_type::iterator it;
 	register_info *reginfo;
 
-	it = map_comp_name.find(strname);
-	if (it == map_comp_name.end()) {
+	//Erase role of component
+	auto itrolec = map_comp_name.find(strname);
+	if (itrolec == map_comp_name.end()) {
 		//not found
-		errprint("Component '%s' not found. role '%s'.\n",
+		errprint("Role '%s' of Component '%s' not found.\n",
+			strrole.c_str(), strname.c_str());
+		return false;
+	}
+
+	reginfo = itrolec->second;
+	auto itroler = std::find(reginfo->roles.begin(), reginfo->roles.end(), strname);
+	if (itroler == reginfo->roles.end()) {
+		//not found
+		errprint("Role '%s' not found.\n",
+			strrole.c_str());
+		return false;
+	}
+	reginfo->roles.erase(itroler);
+
+	//Erase component of role
+	auto itcompr = map_role_name.find(strrole);
+	if (itcompr == map_role_name.end()) {
+		errprint("Component '%s' of Role '%s' not found.\n",
 			strname.c_str(), strrole.c_str());
 		return false;
 	}
 
-	reginfo = it->second;
-	for (auto it = reginfo->roles.begin(); it != reginfo->roles.end(); it++) {
-		if (*it == name) {
-			reginfo->roles.erase(it);
-			break;
-		}
+	std::vector<std::string>& it_vec = itcompr->second;
+	auto itcompc = std::find(it_vec.begin(), it_vec.end(), strname);
+	if (itcompc == it_vec.end()) {
+		errprint("Component '%s' not found.\n",
+			strname.c_str());
+		return false;
+	}
+	it_vec.erase(itcompc);
+
+	return true;
+}
+
+const std::vector<std::string> *register_component::find_by_role(const char *role)
+{
+	//Erase component of role
+	auto itr = map_role_name.find(role);
+	if (itr == map_role_name.end()) {
+		errprint("Role '%s' not found.\n",
+			role);
+		return nullptr;
 	}
 
-	return false;
+	return &itr->second;
 }
 
 void register_component::dump() const
@@ -247,6 +290,25 @@ void register_component::dump() const
 			comp_info->constructor,
 			comp_info->destructor,
 			roles.c_str());
+	}
+
+	for (auto& elem : map_role_name) {
+		std::string comps;
+
+		//Enum components
+		for (auto& elem_r : elem.second) {
+			comps += elem_r + ", ";
+		}
+		if (comps.size() == 0) {
+			comps = "(empty)";
+		} else if (comps.size() > 2) {
+			comps = comps.substr(0, comps.size() - 2);
+		}
+
+		dprint("role      : %s\n"
+			"  comps    : %s\n",
+			elem.first.c_str(),
+			comps.c_str());
 	}
 }
 
