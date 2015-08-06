@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	const char *arg_role;
 	char name_role[OMX_MAX_STRINGNAME_SIZE];
 	OMX_U32 num_comps, acc_comps;
-	std::array<OMX_U8 *, 128> name_comps = {nullptr, };
+	std::array<OMX_U8 *, 128> name_comps;
 	OMX_ERRORTYPE result;
 	OMX_U32 i;
 
