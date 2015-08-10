@@ -149,6 +149,10 @@ public:
 	virtual OMX_ERRORTYPE get_param_image_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_IMAGE_PARAM_PORTFORMATTYPE *format) const;
 	virtual OMX_ERRORTYPE get_param_video_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_VIDEO_PARAM_PORTFORMATTYPE *format) const;
 	virtual OMX_ERRORTYPE get_param_other_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_OTHER_PARAM_PORTFORMATTYPE *format) const;
+	virtual OMX_ERRORTYPE get_param_audio_format_all(OMX_U32 port_index, std::vector<OMX_AUDIO_PARAM_PORTFORMATTYPE> *formats) const;
+	virtual OMX_ERRORTYPE get_param_image_format_all(OMX_U32 port_index, std::vector<OMX_IMAGE_PARAM_PORTFORMATTYPE> *formats) const;
+	virtual OMX_ERRORTYPE get_param_video_format_all(OMX_U32 port_index, std::vector<OMX_VIDEO_PARAM_PORTFORMATTYPE> *formats) const;
+	virtual OMX_ERRORTYPE get_param_other_format_all(OMX_U32 port_index, std::vector<OMX_OTHER_PARAM_PORTFORMATTYPE> *formats) const;
 
 public:
 	//Utilities
