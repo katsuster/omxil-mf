@@ -601,11 +601,13 @@ OMX_ERRORTYPE omxil_comp::get_param_audio_format_all(OMX_U32 port_index, std::ve
 			fprintf(stderr, "get_param_audio_format(port:%d, fmt:%d) failed.\n",
 				(int)port_index, (int)j);
 			return result;
+		} else if (result == OMX_ErrorNoMore) {
+			continue;
 		}
 		formats->push_back(fmt);
 
 		j++;
-	} while (result == OMX_ErrorNoMore);
+	} while (result != OMX_ErrorNoMore);
 
 	return OMX_ErrorNone;
 }
@@ -627,11 +629,13 @@ OMX_ERRORTYPE omxil_comp::get_param_image_format_all(OMX_U32 port_index, std::ve
 			fprintf(stderr, "get_param_image_format(port:%d, fmt:%d) failed.\n",
 				(int)port_index, (int)j);
 			return result;
+		} else if (result == OMX_ErrorNoMore) {
+			continue;
 		}
 		formats->push_back(fmt);
 
 		j++;
-	} while (result == OMX_ErrorNoMore);
+	} while (result != OMX_ErrorNoMore);
 
 	return OMX_ErrorNone;
 }
@@ -653,11 +657,13 @@ OMX_ERRORTYPE omxil_comp::get_param_video_format_all(OMX_U32 port_index, std::ve
 			fprintf(stderr, "get_param_video_format(port:%d, fmt:%d) failed.\n",
 				(int)port_index, (int)j);
 			return result;
+		} else if (result == OMX_ErrorNoMore) {
+			continue;
 		}
 		formats->push_back(fmt);
 
 		j++;
-	} while (result == OMX_ErrorNoMore);
+	} while (result != OMX_ErrorNoMore);
 
 	return OMX_ErrorNone;
 }
@@ -679,11 +685,13 @@ OMX_ERRORTYPE omxil_comp::get_param_other_format_all(OMX_U32 port_index, std::ve
 			fprintf(stderr, "get_param_other_format(port:%d, fmt:%d) failed.\n",
 				(int)port_index, (int)j);
 			return result;
+		} else if (result == OMX_ErrorNoMore) {
+			continue;
 		}
 		formats->push_back(fmt);
 
 		j++;
-	} while (result == OMX_ErrorNoMore);
+	} while (result != OMX_ErrorNoMore);
 
 	return OMX_ErrorNone;
 }

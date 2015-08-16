@@ -14,7 +14,7 @@ port_audio::port_audio(int ind, component *c)
 	: port(ind, c),
 	mime_type(nullptr), native_render(nullptr),
 	flag_error_concealment(OMX_FALSE),
-	encoding(OMX_AUDIO_CodingUnused)
+	default_format(-1)
 {
 	scoped_log_begin;
 
@@ -64,12 +64,13 @@ void port_audio::set_flag_error_concealment(OMX_BOOL v)
 
 OMX_AUDIO_CODINGTYPE port_audio::get_encoding() const
 {
-	return encoding;
-}
+	const OMX_AUDIO_PARAM_PORTFORMATTYPE *f = get_default_format();
 
-void port_audio::set_encoding(OMX_AUDIO_CODINGTYPE v)
-{
-	encoding = v;
+	if (f == nullptr) {
+		return OMX_AUDIO_CodingUnused;
+	} else {
+		return f->eEncoding;
+	}
 }
 
 const OMX_PARAM_PORTDEFINITIONTYPE *port_audio::get_definition() const
@@ -81,9 +82,61 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port_audio::get_definition() const
 	definition.format.audio.cMIMEType     = mime_type;
 	definition.format.audio.pNativeRender = native_render;
 	definition.format.audio.bFlagErrorConcealment = flag_error_concealment;
-	definition.format.audio.eEncoding     = encoding;
+	definition.format.audio.eEncoding     = get_encoding();
 
 	return &definition;
+}
+
+const OMX_AUDIO_PARAM_PORTFORMATTYPE *port_audio::get_supported_format(size_t index) const
+{
+	if (index < 0 || formats.size() <= index) {
+		return nullptr;
+	}
+
+	return &formats.at(index);
+}
+
+OMX_ERRORTYPE port_audio::add_supported_format(const OMX_AUDIO_PARAM_PORTFORMATTYPE *f)
+{
+	OMX_AUDIO_PARAM_PORTFORMATTYPE fmt;
+
+	if (f == nullptr) {
+		return OMX_ErrorBadParameter;
+	}
+
+	fmt = *f;
+	fmt.nPortIndex = 0;
+	fmt.nIndex = 0;
+	formats.push_back(fmt);
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port_audio::remove_supported_format(size_t index)
+{
+	if (index < 0 || formats.size() <= index) {
+		return OMX_ErrorBadParameter;
+	}
+
+	formats.erase(formats.begin() + index);
+
+	return OMX_ErrorNone;
+}
+
+const OMX_AUDIO_PARAM_PORTFORMATTYPE *port_audio::get_default_format() const
+{
+	return get_supported_format(default_format);
+}
+
+OMX_ERRORTYPE port_audio::set_default_format(size_t index)
+{
+	if (index < 0 || formats.size() <= index) {
+		return OMX_ErrorBadParameter;
+	}
+
+	default_format = index;
+
+	return OMX_ErrorNone;
 }
 
 } //namespace mf

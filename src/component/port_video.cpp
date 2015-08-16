@@ -14,9 +14,9 @@ port_video::port_video(int ind, component *c)
 	: port(ind, c),
 	mime_type(nullptr), native_render(nullptr),
 	frame_width(0), frame_height(0), stride(0), slice_height(0),
-	bitrate(0), framerate(0), flag_error_concealment(OMX_FALSE),
-	compression_format(OMX_VIDEO_CodingUnused),
-	color_format(OMX_COLOR_FormatUnused), native_window(nullptr)
+	bitrate(0), flag_error_concealment(OMX_FALSE),
+	native_window(nullptr),
+	default_format(-1)
 {
 	scoped_log_begin;
 
@@ -106,12 +106,13 @@ void port_video::set_bitrate(OMX_U32 v)
 
 OMX_U32 port_video::get_framerate() const
 {
-	return framerate;
-}
+	const OMX_VIDEO_PARAM_PORTFORMATTYPE *f = get_default_format();
 
-void port_video::set_framerate(OMX_U32 v)
-{
-	framerate = v;
+	if (f == nullptr) {
+		return 0;
+	} else {
+		return f->xFramerate;
+	}
 }
 
 OMX_BOOL port_video::get_flag_error_concealment() const
@@ -126,22 +127,24 @@ void port_video::set_flag_error_concealment(OMX_BOOL v)
 
 OMX_VIDEO_CODINGTYPE port_video::get_compression_format() const
 {
-	return compression_format;
-}
+	const OMX_VIDEO_PARAM_PORTFORMATTYPE *f = get_default_format();
 
-void port_video::set_compression_format(OMX_VIDEO_CODINGTYPE v)
-{
-	compression_format = v;
+	if (f == nullptr) {
+		return OMX_VIDEO_CodingUnused;
+	} else {
+		return f->eCompressionFormat;
+	}
 }
 
 OMX_COLOR_FORMATTYPE port_video::get_color_format() const
 {
-	return color_format;
-}
+	const OMX_VIDEO_PARAM_PORTFORMATTYPE *f = get_default_format();
 
-void port_video::set_color_format(OMX_COLOR_FORMATTYPE v)
-{
-	color_format = v;
+	if (f == nullptr) {
+		return OMX_COLOR_FormatUnused;
+	} else {
+		return f->eColorFormat;
+	}
 }
 
 OMX_NATIVE_WINDOWTYPE port_video::get_native_window() const
@@ -167,13 +170,65 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port_video::get_definition() const
 	definition.format.video.nStride       = stride;
 	definition.format.video.nSliceHeight  = slice_height;
 	definition.format.video.nBitrate      = bitrate;
-	definition.format.video.xFramerate    = framerate;
+	definition.format.video.xFramerate    = get_framerate();
 	definition.format.video.bFlagErrorConcealment = flag_error_concealment;
-	definition.format.video.eCompressionFormat    = compression_format;
-	definition.format.video.eColorFormat  = color_format;
+	definition.format.video.eCompressionFormat    = get_compression_format();
+	definition.format.video.eColorFormat  = get_color_format();
 	definition.format.video.pNativeWindow = native_window;
 
         return &definition;
+}
+
+const OMX_VIDEO_PARAM_PORTFORMATTYPE *port_video::get_supported_format(size_t index) const
+{
+	if (index < 0 || formats.size() <= index) {
+		return nullptr;
+	}
+
+	return &formats.at(index);
+}
+
+OMX_ERRORTYPE port_video::add_supported_format(const OMX_VIDEO_PARAM_PORTFORMATTYPE *f)
+{
+	OMX_VIDEO_PARAM_PORTFORMATTYPE fmt;
+
+	if (f == nullptr) {
+		return OMX_ErrorBadParameter;
+	}
+
+	fmt = *f;
+	fmt.nPortIndex = 0;
+	fmt.nIndex = 0;
+	formats.push_back(fmt);
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port_video::remove_supported_format(size_t index)
+{
+	if (index < 0 || formats.size() <= index) {
+		return OMX_ErrorBadParameter;
+	}
+
+	formats.erase(formats.begin() + index);
+
+	return OMX_ErrorNone;
+}
+
+const OMX_VIDEO_PARAM_PORTFORMATTYPE *port_video::get_default_format() const
+{
+	return get_supported_format(default_format);
+}
+
+OMX_ERRORTYPE port_video::set_default_format(size_t index)
+{
+	if (index < 0 || formats.size() <= index) {
+		return OMX_ErrorBadParameter;
+	}
+
+	default_format = index;
+
+	return OMX_ErrorNone;
 }
 
 } //namespace mf

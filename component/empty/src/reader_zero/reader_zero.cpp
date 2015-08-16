@@ -7,6 +7,8 @@ reader_zero::reader_zero(OMX_COMPONENTTYPE *c, const char *cname)
 	: component(c, cname),
 	out_port_video(nullptr)
 {
+	OMX_VIDEO_PARAM_PORTFORMATTYPE f;
+
 	try {
 		out_port_video = new port_video(2, this);
 		out_port_video->set_dir(OMX_DirOutput);
@@ -14,10 +16,13 @@ reader_zero::reader_zero(OMX_COMPONENTTYPE *c, const char *cname)
 		out_port_video->set_buffer_count_min(1);
 		out_port_video->set_buffer_size(65536);
 		out_port_video->set_buffer_alignment(64);
-		out_port_video->set_compression_format(OMX_VIDEO_CodingUnused);
-		out_port_video->set_color_format(OMX_COLOR_FormatYUV420Planar);
-                out_port_video->set_frame_width(640);
-                out_port_video->set_frame_height(480);
+		out_port_video->set_frame_width(640);
+		out_port_video->set_frame_height(480);
+		f.eCompressionFormat = OMX_VIDEO_CodingUnused;
+		f.eColorFormat       = OMX_COLOR_FormatYUV420Planar;
+		f.xFramerate         = 0;
+		out_port_video->add_supported_format(&f);
+		out_port_video->set_default_format(0);
 
 		insert_port(*out_port_video);
 	} catch (const std::bad_alloc& e) {

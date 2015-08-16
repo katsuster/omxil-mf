@@ -480,7 +480,7 @@ OMX_ERRORTYPE port::disable_port()
 		return OMX_ErrorIncorrectStateOperation;
 	}
 
-
+	//TODO: flush all buffers?
 
 	set_enabled(OMX_FALSE);
 
@@ -497,6 +497,7 @@ OMX_ERRORTYPE port::enable_port()
 		return OMX_ErrorIncorrectStateOperation;
 	}
 
+	//TODO: flush all buffers?
 
 	set_enabled(OMX_TRUE);
 

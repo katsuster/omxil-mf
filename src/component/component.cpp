@@ -10,7 +10,10 @@
 #include <OMX_Core.h>
 
 #include <omxil_mf/component.hpp>
-#include <omxil_mf/port.hpp>
+#include <omxil_mf/port_audio.hpp>
+#include <omxil_mf/port_image.hpp>
+#include <omxil_mf/port_video.hpp>
+#include <omxil_mf/port_other.hpp>
 #include <omxil_mf/scoped_log.hpp>
 
 #include "api/consts.hpp"
@@ -302,9 +305,21 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 {
 	scoped_log_begin;
 	port *port_found = nullptr;
+	port_audio *port_found_a = nullptr;
+	port_image *port_found_i = nullptr;
+	port_video *port_found_v = nullptr;
+	port_other *port_found_o = nullptr;
 	OMX_PARAM_PORTDEFINITIONTYPE *def = nullptr;
 	OMX_PARAM_BUFFERSUPPLIERTYPE *supply = nullptr;
 	OMX_PORT_PARAM_TYPE *param = nullptr;
+	OMX_AUDIO_PARAM_PORTFORMATTYPE *pf_audio;
+	OMX_IMAGE_PARAM_PORTFORMATTYPE *pf_image;
+	OMX_VIDEO_PARAM_PORTFORMATTYPE *pf_video;
+	OMX_OTHER_PARAM_PORTFORMATTYPE *pf_other;
+	const OMX_AUDIO_PARAM_PORTFORMATTYPE *pfa_sup;
+	const OMX_IMAGE_PARAM_PORTFORMATTYPE *pfi_sup;
+	const OMX_VIDEO_PARAM_PORTFORMATTYPE *pfv_sup;
+	const OMX_OTHER_PARAM_PORTFORMATTYPE *pfo_sup;
 	//OMX_PRIORITYMGMTTYPE *mgm;
 	void *ptr = nullptr;
 	OMX_ERRORTYPE err;
@@ -409,18 +424,162 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	//case OMX_IndexParamStandardComponentRole:
 	//	(OMX_PARAM_COMPONENTROLETYPE *) ptr;
 	//	break;
-	//case OMX_IndexParamAudioPortFormat:
-	//	(OMX_AUDIO_PARAM_PORTFORMATTYPE *) ptr;
-	//	break;
-	//case OMX_IndexParamVideoPortFormat:
-	//	(OMX_VIDEO_PARAM_PORTFORMATTYPE *) ptr;
-	//	break;
-	//case OMX_IndexParamImagePortFormat:
-	//	(OMX_IMAGE_PARAM_PORTFORMATTYPE *) ptr;
-	//	break;
-	//case OMX_IndexParamOtherPortFormat:
-	//	(OMX_OTHER_PARAM_PORTFORMATTYPE *) ptr;
-	//	break;
+	case OMX_IndexParamAudioPortFormat:
+		pf_audio = (OMX_AUDIO_PARAM_PORTFORMATTYPE *) ptr;
+
+		port_found = find_port(pf_audio->nPortIndex);
+		if (port_found == nullptr) {
+			errprint("invalid port:%d\n", (int)pf_audio->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+
+		if (typeid(*port_found) != typeid(port_audio)) {
+			errprint("port:%d is not audio port.\n", (int)pf_audio->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+		port_found_a = dynamic_cast<port_audio *>(port_found);
+
+		pfa_sup = port_found_a->get_supported_format(pf_audio->nIndex);
+		if (pfa_sup == nullptr) {
+			errprint("port:%d does not have format(index:%d).\n",
+				(int)pf_audio->nPortIndex, (int)pf_audio->nIndex);
+			err = OMX_ErrorNoMore;
+			break;
+		}
+
+		{
+			OMX_AUDIO_PARAM_PORTFORMATTYPE tmp;
+
+			tmp = *pfa_sup;
+			tmp.nSize      = pf_audio->nSize;
+			tmp.nVersion   = pf_audio->nVersion;
+			tmp.nPortIndex = pf_audio->nPortIndex;
+			tmp.nIndex     = pf_audio->nIndex;
+
+			*pf_audio = tmp;
+		}
+
+		err = OMX_ErrorNone;
+		break;
+	case OMX_IndexParamImagePortFormat:
+		pf_image = (OMX_IMAGE_PARAM_PORTFORMATTYPE *) ptr;
+
+		port_found = find_port(pf_image->nPortIndex);
+		if (port_found == nullptr) {
+			errprint("invalid port:%d\n", (int)pf_image->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+
+		if (typeid(*port_found) != typeid(port_image)) {
+			errprint("port:%d is not image port.\n", (int)pf_image->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+		port_found_i = dynamic_cast<port_image *>(port_found);
+
+		pfi_sup = port_found_i->get_supported_format(pf_image->nIndex);
+		if (pfi_sup == nullptr) {
+			errprint("port:%d does not have format(index:%d).\n",
+				(int)pf_image->nPortIndex, (int)pf_image->nIndex);
+			err = OMX_ErrorNoMore;
+			break;
+		}
+
+		{
+			OMX_IMAGE_PARAM_PORTFORMATTYPE tmp;
+
+			tmp = *pfi_sup;
+			tmp.nSize      = pf_image->nSize;
+			tmp.nVersion   = pf_image->nVersion;
+			tmp.nPortIndex = pf_image->nPortIndex;
+			tmp.nIndex     = pf_image->nIndex;
+
+			*pf_image = tmp;
+		}
+
+		err = OMX_ErrorNone;
+		break;
+	case OMX_IndexParamVideoPortFormat:
+		pf_video = (OMX_VIDEO_PARAM_PORTFORMATTYPE *) ptr;
+
+		port_found = find_port(pf_video->nPortIndex);
+		if (port_found == nullptr) {
+			errprint("invalid port:%d\n", (int)pf_video->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+
+		if (typeid(*port_found) != typeid(port_video)) {
+			errprint("port:%d is not video port.\n", (int)pf_video->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+		port_found_v = dynamic_cast<port_video *>(port_found);
+
+		pfv_sup = port_found_v->get_supported_format(pf_video->nIndex);
+		if (pfv_sup == nullptr) {
+			errprint("port:%d does not have format(index:%d).\n",
+				(int)pf_video->nPortIndex, (int)pf_video->nIndex);
+			err = OMX_ErrorNoMore;
+			break;
+		}
+
+		{
+			OMX_VIDEO_PARAM_PORTFORMATTYPE tmp;
+
+			tmp = *pfv_sup;
+			tmp.nSize      = pf_video->nSize;
+			tmp.nVersion   = pf_video->nVersion;
+			tmp.nPortIndex = pf_video->nPortIndex;
+			tmp.nIndex     = pf_video->nIndex;
+
+			*pf_video = tmp;
+		}
+
+		err = OMX_ErrorNone;
+		break;
+	case OMX_IndexParamOtherPortFormat:
+		pf_other = (OMX_OTHER_PARAM_PORTFORMATTYPE *) ptr;
+
+		port_found = find_port(pf_other->nPortIndex);
+		if (port_found == nullptr) {
+			errprint("invalid port:%d\n", (int)pf_other->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+
+		if (typeid(*port_found) != typeid(port_other)) {
+			errprint("port:%d is not other port.\n", (int)pf_other->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+		port_found_o = dynamic_cast<port_other *>(port_found);
+
+		pfo_sup = port_found_o->get_supported_format(pf_other->nIndex);
+		if (pfo_sup == nullptr) {
+			errprint("port:%d does not have format(index:%d).\n",
+				(int)pf_other->nPortIndex, (int)pf_other->nIndex);
+			err = OMX_ErrorNoMore;
+			break;
+		}
+
+		{
+			OMX_OTHER_PARAM_PORTFORMATTYPE tmp;
+
+			tmp = *pfo_sup;
+			tmp.nSize      = pf_other->nSize;
+			tmp.nVersion   = pf_other->nVersion;
+			tmp.nPortIndex = pf_other->nPortIndex;
+			tmp.nIndex     = pf_other->nIndex;
+
+			*pf_other = tmp;
+		}
+
+		err = OMX_ErrorNone;
+		break;
 	//case OMX_IndexParamPriorityMgmt:
 	//	mgm = (OMX_PRIORITYMGMTTYPE *) ptr;
 	//	break;

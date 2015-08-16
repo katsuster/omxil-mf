@@ -7,6 +7,8 @@ renderer_null::renderer_null(OMX_COMPONENTTYPE *c, const char *cname)
 	: component(c, cname),
 	in_port_video(nullptr)
 {
+	OMX_VIDEO_PARAM_PORTFORMATTYPE f;
+
 	try {
 		in_port_video = new port_video(3, this);
 		in_port_video->set_dir(OMX_DirInput);
@@ -14,8 +16,11 @@ renderer_null::renderer_null(OMX_COMPONENTTYPE *c, const char *cname)
 		in_port_video->set_buffer_count_min(1);
 		in_port_video->set_buffer_size(32768);
 		in_port_video->set_buffer_alignment(64);
-		in_port_video->set_compression_format(OMX_VIDEO_CodingAVC);
-		in_port_video->set_color_format(OMX_COLOR_FormatUnused);
+		f.eCompressionFormat = OMX_VIDEO_CodingUnused;
+		f.eColorFormat       = OMX_COLOR_FormatYUV420Planar;
+		f.xFramerate         = 0;
+		in_port_video->add_supported_format(&f);
+		in_port_video->set_default_format(0);
 
 		insert_port(*in_port_video);
 	} catch (const std::bad_alloc& e) {

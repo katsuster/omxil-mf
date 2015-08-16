@@ -51,16 +51,13 @@ public:
 	virtual void set_bitrate(OMX_U32 v);
 
 	virtual OMX_U32 get_framerate() const;
-	virtual void set_framerate(OMX_U32 v);
 
 	virtual OMX_BOOL get_flag_error_concealment() const;
 	virtual void set_flag_error_concealment(OMX_BOOL v);
 
 	virtual OMX_VIDEO_CODINGTYPE get_compression_format() const;
-	virtual void set_compression_format(OMX_VIDEO_CODINGTYPE v);
 
 	virtual OMX_COLOR_FORMATTYPE get_color_format() const;
-	virtual void set_color_format(OMX_COLOR_FORMATTYPE v);
 
 	virtual OMX_NATIVE_WINDOWTYPE get_native_window() const;
 	virtual void set_native_window(OMX_NATIVE_WINDOWTYPE v);
@@ -90,6 +87,46 @@ public:
 	 */
 	virtual const OMX_PARAM_PORTDEFINITIONTYPE *get_definition() const;
 
+	/**
+	 * ポートがサポートするデータの形式を取得します。
+	 *
+	 * @param index データ形式のインデックス
+	 * @return データ形式へのポインタ、取得できなければ nullptr
+	 */
+	virtual const OMX_VIDEO_PARAM_PORTFORMATTYPE *get_supported_format(size_t index) const;
+
+	/**
+	 * ポートがサポートするデータの形式を追加します。
+	 *
+	 * @param f データ形式へのポインタ
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE add_supported_format(const OMX_VIDEO_PARAM_PORTFORMATTYPE *f);
+
+	/**
+	 * ポートがサポートするデータの形式を削除します。
+	 *
+	 * @param index データ形式のインデックス
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE remove_supported_format(size_t index);
+
+	/**
+	 * ポートがデフォルトでサポートするデータの形式を取得します。
+	 *
+	 * @param index データ形式のインデックス
+	 * @return データ形式へのポインタ
+	 */
+	virtual const OMX_VIDEO_PARAM_PORTFORMATTYPE *get_default_format() const;
+
+	/**
+	 * ポートがデフォルトでサポートするデータの形式を設定します。
+	 *
+	 * @param index データ形式のインデックス
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE set_default_format(size_t index);
+
 private:
 	OMX_STRING mime_type;
 	OMX_NATIVE_DEVICETYPE native_render;
@@ -98,11 +135,19 @@ private:
 	OMX_S32 stride;
 	OMX_U32 slice_height;
 	OMX_U32 bitrate;
-	OMX_U32 framerate;
 	OMX_BOOL flag_error_concealment;
-	OMX_VIDEO_CODINGTYPE compression_format;
-	OMX_COLOR_FORMATTYPE color_format;
+	//下記メンバについては、直接設定できません
+	//OMX_XXXXX_PARAM_PORTFORMATTYPE のリスト
+	//（add_supported_format, get_supported_format）
+	//デフォルトフォーマットの設定機能（set_default_format）
+	//を使用してください
+	//  OMX_U32 framerate;
+	//  OMX_VIDEO_CODINGTYPE compression_format;
+	//  OMX_COLOR_FORMATTYPE color_format;
 	OMX_NATIVE_WINDOWTYPE native_window;
+
+	std::vector<OMX_VIDEO_PARAM_PORTFORMATTYPE> formats;
+	int default_format;
 
 };
 
