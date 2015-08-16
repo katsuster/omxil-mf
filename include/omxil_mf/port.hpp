@@ -46,6 +46,8 @@ class port;
 
 /**
  * ポートに渡された OpenMAX バッファです。
+ *
+ * 主に OMX_BUFFERHEADERTYPE にアクセスするためのラッパークラスです。
  */
 struct port_buffer {
 	//バッファを所持しているポート
@@ -55,10 +57,13 @@ struct port_buffer {
 	bool f_allocate;
 	//OpenMAX のバッファヘッダ
 	OMX_BUFFERHEADERTYPE *header;
-	//現在位置（初期値は nOffset）コンポーネント内で、
-	//入力/出力ポートに渡されたバッファの nOffset は変更しない
-	//ただしコンポーネント自身が生成する場合（クロックなど）は、
-	//nOffset の初期値だけ設定する
+	//現在位置（初期値は nOffset）
+	//NOTE: 
+	//OpenMAX IL 1.2.0: 3.1.3.9.2 EmptyBufferDone
+	//OpenMAX IL 1.2.0: 3.1.3.9.3 FillBufferDone によると、
+	//コンポーネントは渡されたバッファの
+	//nOffset と nFilledLen を更新して返す、とあるが、
+	//gst-omx など実際に変更して返すと変な動作をする奴らが多い？
 	OMX_U32 index;
 
 public:
@@ -173,6 +178,7 @@ private:
 	/**
 	 * OpenMAX バッファの現在位置を取得します。
 	 *
+	 * OpenMAX IL 1.1.2: 3.1.2.9.2 EmptyThisBuffer によれば、
 	 * 読み出しの際は、読み出した分だけ index を進め、
 	 * nFilledLen を減じてから通知する仕様のため、
 	 * 現在位置に index を使用します。
@@ -190,6 +196,7 @@ private:
 	 * +++: 有効なデータ、コンポーネントが処理すべきデータ
 	 * </pre>
 	 *
+	 * OpenMAX IL 1.1.2: 3.1.2.9.3 FillBufferDone によれば、
 	 * 書き込みの際は index は書き込んだデータの先頭を指し、
 	 * nFilledLen は書き込んだデータの総量を通知する仕様のため、
 	 * 現在位置に index + nFilledLen を使用します。
