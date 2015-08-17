@@ -426,6 +426,15 @@ void port::update_buffer_status()
 	}
 }
 
+void port::wait_buffer_returned()
+{
+	scoped_log_begin;
+	std::unique_lock<std::recursive_mutex> lk_port(mut);
+
+	cond.wait(lk_port, [&] { return is_broken() || bound_ret->size() == 0; });
+	error_if_broken(lk_port);
+}
+
 const OMX_PARAM_PORTDEFINITIONTYPE *port::get_definition() const
 {
 	scoped_log_begin;
@@ -549,6 +558,7 @@ OMX_ERRORTYPE port::flush_buffers()
 		cnt = bound_send->read_array(&pb, 1);
 		if (cnt != 0) {
 			bound_ret->write_fully(&pb, 1);
+			cond.notify_all();
 		}
 	}
 
@@ -993,6 +1003,7 @@ OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 		pb.header = bufhead;
 
 		bound_ret->write_fully(&pb, 1);
+		cond.notify_all();
 
 		err = OMX_ErrorNone;
 	} catch (const std::runtime_error& e) {
@@ -1040,6 +1051,7 @@ void *port::buffer_done()
 	while (1) {
 		//blocked read
 		bound_ret->read_fully(&pb, 1);
+		cond.notify_all();
 
 		comp = pb.p->get_component();
 

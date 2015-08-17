@@ -439,7 +439,7 @@ public:
 	virtual void set_no_buffer(OMX_BOOL v);
 
 	/**
-	 * ポートのバッファが全てなくなるまで待ちます。
+	 * ポートのバッファが全て解放されるまで待ちます。
 	 *
 	 * 注: 'no buffer' はこのライブラリ独自の用語です。
 	 * OpenMAX IL の用語ではありません。
@@ -488,6 +488,12 @@ public:
 	 * </pre>
 	 */
 	virtual void update_buffer_status();
+
+	/**
+	 * 全てのバッファを EmptyBufferDone あるいは FillBufferDone にて、
+	 * 返却するまで待ちます。
+	 */
+	virtual void wait_buffer_returned();
 
 	/**
 	 * Get OpenMAX IL definition data of this port.

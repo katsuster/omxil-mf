@@ -207,6 +207,17 @@ void component::wait_all_port_no_buffer(OMX_BOOL v)
 	}
 }
 
+void component::wait_all_port_buffer_returned()
+{
+	scoped_log_begin;
+
+	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+		if (it->second.get_enabled()) {
+			it->second.wait_buffer_returned();
+		}
+	}
+}
+
 void component::run()
 {
 	scoped_log_begin;
@@ -1193,7 +1204,7 @@ OMX_ERRORTYPE component::command_state_set_to_loaded()
 		err = OMX_ErrorSameState;
 		break;
 	case OMX_StateIdle:
-		//prepare to flush all ports
+		//Prepare to flush all ports
 		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
 			try {
 				it->second.begin_flush();
@@ -1204,13 +1215,13 @@ OMX_ERRORTYPE component::command_state_set_to_loaded()
 			}
 		}
 
-		//stop & wait main thread
+		//Stop & wait main thread
 		stop_running();
 		th_main->join();
 		delete th_main;
 		th_main = nullptr;
 
-		//flush all ports
+		//Flush all ports
 		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
 			try {
 				it->second.flush_buffers();
@@ -1264,7 +1275,7 @@ OMX_ERRORTYPE component::command_state_set_to_idle()
 		}
 
 		try {
-			//start main thread
+			//Start main thread
 			th_main = new std::thread(component_thread_main, get_omx_component());
 		} catch (const std::bad_alloc& e) {
 			errprint("failed to create main thread '%s'.\n", e.what());
@@ -1278,9 +1289,34 @@ OMX_ERRORTYPE component::command_state_set_to_idle()
 		err = OMX_ErrorSameState;
 		break;
 	case OMX_StateExecuting:
-		//FIXME: flush not implemented yet
-
+		//Flush all ports
 		err = OMX_ErrorNone;
+		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+			OMX_ERRORTYPE tmperr;
+
+			try {
+				it->second.begin_flush();
+				tmperr = it->second.flush_buffers();
+				it->second.end_flush();
+			} catch (const std::runtime_error& e) {
+				errprint("runtime_error: %s\n", e.what());
+				tmperr = OMX_ErrorInsufficientResources;
+			}
+			if (tmperr != OMX_ErrorNone) {
+				err = tmperr;
+				break;
+			}
+		}
+
+		//Wait for all buffer returned to supplier
+		try {
+			wait_all_port_buffer_returned();
+		} catch (const std::runtime_error& e) {
+			errprint("runtime_error: %s\n", e.what());
+			err = OMX_ErrorInsufficientResources;
+			break;
+		}
+
 		break;
 	default:
 		errprint("invalid state:%s.\n",

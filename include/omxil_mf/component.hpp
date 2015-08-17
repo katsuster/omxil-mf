@@ -141,7 +141,7 @@ public:
 	virtual void wait_all_port_populated(OMX_BOOL v);
 
 	/**
-	 * 全ての有効なポートのバッファが全てなくなるまで待ちます。
+	 * 全ての有効なポートのバッファが全て解放されるまで待ちます。
 	 *
 	 * 注: 'no buffer' はこのライブラリ独自の用語です。
 	 * OpenMAX IL の用語ではありません。
@@ -151,6 +151,11 @@ public:
 	 * 	OMX_FALSE なら no buffer ではなくなるまで待ちます。
 	 */
 	virtual void wait_all_port_no_buffer(OMX_BOOL v);
+
+	/**
+	 * 全ての有効なポートがバッファを返却するまで待ちます。
+	 */
+	virtual void wait_all_port_buffer_returned();
 
 	/**
 	 * コンポーネントのメイン処理を行います。
