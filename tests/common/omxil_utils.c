@@ -344,6 +344,55 @@ const char *get_omx_audio_codingtype_name(OMX_AUDIO_CODINGTYPE v)
 	return name;
 }
 
+const char *get_omx_video_codingtype_name(OMX_VIDEO_CODINGTYPE v)
+{
+	const char *name = "????";
+
+	switch (v) {
+	case OMX_VIDEO_CodingUnused:
+		name = "OMX_VIDEO_CodingUnused";
+		break;
+	case OMX_VIDEO_CodingAutoDetect:
+		name = "OMX_VIDEO_CodingAutoDetect";
+		break;
+	case OMX_VIDEO_CodingMPEG2:
+		name = "OMX_VIDEO_CodingMPEG2";
+		break;
+	case OMX_VIDEO_CodingH263:
+		name = "OMX_VIDEO_CodingH263";
+		break;
+	case OMX_VIDEO_CodingMPEG4:
+		name = "OMX_VIDEO_CodingMPEG4";
+		break;
+	case OMX_VIDEO_CodingWMV:
+		name = "OMX_VIDEO_CodingWMV";
+		break;
+	case OMX_VIDEO_CodingRV:
+		name = "OMX_VIDEO_CodingRV";
+		break;
+	case OMX_VIDEO_CodingAVC:
+		name = "OMX_VIDEO_CodingAVC";
+		break;
+	case OMX_VIDEO_CodingMJPEG:
+		name = "OMX_VIDEO_CodingMJPEG";
+		break;
+	default:
+		name = "unknown";
+		break;
+	}
+
+	if (OMX_VIDEO_CodingKhronosExtensions <= v &&
+		v < OMX_VIDEO_CodingVendorStartUnused) {
+		name = "OMX_VIDEO_CodingKhronosExtensions";
+	}
+	if (OMX_VIDEO_CodingVendorStartUnused <= v &&
+		v < OMX_VIDEO_CodingMax) {
+		name = "OMX_VIDEO_CodingVendorStartUnused";
+	}
+
+	return name;
+}
+
 const char *get_omx_image_codingtype_name(OMX_IMAGE_CODINGTYPE v)
 {
 	const char *name = "????";
@@ -550,55 +599,6 @@ const char *get_omx_color_formattype_name(OMX_COLOR_FORMATTYPE v)
 	return name;
 }
 
-const char *get_omx_video_codingtype_name(OMX_VIDEO_CODINGTYPE v)
-{
-	const char *name = "????";
-
-	switch (v) {
-	case OMX_VIDEO_CodingUnused:
-		name = "OMX_VIDEO_CodingUnused";
-		break;
-	case OMX_VIDEO_CodingAutoDetect:
-		name = "OMX_VIDEO_CodingAutoDetect";
-		break;
-	case OMX_VIDEO_CodingMPEG2:
-		name = "OMX_VIDEO_CodingMPEG2";
-		break;
-	case OMX_VIDEO_CodingH263:
-		name = "OMX_VIDEO_CodingH263";
-		break;
-	case OMX_VIDEO_CodingMPEG4:
-		name = "OMX_VIDEO_CodingMPEG4";
-		break;
-	case OMX_VIDEO_CodingWMV:
-		name = "OMX_VIDEO_CodingWMV";
-		break;
-	case OMX_VIDEO_CodingRV:
-		name = "OMX_VIDEO_CodingRV";
-		break;
-	case OMX_VIDEO_CodingAVC:
-		name = "OMX_VIDEO_CodingAVC";
-		break;
-	case OMX_VIDEO_CodingMJPEG:
-		name = "OMX_VIDEO_CodingMJPEG";
-		break;
-	default:
-		name = "unknown";
-		break;
-	}
-
-	if (OMX_VIDEO_CodingKhronosExtensions <= v &&
-		v < OMX_VIDEO_CodingVendorStartUnused) {
-		name = "OMX_VIDEO_CodingKhronosExtensions";
-	}
-	if (OMX_VIDEO_CodingVendorStartUnused <= v &&
-		v < OMX_VIDEO_CodingMax) {
-		name = "OMX_VIDEO_CodingVendorStartUnused";
-	}
-
-	return name;
-}
-
 const char *get_omx_other_formattype_name(OMX_OTHER_FORMATTYPE v)
 {
 	const char *name = "????";
@@ -762,27 +762,6 @@ void dump_audio_param_portformattype(const OMX_AUDIO_PARAM_PORTFORMATTYPE *p)
 		p->eEncoding, get_omx_audio_codingtype_name(p->eEncoding));
 }
 
-void dump_image_param_portformattype(const OMX_IMAGE_PARAM_PORTFORMATTYPE *p)
-{
-	printf("OMX_IMAGE_PARAM_PORTFORMATTYPE %p ----\n"
-		"  nSize             : %d\n"
-		"  nVersion          : %02d.%02d.%02d.%02d\n"
-		"  nPortIndex        : %d\n"
-		"  nIndex            : %d\n"
-		"  eCompressionFormat: %d(%s)\n"
-		"  eColorFormat      : %d(%s)\n",
-		p,
-		(int)p->nSize,
-		(int)p->nVersion.s.nVersionMajor,
-		(int)p->nVersion.s.nVersionMinor,
-		(int)p->nVersion.s.nRevision,
-		(int)p->nVersion.s.nStep,
-		(int)p->nPortIndex,
-		(int)p->nIndex,
-		p->eCompressionFormat, get_omx_image_codingtype_name(p->eCompressionFormat),
-		p->eColorFormat, get_omx_color_formattype_name(p->eColorFormat));
-}
-
 void dump_video_param_portformattype(const OMX_VIDEO_PARAM_PORTFORMATTYPE *p)
 {
 	printf("OMX_VIDEO_PARAM_PORTFORMATTYPE %p ----\n"
@@ -804,6 +783,27 @@ void dump_video_param_portformattype(const OMX_VIDEO_PARAM_PORTFORMATTYPE *p)
 		p->eCompressionFormat, get_omx_video_codingtype_name(p->eCompressionFormat),
 		p->eColorFormat, get_omx_color_formattype_name(p->eColorFormat),
 		(int)p->xFramerate);
+}
+
+void dump_image_param_portformattype(const OMX_IMAGE_PARAM_PORTFORMATTYPE *p)
+{
+	printf("OMX_IMAGE_PARAM_PORTFORMATTYPE %p ----\n"
+		"  nSize             : %d\n"
+		"  nVersion          : %02d.%02d.%02d.%02d\n"
+		"  nPortIndex        : %d\n"
+		"  nIndex            : %d\n"
+		"  eCompressionFormat: %d(%s)\n"
+		"  eColorFormat      : %d(%s)\n",
+		p,
+		(int)p->nSize,
+		(int)p->nVersion.s.nVersionMajor,
+		(int)p->nVersion.s.nVersionMinor,
+		(int)p->nVersion.s.nRevision,
+		(int)p->nVersion.s.nStep,
+		(int)p->nPortIndex,
+		(int)p->nIndex,
+		p->eCompressionFormat, get_omx_image_codingtype_name(p->eCompressionFormat),
+		p->eColorFormat, get_omx_color_formattype_name(p->eColorFormat));
 }
 
 void dump_other_param_portformattype(const OMX_OTHER_PARAM_PORTFORMATTYPE *p)

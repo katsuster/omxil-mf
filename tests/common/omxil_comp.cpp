@@ -457,23 +457,6 @@ OMX_ERRORTYPE omxil_comp::get_param_audio_init(OMX_PORT_PARAM_TYPE *param) const
 	return result;
 }
 
-OMX_ERRORTYPE omxil_comp::get_param_image_init(OMX_PORT_PARAM_TYPE *param) const
-{
-	OMX_ERRORTYPE result;
-
-	*param = {};
-	param->nSize = sizeof(*param);
-	fill_version(&param->nVersion);
-	result = GetParameter(OMX_IndexParamImageInit, param);
-	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "OMX_GetParameter(IndexParamImageInit) "
-			"failed.\n");
-		return result;
-	}
-
-	return result;
-}
-
 OMX_ERRORTYPE omxil_comp::get_param_video_init(OMX_PORT_PARAM_TYPE *param) const
 {
 	OMX_ERRORTYPE result;
@@ -484,6 +467,23 @@ OMX_ERRORTYPE omxil_comp::get_param_video_init(OMX_PORT_PARAM_TYPE *param) const
 	result = GetParameter(OMX_IndexParamVideoInit, param);
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "OMX_GetParameter(IndexParamVideoInit) "
+			"failed.\n");
+		return result;
+	}
+
+	return result;
+}
+
+OMX_ERRORTYPE omxil_comp::get_param_image_init(OMX_PORT_PARAM_TYPE *param) const
+{
+	OMX_ERRORTYPE result;
+
+	*param = {};
+	param->nSize = sizeof(*param);
+	fill_version(&param->nVersion);
+	result = GetParameter(OMX_IndexParamImageInit, param);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(IndexParamImageInit) "
 			"failed.\n");
 		return result;
 	}
@@ -527,25 +527,6 @@ OMX_ERRORTYPE omxil_comp::get_param_audio_format(OMX_U32 port_index, OMX_U32 fmt
 	return result;
 }
 
-OMX_ERRORTYPE omxil_comp::get_param_image_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_IMAGE_PARAM_PORTFORMATTYPE *format) const
-{
-	OMX_ERRORTYPE result;
-
-	*format = {};
-	format->nSize = sizeof(*format);
-	fill_version(&format->nVersion);
-	format->nPortIndex = port_index;
-	format->nIndex     = fmt_index;
-	result = GetParameter(OMX_IndexParamImagePortFormat, format);
-	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "OMX_GetParameter(IndexParamImagePortFormat) "
-			"failed.\n");
-		return result;
-	}
-
-	return result;
-}
-
 OMX_ERRORTYPE omxil_comp::get_param_video_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_VIDEO_PARAM_PORTFORMATTYPE *format) const
 {
 	OMX_ERRORTYPE result;
@@ -558,6 +539,25 @@ OMX_ERRORTYPE omxil_comp::get_param_video_format(OMX_U32 port_index, OMX_U32 fmt
 	result = GetParameter(OMX_IndexParamVideoPortFormat, format);
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "OMX_GetParameter(IndexParamVideoPortFormat) "
+			"failed.\n");
+		return result;
+	}
+
+	return result;
+}
+
+OMX_ERRORTYPE omxil_comp::get_param_image_format(OMX_U32 port_index, OMX_U32 fmt_index, OMX_IMAGE_PARAM_PORTFORMATTYPE *format) const
+{
+	OMX_ERRORTYPE result;
+
+	*format = {};
+	format->nSize = sizeof(*format);
+	fill_version(&format->nVersion);
+	format->nPortIndex = port_index;
+	format->nIndex     = fmt_index;
+	result = GetParameter(OMX_IndexParamImagePortFormat, format);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "OMX_GetParameter(IndexParamImagePortFormat) "
 			"failed.\n");
 		return result;
 	}
@@ -612,34 +612,6 @@ OMX_ERRORTYPE omxil_comp::get_param_audio_format_all(OMX_U32 port_index, std::ve
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE omxil_comp::get_param_image_format_all(OMX_U32 port_index, std::vector<OMX_IMAGE_PARAM_PORTFORMATTYPE> *formats) const
-{
-	OMX_IMAGE_PARAM_PORTFORMATTYPE fmt;
-	OMX_ERRORTYPE result;
-	OMX_U32 j;
-
-	if (formats == nullptr) {
-		return OMX_ErrorBadParameter;
-	}
-
-	j = 0;
-	do {
-		result = get_param_image_format(port_index, j, &fmt);
-		if (result != OMX_ErrorNone && result != OMX_ErrorNoMore) {
-			fprintf(stderr, "get_param_image_format(port:%d, fmt:%d) failed.\n",
-				(int)port_index, (int)j);
-			return result;
-		} else if (result == OMX_ErrorNoMore) {
-			continue;
-		}
-		formats->push_back(fmt);
-
-		j++;
-	} while (result != OMX_ErrorNoMore);
-
-	return OMX_ErrorNone;
-}
-
 OMX_ERRORTYPE omxil_comp::get_param_video_format_all(OMX_U32 port_index, std::vector<OMX_VIDEO_PARAM_PORTFORMATTYPE> *formats) const
 {
 	OMX_VIDEO_PARAM_PORTFORMATTYPE fmt;
@@ -655,6 +627,34 @@ OMX_ERRORTYPE omxil_comp::get_param_video_format_all(OMX_U32 port_index, std::ve
 		result = get_param_video_format(port_index, j, &fmt);
 		if (result != OMX_ErrorNone && result != OMX_ErrorNoMore) {
 			fprintf(stderr, "get_param_video_format(port:%d, fmt:%d) failed.\n",
+				(int)port_index, (int)j);
+			return result;
+		} else if (result == OMX_ErrorNoMore) {
+			continue;
+		}
+		formats->push_back(fmt);
+
+		j++;
+	} while (result != OMX_ErrorNoMore);
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE omxil_comp::get_param_image_format_all(OMX_U32 port_index, std::vector<OMX_IMAGE_PARAM_PORTFORMATTYPE> *formats) const
+{
+	OMX_IMAGE_PARAM_PORTFORMATTYPE fmt;
+	OMX_ERRORTYPE result;
+	OMX_U32 j;
+
+	if (formats == nullptr) {
+		return OMX_ErrorBadParameter;
+	}
+
+	j = 0;
+	do {
+		result = get_param_image_format(port_index, j, &fmt);
+		if (result != OMX_ErrorNone && result != OMX_ErrorNoMore) {
+			fprintf(stderr, "get_param_image_format(port:%d, fmt:%d) failed.\n",
 				(int)port_index, (int)j);
 			return result;
 		} else if (result == OMX_ErrorNoMore) {

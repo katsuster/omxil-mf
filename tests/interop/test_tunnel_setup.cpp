@@ -30,13 +30,13 @@ public:
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "get_param_audio_init() failed.\n");
 		}
-		result = get_param_image_init(&param_i);
-		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "get_param_image_init() failed.\n");
-		}
 		result = get_param_video_init(&param_v);
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "get_param_video_init() failed.\n");
+		}
+		result = get_param_image_init(&param_i);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "get_param_image_init() failed.\n");
 		}
 		result = get_param_other_init(&param_o);
 		if (result != OMX_ErrorNone) {
@@ -52,21 +52,21 @@ public:
 			}
 			def_all.insert(map_portdef::value_type(i, def));
 		}
-		for (OMX_U32 i = param_i.nStartPortNumber; i < param_i.nStartPortNumber + param_i.nPorts; i++) {
-			def = new OMX_PARAM_PORTDEFINITIONTYPE{0, };
-
-			result = get_param_port_definition(i, def);
-			if (result != OMX_ErrorNone) {
-				fprintf(stderr, "get_param_port_definition(image) failed.\n");
-			}
-			def_all.insert(map_portdef::value_type(i, def));
-		}
 		for (OMX_U32 i = param_v.nStartPortNumber; i < param_v.nStartPortNumber + param_v.nPorts; i++) {
 			def = new OMX_PARAM_PORTDEFINITIONTYPE{0, };
 
 			result = get_param_port_definition(i, def);
 			if (result != OMX_ErrorNone) {
 				fprintf(stderr, "get_param_port_definition(video) failed.\n");
+			}
+			def_all.insert(map_portdef::value_type(i, def));
+		}
+		for (OMX_U32 i = param_i.nStartPortNumber; i < param_i.nStartPortNumber + param_i.nPorts; i++) {
+			def = new OMX_PARAM_PORTDEFINITIONTYPE{0, };
+
+			result = get_param_port_definition(i, def);
+			if (result != OMX_ErrorNone) {
+				fprintf(stderr, "get_param_port_definition(image) failed.\n");
 			}
 			def_all.insert(map_portdef::value_type(i, def));
 		}
@@ -178,6 +178,21 @@ int main(int argc, char *argv[])
 			(int)i, arg_comp[i], comp[i]);
 	}
 
+	{
+		result = OMX_SetupTunnel(comp[0]->get_component(), 0, comp[1]->get_component(), 0);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "OMX_SetupTunnel(comp%d:%d, comp%d:%d) failed.\n",
+				(int)0, 0, 1, 0);
+			goto err_out2;
+		}
+	}
+
+	//
+	//TODO: Setup tunnel
+	//
+	result = OMX_ErrorNotImplemented;
+	goto err_out2;
+
 	//Set StateIdle
 	for (i = 0; i < n_comps; i++) {
 		result = comp[i]->SendCommand(OMX_CommandStateSet, OMX_StateIdle, 0);
@@ -187,13 +202,6 @@ int main(int argc, char *argv[])
 			goto err_out2;
 		}
 	}
-
-
-	//
-	//TODO: Setup tunnel
-	//
-	result = OMX_ErrorNotImplemented;
-	goto err_out2;
 
 	//Wait for StatusIdle
 	for (i = 0; i < n_comps; i++) {

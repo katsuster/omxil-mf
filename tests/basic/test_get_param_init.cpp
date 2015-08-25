@@ -79,14 +79,6 @@ int main(int argc, char *argv[])
 	printf("IndexParamAudioInit: -----\n");
 	dump_port_param_type(&param_a);
 
-	result = comp->get_param_image_init(&param_i);
-	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "get_param_image_init() failed.\n");
-		goto err_out3;
-	}
-	printf("IndexParamImageInit: -----\n");
-	dump_port_param_type(&param_i);
-
 	result = comp->get_param_video_init(&param_v);
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "get_param_video_init() failed.\n");
@@ -94,6 +86,14 @@ int main(int argc, char *argv[])
 	}
 	printf("IndexParamVideoInit: -----\n");
 	dump_port_param_type(&param_v);
+
+	result = comp->get_param_image_init(&param_i);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "get_param_image_init() failed.\n");
+		goto err_out3;
+	}
+	printf("IndexParamImageInit: -----\n");
+	dump_port_param_type(&param_i);
 
 	result = comp->get_param_other_init(&param_o);
 	if (result != OMX_ErrorNone) {
@@ -115,16 +115,6 @@ int main(int argc, char *argv[])
 		dump_param_portdefinitiontype(&def);
 	}
 
-	for (i = param_i.nStartPortNumber; i < param_i.nStartPortNumber + param_i.nPorts; i++) {
-		result = comp->get_param_port_definition(i, &def);
-		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "get_param_port_definition(image) failed.\n");
-			goto err_out3;
-		}
-		printf("IndexParamPortDefinition: image %d -----\n", (int)def.nPortIndex);
-		dump_param_portdefinitiontype(&def);
-	}
-
 	for (i = param_v.nStartPortNumber; i < param_v.nStartPortNumber + param_v.nPorts; i++) {
 		result = comp->get_param_port_definition(i, &def);
 		if (result != OMX_ErrorNone) {
@@ -132,6 +122,16 @@ int main(int argc, char *argv[])
 			goto err_out3;
 		}
 		printf("IndexParamPortDefinition: video %d -----\n", (int)def.nPortIndex);
+		dump_param_portdefinitiontype(&def);
+	}
+
+	for (i = param_i.nStartPortNumber; i < param_i.nStartPortNumber + param_i.nPorts; i++) {
+		result = comp->get_param_port_definition(i, &def);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "get_param_port_definition(image) failed.\n");
+			goto err_out3;
+		}
+		printf("IndexParamPortDefinition: image %d -----\n", (int)def.nPortIndex);
 		dump_param_portdefinitiontype(&def);
 	}
 
@@ -164,23 +164,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	for (i = param_i.nStartPortNumber; i < param_i.nStartPortNumber + param_i.nPorts; i++) {
-		std::vector<OMX_IMAGE_PARAM_PORTFORMATTYPE> formats_i;
-
-		result = comp->get_param_image_format_all(i, &formats_i);
-		if (result != OMX_ErrorNone && result != OMX_ErrorNoMore) {
-			fprintf(stderr, "get_param_image_format_all(port:%d) failed.\n",
-				(int)i);
-			goto err_out3;
-		}
-
-		for (auto& elem : formats_i) {
-			printf("IndexParamImagePortFormat: port:%d, fmt:%d -----\n",
-				(int)elem.nPortIndex, (int)elem.nIndex);
-			dump_image_param_portformattype(&elem);
-		}
-	}
-
 	for (i = param_v.nStartPortNumber; i < param_v.nStartPortNumber + param_v.nPorts; i++) {
 		std::vector<OMX_VIDEO_PARAM_PORTFORMATTYPE> formats_v;
 
@@ -195,6 +178,23 @@ int main(int argc, char *argv[])
 			printf("IndexParamVideoPortFormat: port:%d, fmt:%d -----\n",
 				(int)elem.nPortIndex, (int)elem.nIndex);
 			dump_video_param_portformattype(&elem);
+		}
+	}
+
+	for (i = param_i.nStartPortNumber; i < param_i.nStartPortNumber + param_i.nPorts; i++) {
+		std::vector<OMX_IMAGE_PARAM_PORTFORMATTYPE> formats_i;
+
+		result = comp->get_param_image_format_all(i, &formats_i);
+		if (result != OMX_ErrorNone && result != OMX_ErrorNoMore) {
+			fprintf(stderr, "get_param_image_format_all(port:%d) failed.\n",
+				(int)i);
+			goto err_out3;
+		}
+
+		for (auto& elem : formats_i) {
+			printf("IndexParamImagePortFormat: port:%d, fmt:%d -----\n",
+				(int)elem.nPortIndex, (int)elem.nIndex);
+			dump_image_param_portformattype(&elem);
 		}
 	}
 

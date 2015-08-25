@@ -11,8 +11,8 @@
 
 #include <omxil_mf/component.hpp>
 #include <omxil_mf/port_audio.hpp>
-#include <omxil_mf/port_image.hpp>
 #include <omxil_mf/port_video.hpp>
+#include <omxil_mf/port_image.hpp>
 #include <omxil_mf/port_other.hpp>
 #include <omxil_mf/scoped_log.hpp>
 
@@ -317,19 +317,19 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	scoped_log_begin;
 	port *port_found = nullptr;
 	port_audio *port_found_a = nullptr;
-	port_image *port_found_i = nullptr;
 	port_video *port_found_v = nullptr;
+	port_image *port_found_i = nullptr;
 	port_other *port_found_o = nullptr;
 	OMX_PARAM_PORTDEFINITIONTYPE *def = nullptr;
 	OMX_PARAM_BUFFERSUPPLIERTYPE *supply = nullptr;
 	OMX_PORT_PARAM_TYPE *param = nullptr;
 	OMX_AUDIO_PARAM_PORTFORMATTYPE *pf_audio;
-	OMX_IMAGE_PARAM_PORTFORMATTYPE *pf_image;
 	OMX_VIDEO_PARAM_PORTFORMATTYPE *pf_video;
+	OMX_IMAGE_PARAM_PORTFORMATTYPE *pf_image;
 	OMX_OTHER_PARAM_PORTFORMATTYPE *pf_other;
 	const OMX_AUDIO_PARAM_PORTFORMATTYPE *pfa_sup;
-	const OMX_IMAGE_PARAM_PORTFORMATTYPE *pfi_sup;
 	const OMX_VIDEO_PARAM_PORTFORMATTYPE *pfv_sup;
+	const OMX_IMAGE_PARAM_PORTFORMATTYPE *pfi_sup;
 	const OMX_OTHER_PARAM_PORTFORMATTYPE *pfo_sup;
 	//OMX_PRIORITYMGMTTYPE *mgm;
 	void *ptr = nullptr;
@@ -474,45 +474,6 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = OMX_ErrorNone;
 		break;
-	case OMX_IndexParamImagePortFormat:
-		pf_image = (OMX_IMAGE_PARAM_PORTFORMATTYPE *) ptr;
-
-		port_found = find_port(pf_image->nPortIndex);
-		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)pf_image->nPortIndex);
-			err = OMX_ErrorBadPortIndex;
-			break;
-		}
-
-		if (typeid(*port_found) != typeid(port_image)) {
-			errprint("port:%d is not image port.\n", (int)pf_image->nPortIndex);
-			err = OMX_ErrorBadPortIndex;
-			break;
-		}
-		port_found_i = dynamic_cast<port_image *>(port_found);
-
-		pfi_sup = port_found_i->get_supported_format(pf_image->nIndex);
-		if (pfi_sup == nullptr) {
-			errprint("port:%d does not have format(index:%d).\n",
-				(int)pf_image->nPortIndex, (int)pf_image->nIndex);
-			err = OMX_ErrorNoMore;
-			break;
-		}
-
-		{
-			OMX_IMAGE_PARAM_PORTFORMATTYPE tmp;
-
-			tmp = *pfi_sup;
-			tmp.nSize      = pf_image->nSize;
-			tmp.nVersion   = pf_image->nVersion;
-			tmp.nPortIndex = pf_image->nPortIndex;
-			tmp.nIndex     = pf_image->nIndex;
-
-			*pf_image = tmp;
-		}
-
-		err = OMX_ErrorNone;
-		break;
 	case OMX_IndexParamVideoPortFormat:
 		pf_video = (OMX_VIDEO_PARAM_PORTFORMATTYPE *) ptr;
 
@@ -548,6 +509,45 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			tmp.nIndex     = pf_video->nIndex;
 
 			*pf_video = tmp;
+		}
+
+		err = OMX_ErrorNone;
+		break;
+	case OMX_IndexParamImagePortFormat:
+		pf_image = (OMX_IMAGE_PARAM_PORTFORMATTYPE *) ptr;
+
+		port_found = find_port(pf_image->nPortIndex);
+		if (port_found == nullptr) {
+			errprint("invalid port:%d\n", (int)pf_image->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+
+		if (typeid(*port_found) != typeid(port_image)) {
+			errprint("port:%d is not image port.\n", (int)pf_image->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+		port_found_i = dynamic_cast<port_image *>(port_found);
+
+		pfi_sup = port_found_i->get_supported_format(pf_image->nIndex);
+		if (pfi_sup == nullptr) {
+			errprint("port:%d does not have format(index:%d).\n",
+				(int)pf_image->nPortIndex, (int)pf_image->nIndex);
+			err = OMX_ErrorNoMore;
+			break;
+		}
+
+		{
+			OMX_IMAGE_PARAM_PORTFORMATTYPE tmp;
+
+			tmp = *pfi_sup;
+			tmp.nSize      = pf_image->nSize;
+			tmp.nVersion   = pf_image->nVersion;
+			tmp.nPortIndex = pf_image->nPortIndex;
+			tmp.nIndex     = pf_image->nIndex;
+
+			*pf_image = tmp;
 		}
 
 		err = OMX_ErrorNone;
