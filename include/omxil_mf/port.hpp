@@ -11,6 +11,7 @@
 
 #include <omxil_mf/ring/ring_buffer.hpp>
 #include <omxil_mf/ring/bounded_buffer.hpp>
+#include <omxil_mf/port_format.hpp>
 
 
 //OpenMAX バッファを受け渡すバッファの深さ
@@ -22,7 +23,14 @@ namespace mf {
 class component;
 class port;
 
-/*
+/**
+ * ポートに渡された OpenMAX バッファです。
+ *
+ * 主に OMX_BUFFERHEADERTYPE にアクセスするためのラッパークラスです。
+ *
+ * OMX_BUFFERHEADERTYPE の定義は下記の通りです。
+ *
+ * <pre>
  * struct OMX_BUFFERHEADERTYPE {
  *     OMX_U32 nSize;
  *     OMX_VERSIONTYPE nVersion;
@@ -42,12 +50,7 @@ class port;
  *     OMX_U32 nOutputPortIndex;
  *     OMX_U32 nInputPortIndex;
  * }
- */
-
-/**
- * ポートに渡された OpenMAX バッファです。
- *
- * 主に OMX_BUFFERHEADERTYPE にアクセスするためのラッパークラスです。
+ * </pre>
  */
 struct port_buffer {
 	//バッファを所持しているポート
@@ -501,6 +504,7 @@ public:
 	 * OMX_PARAM_PORTDEFINITIONTYPE の各メンバに設定値がセットされます。
 	 * ただし format メンバは 0 で埋められます。
 	 *
+	 * <pre>
 	 * struct OMX_PARAM_PORTDEFINITIONTYPE {
 	 *     OMX_U32 nSize;
 	 *     OMX_VERSIONTYPE nVersion;
@@ -521,6 +525,7 @@ public:
 	 *     OMX_BOOL bBuffersContiguous;
 	 *     OMX_U32 nBufferAlignment;
 	 * }
+	 * </pre>
 	 *
 	 * @return port definition data of OpenMAX IL
 	 */
@@ -536,6 +541,7 @@ public:
 	 * このポートのメンバ変数が更新されます。
 	 * ただし nSize, nVersion, format メンバは無視されます。
 	 *
+	 * <pre>
 	 * struct OMX_PARAM_PORTDEFINITIONTYPE {
 	 *     OMX_U32 nSize;
 	 *     OMX_VERSIONTYPE nVersion;
@@ -556,6 +562,7 @@ public:
 	 *     OMX_BOOL bBuffersContiguous;
 	 *     OMX_U32 nBufferAlignment;
 	 * }
+	 * </pre>
 	 *
 	 * @return OpenMAX エラー値
 	 */
@@ -571,6 +578,7 @@ public:
 	 * このポートのメンバ変数が更新されます。
 	 * ただし nBufferCountActual メンバ以外は全て無視されます。
 	 *
+	 * <pre>
 	 * struct OMX_PARAM_PORTDEFINITIONTYPE {
 	 *     OMX_U32 nSize;
 	 *     OMX_VERSIONTYPE nVersion;
@@ -591,10 +599,102 @@ public:
 	 *     OMX_BOOL bBuffersContiguous;
 	 *     OMX_U32 nBufferAlignment;
 	 * }
+	 * </pre>
 	 *
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v);
+
+	/**
+	 * ポートがサポートするデータ形式を追加します。
+	 *
+	 * @param f データ形式へのポインタ
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE add_supported_format(const port_format& f);
+
+	/**
+	 * ポートがサポートするオーディオデータ形式を追加します。
+	 *
+	 * @param f データ形式へのポインタ
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE add_supported_format(const OMX_AUDIO_PARAM_PORTFORMATTYPE *f);
+
+	/**
+	 * ポートがサポートするビデオデータ形式を追加します。
+	 *
+	 * @param f データ形式へのポインタ
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE add_supported_format(const OMX_VIDEO_PARAM_PORTFORMATTYPE *f);
+
+	/**
+	 * ポートがサポートする画像データ形式を追加します。
+	 *
+	 * @param f データ形式へのポインタ
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE add_supported_format(const OMX_IMAGE_PARAM_PORTFORMATTYPE *f);
+
+	/**
+	 * ポートがサポートするその他のデータ形式を追加します。
+	 *
+	 * @param f データ形式へのポインタ
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE add_supported_format(const OMX_OTHER_PARAM_PORTFORMATTYPE *f);
+
+	/**
+	 * ポートがサポートするデータの形式を削除します。
+	 *
+	 * @param index データ形式のインデックス
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE remove_supported_format(size_t index);
+
+	/**
+	 * ポートがサポートするデータの形式を取得します。
+	 *
+	 * 取得した port_format は Audio/Video/Image/Other いずれかの、
+	 * OMX_XXXXX_PARAM_PORTFORMATTYPE を保持しています。
+	 *
+	 * 下記のようにすれば必要な種類の PORTFORMATTYPE を取得できます。
+	 *
+	 * <pre>
+	 * const port_format *pf = get_supported_format(index);
+	 * //If you need audio port format type
+	 * const OMX_AUDIO_PARAM_PORTFORMATTYPE *pf_audio = pf->get_audio();
+	 * </pre>
+	 *
+	 * @param index データ形式のインデックス
+	 * @return データ形式へのポインタ、取得できなければ nullptr
+	 */
+	virtual const port_format *get_supported_format(size_t index) const;
+
+	/**
+	 * ポートがデフォルトでサポートするデータの形式を取得します。
+	 *
+	 * デフォルトに指定したフォーマットの index を
+	 * default_format_index と置いたとき、
+	 * 下記の呼び出しに等しいです。
+	 *
+	 * <pre>
+	 * get_supported_format(default_format_index);
+	 * </pre>
+	 *
+	 * @param index データ形式のインデックス
+	 * @return データ形式へのポインタ
+	 */
+	virtual const port_format *get_default_format() const;
+
+	/**
+	 * ポートがデフォルトでサポートするデータの形式を設定します。
+	 *
+	 * @param index データ形式のインデックス
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE set_default_format(size_t index);
 
 	/**
 	 * ポートを無効にします。
@@ -658,6 +758,7 @@ public:
 	 * コンポーネント外部で確保されたバッファを、
 	 * コンポーネントとのデータのやり取りに使用します。
 	 *
+	 * <pre>
 	 * struct OMX_BUFFERHEADERTYPE {
 	 *     OMX_U32 nSize;
 	 *     OMX_VERSIONTYPE nVersion;
@@ -677,6 +778,7 @@ public:
 	 *     OMX_U32 nOutputPortIndex;
 	 *     OMX_U32 nInputPortIndex;
 	 * }
+	 * </pre>
 	 *
 	 * @param bufhead OpenMAX バッファヘッダを受け取るためのポインタ
 	 * @return OpenMAX エラー値
@@ -687,6 +789,7 @@ public:
 	 * コンポーネントでバッファを確保し、
 	 * コンポーネントとのデータのやり取りに使用します。
 	 *
+	 * <pre>
 	 * struct OMX_BUFFERHEADERTYPE {
 	 *     OMX_U32 nSize;
 	 *     OMX_VERSIONTYPE nVersion;
@@ -706,6 +809,7 @@ public:
 	 *     OMX_U32 nOutputPortIndex;
 	 *     OMX_U32 nInputPortIndex;
 	 * }
+	 * </pre>
 	 *
 	 * @param bufhead OpenMAX バッファヘッダを受け取るためのポインタ
 	 * @return OpenMAX エラー値
@@ -924,6 +1028,12 @@ private:
 	//以上 OMX_PARAM_PORTDEFINITIONTYPE に基づくメンバ
 
 	OMX_BOOL f_no_buffer;
+
+	//ポートがサポートするフォーマットのリスト
+	//OMX_GetParameter(OMX_IndexParamXxxxxPortFormat) にて使用します。
+	//Xxxxx は Audio | Video | Image | Other のいずれかです。
+	std::vector<port_format> formats;
+	int default_format;
 
 	//使用可能バッファ登録リスト
 	std::vector<port_buffer *> list_bufs;

@@ -15,8 +15,7 @@ port_image::port_image(int ind, component *c)
 	mime_type(nullptr), native_render(nullptr),
 	frame_width(0), frame_height(0), stride(0), slice_height(0),
 	flag_error_concealment(OMX_FALSE),
-	native_window(nullptr),
-	default_format(-1)
+	native_window(nullptr)
 {
 	scoped_log_begin;
 
@@ -106,7 +105,7 @@ void port_image::set_flag_error_concealment(OMX_BOOL v)
 
 OMX_IMAGE_CODINGTYPE port_image::get_compression_format() const
 {
-	const OMX_IMAGE_PARAM_PORTFORMATTYPE *f = get_default_format();
+	const OMX_IMAGE_PARAM_PORTFORMATTYPE *f = get_default_format_image();
 
 	if (f == nullptr) {
 		return OMX_IMAGE_CodingUnused;
@@ -117,7 +116,7 @@ OMX_IMAGE_CODINGTYPE port_image::get_compression_format() const
 
 OMX_COLOR_FORMATTYPE port_image::get_color_format() const
 {
-	const OMX_IMAGE_PARAM_PORTFORMATTYPE *f = get_default_format();
+	const OMX_IMAGE_PARAM_PORTFORMATTYPE *f = get_default_format_image();
 
 	if (f == nullptr) {
 		return OMX_COLOR_FormatUnused;
@@ -198,56 +197,15 @@ OMX_ERRORTYPE port_image::set_definition_from_client(const OMX_PARAM_PORTDEFINIT
 	return OMX_ErrorNone;
 }
 
-const OMX_IMAGE_PARAM_PORTFORMATTYPE *port_image::get_supported_format(size_t index) const
+const OMX_IMAGE_PARAM_PORTFORMATTYPE *port_image::get_default_format_image() const
 {
-	if (index < 0 || formats.size() <= index) {
+	const port_format *pf = get_default_format();
+
+	if (pf == nullptr) {
 		return nullptr;
 	}
 
-	return &formats.at(index);
-}
-
-OMX_ERRORTYPE port_image::add_supported_format(const OMX_IMAGE_PARAM_PORTFORMATTYPE *f)
-{
-	OMX_IMAGE_PARAM_PORTFORMATTYPE fmt;
-
-	if (f == nullptr) {
-		return OMX_ErrorBadParameter;
-	}
-
-	fmt = *f;
-	fmt.nPortIndex = 0;
-	fmt.nIndex = 0;
-	formats.push_back(fmt);
-
-	return OMX_ErrorNone;
-}
-
-OMX_ERRORTYPE port_image::remove_supported_format(size_t index)
-{
-	if (index < 0 || formats.size() <= index) {
-		return OMX_ErrorBadParameter;
-	}
-
-	formats.erase(formats.begin() + index);
-
-	return OMX_ErrorNone;
-}
-
-const OMX_IMAGE_PARAM_PORTFORMATTYPE *port_image::get_default_format() const
-{
-	return get_supported_format(default_format);
-}
-
-OMX_ERRORTYPE port_image::set_default_format(size_t index)
-{
-	if (index < 0 || formats.size() <= index) {
-		return OMX_ErrorBadParameter;
-	}
-
-	default_format = index;
-
-	return OMX_ErrorNone;
+	return pf->get_format_image();
 }
 
 } //namespace mf

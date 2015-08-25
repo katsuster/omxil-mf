@@ -46,12 +46,14 @@ public:
 	 * OMX_PARAM_PORTDEFINITIONTYPE の各メンバに加え、
 	 * format.audio メンバにも設定値がセットされます。
 	 *
+	 * <pre>
 	 * struct OMX_AUDIO_PORTDEFINITIONTYPE {
 	 *     OMX_STRING cMIMEType;
 	 *     OMX_NATIVE_DEVICETYPE pNativeRender;
 	 *     OMX_BOOL bFlagErrorConcealment;
 	 *     OMX_AUDIO_CODINGTYPE eEncoding;
 	 * }
+	 * </pre>
 	 *
 	 * @return port definition data of OpenMAX IL
 	 */
@@ -67,12 +69,14 @@ public:
 	 * format.audio の各メンバに対応する、
 	 * このポートのメンバ変数が更新されます。
 	 *
+	 * <pre>
 	 * struct OMX_AUDIO_PORTDEFINITIONTYPE {
 	 *     OMX_STRING cMIMEType;
 	 *     OMX_NATIVE_DEVICETYPE pNativeRender;
 	 *     OMX_BOOL bFlagErrorConcealment;
 	 *     OMX_AUDIO_CODINGTYPE eEncoding;
 	 * }
+	 * </pre>
 	 *
 	 * @return OpenMAX エラー値
 	 */
@@ -88,56 +92,26 @@ public:
 	 * format.audio の各メンバに対応する、
 	 * このポートのメンバ変数が更新されます。
 	 *
+	 * <pre>
 	 * struct OMX_AUDIO_PORTDEFINITIONTYPE {
 	 *     OMX_STRING cMIMEType;
 	 *     OMX_NATIVE_DEVICETYPE pNativeRender;
 	 *     OMX_BOOL bFlagErrorConcealment;
 	 *     OMX_AUDIO_CODINGTYPE eEncoding;
 	 * }
+	 * </pre>
 	 *
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v);
 
 	/**
-	 * ポートがサポートするデータの形式を取得します。
-	 *
-	 * @param index データ形式のインデックス
-	 * @return データ形式へのポインタ、取得できなければ nullptr
-	 */
-	virtual const OMX_AUDIO_PARAM_PORTFORMATTYPE *get_supported_format(size_t index) const;
-
-	/**
-	 * ポートがサポートするデータの形式を追加します。
-	 *
-	 * @param f データ形式へのポインタ
-	 * @return OpenMAX エラー値
-	 */
-	virtual OMX_ERRORTYPE add_supported_format(const OMX_AUDIO_PARAM_PORTFORMATTYPE *f);
-
-	/**
-	 * ポートがサポートするデータの形式を削除します。
-	 *
-	 * @param index データ形式のインデックス
-	 * @return OpenMAX エラー値
-	 */
-	virtual OMX_ERRORTYPE remove_supported_format(size_t index);
-
-	/**
-	 * ポートがデフォルトでサポートするデータの形式を取得します。
+	 * ポートがデフォルトでサポートするオーディオデータ形式を取得します。
 	 *
 	 * @param index データ形式のインデックス
 	 * @return データ形式へのポインタ
 	 */
-	virtual const OMX_AUDIO_PARAM_PORTFORMATTYPE *get_default_format() const;
-
-	/**
-	 * ポートがデフォルトでサポートするデータの形式を設定します。
-	 *
-	 * @param index データ形式のインデックス
-	 * @return OpenMAX エラー値
-	 */
-	virtual OMX_ERRORTYPE set_default_format(size_t index);
+	virtual const OMX_AUDIO_PARAM_PORTFORMATTYPE *get_default_format_audio() const;
 
 private:
 	OMX_STRING mime_type;
@@ -149,9 +123,6 @@ private:
 	//デフォルトフォーマットの設定機能（set_default_format）
 	//を使用してください
 	//  OMX_AUDIO_CODINGTYPE encoding;
-
-	std::vector<OMX_AUDIO_PARAM_PORTFORMATTYPE> formats;
-	int default_format;
 
 };
 

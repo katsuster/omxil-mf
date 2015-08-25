@@ -149,6 +149,7 @@ port::port(int ind, component *c)
 	domain(OMX_PortDomainMax),
 	buffers_contiguous(OMX_FALSE), buffer_alignment(0),
 	f_no_buffer(OMX_TRUE),
+	default_format(-1),
 	ring_send(nullptr), bound_send(nullptr),
 	ring_ret(nullptr), bound_ret(nullptr), th_ret(nullptr)
 {
@@ -486,6 +487,85 @@ OMX_ERRORTYPE port::set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYP
 	//nBufferCountActual 以外は全て read-only
 	buffer_count_actual = v.nBufferCountActual;
 	//definition.format is ignored
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port::add_supported_format(const port_format& f)
+{
+	formats.push_back(f);
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port::add_supported_format(const OMX_AUDIO_PARAM_PORTFORMATTYPE *f)
+{
+	if (f == nullptr) {
+		return OMX_ErrorBadParameter;
+	}
+
+	return add_supported_format(port_format(*f));
+}
+
+OMX_ERRORTYPE port::add_supported_format(const OMX_VIDEO_PARAM_PORTFORMATTYPE *f)
+{
+	if (f == nullptr) {
+		return OMX_ErrorBadParameter;
+	}
+
+	return add_supported_format(port_format(*f));
+}
+
+OMX_ERRORTYPE port::add_supported_format(const OMX_IMAGE_PARAM_PORTFORMATTYPE *f)
+{
+	if (f == nullptr) {
+		return OMX_ErrorBadParameter;
+	}
+
+	return add_supported_format(port_format(*f));
+}
+
+OMX_ERRORTYPE port::add_supported_format(const OMX_OTHER_PARAM_PORTFORMATTYPE *f)
+{
+	if (f == nullptr) {
+		return OMX_ErrorBadParameter;
+	}
+
+	return add_supported_format(port_format(*f));
+}
+
+OMX_ERRORTYPE port::remove_supported_format(size_t index)
+{
+	if (index < 0 || formats.size() <= index) {
+		return OMX_ErrorBadParameter;
+	}
+
+	formats.erase(formats.begin() + index);
+
+	return OMX_ErrorNone;
+}
+
+const port_format *port::get_supported_format(size_t index) const
+{
+	if (index < 0 || formats.size() <= index) {
+		return nullptr;
+	}
+
+	return &formats.at(index);
+}
+	
+const port_format *port::get_default_format() const
+{
+	return get_supported_format(default_format);
+}
+
+OMX_ERRORTYPE port::set_default_format(size_t index)
+{
+	if (index < 0 || formats.size() <= index) {
+		return OMX_ErrorBadParameter;
+	}
+
+	default_format = index;
 
 	return OMX_ErrorNone;
 }

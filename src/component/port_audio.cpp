@@ -13,8 +13,7 @@ namespace mf {
 port_audio::port_audio(int ind, component *c)
 	: port(ind, c),
 	mime_type(nullptr), native_render(nullptr),
-	flag_error_concealment(OMX_FALSE),
-	default_format(-1)
+	flag_error_concealment(OMX_FALSE)
 {
 	scoped_log_begin;
 
@@ -64,7 +63,7 @@ void port_audio::set_flag_error_concealment(OMX_BOOL v)
 
 OMX_AUDIO_CODINGTYPE port_audio::get_encoding() const
 {
-	const OMX_AUDIO_PARAM_PORTFORMATTYPE *f = get_default_format();
+	const OMX_AUDIO_PARAM_PORTFORMATTYPE *f = get_default_format_audio();
 
 	if (f == nullptr) {
 		return OMX_AUDIO_CodingUnused;
@@ -117,56 +116,15 @@ OMX_ERRORTYPE port_audio::set_definition_from_client(const OMX_PARAM_PORTDEFINIT
 	return OMX_ErrorNone;
 }
 
-const OMX_AUDIO_PARAM_PORTFORMATTYPE *port_audio::get_supported_format(size_t index) const
+const OMX_AUDIO_PARAM_PORTFORMATTYPE *port_audio::get_default_format_audio() const
 {
-	if (index < 0 || formats.size() <= index) {
+	const port_format *pf = get_default_format();
+
+	if (pf == nullptr) {
 		return nullptr;
 	}
 
-	return &formats.at(index);
-}
-
-OMX_ERRORTYPE port_audio::add_supported_format(const OMX_AUDIO_PARAM_PORTFORMATTYPE *f)
-{
-	OMX_AUDIO_PARAM_PORTFORMATTYPE fmt;
-
-	if (f == nullptr) {
-		return OMX_ErrorBadParameter;
-	}
-
-	fmt = *f;
-	fmt.nPortIndex = 0;
-	fmt.nIndex = 0;
-	formats.push_back(fmt);
-
-	return OMX_ErrorNone;
-}
-
-OMX_ERRORTYPE port_audio::remove_supported_format(size_t index)
-{
-	if (index < 0 || formats.size() <= index) {
-		return OMX_ErrorBadParameter;
-	}
-
-	formats.erase(formats.begin() + index);
-
-	return OMX_ErrorNone;
-}
-
-const OMX_AUDIO_PARAM_PORTFORMATTYPE *port_audio::get_default_format() const
-{
-	return get_supported_format(default_format);
-}
-
-OMX_ERRORTYPE port_audio::set_default_format(size_t index)
-{
-	if (index < 0 || formats.size() <= index) {
-		return OMX_ErrorBadParameter;
-	}
-
-	default_format = index;
-
-	return OMX_ErrorNone;
+	return pf->get_format_audio();
 }
 
 } //namespace mf

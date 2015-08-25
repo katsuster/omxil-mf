@@ -30,5 +30,6 @@ nobase_libomxil_mf_la_HEADERS = \
 	$(MF_HEADER_DIR)/port_video.hpp \
 	$(MF_HEADER_DIR)/port_image.hpp \
 	$(MF_HEADER_DIR)/port_other.hpp \
+	$(MF_HEADER_DIR)/port_format.hpp \
 	$(MF_HEADER_DIR)/scoped_log.hpp \
 	$(MF_HEADER_DIR)/dprint.h

@@ -30,6 +30,7 @@ libomxil_mf_la_SOURCES = \
 	$(COMPONENT_DIR)/port_video.cpp \
 	$(COMPONENT_DIR)/port_image.cpp \
 	$(COMPONENT_DIR)/port_other.cpp \
+	$(COMPONENT_DIR)/port_format.cpp \
 	$(REGIST_DIR)/register_component.cpp \
 	$(DEBUG_DIR)/dprint.cpp
 EXTRA_libomxil_mf_la_SOURCES = \
