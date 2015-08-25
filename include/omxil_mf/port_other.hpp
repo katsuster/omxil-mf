@@ -46,6 +46,42 @@ public:
 	virtual const OMX_PARAM_PORTDEFINITIONTYPE *get_definition() const;
 
 	/**
+	 * Set OpenMAX IL definition data of this port.
+	 *
+	 * コンポーネントや、ポート自身が definition data を設定する場合、
+	 * こちらのメンバ関数を呼び出します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE の各メンバに加え、
+	 * format.other の各メンバに対応する、
+	 * このポートのメンバ変数が更新されます。
+	 *
+	 * struct OMX_OTHER_PORTDEFINITIONTYPE {
+	 *     OMX_OTHER_FORMATTYPE eFormat;
+	 * }
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v);
+
+	/**
+	 * Set OpenMAX IL definition data of this port by IL Client.
+	 *
+	 * OpenMAX IL クライアントから definition data を設定された場合、
+	 * こちらのメンバ関数を呼び出します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE の各メンバに加え、
+	 * format.other の各メンバに対応する、
+	 * このポートのメンバ変数が更新されます。
+	 *
+	 * struct OMX_OTHER_PORTDEFINITIONTYPE {
+	 *     OMX_OTHER_FORMATTYPE eFormat;
+	 * }
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v);
+
+	/**
 	 * ポートがサポートするデータの形式を取得します。
 	 *
 	 * @param index データ形式のインデックス

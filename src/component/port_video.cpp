@@ -179,6 +179,52 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port_video::get_definition() const
         return &definition;
 }
 
+OMX_ERRORTYPE port_video::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
+{
+	scoped_log_begin;
+
+	mime_type                = v.format.video.cMIMEType;
+	native_render            = v.format.video.pNativeRender;
+	frame_width              = v.format.video.nFrameWidth;
+	frame_height             = v.format.video.nFrameHeight;
+	stride                   = v.format.video.nStride;
+	slice_height             = v.format.video.nSliceHeight;
+	bitrate                  = v.format.video.nBitrate;
+	//FIXME: xFramerate, eCompressionFormat, eColorFormat を変えられたらどうする？？
+	//set_framerate(v.format.video.xFramerate);
+	flag_error_concealment   = v.format.video.bFlagErrorConcealment;
+	//set_compression_format(v.format.video.eCompressionFormat);
+	//set_color_format(v.format.video.eColorFormat);
+	native_window            = v.format.video.pNativeWindow;
+
+	super::set_definition(v);
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port_video::set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v)
+{
+	scoped_log_begin;
+
+	mime_type                = v.format.video.cMIMEType;
+	native_render            = v.format.video.pNativeRender;
+	frame_width              = v.format.video.nFrameWidth;
+	frame_height             = v.format.video.nFrameHeight;
+	stride                   = v.format.video.nStride;
+	slice_height             = v.format.video.nSliceHeight;
+	bitrate                  = v.format.video.nBitrate;
+	//FIXME: xFramerate, eCompressionFormat, eColorFormat を変えられたらどうする？？
+	//set_framerate(v.format.video.xFramerate);
+	flag_error_concealment   = v.format.video.bFlagErrorConcealment;
+	//set_compression_format(v.format.video.eCompressionFormat);
+	//set_color_format(v.format.video.eColorFormat);
+	native_window            = v.format.video.pNativeWindow;
+
+	super::set_definition_from_client(v);
+
+	return OMX_ErrorNone;
+}
+
 const OMX_VIDEO_PARAM_PORTFORMATTYPE *port_video::get_supported_format(size_t index) const
 {
 	if (index < 0 || formats.size() <= index) {

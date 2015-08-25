@@ -52,6 +52,30 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port_other::get_definition() const
 	return &definition;
 }
 
+OMX_ERRORTYPE port_other::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
+{
+	scoped_log_begin;
+
+	//FIXME: eEncoding を変えられたらどうする？？
+	//set_format(v.format.other.eFormat);
+
+	super::set_definition(v);
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port_other::set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v)
+{
+	scoped_log_begin;
+
+	//FIXME: eEncoding を変えられたらどうする？？
+	//set_format(v.format.other.eFormat);
+
+	super::set_definition_from_client(v);
+
+	return OMX_ErrorNone;
+}
+
 const OMX_OTHER_PARAM_PORTFORMATTYPE *port_other::get_supported_format(size_t index) const
 {
 	if (index < 0 || formats.size() <= index) {

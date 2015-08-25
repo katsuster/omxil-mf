@@ -479,6 +479,17 @@ OMX_ERRORTYPE port::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 	return OMX_ErrorNone;
 }
 
+OMX_ERRORTYPE port::set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v)
+{
+	scoped_log_begin;
+
+	//nBufferCountActual 以外は全て read-only
+	buffer_count_actual = v.nBufferCountActual;
+	//definition.format is ignored
+
+	return OMX_ErrorNone;
+}
+
 OMX_ERRORTYPE port::disable_port()
 {
 	scoped_log_begin;

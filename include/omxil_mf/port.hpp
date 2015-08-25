@@ -58,7 +58,7 @@ struct port_buffer {
 	//OpenMAX のバッファヘッダ
 	OMX_BUFFERHEADERTYPE *header;
 	//現在位置（初期値は nOffset）
-	//NOTE: 
+	//NOTE:
 	//OpenMAX IL 1.2.0: 3.1.3.9.2 EmptyBufferDone
 	//OpenMAX IL 1.2.0: 3.1.3.9.3 FillBufferDone によると、
 	//コンポーネントは渡されたバッファの
@@ -529,8 +529,11 @@ public:
 	/**
 	 * Set OpenMAX IL definition data of this port.
 	 *
+	 * コンポーネントや、ポート自身が definition data を設定する場合、
+	 * こちらのメンバ関数を呼び出します。
+	 *
 	 * OMX_PARAM_PORTDEFINITIONTYPE の各メンバに対応して、
-	 * このポートのメンバが更新されます。
+	 * このポートのメンバ変数が更新されます。
 	 * ただし nSize, nVersion, format メンバは無視されます。
 	 *
 	 * struct OMX_PARAM_PORTDEFINITIONTYPE {
@@ -557,6 +560,41 @@ public:
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v);
+
+	/**
+	 * Set OpenMAX IL definition data of this port by IL Client.
+	 *
+	 * OpenMAX IL クライアントから definition data を設定された場合、
+	 * こちらのメンバ関数を呼び出します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE の各メンバに対応した、
+	 * このポートのメンバ変数が更新されます。
+	 * ただし nBufferCountActual メンバ以外は全て無視されます。
+	 *
+	 * struct OMX_PARAM_PORTDEFINITIONTYPE {
+	 *     OMX_U32 nSize;
+	 *     OMX_VERSIONTYPE nVersion;
+	 *     OMX_U32 nPortIndex;
+	 *     OMX_DIRTYPE eDir;
+	 *     OMX_U32 nBufferCountActual;
+	 *     OMX_U32 nBufferCountMin;
+	 *     OMX_U32 nBufferSize;
+	 *     OMX_BOOL bEnabled;
+	 *     OMX_BOOL bPopulated;
+	 *     OMX_PORTDOMAINTYPE eDomain;
+	 *     union {
+	 *         OMX_AUDIO_PORTDEFINITIONTYPE audio;
+	 *         OMX_VIDEO_PORTDEFINITIONTYPE video;
+	 *         OMX_IMAGE_PORTDEFINITIONTYPE image;
+	 *         OMX_OTHER_PORTDEFINITIONTYPE other;
+	 *     } format;
+	 *     OMX_BOOL bBuffersContiguous;
+	 *     OMX_U32 nBufferAlignment;
+	 * }
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v);
 
 	/**
 	 * ポートを無効にします。

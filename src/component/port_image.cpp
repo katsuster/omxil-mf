@@ -156,6 +156,48 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port_image::get_definition() const
 	return &definition;
 }
 
+OMX_ERRORTYPE port_image::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
+{
+	scoped_log_begin;
+
+	mime_type                = v.format.image.cMIMEType;
+	native_render            = v.format.image.pNativeRender;
+	frame_width              = v.format.image.nFrameWidth;
+	frame_height             = v.format.image.nFrameHeight;
+	stride                   = v.format.image.nStride;
+	slice_height             = v.format.image.nSliceHeight;
+	flag_error_concealment   = v.format.image.bFlagErrorConcealment;
+	//FIXME: eCompressionFormat, eColorFormat を変えられたらどうするの？？
+	//set_compression_format(v.format.image.eCompressionFormat);
+	//set_color_format(v.format.image.eColorFormat);
+	native_window            = v.format.image.pNativeWindow;
+
+	super::set_definition(v);
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port_image::set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v)
+{
+	scoped_log_begin;
+
+	mime_type                = v.format.image.cMIMEType;
+	native_render            = v.format.image.pNativeRender;
+	frame_width              = v.format.image.nFrameWidth;
+	frame_height             = v.format.image.nFrameHeight;
+	stride                   = v.format.image.nStride;
+	slice_height             = v.format.image.nSliceHeight;
+	flag_error_concealment   = v.format.image.bFlagErrorConcealment;
+	//FIXME: eCompressionFormat, eColorFormat を変えられたらどうするの？？
+	//set_compression_format(v.format.image.eCompressionFormat);
+	//set_color_format(v.format.image.eColorFormat);
+	native_window            = v.format.image.pNativeWindow;
+
+	super::set_definition_from_client(v);
+
+	return OMX_ErrorNone;
+}
+
 const OMX_IMAGE_PARAM_PORTFORMATTYPE *port_image::get_supported_format(size_t index) const
 {
 	if (index < 0 || formats.size() <= index) {
