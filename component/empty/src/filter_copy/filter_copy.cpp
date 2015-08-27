@@ -91,7 +91,7 @@ void filter_copy::run()
 		memmove(&pb_out.header->pBuffer[off_out], 
 			&pb_in.header->pBuffer[off_in], len_out);
 
-		//NOTE: gst-openmax ‚Í nOffset ‚ð–ß‚³‚È‚¢‚Æ‚¨‚©‚µ‚È‹““®‚ð‚·‚éHH
+		//NOTE: gst-openmax ã¯ nOffset ã‚’æˆ»ã•ãªã„ã¨ãŠã‹ã—ãªæŒ™å‹•ã‚’ã™ã‚‹ï¼Ÿï¼Ÿ
 		pb_in.header->nOffset = 0;
 		in_port_video->empty_buffer_done(&pb_in);
 
