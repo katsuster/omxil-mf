@@ -80,8 +80,9 @@ host_triplet = @host@
 check_PROGRAMS = init_deinit$(EXEEXT) init_deinit_multi$(EXEEXT) \
 	enum_components$(EXEEXT) get_roles_of_component$(EXEEXT) \
 	get_components_of_role$(EXEEXT) get_handle$(EXEEXT) \
-	get_param_init$(EXEEXT) send_command$(EXEEXT) \
-	empty_buffer$(EXEEXT) fill_buffer$(EXEEXT) empty_fill$(EXEEXT)
+	get_param_init$(EXEEXT) set_port_format$(EXEEXT) \
+	send_command$(EXEEXT) empty_buffer$(EXEEXT) \
+	fill_buffer$(EXEEXT) empty_fill$(EXEEXT)
 @USE_BELLAGIO_TRUE@am__append_1 = -DUSE_BELLAGIO
 @USE_BELLAGIO_TRUE@am__append_2 = 
 @USE_BELLAGIO_TRUE@am__append_3 = -std=c++0x
@@ -93,7 +94,8 @@ check_PROGRAMS = init_deinit$(EXEEXT) init_deinit_multi$(EXEEXT) \
 TESTS = init_deinit$(EXEEXT) init_deinit_multi$(EXEEXT) \
 	enum_components$(EXEEXT) get_roles_of_component.sh \
 	get_components_of_role.sh get_handle.sh get_param_init.sh \
-	send_command.sh empty_buffer.sh fill_buffer.sh empty_fill.sh
+	set_port_format.sh send_command.sh empty_buffer.sh \
+	fill_buffer.sh empty_fill.sh
 subdir = tests/basic
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp $(top_srcdir)/test-driver
@@ -219,6 +221,17 @@ send_command_DEPENDENCIES = $(am__DEPENDENCIES_2)
 send_command_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(send_command_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am__objects_12 = set_port_format-omxil_utils.$(OBJEXT) \
+	set_port_format-omxil_comp.$(OBJEXT)
+am_set_port_format_OBJECTS =  \
+	set_port_format-test_set_port_format.$(OBJEXT) \
+	$(am__objects_12)
+set_port_format_OBJECTS = $(am_set_port_format_OBJECTS)
+set_port_format_DEPENDENCIES = $(am__DEPENDENCIES_2)
+set_port_format_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(set_port_format_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -276,13 +289,13 @@ SOURCES = $(empty_buffer_SOURCES) $(empty_fill_SOURCES) \
 	$(get_components_of_role_SOURCES) $(get_handle_SOURCES) \
 	$(get_param_init_SOURCES) $(get_roles_of_component_SOURCES) \
 	$(init_deinit_SOURCES) $(init_deinit_multi_SOURCES) \
-	$(send_command_SOURCES)
+	$(send_command_SOURCES) $(set_port_format_SOURCES)
 DIST_SOURCES = $(empty_buffer_SOURCES) $(empty_fill_SOURCES) \
 	$(enum_components_SOURCES) $(fill_buffer_SOURCES) \
 	$(get_components_of_role_SOURCES) $(get_handle_SOURCES) \
 	$(get_param_init_SOURCES) $(get_roles_of_component_SOURCES) \
 	$(init_deinit_SOURCES) $(init_deinit_multi_SOURCES) \
-	$(send_command_SOURCES)
+	$(send_command_SOURCES) $(set_port_format_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -676,6 +689,11 @@ get_param_init_LDADD = $(common_LDADD)
 get_param_init_CPPFLAGS = $(common_CPPFLAGS)
 get_param_init_CFLAGS = $(common_CFLAGS)
 get_param_init_CXXFLAGS = $(common_CXXFLAGS)
+set_port_format_SOURCES = test_set_port_format.cpp $(common_SOURCES)
+set_port_format_LDADD = $(common_LDADD)
+set_port_format_CPPFLAGS = $(common_CPPFLAGS)
+set_port_format_CFLAGS = $(common_CFLAGS)
+set_port_format_CXXFLAGS = $(common_CXXFLAGS)
 send_command_SOURCES = test_send_command.cpp $(common_SOURCES)
 send_command_LDADD = $(common_LDADD)
 send_command_CPPFLAGS = $(common_CPPFLAGS)
@@ -784,6 +802,10 @@ send_command$(EXEEXT): $(send_command_OBJECTS) $(send_command_DEPENDENCIES) $(EX
 	@rm -f send_command$(EXEEXT)
 	$(AM_V_CXXLD)$(send_command_LINK) $(send_command_OBJECTS) $(send_command_LDADD) $(LIBS)
 
+set_port_format$(EXEEXT): $(set_port_format_OBJECTS) $(set_port_format_DEPENDENCIES) $(EXTRA_set_port_format_DEPENDENCIES) 
+	@rm -f set_port_format$(EXEEXT)
+	$(AM_V_CXXLD)$(set_port_format_LINK) $(set_port_format_OBJECTS) $(set_port_format_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -823,6 +845,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_command-omxil_comp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_command-omxil_utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/send_command-test_send_command.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/set_port_format-omxil_comp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/set_port_format-omxil_utils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/set_port_format-test_set_port_format.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1040,6 +1065,20 @@ send_command-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(COMMON_DIR)/omxil_utils.c' object='send_command-omxil_utils.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CFLAGS) $(CFLAGS) -c -o send_command-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
+
+set_port_format-omxil_utils.o: $(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(set_port_format_CPPFLAGS) $(CPPFLAGS) $(set_port_format_CFLAGS) $(CFLAGS) -MT set_port_format-omxil_utils.o -MD -MP -MF $(DEPDIR)/set_port_format-omxil_utils.Tpo -c -o set_port_format-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/set_port_format-omxil_utils.Tpo $(DEPDIR)/set_port_format-omxil_utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(COMMON_DIR)/omxil_utils.c' object='set_port_format-omxil_utils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(set_port_format_CPPFLAGS) $(CPPFLAGS) $(set_port_format_CFLAGS) $(CFLAGS) -c -o set_port_format-omxil_utils.o `test -f '$(COMMON_DIR)/omxil_utils.c' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_utils.c
+
+set_port_format-omxil_utils.obj: $(COMMON_DIR)/omxil_utils.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(set_port_format_CPPFLAGS) $(CPPFLAGS) $(set_port_format_CFLAGS) $(CFLAGS) -MT set_port_format-omxil_utils.obj -MD -MP -MF $(DEPDIR)/set_port_format-omxil_utils.Tpo -c -o set_port_format-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/set_port_format-omxil_utils.Tpo $(DEPDIR)/set_port_format-omxil_utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(COMMON_DIR)/omxil_utils.c' object='set_port_format-omxil_utils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(set_port_format_CPPFLAGS) $(CPPFLAGS) $(set_port_format_CFLAGS) $(CFLAGS) -c -o set_port_format-omxil_utils.obj `if test -f '$(COMMON_DIR)/omxil_utils.c'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_utils.c'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_utils.c'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1328,6 +1367,34 @@ send_command-omxil_comp.obj: $(COMMON_DIR)/omxil_comp.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(send_command_CPPFLAGS) $(CPPFLAGS) $(send_command_CXXFLAGS) $(CXXFLAGS) -c -o send_command-omxil_comp.obj `if test -f '$(COMMON_DIR)/omxil_comp.cpp'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_comp.cpp'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_comp.cpp'; fi`
 
+set_port_format-test_set_port_format.o: test_set_port_format.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(set_port_format_CPPFLAGS) $(CPPFLAGS) $(set_port_format_CXXFLAGS) $(CXXFLAGS) -MT set_port_format-test_set_port_format.o -MD -MP -MF $(DEPDIR)/set_port_format-test_set_port_format.Tpo -c -o set_port_format-test_set_port_format.o `test -f 'test_set_port_format.cpp' || echo '$(srcdir)/'`test_set_port_format.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/set_port_format-test_set_port_format.Tpo $(DEPDIR)/set_port_format-test_set_port_format.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_set_port_format.cpp' object='set_port_format-test_set_port_format.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(set_port_format_CPPFLAGS) $(CPPFLAGS) $(set_port_format_CXXFLAGS) $(CXXFLAGS) -c -o set_port_format-test_set_port_format.o `test -f 'test_set_port_format.cpp' || echo '$(srcdir)/'`test_set_port_format.cpp
+
+set_port_format-test_set_port_format.obj: test_set_port_format.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(set_port_format_CPPFLAGS) $(CPPFLAGS) $(set_port_format_CXXFLAGS) $(CXXFLAGS) -MT set_port_format-test_set_port_format.obj -MD -MP -MF $(DEPDIR)/set_port_format-test_set_port_format.Tpo -c -o set_port_format-test_set_port_format.obj `if test -f 'test_set_port_format.cpp'; then $(CYGPATH_W) 'test_set_port_format.cpp'; else $(CYGPATH_W) '$(srcdir)/test_set_port_format.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/set_port_format-test_set_port_format.Tpo $(DEPDIR)/set_port_format-test_set_port_format.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='test_set_port_format.cpp' object='set_port_format-test_set_port_format.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(set_port_format_CPPFLAGS) $(CPPFLAGS) $(set_port_format_CXXFLAGS) $(CXXFLAGS) -c -o set_port_format-test_set_port_format.obj `if test -f 'test_set_port_format.cpp'; then $(CYGPATH_W) 'test_set_port_format.cpp'; else $(CYGPATH_W) '$(srcdir)/test_set_port_format.cpp'; fi`
+
+set_port_format-omxil_comp.o: $(COMMON_DIR)/omxil_comp.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(set_port_format_CPPFLAGS) $(CPPFLAGS) $(set_port_format_CXXFLAGS) $(CXXFLAGS) -MT set_port_format-omxil_comp.o -MD -MP -MF $(DEPDIR)/set_port_format-omxil_comp.Tpo -c -o set_port_format-omxil_comp.o `test -f '$(COMMON_DIR)/omxil_comp.cpp' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_comp.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/set_port_format-omxil_comp.Tpo $(DEPDIR)/set_port_format-omxil_comp.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMMON_DIR)/omxil_comp.cpp' object='set_port_format-omxil_comp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(set_port_format_CPPFLAGS) $(CPPFLAGS) $(set_port_format_CXXFLAGS) $(CXXFLAGS) -c -o set_port_format-omxil_comp.o `test -f '$(COMMON_DIR)/omxil_comp.cpp' || echo '$(srcdir)/'`$(COMMON_DIR)/omxil_comp.cpp
+
+set_port_format-omxil_comp.obj: $(COMMON_DIR)/omxil_comp.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(set_port_format_CPPFLAGS) $(CPPFLAGS) $(set_port_format_CXXFLAGS) $(CXXFLAGS) -MT set_port_format-omxil_comp.obj -MD -MP -MF $(DEPDIR)/set_port_format-omxil_comp.Tpo -c -o set_port_format-omxil_comp.obj `if test -f '$(COMMON_DIR)/omxil_comp.cpp'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_comp.cpp'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_comp.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/set_port_format-omxil_comp.Tpo $(DEPDIR)/set_port_format-omxil_comp.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMMON_DIR)/omxil_comp.cpp' object='set_port_format-omxil_comp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(set_port_format_CPPFLAGS) $(CPPFLAGS) $(set_port_format_CXXFLAGS) $(CXXFLAGS) -c -o set_port_format-omxil_comp.obj `if test -f '$(COMMON_DIR)/omxil_comp.cpp'; then $(CYGPATH_W) '$(COMMON_DIR)/omxil_comp.cpp'; else $(CYGPATH_W) '$(srcdir)/$(COMMON_DIR)/omxil_comp.cpp'; fi`
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -1572,6 +1639,13 @@ get_handle.sh.log: get_handle.sh
 get_param_init.sh.log: get_param_init.sh
 	@p='get_param_init.sh'; \
 	b='get_param_init.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+set_port_format.sh.log: set_port_format.sh
+	@p='set_port_format.sh'; \
+	b='set_port_format.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

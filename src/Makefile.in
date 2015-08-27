@@ -129,7 +129,8 @@ am_libomxil_mf_la_OBJECTS = libomxil_mf_la-omxil.lo \
 	libomxil_mf_la-omx_reflector.lo libomxil_mf_la-component.lo \
 	libomxil_mf_la-port.lo libomxil_mf_la-port_audio.lo \
 	libomxil_mf_la-port_video.lo libomxil_mf_la-port_image.lo \
-	libomxil_mf_la-port_other.lo libomxil_mf_la-port_format.lo \
+	libomxil_mf_la-port_other.lo libomxil_mf_la-port_buffer.lo \
+	libomxil_mf_la-port_format.lo \
 	libomxil_mf_la-register_component.lo libomxil_mf_la-dprint.lo
 libomxil_mf_la_OBJECTS = $(am_libomxil_mf_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -369,6 +370,7 @@ libomxil_mf_la_SOURCES = \
 	$(COMPONENT_DIR)/port_video.cpp \
 	$(COMPONENT_DIR)/port_image.cpp \
 	$(COMPONENT_DIR)/port_other.cpp \
+	$(COMPONENT_DIR)/port_buffer.cpp \
 	$(COMPONENT_DIR)/port_format.cpp \
 	$(REGIST_DIR)/register_component.cpp \
 	$(DEBUG_DIR)/dprint.cpp
@@ -483,6 +485,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-omxil_mf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-port.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-port_audio.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-port_buffer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-port_format.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-port_image.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-port_other.Plo@am__quote@
@@ -615,6 +618,13 @@ libomxil_mf_la-port_other.lo: $(COMPONENT_DIR)/port_other.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMPONENT_DIR)/port_other.cpp' object='libomxil_mf_la-port_other.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-port_other.lo `test -f '$(COMPONENT_DIR)/port_other.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/port_other.cpp
+
+libomxil_mf_la-port_buffer.lo: $(COMPONENT_DIR)/port_buffer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-port_buffer.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-port_buffer.Tpo -c -o libomxil_mf_la-port_buffer.lo `test -f '$(COMPONENT_DIR)/port_buffer.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/port_buffer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-port_buffer.Tpo $(DEPDIR)/libomxil_mf_la-port_buffer.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(COMPONENT_DIR)/port_buffer.cpp' object='libomxil_mf_la-port_buffer.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-port_buffer.lo `test -f '$(COMPONENT_DIR)/port_buffer.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/port_buffer.cpp
 
 libomxil_mf_la-port_format.lo: $(COMPONENT_DIR)/port_format.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-port_format.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-port_format.Tpo -c -o libomxil_mf_la-port_format.lo `test -f '$(COMPONENT_DIR)/port_format.cpp' || echo '$(srcdir)/'`$(COMPONENT_DIR)/port_format.cpp
