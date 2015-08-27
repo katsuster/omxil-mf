@@ -252,7 +252,7 @@ OMX_ERRORTYPE component::GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRI
 
 	//name
 	strncpy(pComponentName, get_component_name().c_str(), OMX_MAX_STRINGNAME_SIZE);
-	
+
 	//component version (default is 1.0.0.0)
 	pComponentVersion->s.nVersionMajor = 1;
 	pComponentVersion->s.nVersionMinor = 0;
@@ -261,7 +261,7 @@ OMX_ERRORTYPE component::GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRI
 
 	//spec version
 	*pSpecVersion = get_omx_component()->nVersion;
-	
+
 	//uuid
 	memset(*pComponentUUID, 0, sizeof(*pComponentUUID));
 	uuid[0] = (uint64_t)this;
@@ -269,7 +269,7 @@ OMX_ERRORTYPE component::GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRI
 	uuid[2] = 0;
 	uuid[3] = 0;
 	memmove(*pComponentUUID, uuid, sizeof(uuid));
-	
+
 	return OMX_ErrorNone;
 }
 
@@ -432,6 +432,12 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	case OMX_IndexParamAudioPortFormat:
 		pf_audio = (OMX_AUDIO_PARAM_PORTFORMATTYPE *) ptr;
 
+		err = check_omx_header(pf_audio, sizeof(OMX_AUDIO_PARAM_PORTFORMATTYPE));
+		if (err != OMX_ErrorNone) {
+			errprint("invalid header.\n");
+			break;
+		}
+
 		port_found = find_port(pf_audio->nPortIndex);
 		if (port_found == nullptr) {
 			errprint("invalid port:%d\n", (int)pf_audio->nPortIndex);
@@ -439,7 +445,7 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
-		pf_found = port_found->get_supported_format(pf_audio->nIndex);
+		pf_found = port_found->get_port_format(pf_audio->nIndex);
 		if (pf_found == nullptr || pf_found->get_format_audio() == nullptr) {
 			errprint("port:%d does not have audio format(index:%d).\n",
 				(int)pf_audio->nPortIndex, (int)pf_audio->nIndex);
@@ -465,6 +471,12 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	case OMX_IndexParamVideoPortFormat:
 		pf_video = (OMX_VIDEO_PARAM_PORTFORMATTYPE *) ptr;
 
+		err = check_omx_header(pf_video, sizeof(OMX_VIDEO_PARAM_PORTFORMATTYPE));
+		if (err != OMX_ErrorNone) {
+			errprint("invalid header.\n");
+			break;
+		}
+
 		port_found = find_port(pf_video->nPortIndex);
 		if (port_found == nullptr) {
 			errprint("invalid port:%d\n", (int)pf_video->nPortIndex);
@@ -472,7 +484,7 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
-		pf_found = port_found->get_supported_format(pf_video->nIndex);
+		pf_found = port_found->get_port_format(pf_video->nIndex);
 		if (pf_found == nullptr || pf_found->get_format_video() == nullptr) {
 			errprint("port:%d does not have video format(index:%d).\n",
 				(int)pf_video->nPortIndex, (int)pf_video->nIndex);
@@ -498,6 +510,12 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	case OMX_IndexParamImagePortFormat:
 		pf_image = (OMX_IMAGE_PARAM_PORTFORMATTYPE *) ptr;
 
+		err = check_omx_header(pf_image, sizeof(OMX_IMAGE_PARAM_PORTFORMATTYPE));
+		if (err != OMX_ErrorNone) {
+			errprint("invalid header.\n");
+			break;
+		}
+
 		port_found = find_port(pf_image->nPortIndex);
 		if (port_found == nullptr) {
 			errprint("invalid port:%d\n", (int)pf_image->nPortIndex);
@@ -505,7 +523,7 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
-		pf_found = port_found->get_supported_format(pf_image->nIndex);
+		pf_found = port_found->get_port_format(pf_image->nIndex);
 		if (pf_found == nullptr || pf_found->get_format_image() == nullptr) {
 			errprint("port:%d does not have image format(index:%d).\n",
 				(int)pf_image->nPortIndex, (int)pf_image->nIndex);
@@ -531,6 +549,12 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	case OMX_IndexParamOtherPortFormat:
 		pf_other = (OMX_OTHER_PARAM_PORTFORMATTYPE *) ptr;
 
+		err = check_omx_header(pf_other, sizeof(OMX_OTHER_PARAM_PORTFORMATTYPE));
+		if (err != OMX_ErrorNone) {
+			errprint("invalid header.\n");
+			break;
+		}
+
 		port_found = find_port(pf_other->nPortIndex);
 		if (port_found == nullptr) {
 			errprint("invalid port:%d\n", (int)pf_other->nPortIndex);
@@ -538,7 +562,7 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
-		pf_found = port_found->get_supported_format(pf_other->nIndex);
+		pf_found = port_found->get_port_format(pf_other->nIndex);
 		if (pf_found == nullptr || pf_found->get_format_other() == nullptr) {
 			errprint("port:%d does not have other format(index:%d).\n",
 				(int)pf_other->nPortIndex, (int)pf_other->nIndex);
@@ -581,6 +605,10 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	OMX_PARAM_BUFFERSUPPLIERTYPE *supply = nullptr;
 	OMX_PORT_PARAM_TYPE *param = nullptr;
 	//OMX_PRIORITYMGMTTYPE *mgm;
+	OMX_AUDIO_PARAM_PORTFORMATTYPE *pf_audio;
+	OMX_VIDEO_PARAM_PORTFORMATTYPE *pf_video;
+	OMX_IMAGE_PARAM_PORTFORMATTYPE *pf_image;
+	OMX_OTHER_PARAM_PORTFORMATTYPE *pf_other;
 	void *ptr = nullptr;
 	OMX_ERRORTYPE err;
 
@@ -656,18 +684,58 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	//case OMX_IndexParamStandardComponentRole:
 	//	(OMX_PARAM_COMPONENTROLETYPE *) ptr;
 	//	break;
-	//case OMX_IndexParamAudioPortFormat:
-	//	(OMX_AUDIO_PARAM_PORTFORMATTYPE *) ptr;
-	//	break;
-	//case OMX_IndexParamVideoPortFormat:
-	//	(OMX_VIDEO_PARAM_PORTFORMATTYPE *) ptr;
-	//	break;
-	//case OMX_IndexParamImagePortFormat:
-	//	(OMX_IMAGE_PARAM_PORTFORMATTYPE *) ptr;
-	//	break;
-	//case OMX_IndexParamOtherPortFormat:
-	//	(OMX_OTHER_PARAM_PORTFORMATTYPE *) ptr;
-	//	break;
+	case OMX_IndexParamAudioPortFormat:
+		pf_audio = (OMX_AUDIO_PARAM_PORTFORMATTYPE *) ptr;
+
+		err = check_omx_header(pf_audio, sizeof(OMX_AUDIO_PARAM_PORTFORMATTYPE));
+		if (err != OMX_ErrorNone) {
+			errprint("invalid header.\n");
+			break;
+		}
+
+		//FIXME: not supported
+		err = OMX_ErrorUnsupportedIndex;
+
+		break;
+	case OMX_IndexParamVideoPortFormat:
+		pf_video = (OMX_VIDEO_PARAM_PORTFORMATTYPE *) ptr;
+
+		err = check_omx_header(pf_video, sizeof(OMX_VIDEO_PARAM_PORTFORMATTYPE));
+		if (err != OMX_ErrorNone) {
+			errprint("invalid header.\n");
+			break;
+		}
+
+		//FIXME: not supported
+		err = OMX_ErrorUnsupportedIndex;
+
+		break;
+	case OMX_IndexParamImagePortFormat:
+		pf_image = (OMX_IMAGE_PARAM_PORTFORMATTYPE *) ptr;
+
+		err = check_omx_header(pf_image, sizeof(OMX_IMAGE_PARAM_PORTFORMATTYPE));
+		if (err != OMX_ErrorNone) {
+			errprint("invalid header.\n");
+			break;
+		}
+
+		//FIXME: not supported
+		err = OMX_ErrorUnsupportedIndex;
+
+		break;
+	case OMX_IndexParamOtherPortFormat:
+		pf_other = (OMX_OTHER_PARAM_PORTFORMATTYPE *) ptr;
+
+		err = check_omx_header(pf_other, sizeof(OMX_OTHER_PARAM_PORTFORMATTYPE));
+		if (err != OMX_ErrorNone) {
+			errprint("invalid header.\n");
+			break;
+		}
+
+		//FIXME: not supported
+		err = OMX_ErrorUnsupportedIndex;
+
+		break;
 	//case OMX_IndexParamPriorityMgmt:
 	//	mgm = (OMX_PRIORITYMGMTTYPE *) ptr;
 	//	break;

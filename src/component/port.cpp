@@ -361,50 +361,34 @@ OMX_ERRORTYPE port::set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYP
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE port::add_supported_format(const port_format& f)
+OMX_ERRORTYPE port::add_port_format(const port_format& f)
 {
 	formats.push_back(f);
 
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE port::add_supported_format(const OMX_AUDIO_PARAM_PORTFORMATTYPE *f)
+OMX_ERRORTYPE port::add_port_format(const OMX_AUDIO_PARAM_PORTFORMATTYPE& f)
 {
-	if (f == nullptr) {
-		return OMX_ErrorBadParameter;
-	}
-
-	return add_supported_format(port_format(*f));
+	return add_port_format(port_format(f));
 }
 
-OMX_ERRORTYPE port::add_supported_format(const OMX_VIDEO_PARAM_PORTFORMATTYPE *f)
+OMX_ERRORTYPE port::add_port_format(const OMX_VIDEO_PARAM_PORTFORMATTYPE& f)
 {
-	if (f == nullptr) {
-		return OMX_ErrorBadParameter;
-	}
-
-	return add_supported_format(port_format(*f));
+	return add_port_format(port_format(f));
 }
 
-OMX_ERRORTYPE port::add_supported_format(const OMX_IMAGE_PARAM_PORTFORMATTYPE *f)
+OMX_ERRORTYPE port::add_port_format(const OMX_IMAGE_PARAM_PORTFORMATTYPE& f)
 {
-	if (f == nullptr) {
-		return OMX_ErrorBadParameter;
-	}
-
-	return add_supported_format(port_format(*f));
+	return add_port_format(port_format(f));
 }
 
-OMX_ERRORTYPE port::add_supported_format(const OMX_OTHER_PARAM_PORTFORMATTYPE *f)
+OMX_ERRORTYPE port::add_port_format(const OMX_OTHER_PARAM_PORTFORMATTYPE& f)
 {
-	if (f == nullptr) {
-		return OMX_ErrorBadParameter;
-	}
-
-	return add_supported_format(port_format(*f));
+	return add_port_format(port_format(f));
 }
 
-OMX_ERRORTYPE port::remove_supported_format(size_t index)
+OMX_ERRORTYPE port::remove_port_format(size_t index)
 {
 	if (index < 0 || formats.size() <= index) {
 		return OMX_ErrorBadParameter;
@@ -415,7 +399,7 @@ OMX_ERRORTYPE port::remove_supported_format(size_t index)
 	return OMX_ErrorNone;
 }
 
-const port_format *port::get_supported_format(size_t index) const
+const port_format *port::get_port_format(size_t index) const
 {
 	if (index < 0 || formats.size() <= index) {
 		return nullptr;
@@ -423,10 +407,27 @@ const port_format *port::get_supported_format(size_t index) const
 
 	return &formats.at(index);
 }
-	
+
+const port_format *port::get_port_format(const port_format& f) const
+{
+	size_t index;
+
+	index = get_port_format_index(f);
+	if (index == (size_t)~0) {
+		return nullptr;
+	}
+
+	return get_port_format(index);
+}
+
+size_t port::get_port_format_index(const port_format& f) const
+{
+	return (size_t)~0;
+}
+
 const port_format *port::get_default_format() const
 {
-	return get_supported_format(default_format);
+	return get_port_format(default_format);
 }
 
 OMX_ERRORTYPE port::set_default_format(size_t index)
@@ -438,6 +439,18 @@ OMX_ERRORTYPE port::set_default_format(size_t index)
 	default_format = index;
 
 	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port::set_default_format(const port_format& f)
+{
+	size_t index;
+
+	index = get_port_format_index(f);
+	if (index == (size_t)(~0)) {
+		return OMX_ErrorUnsupportedSetting;
+	}
+
+	return set_default_format(index);
 }
 
 OMX_ERRORTYPE port::disable_port()

@@ -337,39 +337,39 @@ public:
 	 * @param f データ形式へのポインタ
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE add_supported_format(const port_format& f);
+	virtual OMX_ERRORTYPE add_port_format(const port_format& f);
 
 	/**
 	 * ポートがサポートするオーディオデータ形式を追加します。
 	 *
-	 * @param f データ形式へのポインタ
+	 * @param f データ形式への参照
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE add_supported_format(const OMX_AUDIO_PARAM_PORTFORMATTYPE *f);
+	virtual OMX_ERRORTYPE add_port_format(const OMX_AUDIO_PARAM_PORTFORMATTYPE& f);
 
 	/**
 	 * ポートがサポートするビデオデータ形式を追加します。
 	 *
-	 * @param f データ形式へのポインタ
+	 * @param f データ形式への参照
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE add_supported_format(const OMX_VIDEO_PARAM_PORTFORMATTYPE *f);
+	virtual OMX_ERRORTYPE add_port_format(const OMX_VIDEO_PARAM_PORTFORMATTYPE& f);
 
 	/**
 	 * ポートがサポートする画像データ形式を追加します。
 	 *
-	 * @param f データ形式へのポインタ
+	 * @param f データ形式への参照
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE add_supported_format(const OMX_IMAGE_PARAM_PORTFORMATTYPE *f);
+	virtual OMX_ERRORTYPE add_port_format(const OMX_IMAGE_PARAM_PORTFORMATTYPE& f);
 
 	/**
 	 * ポートがサポートするその他のデータ形式を追加します。
 	 *
-	 * @param f データ形式へのポインタ
+	 * @param f データ形式への参照
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE add_supported_format(const OMX_OTHER_PARAM_PORTFORMATTYPE *f);
+	virtual OMX_ERRORTYPE add_port_format(const OMX_OTHER_PARAM_PORTFORMATTYPE& f);
 
 	/**
 	 * ポートがサポートするデータの形式を削除します。
@@ -377,7 +377,7 @@ public:
 	 * @param index データ形式のインデックス
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE remove_supported_format(size_t index);
+	virtual OMX_ERRORTYPE remove_port_format(size_t index);
 
 	/**
 	 * ポートがサポートするデータの形式を取得します。
@@ -385,18 +385,82 @@ public:
 	 * 取得した port_format は Audio/Video/Image/Other いずれかの、
 	 * OMX_XXXXX_PARAM_PORTFORMATTYPE を保持しています。
 	 *
-	 * 下記のようにすれば必要な種類の PORTFORMATTYPE を取得できます。
+	 * 下記のように必要な種類の PORTFORMATTYPE を取得してください。
 	 *
 	 * <pre>
-	 * const port_format *pf = get_supported_format(index);
+	 * const port_format *pf = get_port_format(index);
+	 * if (pf == nullptr) {
+	 *     //Invalid index
+	 * }
 	 * //If you need audio port format type
 	 * const OMX_AUDIO_PARAM_PORTFORMATTYPE *pf_audio = pf->get_audio();
+	 * if (pf_audio == nullptr) {
+	 *     //Not audio
+	 * }
 	 * </pre>
 	 *
 	 * @param index データ形式のインデックス
 	 * @return データ形式へのポインタ、取得できなければ nullptr
 	 */
-	virtual const port_format *get_supported_format(size_t index) const;
+	virtual const port_format *get_port_format(size_t index) const;
+
+	/**
+	 * 条件を指定してポートがサポートするデータの形式を取得します。
+	 *
+	 * 指定した条件が複数のデータ形式に該当する場合、
+	 * index の値が小さいデータ形式が優先されます。
+	 *
+	 * 参考: OpenMAX IL 1.2.0 Specification:
+	 *   4.1.7 OMX_AUDIO_PARAM_PORTFORMATTYPE,
+	 *   4.3.5 OMX_VIDEO_PARAM_PORTFORMATTYPE
+	 *
+	 * 下記のように設定したい種類の PORTFORMATTYPE を渡して、
+	 * port_format を作成してください。
+	 *
+	 * <pre>
+	 * OMX_VIDEO_PARAM_PORTFORMATTYPE fmt;
+	 * fmt.eCompressionFormat = OMX_VIDEO_CodingMPEG2;
+	 * fmt.eColorFormat       = OMX_COLOR_FormatUnused; //don't care
+	 * fmt.xFramerate         = 0; //don't care
+	 *
+	 * size_t index = get_port_format(port_format(fmt));
+	 * </pre>
+	 *
+	 * @param f データ形式
+	 * @return データ形式へのポインタ、取得できなければ nullptr
+	 */
+	virtual const port_format *get_port_format(const port_format& f) const;
+
+	/**
+	 * ポートがサポートするデータの形式のインデクスを取得します。
+	 *
+	 * 指定した条件が複数のデータ形式に該当する場合、
+	 * index の値が小さいデータ形式が優先されます。
+	 *
+	 * 参考: OpenMAX IL 1.2.0 Specification:
+	 *   4.1.7 OMX_AUDIO_PARAM_PORTFORMATTYPE,
+	 *   4.3.5 OMX_VIDEO_PARAM_PORTFORMATTYPE
+	 *
+	 * 下記のように設定したい種類の PORTFORMATTYPE を渡して、
+	 * port_format を作成してください。
+	 *
+	 * <pre>
+	 * OMX_VIDEO_PARAM_PORTFORMATTYPE fmt;
+	 * fmt.eCompressionFormat = OMX_VIDEO_CodingMPEG2;
+	 * fmt.eColorFormat       = OMX_COLOR_FormatUnused; //don't care
+	 * fmt.xFramerate         = 0; //don't care
+	 *
+	 * size_t index = get_port_format_index(port_format(pfmt));
+	 * </pre>
+	 *
+	 * NOTE:
+	 * このクラスの実装では、常に (~0) を返します。
+	 * 継承したクラスで適切にオーバライドしてください。
+	 *
+	 * @param f データ形式
+	 * @return データ形式のインデクス、取得できなければ (~0)
+	 */
+	virtual size_t get_port_format_index(const port_format& f) const;
 
 	/**
 	 * ポートがデフォルトでサポートするデータの形式を取得します。
@@ -406,7 +470,7 @@ public:
 	 * 下記の呼び出しに等しいです。
 	 *
 	 * <pre>
-	 * get_supported_format(default_format_index);
+	 * get_port_format(default_format_index);
 	 * </pre>
 	 *
 	 * @param index データ形式のインデックス
@@ -421,6 +485,31 @@ public:
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE set_default_format(size_t index);
+
+	/**
+	 * ポートがデフォルトでサポートするデータの形式を設定します。
+	 *
+	 * port_format は Audio/Video/Image/Other いずれかの、
+	 * OMX_XXXXX_PARAM_PORTFORMATTYPE を保持している必要があります。
+	 *
+	 * 下記のように設定したい種類の PORTFORMATTYPE を渡して、
+	 * port_format を作成してください。
+	 *
+	 * <pre>
+	 * OMX_XXXXX_PARAM_PORTFORMATTYPE fmt;
+	 * fmt.eEncoding = OMX_AUDIO_CodingPCM;
+	 *
+	 * port_format pfmt = port_format(fmt);
+	 * port->set_port_format(&pfmt);
+	 * </pre>
+	 *
+	 * @param index データ形式のインデックス
+	 * @return OpenMAX エラー値
+	 *     OMX_ErrorBadParameter      : データ形式に何も指定していない、
+	 *                                  もしくは矛盾している
+	 *     OMX_ErrorUnsupportedSetting: 対応していないデータ形式を指定した
+	 */
+	virtual OMX_ERRORTYPE set_default_format(const port_format& f);
 
 	/**
 	 * ポートを無効にします。

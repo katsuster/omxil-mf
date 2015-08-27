@@ -19,7 +19,7 @@ renderer_null::renderer_null(OMX_COMPONENTTYPE *c, const char *cname)
 		f.eCompressionFormat = OMX_VIDEO_CodingUnused;
 		f.eColorFormat       = OMX_COLOR_FormatYUV420Planar;
 		f.xFramerate         = 0;
-		in_port_video->add_supported_format(&f);
+		in_port_video->add_port_format(f);
 		in_port_video->set_default_format(0);
 
 		insert_port(*in_port_video);
