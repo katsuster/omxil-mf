@@ -9,6 +9,7 @@ check_PROGRAMS = \
 	get_components_of_role \
 	get_handle \
 	get_param_init \
+	set_port_format \
 	send_command \
 	empty_buffer \
 	fill_buffer \
@@ -75,6 +76,12 @@ get_param_init_CPPFLAGS  = $(common_CPPFLAGS)
 get_param_init_CFLAGS    = $(common_CFLAGS)
 get_param_init_CXXFLAGS  = $(common_CXXFLAGS)
 
+set_port_format_SOURCES   = test_set_port_format.cpp $(common_SOURCES)
+set_port_format_LDADD     = $(common_LDADD)
+set_port_format_CPPFLAGS  = $(common_CPPFLAGS)
+set_port_format_CFLAGS    = $(common_CFLAGS)
+set_port_format_CXXFLAGS  = $(common_CXXFLAGS)
+
 send_command_SOURCES   = test_send_command.cpp $(common_SOURCES)
 send_command_LDADD     = $(common_LDADD)
 send_command_CPPFLAGS  = $(common_CPPFLAGS)
@@ -107,6 +114,7 @@ TESTS = \
 	get_components_of_role.sh \
 	get_handle.sh \
 	get_param_init.sh \
+	set_port_format.sh \
 	send_command.sh \
 	empty_buffer.sh \
 	fill_buffer.sh \
