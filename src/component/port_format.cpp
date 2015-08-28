@@ -57,7 +57,7 @@ const OMX_AUDIO_PARAM_PORTFORMATTYPE *port_format::get_format_audio() const
 
 const OMX_VIDEO_PARAM_PORTFORMATTYPE *port_format::get_format_video() const
 {
-	if (dom_type == OMX_PortDomainAudio) {
+	if (dom_type == OMX_PortDomainVideo) {
 		return &pf_video;
 	} else {
 		return nullptr;
