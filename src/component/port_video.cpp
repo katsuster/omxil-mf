@@ -181,6 +181,19 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port_video::get_definition() const
 OMX_ERRORTYPE port_video::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 {
 	scoped_log_begin;
+	OMX_VIDEO_PARAM_PORTFORMATTYPE t = {0, };
+	OMX_ERRORTYPE err;
+
+	//xFramerate, eCompressionFormat, eColorFormat を変えられたら、
+	//デフォルトフォーマットを切り替える
+	t.eCompressionFormat = v.format.video.eCompressionFormat;
+	t.eColorFormat       = v.format.video.eColorFormat;
+	t.xFramerate         = v.format.video.xFramerate;
+	err = set_default_format(port_format(t));
+	if (err != OMX_ErrorNone) {
+		errprint("unsupported video format in port definition.\n");
+		return err;
+	}
 
 	mime_type                = v.format.video.cMIMEType;
 	native_render            = v.format.video.pNativeRender;
@@ -189,12 +202,12 @@ OMX_ERRORTYPE port_video::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 	stride                   = v.format.video.nStride;
 	slice_height             = v.format.video.nSliceHeight;
 	bitrate                  = v.format.video.nBitrate;
-	//FIXME: xFramerate, eCompressionFormat, eColorFormat を変えられたらどうする？？
-	//set_framerate(v.format.video.xFramerate);
 	flag_error_concealment   = v.format.video.bFlagErrorConcealment;
-	//set_compression_format(v.format.video.eCompressionFormat);
-	//set_color_format(v.format.video.eColorFormat);
 	native_window            = v.format.video.pNativeWindow;
+	//下記はデフォルトフォーマットの切り替えによって変更を反映すること
+	//v.format.video.xFramerate
+	//v.format.video.eCompressionFormat
+	//v.format.video.eColorFormat
 
 	super::set_definition(v);
 

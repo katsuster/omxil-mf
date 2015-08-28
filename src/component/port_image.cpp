@@ -158,6 +158,18 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port_image::get_definition() const
 OMX_ERRORTYPE port_image::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 {
 	scoped_log_begin;
+	OMX_IMAGE_PARAM_PORTFORMATTYPE t = {0, };
+	OMX_ERRORTYPE err;
+
+	//eCompressionFormat, eColorFormat を変えられたら、
+	//デフォルトフォーマットを切り替える
+	t.eCompressionFormat = v.format.image.eCompressionFormat;
+	t.eColorFormat       = v.format.image.eColorFormat;
+	err = set_default_format(port_format(t));
+	if (err != OMX_ErrorNone) {
+		errprint("unsupported image format in port definition.\n");
+		return err;
+	}
 
 	mime_type                = v.format.image.cMIMEType;
 	native_render            = v.format.image.pNativeRender;
@@ -166,10 +178,10 @@ OMX_ERRORTYPE port_image::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 	stride                   = v.format.image.nStride;
 	slice_height             = v.format.image.nSliceHeight;
 	flag_error_concealment   = v.format.image.bFlagErrorConcealment;
-	//FIXME: eCompressionFormat, eColorFormat を変えられたらどうするの？？
+	native_window            = v.format.image.pNativeWindow;
+	//下記はデフォルトフォーマットの切り替えによって変更を反映すること
 	//set_compression_format(v.format.image.eCompressionFormat);
 	//set_color_format(v.format.image.eColorFormat);
-	native_window            = v.format.image.pNativeWindow;
 
 	super::set_definition(v);
 

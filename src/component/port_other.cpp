@@ -54,9 +54,20 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port_other::get_definition() const
 OMX_ERRORTYPE port_other::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 {
 	scoped_log_begin;
+	OMX_OTHER_PARAM_PORTFORMATTYPE t = {0, };
+	OMX_ERRORTYPE err;
 
-	//FIXME: eEncoding を変えられたらどうする？？
-	//set_format(v.format.other.eFormat);
+	//xFramerate, eCompressionFormat, eColorFormat を変えられたら、
+	//デフォルトフォーマットを切り替える
+	t.eFormat = v.format.other.eFormat;
+	err = set_default_format(port_format(t));
+	if (err != OMX_ErrorNone) {
+		errprint("unsupported other format in port definition.\n");
+		return err;
+	}
+
+	//下記はデフォルトフォーマットの切り替えによって変更を反映すること
+	//v.format.other.eFormat
 
 	super::set_definition(v);
 

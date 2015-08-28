@@ -89,12 +89,23 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port_audio::get_definition() const
 OMX_ERRORTYPE port_audio::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 {
 	scoped_log_begin;
+	OMX_AUDIO_PARAM_PORTFORMATTYPE t = {0, };
+	OMX_ERRORTYPE err;
+
+	//eEncoding を変えられたら、
+	//デフォルトフォーマットを切り替える
+	t.eEncoding = v.format.audio.eEncoding;
+	err = set_default_format(port_format(t));
+	if (err != OMX_ErrorNone) {
+		errprint("unsupported audio format in port definition.\n");
+		return err;
+	}
 
 	mime_type              = v.format.audio.cMIMEType;
 	native_render          = v.format.audio.pNativeRender;
 	flag_error_concealment = v.format.audio.bFlagErrorConcealment;
-	//FIXME: eEncoding を変えられたらどうする？？
-	//set_encoding(v.format.audio.eEncoding);
+	//下記はデフォルトフォーマットの切り替えによって変更を反映すること
+	//v.format.audio.eEncoding
 
 	super::set_definition(v);
 
