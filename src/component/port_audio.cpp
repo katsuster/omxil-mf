@@ -104,16 +104,70 @@ OMX_ERRORTYPE port_audio::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 OMX_ERRORTYPE port_audio::set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 {
 	scoped_log_begin;
+	OMX_AUDIO_PARAM_PORTFORMATTYPE t = {0, };
+	OMX_ERRORTYPE err;
+
+	//eEncoding を変えられたら、
+	//デフォルトフォーマットを切り替える
+	t.eEncoding = v.format.audio.eEncoding;
+	err = set_default_format(port_format(t));
+	if (err != OMX_ErrorNone) {
+		errprint("unsupported audio format in port definition.\n");
+		return err;
+	}
 
 	mime_type              = v.format.audio.cMIMEType;
 	native_render          = v.format.audio.pNativeRender;
 	flag_error_concealment = v.format.audio.bFlagErrorConcealment;
-	//FIXME: eEncoding はどうするの？？
-	//set_encoding(v.format.audio.eEncoding);
+	//下記はデフォルトフォーマットの切り替えによって変更を反映すること
+	//v.format.audio.eEncoding
 
 	super::set_definition_from_client(v);
 
 	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port_audio::get_port_format_index(const port_format& f, size_t *ind) const
+{
+	scoped_log_begin;
+	const OMX_AUDIO_PARAM_PORTFORMATTYPE *t = f.get_format_audio();
+	size_t i = 0;
+
+	if (ind != nullptr) {
+		*ind = (size_t)~0;
+	}
+
+	if (t == nullptr) {
+		//not audio
+		errprint("argument has not audio.\n");
+		return OMX_ErrorBadParameter;
+	}
+
+	//全て不定の場合はエラーとする
+	if (t->eEncoding == OMX_AUDIO_CodingUnused) {
+		errprint("argument has invalid audio condition.\n");
+		return OMX_ErrorBadParameter;
+	}
+
+	for (auto elem : get_port_format_list()) {
+		const OMX_AUDIO_PARAM_PORTFORMATTYPE *e = elem.get_format_audio();
+		if (e == nullptr) {
+			//not audio
+			continue;
+		}
+
+		if (t->eEncoding == e->eEncoding) {
+			//found
+			if (ind != nullptr) {
+				*ind = i;
+			}
+			return OMX_ErrorNone;
+		}
+		i++;
+	}
+
+	//not found
+	return OMX_ErrorUnsupportedSetting;
 }
 
 const OMX_AUDIO_PARAM_PORTFORMATTYPE *port_audio::get_default_format_audio() const

@@ -423,7 +423,7 @@ public:
 	 * fmt.eColorFormat       = OMX_COLOR_FormatUnused; //don't care
 	 * fmt.xFramerate         = 0; //don't care
 	 *
-	 * size_t index = get_port_format(port_format(fmt));
+	 * const port_format *pfmt = get_port_format_index(port_format(pfmt));
 	 * </pre>
 	 *
 	 * @param f データ形式
@@ -450,17 +450,19 @@ public:
 	 * fmt.eColorFormat       = OMX_COLOR_FormatUnused; //don't care
 	 * fmt.xFramerate         = 0; //don't care
 	 *
-	 * size_t index = get_port_format_index(port_format(pfmt));
+	 * size_t index;
+	 * get_port_format_index(port_format(pfmt), &index);
 	 * </pre>
 	 *
 	 * NOTE:
-	 * このクラスの実装では、常に (~0) を返します。
+	 * このクラスの実装では、常に成功し、インデクスは (~0) を返します。
 	 * 継承したクラスで適切にオーバライドしてください。
 	 *
-	 * @param f データ形式
-	 * @return データ形式のインデクス、取得できなければ (~0)
+	 * @param f   データ形式
+	 * @param ind データ形式のインデクス、取得できなければ (~0)
+	 * @return OpenMAX エラー値
 	 */
-	virtual size_t get_port_format_index(const port_format& f) const;
+	virtual OMX_ERRORTYPE get_port_format_index(const port_format& f, size_t *ind) const;
 
 	/**
 	 * ポートがデフォルトでサポートするデータの形式を取得します。
@@ -772,6 +774,16 @@ public:
 
 protected:
 	/**
+	 * ポートが対応しているフォーマットのリストを取得します。
+	 *
+	 * 継承先のクラスにて、
+	 * フォーマットのリストを直接参照したいときに用います。
+	 *
+	 * @return フォーマットのリストへの参照
+	 */
+	virtual const std::vector<port_format>& get_port_format_list() const;
+
+	/**
 	 * ポートの待ちを強制キャンセルすべきか、
 	 * そうでないかをチェックし、キャンセルすべきなら例外をスローします。
 	 *
@@ -813,7 +825,7 @@ protected:
 
 
 protected:
-	//for get_definition() member function.
+	//temporary buffer for get_definition() member function.
 	mutable OMX_PARAM_PORTDEFINITIONTYPE definition;
 
 

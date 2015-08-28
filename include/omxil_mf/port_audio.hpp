@@ -27,7 +27,7 @@ public:
 	//disable operator=
 	port_audio& operator=(const port_audio& obj) = delete;
 
-	virtual const char *get_name() const;
+	virtual const char *get_name() const override;
 
 	virtual OMX_STRING get_mime_type() const;
 	virtual void set_mime_type(OMX_STRING v);
@@ -57,7 +57,7 @@ public:
 	 *
 	 * @return port definition data of OpenMAX IL
 	 */
-	virtual const OMX_PARAM_PORTDEFINITIONTYPE *get_definition() const;
+	virtual const OMX_PARAM_PORTDEFINITIONTYPE *get_definition() const override;
 
 	/**
 	 * Set OpenMAX IL definition data of this port.
@@ -80,7 +80,7 @@ public:
 	 *
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v);
+	virtual OMX_ERRORTYPE set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v) override;
 
 	/**
 	 * Set OpenMAX IL definition data of this port by IL Client.
@@ -103,7 +103,19 @@ public:
 	 *
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v);
+	virtual OMX_ERRORTYPE set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v) override;
+
+	/**
+	 * ポートがサポートするデータの形式のインデクスを取得します。
+	 *
+	 * 指定した条件が複数のデータ形式に該当する場合、
+	 * index の値が小さいデータ形式が優先されます。
+	 *
+	 * @param f   データ形式
+	 * @param ind データ形式のインデクス、取得できなければ (~0)
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE get_port_format_index(const port_format& f, size_t *ind) const override;
 
 	/**
 	 * ポートがデフォルトでサポートするオーディオデータ形式を取得します。

@@ -204,6 +204,19 @@ OMX_ERRORTYPE port_video::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 OMX_ERRORTYPE port_video::set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 {
 	scoped_log_begin;
+	OMX_VIDEO_PARAM_PORTFORMATTYPE t = {0, };
+	OMX_ERRORTYPE err;
+
+	//xFramerate, eCompressionFormat, eColorFormat を変えられたら、
+	//デフォルトフォーマットを切り替える
+	t.eCompressionFormat = v.format.video.eCompressionFormat;
+	t.eColorFormat       = v.format.video.eColorFormat;
+	t.xFramerate         = v.format.video.xFramerate;
+	err = set_default_format(port_format(t));
+	if (err != OMX_ErrorNone) {
+		errprint("unsupported video format in port definition.\n");
+		return err;
+	}
 
 	mime_type                = v.format.video.cMIMEType;
 	native_render            = v.format.video.pNativeRender;
@@ -212,16 +225,63 @@ OMX_ERRORTYPE port_video::set_definition_from_client(const OMX_PARAM_PORTDEFINIT
 	stride                   = v.format.video.nStride;
 	slice_height             = v.format.video.nSliceHeight;
 	bitrate                  = v.format.video.nBitrate;
-	//FIXME: xFramerate, eCompressionFormat, eColorFormat を変えられたらどうする？？
-	//set_framerate(v.format.video.xFramerate);
 	flag_error_concealment   = v.format.video.bFlagErrorConcealment;
-	//set_compression_format(v.format.video.eCompressionFormat);
-	//set_color_format(v.format.video.eColorFormat);
 	native_window            = v.format.video.pNativeWindow;
+	//下記はデフォルトフォーマットの切り替えによって変更を反映すること
+	//v.format.video.xFramerate
+	//v.format.video.eCompressionFormat
+	//v.format.video.eColorFormat
 
 	super::set_definition_from_client(v);
 
 	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port_video::get_port_format_index(const port_format& f, size_t *ind) const
+{
+	scoped_log_begin;
+	const OMX_VIDEO_PARAM_PORTFORMATTYPE *t = f.get_format_video();
+	size_t i = 0;
+
+	if (ind != nullptr) {
+		*ind = (size_t)~0;
+	}
+
+	if (t == nullptr) {
+		//not video
+		errprint("argument has not video.\n");
+		return OMX_ErrorBadParameter;
+	}
+
+	//全て不定の場合はエラーとする
+	if (t->eCompressionFormat == OMX_VIDEO_CodingUnused &&
+		t->eColorFormat == OMX_COLOR_FormatUnused &&
+		t->xFramerate == 0) {
+		errprint("argument has invalid video condition.\n");
+		return OMX_ErrorBadParameter;
+	}
+
+	for (auto elem : get_port_format_list()) {
+		const OMX_VIDEO_PARAM_PORTFORMATTYPE *e = elem.get_format_video();
+		if (e == nullptr) {
+			//not video
+			continue;
+		}
+
+		if ((t->eCompressionFormat == OMX_VIDEO_CodingUnused || t->eCompressionFormat == e->eCompressionFormat) &&
+			(t->eColorFormat == OMX_COLOR_FormatUnused || t->eColorFormat == e->eColorFormat) &&
+			(t->xFramerate == 0 || t->xFramerate == e->xFramerate)) {
+			//found
+			if (ind != nullptr) {
+				*ind = i;
+			}
+			return OMX_ErrorNone;
+		}
+		i++;
+	}
+
+	//not found
+	return OMX_ErrorUnsupportedSetting;
 }
 
 const OMX_VIDEO_PARAM_PORTFORMATTYPE *port_video::get_default_format_video() const

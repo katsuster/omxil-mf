@@ -179,6 +179,18 @@ OMX_ERRORTYPE port_image::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 OMX_ERRORTYPE port_image::set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v)
 {
 	scoped_log_begin;
+	OMX_IMAGE_PARAM_PORTFORMATTYPE t = {0, };
+	OMX_ERRORTYPE err;
+
+	//eCompressionFormat, eColorFormat を変えられたら、
+	//デフォルトフォーマットを切り替える
+	t.eCompressionFormat = v.format.image.eCompressionFormat;
+	t.eColorFormat       = v.format.image.eColorFormat;
+	err = set_default_format(port_format(t));
+	if (err != OMX_ErrorNone) {
+		errprint("unsupported image format in port definition.\n");
+		return err;
+	}
 
 	mime_type                = v.format.image.cMIMEType;
 	native_render            = v.format.image.pNativeRender;
@@ -187,14 +199,59 @@ OMX_ERRORTYPE port_image::set_definition_from_client(const OMX_PARAM_PORTDEFINIT
 	stride                   = v.format.image.nStride;
 	slice_height             = v.format.image.nSliceHeight;
 	flag_error_concealment   = v.format.image.bFlagErrorConcealment;
-	//FIXME: eCompressionFormat, eColorFormat を変えられたらどうするの？？
+	native_window            = v.format.image.pNativeWindow;
+	//下記はデフォルトフォーマットの切り替えによって変更を反映すること
 	//set_compression_format(v.format.image.eCompressionFormat);
 	//set_color_format(v.format.image.eColorFormat);
-	native_window            = v.format.image.pNativeWindow;
 
 	super::set_definition_from_client(v);
 
 	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port_image::get_port_format_index(const port_format& f, size_t *ind) const
+{
+	scoped_log_begin;
+	const OMX_IMAGE_PARAM_PORTFORMATTYPE *t = f.get_format_image();
+	size_t i = 0;
+
+	if (ind != nullptr) {
+		*ind = (size_t)~0;
+	}
+
+	if (t == nullptr) {
+		//not image
+		errprint("argument has not image.\n");
+		return OMX_ErrorBadParameter;
+	}
+
+	//全て不定の場合はエラーとする
+	if (t->eCompressionFormat == OMX_IMAGE_CodingUnused &&
+		t->eColorFormat == OMX_COLOR_FormatUnused) {
+		errprint("argument has invalid image condition.\n");
+		return OMX_ErrorBadParameter;
+	}
+
+	for (auto elem : get_port_format_list()) {
+		const OMX_IMAGE_PARAM_PORTFORMATTYPE *e = elem.get_format_image();
+		if (e == nullptr) {
+			//not image
+			continue;
+		}
+
+		if ((t->eCompressionFormat == OMX_IMAGE_CodingUnused || t->eCompressionFormat == e->eCompressionFormat) &&
+			(t->eColorFormat == OMX_COLOR_FormatUnused || t->eColorFormat == e->eColorFormat)) {
+			//found
+			if (ind != nullptr) {
+				*ind = i;
+			}
+			return OMX_ErrorNone;
+		}
+		i++;
+	}
+
+	//not found
+	return OMX_ErrorUnsupportedSetting;
 }
 
 const OMX_IMAGE_PARAM_PORTFORMATTYPE *port_image::get_default_format_image() const

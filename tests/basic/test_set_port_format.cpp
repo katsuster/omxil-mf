@@ -219,11 +219,12 @@ int main(int argc, char *argv[])
 	//SetParam()
 	{
 		OMX_VIDEO_PARAM_PORTFORMATTYPE fmt_v;
-		int i = 1;
+		int i = param_v.nStartPortNumber + 1; //output
 
+		//Normal parameter
 		fmt_v.nSize      = sizeof(OMX_VIDEO_PARAM_PORTFORMATTYPE);
 		omxil_comp::fill_version(&fmt_v.nVersion);
-		fmt_v.nPortIndex = 1;
+		fmt_v.nPortIndex = i;
 		fmt_v.nIndex     = 0;
 		fmt_v.eCompressionFormat = OMX_VIDEO_CodingUnused;
 		fmt_v.eColorFormat       = OMX_COLOR_Format32bitBGRA8888;
@@ -231,6 +232,28 @@ int main(int argc, char *argv[])
 		result = comp->SetParameter(OMX_IndexParamVideoPortFormat, &fmt_v);
 		if (result != OMX_ErrorNone && result != OMX_ErrorNoMore) {
 			fprintf(stderr, "SetParameter(VideoPortFormat, port:%d) failed.\n",
+				(int)i);
+			goto err_out3;
+		}
+
+		//Invalid parameter
+		fmt_v.eCompressionFormat = OMX_VIDEO_CodingUnused;
+		fmt_v.eColorFormat       = OMX_COLOR_FormatUnused;
+		fmt_v.xFramerate         = 0;
+		result = comp->SetParameter(OMX_IndexParamVideoPortFormat, &fmt_v);
+		if (result != OMX_ErrorBadParameter) {
+			fprintf(stderr, "SetParameter(VideoPortFormat, port:%d) cannot detect invalid parameter.\n",
+				(int)i);
+			goto err_out3;
+		}
+
+		//Unsupported parameter
+		fmt_v.eCompressionFormat = OMX_VIDEO_CodingUnused;
+		fmt_v.eColorFormat       = OMX_COLOR_FormatMonochrome;
+		fmt_v.xFramerate         = 0;
+		result = comp->SetParameter(OMX_IndexParamVideoPortFormat, &fmt_v);
+		if (result != OMX_ErrorUnsupportedSetting) {
+			fprintf(stderr, "SetParameter(VideoPortFormat, port:%d) cannot detect unsupported parameter.\n",
 				(int)i);
 			goto err_out3;
 		}

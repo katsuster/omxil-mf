@@ -411,18 +411,23 @@ const port_format *port::get_port_format(size_t index) const
 const port_format *port::get_port_format(const port_format& f) const
 {
 	size_t index;
+	OMX_ERRORTYPE err;
 
-	index = get_port_format_index(f);
-	if (index == (size_t)~0) {
+	err = get_port_format_index(f, &index);
+	if (err != OMX_ErrorNone) {
 		return nullptr;
 	}
 
 	return get_port_format(index);
 }
 
-size_t port::get_port_format_index(const port_format& f) const
+OMX_ERRORTYPE port::get_port_format_index(const port_format& f, size_t *ind) const
 {
-	return (size_t)~0;
+	if (ind != nullptr) {
+		*ind = (size_t)~0;
+	}
+
+	return OMX_ErrorNone;
 }
 
 const port_format *port::get_default_format() const
@@ -444,10 +449,11 @@ OMX_ERRORTYPE port::set_default_format(size_t index)
 OMX_ERRORTYPE port::set_default_format(const port_format& f)
 {
 	size_t index;
+	OMX_ERRORTYPE err;
 
-	index = get_port_format_index(f);
-	if (index == (size_t)(~0)) {
-		return OMX_ErrorUnsupportedSetting;
+	err = get_port_format_index(f, &index);
+	if (err != OMX_ErrorNone) {
+		return err;
 	}
 
 	return set_default_format(index);
@@ -995,6 +1001,11 @@ OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 /*
  * protected functions
  */
+
+const std::vector<port_format>& port::get_port_format_list() const
+{
+	return formats;
+}
 
 void port::error_if_broken(std::unique_lock<std::recursive_mutex>& lk_port)
 {

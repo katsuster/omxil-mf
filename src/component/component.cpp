@@ -693,8 +693,14 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
-		//FIXME: not supported
-		err = OMX_ErrorUnsupportedIndex;
+		port_found = find_port(pf_audio->nPortIndex);
+		if (port_found == nullptr) {
+			errprint("invalid port:%d\n", (int)pf_audio->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+
+		err = port_found->set_default_format(port_format(*pf_audio));
 
 		break;
 	case OMX_IndexParamVideoPortFormat:
@@ -706,8 +712,14 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
-		//FIXME: not supported
-		err = OMX_ErrorUnsupportedIndex;
+		port_found = find_port(pf_video->nPortIndex);
+		if (port_found == nullptr) {
+			errprint("invalid port:%d\n", (int)pf_video->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+
+		err = port_found->set_default_format(port_format(*pf_video));
 
 		break;
 	case OMX_IndexParamImagePortFormat:
@@ -719,8 +731,14 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
-		//FIXME: not supported
-		err = OMX_ErrorUnsupportedIndex;
+		port_found = find_port(pf_image->nPortIndex);
+		if (port_found == nullptr) {
+			errprint("invalid port:%d\n", (int)pf_image->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+
+		err = port_found->set_default_format(port_format(*pf_image));
 
 		break;
 	case OMX_IndexParamOtherPortFormat:
@@ -732,8 +750,14 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
-		//FIXME: not supported
-		err = OMX_ErrorUnsupportedIndex;
+		port_found = find_port(pf_other->nPortIndex);
+		if (port_found == nullptr) {
+			errprint("invalid port:%d\n", (int)pf_other->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+
+		err = port_found->set_default_format(port_format(*pf_other));
 
 		break;
 	//case OMX_IndexParamPriorityMgmt:
