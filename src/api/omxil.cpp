@@ -9,6 +9,7 @@
 #include <omxil_mf/scoped_log.hpp>
 
 #include "regist/register_component.hpp"
+#include "util/omx_enum_name.hpp"
 
 //----------------------------------------
 //external APIs
@@ -123,12 +124,32 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_FreeHandle(OMX_IN OMX_HANDLETYPE hCompone
 	mf::register_component *rc = mf::register_component::get_instance();
 	mf::register_info *rinfo = nullptr;
 	OMX_COMPONENTTYPE *omx_comp = nullptr;
+	OMX_STATETYPE st;
+	OMX_ERRORTYPE err;
 
 	if (hComponent == nullptr) {
 		errprint("Invalid component %p.\n", hComponent);
 		return OMX_ErrorBadParameter;
 	}
 	omx_comp = (OMX_COMPONENTTYPE *)hComponent;
+
+	//OpenMAX IL 1.2.0: Table 3-17: Valid Component Calls
+	err = OMX_GetState(omx_comp, &st);
+	if (err != OMX_ErrorNone) {
+		errprint("Cannot get state of component %p.\n", hComponent);
+		return err;
+	}
+
+	switch (st) {
+	case OMX_StateLoaded:
+		//OK
+		break;
+	default:
+		//NG
+		errprint("Invalid state:%s.\n",
+			mf::omx_enum_name::get_OMX_STATETYPE_name(st));
+		return OMX_ErrorInvalidState;
+	}
 
 	//Delete derived component
 	if (omx_comp->pComponentPrivate != nullptr) {
