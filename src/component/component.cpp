@@ -316,27 +316,19 @@ OMX_ERRORTYPE component::SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE 
 OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure)
 {
 	scoped_log_begin;
-	port *port_found = nullptr;
-	OMX_PARAM_PORTDEFINITIONTYPE *def = nullptr;
-	OMX_PARAM_BUFFERSUPPLIERTYPE *supply = nullptr;
-	OMX_PORT_PARAM_TYPE *param = nullptr;
-	OMX_AUDIO_PARAM_PORTFORMATTYPE *pf_audio;
-	OMX_VIDEO_PARAM_PORTFORMATTYPE *pf_video;
-	OMX_IMAGE_PARAM_PORTFORMATTYPE *pf_image;
-	OMX_OTHER_PARAM_PORTFORMATTYPE *pf_other;
-	const port_format *pf_found;
-	//OMX_PRIORITYMGMTTYPE *mgm;
 	void *ptr = nullptr;
+	port *port_found = nullptr;
+	const port_format *pf_found = nullptr;
 	OMX_ERRORTYPE err;
 
 	dprint("indextype:%s, name:%s\n", omx_enum_name::get_OMX_INDEXTYPE_name(nParamIndex), get_name());
 
 	ptr = pComponentParameterStructure;
 
-	//OpenMAX IL 1.1.2: 8.3 Mandatory Port Parameters
+	//OpenMAX IL 1.2.0: 8.2 Mandatory Port Parameters
 	switch (nParamIndex) {
-	case OMX_IndexParamPortDefinition:
-		def = (OMX_PARAM_PORTDEFINITIONTYPE *) ptr;
+	case OMX_IndexParamPortDefinition: {
+		OMX_PARAM_PORTDEFINITIONTYPE *def = static_cast<OMX_PARAM_PORTDEFINITIONTYPE *>(ptr);
 
 		err = check_omx_header(def, sizeof(OMX_PARAM_PORTDEFINITIONTYPE));
 		if (err != OMX_ErrorNone) {
@@ -354,8 +346,9 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		*def = *(port_found->get_definition());
 
 		break;
-	case OMX_IndexParamCompBufferSupplier:
-		supply = (OMX_PARAM_BUFFERSUPPLIERTYPE *) ptr;
+	}
+	case OMX_IndexParamCompBufferSupplier: {
+		OMX_PARAM_BUFFERSUPPLIERTYPE *supply = static_cast<OMX_PARAM_BUFFERSUPPLIERTYPE *>(ptr);
 
 		err = check_omx_header(supply, sizeof(OMX_PARAM_BUFFERSUPPLIERTYPE));
 		if (err != OMX_ErrorNone) {
@@ -374,8 +367,9 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		throw std::runtime_error("not implemented.");
 
 		break;
-	case OMX_IndexParamAudioInit:
-		param = (OMX_PORT_PARAM_TYPE *) ptr;
+	}
+	case OMX_IndexParamAudioInit: {
+		OMX_PORT_PARAM_TYPE *param = static_cast<OMX_PORT_PARAM_TYPE *>(ptr);
 
 		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
 		if (err != OMX_ErrorNone) {
@@ -387,8 +381,9 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		param->nStartPortNumber = get_audio_start_port();
 
 		break;
-	case OMX_IndexParamVideoInit:
-		param = (OMX_PORT_PARAM_TYPE *) ptr;
+	}
+	case OMX_IndexParamVideoInit: {
+		OMX_PORT_PARAM_TYPE *param = static_cast<OMX_PORT_PARAM_TYPE *>(ptr);
 
 		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
 		if (err != OMX_ErrorNone) {
@@ -400,8 +395,9 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		param->nStartPortNumber = get_video_start_port();
 
 		break;
-	case OMX_IndexParamImageInit:
-		param = (OMX_PORT_PARAM_TYPE *) ptr;
+	}
+	case OMX_IndexParamImageInit: {
+		OMX_PORT_PARAM_TYPE *param = static_cast<OMX_PORT_PARAM_TYPE *>(ptr);
 
 		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
 		if (err != OMX_ErrorNone) {
@@ -413,8 +409,9 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		param->nStartPortNumber = get_image_start_port();
 
 		break;
-	case OMX_IndexParamOtherInit:
-		param = (OMX_PORT_PARAM_TYPE *) ptr;
+	}
+	case OMX_IndexParamOtherInit: {
+		OMX_PORT_PARAM_TYPE *param = static_cast<OMX_PORT_PARAM_TYPE *>(ptr);
 
 		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
 		if (err != OMX_ErrorNone) {
@@ -426,11 +423,12 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		param->nStartPortNumber = get_other_start_port();
 
 		break;
+	}
 	//case OMX_IndexParamStandardComponentRole:
-	//	(OMX_PARAM_COMPONENTROLETYPE *) ptr;
+	//	static_cast<OMX_PARAM_COMPONENTROLETYPE *>(ptr);
 	//	break;
-	case OMX_IndexParamAudioPortFormat:
-		pf_audio = (OMX_AUDIO_PARAM_PORTFORMATTYPE *) ptr;
+	case OMX_IndexParamAudioPortFormat: {
+		OMX_AUDIO_PARAM_PORTFORMATTYPE *pf_audio = static_cast<OMX_AUDIO_PARAM_PORTFORMATTYPE *>(ptr);
 
 		err = check_omx_header(pf_audio, sizeof(OMX_AUDIO_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
@@ -468,8 +466,9 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = OMX_ErrorNone;
 		break;
-	case OMX_IndexParamVideoPortFormat:
-		pf_video = (OMX_VIDEO_PARAM_PORTFORMATTYPE *) ptr;
+	}
+	case OMX_IndexParamVideoPortFormat: {
+		OMX_VIDEO_PARAM_PORTFORMATTYPE *pf_video = static_cast<OMX_VIDEO_PARAM_PORTFORMATTYPE *>(ptr);
 
 		err = check_omx_header(pf_video, sizeof(OMX_VIDEO_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
@@ -507,8 +506,9 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = OMX_ErrorNone;
 		break;
-	case OMX_IndexParamImagePortFormat:
-		pf_image = (OMX_IMAGE_PARAM_PORTFORMATTYPE *) ptr;
+	}
+	case OMX_IndexParamImagePortFormat: {
+		OMX_IMAGE_PARAM_PORTFORMATTYPE *pf_image = static_cast<OMX_IMAGE_PARAM_PORTFORMATTYPE *>(ptr);
 
 		err = check_omx_header(pf_image, sizeof(OMX_IMAGE_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
@@ -546,8 +546,9 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = OMX_ErrorNone;
 		break;
-	case OMX_IndexParamOtherPortFormat:
-		pf_other = (OMX_OTHER_PARAM_PORTFORMATTYPE *) ptr;
+	}
+	case OMX_IndexParamOtherPortFormat: {
+		OMX_OTHER_PARAM_PORTFORMATTYPE *pf_other = static_cast<OMX_OTHER_PARAM_PORTFORMATTYPE *>(ptr);
 
 		err = check_omx_header(pf_other, sizeof(OMX_OTHER_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
@@ -585,9 +586,7 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = OMX_ErrorNone;
 		break;
-	//case OMX_IndexParamPriorityMgmt:
-	//	mgm = (OMX_PRIORITYMGMTTYPE *) ptr;
-	//	break;
+	}
 	default:
 		errprint("unsupported index:%d.\n", (int)nParamIndex);
 		err = OMX_ErrorUnsupportedIndex;
@@ -600,26 +599,18 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure)
 {
 	scoped_log_begin;
-	port *port_found = nullptr;
-	OMX_PARAM_PORTDEFINITIONTYPE *def = nullptr;
-	OMX_PARAM_BUFFERSUPPLIERTYPE *supply = nullptr;
-	OMX_PORT_PARAM_TYPE *param = nullptr;
-	//OMX_PRIORITYMGMTTYPE *mgm;
-	OMX_AUDIO_PARAM_PORTFORMATTYPE *pf_audio;
-	OMX_VIDEO_PARAM_PORTFORMATTYPE *pf_video;
-	OMX_IMAGE_PARAM_PORTFORMATTYPE *pf_image;
-	OMX_OTHER_PARAM_PORTFORMATTYPE *pf_other;
 	void *ptr = nullptr;
+	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
 
 	dprint("indextype:%s, name:%s\n", omx_enum_name::get_OMX_INDEXTYPE_name(nParamIndex), get_name());
 
 	ptr = pComponentParameterStructure;
 
-	//OpenMAX IL 1.1.2: 8.3 Mandatory Port Parameters
+	//OpenMAX IL 1.2.0: 8.2 Mandatory Port Parameters
 	switch (nParamIndex) {
-	case OMX_IndexParamPortDefinition:
-		def = (OMX_PARAM_PORTDEFINITIONTYPE *) ptr;
+	case OMX_IndexParamPortDefinition: {
+		OMX_PARAM_PORTDEFINITIONTYPE *def = static_cast<OMX_PARAM_PORTDEFINITIONTYPE *>(ptr);
 
 		err = check_omx_header(def, sizeof(OMX_PARAM_PORTDEFINITIONTYPE));
 		if (err != OMX_ErrorNone) {
@@ -645,8 +636,9 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		port_found->set_definition_from_client(*def);
 
 		break;
-	case OMX_IndexParamCompBufferSupplier:
-		supply = (OMX_PARAM_BUFFERSUPPLIERTYPE *) ptr;
+	}
+	case OMX_IndexParamCompBufferSupplier: {
+		OMX_PARAM_BUFFERSUPPLIERTYPE *supply = static_cast<OMX_PARAM_BUFFERSUPPLIERTYPE *>(ptr);
 
 		err = check_omx_header(supply, sizeof(OMX_PARAM_BUFFERSUPPLIERTYPE));
 		if (err != OMX_ErrorNone) {
@@ -665,11 +657,12 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		throw std::runtime_error("not implemented.");
 
 		break;
+	}
 	case OMX_IndexParamAudioInit:
 	case OMX_IndexParamVideoInit:
 	case OMX_IndexParamImageInit:
-	case OMX_IndexParamOtherInit:
-		param = (OMX_PORT_PARAM_TYPE *) ptr;
+	case OMX_IndexParamOtherInit: {
+		OMX_PORT_PARAM_TYPE *param = static_cast<OMX_PORT_PARAM_TYPE *>(ptr);
 
 		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
 		if (err != OMX_ErrorNone) {
@@ -681,11 +674,12 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		err = OMX_ErrorUnsupportedIndex;
 
 		break;
+	}
 	//case OMX_IndexParamStandardComponentRole:
-	//	(OMX_PARAM_COMPONENTROLETYPE *) ptr;
+	//	static_cast<OMX_PARAM_COMPONENTROLETYPE *>(ptr);
 	//	break;
-	case OMX_IndexParamAudioPortFormat:
-		pf_audio = (OMX_AUDIO_PARAM_PORTFORMATTYPE *) ptr;
+	case OMX_IndexParamAudioPortFormat: {
+		OMX_AUDIO_PARAM_PORTFORMATTYPE *pf_audio = static_cast<OMX_AUDIO_PARAM_PORTFORMATTYPE *>(ptr);
 
 		err = check_omx_header(pf_audio, sizeof(OMX_AUDIO_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
@@ -703,8 +697,9 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		err = port_found->set_default_format(port_format(*pf_audio));
 
 		break;
-	case OMX_IndexParamVideoPortFormat:
-		pf_video = (OMX_VIDEO_PARAM_PORTFORMATTYPE *) ptr;
+	}
+	case OMX_IndexParamVideoPortFormat: {
+		OMX_VIDEO_PARAM_PORTFORMATTYPE *pf_video = static_cast<OMX_VIDEO_PARAM_PORTFORMATTYPE *>(ptr);
 
 		err = check_omx_header(pf_video, sizeof(OMX_VIDEO_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
@@ -722,8 +717,9 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		err = port_found->set_default_format(port_format(*pf_video));
 
 		break;
-	case OMX_IndexParamImagePortFormat:
-		pf_image = (OMX_IMAGE_PARAM_PORTFORMATTYPE *) ptr;
+	}
+	case OMX_IndexParamImagePortFormat: {
+		OMX_IMAGE_PARAM_PORTFORMATTYPE *pf_image = static_cast<OMX_IMAGE_PARAM_PORTFORMATTYPE *>(ptr);
 
 		err = check_omx_header(pf_image, sizeof(OMX_IMAGE_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
@@ -741,8 +737,9 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		err = port_found->set_default_format(port_format(*pf_image));
 
 		break;
-	case OMX_IndexParamOtherPortFormat:
-		pf_other = (OMX_OTHER_PARAM_PORTFORMATTYPE *) ptr;
+	}
+	case OMX_IndexParamOtherPortFormat: {
+		OMX_OTHER_PARAM_PORTFORMATTYPE *pf_other = static_cast<OMX_OTHER_PARAM_PORTFORMATTYPE *>(ptr);
 
 		err = check_omx_header(pf_other, sizeof(OMX_OTHER_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
@@ -760,9 +757,7 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		err = port_found->set_default_format(port_format(*pf_other));
 
 		break;
-	//case OMX_IndexParamPriorityMgmt:
-	//	mgm = (OMX_PRIORITYMGMTTYPE *) ptr;
-	//	break;
+	}
 	default:
 		errprint("unsupported index:%d.\n", (int)nParamIndex);
 		err = OMX_ErrorUnsupportedIndex;
