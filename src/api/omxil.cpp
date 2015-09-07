@@ -261,6 +261,18 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_SetupTunnel(OMX_IN OMX_HANDLETYPE hOutput
 	return OMX_ErrorNone;
 }
 
+//OpenMAX 1.2.0
+OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_TeardownTunnel(OMX_IN OMX_HANDLETYPE hOutput, OMX_IN OMX_U32 nPortOutput, OMX_IN OMX_HANDLETYPE hInput, OMX_IN  OMX_U32 nPortInput)
+{
+	scoped_log_begin;
+
+	//FIXME: not implemented
+
+	return OMX_ErrorNotImplemented;
+	//return OMX_ErrorNone;
+}
+
+//OpenMAX 1.1.2
 OMX_API OMX_ERRORTYPE OMX_GetContentPipe(OMX_OUT OMX_HANDLETYPE *hPipe, OMX_IN OMX_STRING szURI)
 {
 	scoped_log_begin;
@@ -268,6 +280,8 @@ OMX_API OMX_ERRORTYPE OMX_GetContentPipe(OMX_OUT OMX_HANDLETYPE *hPipe, OMX_IN O
 	if (hPipe == nullptr) {
 		return OMX_ErrorBadParameter;
 	}
+
+	//FIXME: not implemented
 
 	return OMX_ErrorNotImplemented;
 	//return OMX_ErrorNone;
@@ -395,6 +409,28 @@ OMX_API OMX_ERRORTYPE OMX_GetRolesOfComponent(OMX_IN OMX_STRING compName, OMX_IN
 	}
 
 	return result;
+}
+
+//OpenMAX 1.2.0
+OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_GetCoreInterface(OMX_OUT void **ppItf, OMX_IN OMX_STRING cExtensionName)
+{
+	scoped_log_begin;
+
+	//FIXME: not implemented
+
+	return OMX_ErrorNotImplemented;
+	//return OMX_ErrorNone;
+}
+
+//OpenMAX 1.2.0
+OMX_API void OMX_APIENTRY OMX_FreeCoreInterface(OMX_IN void *pItf)
+{
+	scoped_log_begin;
+
+	//FIXME: not implemented
+
+	return;
+	//return OMX_ErrorNone;
 }
 
 } //extern "C"
