@@ -815,9 +815,19 @@ OMX_ERRORTYPE component::GetState(OMX_HANDLETYPE hComponent, OMX_STATETYPE *pSta
 OMX_ERRORTYPE component::ComponentTunnelRequest(OMX_HANDLETYPE hComponent, OMX_U32 nPort, OMX_HANDLETYPE hTunneledComp, OMX_U32 nTunneledPort, OMX_TUNNELSETUPTYPE *pTunnelSetup)
 {
 	scoped_log_begin;
+	port *port_found = nullptr;
+	OMX_ERRORTYPE err;
 
-	return OMX_ErrorNotImplemented;
-	//return OMX_ErrorNone;
+	port_found = find_port(nPort);
+	if (port_found == nullptr) {
+		errprint("invalid port:%d\n", (int)nPort);
+		return OMX_ErrorBadPortIndex;
+	}
+
+	err = port_found->component_tunnel_request(hTunneledComp, nTunneledPort,
+		pTunnelSetup);
+
+	return err;
 }
 
 OMX_ERRORTYPE component::UseBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBufferHdr, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, OMX_U32 nSizeBytes, OMX_U8 *pBuffer)

@@ -568,7 +568,21 @@ OMX_ERRORTYPE port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 in
 	scoped_log_begin;
 	//do nothing
 
-	return OMX_ErrorNone;
+	/* memo:
+	 * struct OMX_TUNNELSETUPTYPE {
+	 * 	OMX_U32 nTunnelFlags;             // bit flags for tunneling
+	 * 	OMX_BUFFERSUPPLIERTYPE eSupplier; // supplier preference
+	 * };
+	 *
+	 * enum OMX_BUFFERSUPPLIERTYPE {
+	 * 	OMX_BufferSupplyUnspecified = 0x0, // port supplying the buffers is unspecified, or don't care
+	 * 	OMX_BufferSupplyInput,             // input port supplies the buffers
+	 * 	OMX_BufferSupplyOutput,            // output port supplies the buffers
+	 * };
+	 */
+
+	return OMX_ErrorNotImplemented;
+	//return OMX_ErrorNone;
 }
 
 OMX_ERRORTYPE port::allocate_tunnel_buffer(OMX_U32 index)
@@ -576,7 +590,8 @@ OMX_ERRORTYPE port::allocate_tunnel_buffer(OMX_U32 index)
 	scoped_log_begin;
 	//do nothing
 
-	return OMX_ErrorNone;
+	return OMX_ErrorNotImplemented;
+	//return OMX_ErrorNone;
 }
 
 OMX_ERRORTYPE port::free_tunnel_buffer(OMX_U32 index)
@@ -584,7 +599,8 @@ OMX_ERRORTYPE port::free_tunnel_buffer(OMX_U32 index)
 	scoped_log_begin;
 	//do nothing
 
-	return OMX_ErrorNone;
+	return OMX_ErrorNotImplemented;
+	//return OMX_ErrorNone;
 }
 
 OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size, OMX_U8 *buf)
