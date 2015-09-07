@@ -1,6 +1,7 @@
 
 #include <omxil_mf/port_format.hpp>
 #include <omxil_mf/scoped_log.hpp>
+#include <util/omx_enum_name.hpp>
 
 namespace mf {
 
@@ -85,6 +86,13 @@ const OMX_OTHER_PARAM_PORTFORMATTYPE *port_format::get_format_other() const
 OMX_PORTDOMAINTYPE port_format::get_domain_type() const
 {
 	return dom_type;
+}
+
+void port_format::dump(const char *msg)
+{
+	//FIXME: implemented yet
+	dprint("port_format dump: %s: dom_type:0x%08x(%s).\n",
+		msg, (int)dom_type, omx_enum_name::get_OMX_PORTDOMAINTYPE_name(dom_type));
 }
 
 } //namespace mf

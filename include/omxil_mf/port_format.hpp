@@ -34,6 +34,13 @@ public:
 	const OMX_OTHER_PARAM_PORTFORMATTYPE *get_format_other() const;
 	OMX_PORTDOMAINTYPE get_domain_type() const;
 
+	/**
+	 * ダンプをデバッグ出力します。
+	 *
+	 * @param msg 一緒に出力する文字列
+	 */
+	void dump(const char *msg);
+
 private:
 	OMX_AUDIO_PARAM_PORTFORMATTYPE pf_audio;
 	OMX_VIDEO_PARAM_PORTFORMATTYPE pf_video;
