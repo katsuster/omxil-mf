@@ -18,7 +18,7 @@ omx_reflector::omx_reflector(OMX_COMPONENTTYPE *c, const char *cname)
 {
 	scoped_log_begin;
 
-	if (c == NULL) {
+	if (c == nullptr) {
 		std::string msg(__func__);
 		msg += ": failed to construct component.";
 		throw std::runtime_error(msg);

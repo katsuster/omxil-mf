@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
 	//
 	buffer = (char *)calloc(4096, sizeof(char));
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		fprintf(stderr, "OMX_GetHandle failed.\n");
 		goto err_out3;
 	}
