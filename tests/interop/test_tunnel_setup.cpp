@@ -141,6 +141,7 @@ int main(int argc, char *argv[])
 	OMX_U32 n_comps;
 	const char *arg_comp[2];
 	comp_test_tunnel_setup *comp[2] = {};
+	OMX_PORT_PARAM_TYPE param_v[2] = {};
 	OMX_ERRORTYPE result;
 	OMX_U32 i;
 
@@ -176,22 +177,27 @@ int main(int argc, char *argv[])
 		}
 		printf("OMX_GetHandle: i:%d, name:%s, comp:%p\n",
 			(int)i, arg_comp[i], comp[i]);
+
+		result = comp[i]->get_param_video_init(&param_v[i]);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "get_param_video_init() failed.\n");
+			goto err_out2;
+		}
+		printf("IndexParamVideoInit: -----\n");
+		dump_port_param_type(&param_v[i]);
 	}
 
+	//Setup tunnel
 	{
-		result = OMX_SetupTunnel(comp[0]->get_component(), 0, comp[1]->get_component(), 0);
+		result = OMX_SetupTunnel(comp[0]->get_component(), param_v[0].nStartPortNumber,
+			comp[1]->get_component(), param_v[1].nStartPortNumber);
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "OMX_SetupTunnel(comp%d:%d, comp%d:%d) failed.\n",
-				(int)0, 0, 1, 0);
+				0, (int)param_v[0].nStartPortNumber,
+				1, (int)param_v[1].nStartPortNumber);
 			goto err_out2;
 		}
 	}
-
-	//
-	//TODO: Setup tunnel
-	//
-	result = OMX_ErrorNotImplemented;
-	goto err_out2;
 
 	//Set StateIdle
 	for (i = 0; i < n_comps; i++) {
