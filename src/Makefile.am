@@ -22,7 +22,11 @@ libomxil_mf_la_SOURCES = \
 	$(UTIL_DIR)/omx_index_enum_name.cpp \
 	$(UTIL_DIR)/omx_core_enum_name.cpp \
 	$(UTIL_DIR)/omx_component_enum_name.cpp \
+	$(UTIL_DIR)/omx_ivcommon_enum_name.cpp \
+	$(UTIL_DIR)/omx_audio_enum_name.cpp \
 	$(UTIL_DIR)/omx_video_enum_name.cpp \
+	$(UTIL_DIR)/omx_image_enum_name.cpp \
+	$(UTIL_DIR)/omx_other_enum_name.cpp \
 	$(COMPONENT_DIR)/omx_reflector.cpp \
 	$(COMPONENT_DIR)/component.cpp \
 	$(COMPONENT_DIR)/port.cpp \

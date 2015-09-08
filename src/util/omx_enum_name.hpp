@@ -40,6 +40,14 @@ public:
 	static const char *get_OMX_METADATASCOPETYPE_name(OMX_METADATASCOPETYPE id);
 	static const char *get_OMX_METADATASEARCHMODETYPE_name(OMX_METADATASEARCHMODETYPE id);
 
+	//OMX_IVCommon.h
+	static const char *get_OMX_COLOR_FORMATTYPE_name(OMX_COLOR_FORMATTYPE id);
+	//TODO: not implemented
+
+	//OMX_Audio.h
+	static const char *get_OMX_AUDIO_CODINGTYPE_name(OMX_AUDIO_CODINGTYPE id);
+	//TODO: not implemented
+
 	//OMX_Video.h
 	static const char *get_OMX_VIDEO_CODINGTYPE_name(OMX_VIDEO_CODINGTYPE id);
 	static const char *get_OMX_VIDEO_CONTROLRATETYPE_name(OMX_VIDEO_CONTROLRATETYPE id);
@@ -58,6 +66,14 @@ public:
 	static const char *get_OMX_VIDEO_AVCLEVELTYPE_name(OMX_VIDEO_AVCLEVELTYPE id);
 	static const char *get_OMX_VIDEO_AVCLOOPFILTERTYPE_name(OMX_VIDEO_AVCLOOPFILTERTYPE id);
 	static const char *get_OMX_VIDEO_AVCSLICEMODETYPE_name(OMX_VIDEO_AVCSLICEMODETYPE id);
+
+	//OMX_Image.h
+	static const char *get_OMX_IMAGE_CODINGTYPE_name(OMX_IMAGE_CODINGTYPE id);
+	//TODO: not implemented
+
+	//OMX_Other.h
+	static const char *get_OMX_OTHER_FORMATTYPE_name(OMX_OTHER_FORMATTYPE id);
+	//TODO: not implemented
 
 };
 
