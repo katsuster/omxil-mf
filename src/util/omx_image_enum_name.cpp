@@ -43,11 +43,11 @@ const char *omx_enum_name::get_OMX_IMAGE_CODINGTYPE_name(OMX_IMAGE_CODINGTYPE id
 		break;
 	}
 
-	if (OMX_IMAGE_CodingKhronosExtensions <= id && 
+	if (OMX_IMAGE_CodingKhronosExtensions <= id &&
 		id < OMX_IMAGE_CodingVendorStartUnused) {
 		name = "(OMX_IMAGE_CodingKhronosExtensions)";
 	}
-	if (OMX_IMAGE_CodingVendorStartUnused <= id && 
+	if (OMX_IMAGE_CodingVendorStartUnused <= id &&
 		id < OMX_IMAGE_CodingMax) {
 		name = "(OMX_IMAGE_CodingVendorStartUnused)";
 	}

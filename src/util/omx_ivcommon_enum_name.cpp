@@ -145,11 +145,11 @@ const char *omx_enum_name::get_OMX_COLOR_FORMATTYPE_name(OMX_COLOR_FORMATTYPE id
 		break;
 	}
 
-	if (OMX_COLOR_FormatKhronosExtensions <= id && 
+	if (OMX_COLOR_FormatKhronosExtensions <= id &&
 		id < OMX_COLOR_FormatVendorStartUnused) {
 		name = "(OMX_COLOR_FormatKhronosExtensions)";
 	}
-	if (OMX_COLOR_FormatVendorStartUnused <= id && 
+	if (OMX_COLOR_FormatVendorStartUnused <= id &&
 		id < OMX_COLOR_FormatMax) {
 		name = "(OMX_COLOR_FormatVendorStartUnused)";
 	}

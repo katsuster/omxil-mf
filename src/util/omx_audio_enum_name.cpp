@@ -97,11 +97,11 @@ const char *omx_enum_name::get_OMX_AUDIO_CODINGTYPE_name(OMX_AUDIO_CODINGTYPE id
 		break;
 	}
 
-	if (OMX_AUDIO_CodingKhronosExtensions <= id && 
+	if (OMX_AUDIO_CodingKhronosExtensions <= id &&
 		id < OMX_AUDIO_CodingVendorStartUnused) {
 		name = "(OMX_AUDIO_CodingKhronosExtensions)";
 	}
-	if (OMX_AUDIO_CodingVendorStartUnused <= id && 
+	if (OMX_AUDIO_CodingVendorStartUnused <= id &&
 		id < OMX_AUDIO_CodingMax) {
 		name = "(OMX_AUDIO_CodingVendorStartUnused)";
 	}
