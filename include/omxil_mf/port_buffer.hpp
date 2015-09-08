@@ -164,7 +164,7 @@ public:
 	 *
 	 * @param msg 一緒に出力する文字列
 	 */
-	void dump(const char *msg);
+	void dump(const char *msg) const;
 
 private:
 	/**

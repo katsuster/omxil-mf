@@ -124,7 +124,7 @@ void port_buffer::set_index(size_t new_index)
 	}
 }
 
-void port_buffer::dump(const char *msg)
+void port_buffer::dump(const char *msg) const
 {
 	dprint("port_buffer dump: %s: nFlags:0x%08x, index:%6d, remain:%6d, "
 		"nOffset:%6d, nFill:%6d, nAlloc:%d, nTime:%d.\n",
