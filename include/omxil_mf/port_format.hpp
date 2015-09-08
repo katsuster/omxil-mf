@@ -22,31 +22,32 @@ public:
 	explicit port_format(const OMX_VIDEO_PARAM_PORTFORMATTYPE& pf);
 	explicit port_format(const OMX_IMAGE_PARAM_PORTFORMATTYPE& pf);
 	explicit port_format(const OMX_OTHER_PARAM_PORTFORMATTYPE& pf);
+	explicit port_format(const OMX_PARAM_PORTDEFINITIONTYPE& def);
 
 	~port_format();
 
 	port_format(const port_format& obj) = default;
 	port_format& operator=(const port_format& obj) = default;
 
+	OMX_PORTDOMAINTYPE get_domain_type() const;
 	const OMX_AUDIO_PARAM_PORTFORMATTYPE *get_format_audio() const;
 	const OMX_VIDEO_PARAM_PORTFORMATTYPE *get_format_video() const;
 	const OMX_IMAGE_PARAM_PORTFORMATTYPE *get_format_image() const;
 	const OMX_OTHER_PARAM_PORTFORMATTYPE *get_format_other() const;
-	OMX_PORTDOMAINTYPE get_domain_type() const;
 
 	/**
 	 * ダンプをデバッグ出力します。
 	 *
 	 * @param msg 一緒に出力する文字列
 	 */
-	void dump(const char *msg);
+	void dump(const char *msg) const;
 
 private:
+	OMX_PORTDOMAINTYPE dom_type;
 	OMX_AUDIO_PARAM_PORTFORMATTYPE pf_audio;
 	OMX_VIDEO_PARAM_PORTFORMATTYPE pf_video;
 	OMX_IMAGE_PARAM_PORTFORMATTYPE pf_image;
 	OMX_OTHER_PARAM_PORTFORMATTYPE pf_other;
-	OMX_PORTDOMAINTYPE dom_type;
 
 };
 
