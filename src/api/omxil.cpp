@@ -195,7 +195,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_SetupTunnel(OMX_IN OMX_HANDLETYPE hOutput
 	// | 7  | not null | none    | not null | none    | tunnel out->in, success |
 	// +----+----------+---------+----------+---------+-------------------------+
 	if (hOutput == nullptr && hInput == nullptr) {
-		//Falied, case No.1
+		//Failed, case No.1
 		return OMX_ErrorBadParameter;
 	}
 	comp_out = static_cast<OMX_COMPONENTTYPE *>(hOutput);
@@ -209,7 +209,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_SetupTunnel(OMX_IN OMX_HANDLETYPE hOutput
 		result_out = comp_out->ComponentTunnelRequest(hOutput, nPortOutput,
 			hInput, nPortInput, &tunnel);
 		if (result_out != OMX_ErrorNone) {
-			//Falied, case No.2
+			//Failed, case No.2
 			errprint("Failed to ComponentTunnelRequest(out)(case 2), "
 				"comp '%p' out-port '%d' -> comp '%p' in-port '%d'.\n",
 				comp_out, (int)nPortOutput,
@@ -231,7 +231,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_SetupTunnel(OMX_IN OMX_HANDLETYPE hOutput
 	}
 
 	if (comp_out != nullptr && comp_in != nullptr && result_in != OMX_ErrorNone) {
-		//Falied, case No.3
+		//Failed, case No.3
 		errprint("Failed to ComponentTunnelRequest(case 3), "
 			"comp '%p' out-port '%d' -> comp '%p' in-port '%d'.\n",
 			comp_out, (int)nPortOutput,
@@ -249,7 +249,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_SetupTunnel(OMX_IN OMX_HANDLETYPE hOutput
 		}
 		return result_in;
 	} else if (comp_out == nullptr && comp_in != nullptr && result_in != OMX_ErrorNone) {
-		//Falied, case No.4
+		//Failed, case No.4
 		errprint("Failed to ComponentTunnelRequest(case 4), "
 			"comp '%p' out-port '%d' -> comp '%p' in-port '%d'.\n",
 			comp_out, (int)nPortOutput,
