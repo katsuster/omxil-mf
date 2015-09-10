@@ -1172,6 +1172,10 @@ void *component::accept_command()
 			data2 = port_index;
 			event_data = nullptr;
 
+			//command_flush() had already called
+			//EventHandler() callback function.
+			f_callback = false;
+
 			break;
 		case OMX_CommandPortDisable:
 			port_index = cmd.param;
