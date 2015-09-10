@@ -288,6 +288,18 @@ OMX_ERRORTYPE component::SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE 
 	case OMX_CommandFlush:
 	case OMX_CommandPortDisable:
 	case OMX_CommandPortEnable:
+		if (nParam == OMX_ALL) {
+			//All ports
+			break;
+		}
+
+		port_found = find_port(nParam);
+		if (port_found == nullptr) {
+			errprint("invalid port: %d\n", (int)nParam);
+			return OMX_ErrorBadPortIndex;
+		}
+
+		break;
 	case OMX_CommandMarkBuffer:
 		port_found = find_port(nParam);
 		if (port_found == nullptr) {
