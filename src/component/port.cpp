@@ -505,7 +505,6 @@ OMX_ERRORTYPE port::begin_flush()
 	}
 
 	//フラッシュ開始、ポートへの読み書き禁止
-	shutdown(true, true);
 	bound_send->shutdown(true, true);
 
 	return OMX_ErrorNone;
@@ -558,7 +557,6 @@ OMX_ERRORTYPE port::end_flush()
 
 	//フラッシュ終了、ポートへの読み書き許可
 	bound_send->abort_shutdown(true, true);
-	abort_shutdown(true, true);
 
 	return OMX_ErrorNone;
 }

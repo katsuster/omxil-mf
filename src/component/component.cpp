@@ -1296,37 +1296,39 @@ OMX_ERRORTYPE component::command_state_set_to_loaded()
 		err = OMX_ErrorSameState;
 		break;
 	case OMX_StateIdle:
-		//Prepare to flush all ports
-		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-			try {
-				it->second.begin_flush();
-			} catch (const std::runtime_error& e) {
-				errprint("runtime_error: %s\n", e.what());
-				err = OMX_ErrorInsufficientResources;
-				break;
-			}
-		}
-
-		//Stop & wait main thread
-		stop_running();
-		th_main->join();
-		delete th_main;
-		th_main = nullptr;
-
-		//Flush all ports
-		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-			try {
-				it->second.flush_buffers();
-				it->second.end_flush();
-			} catch (const std::runtime_error& e) {
-				errprint("runtime_error: %s\n", e.what());
-				err = OMX_ErrorInsufficientResources;
-				break;
-			}
-		}
-
-		//Wait for all enabled port to be not populated
 		try {
+			//Prepare to flush all ports
+			for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+				if (!it->second.get_enabled()) {
+					continue;
+				}
+				it->second.begin_flush();
+			}
+
+			//Stop & wait main thread
+			stop_running();
+			th_main->join();
+			delete th_main;
+			th_main = nullptr;
+
+			for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+				if (!it->second.get_enabled()) {
+					continue;
+				}
+				it->second.flush_buffers();
+			}
+
+			//Wait for all buffer returned to supplier
+			wait_all_port_buffer_returned();
+
+			for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+				if (!it->second.get_enabled()) {
+					continue;
+				}
+				it->second.end_flush();
+			}
+
+			//Wait for all enabled port to be not populated
 			wait_all_port_no_buffer(OMX_TRUE);
 		} catch (const std::runtime_error& e) {
 			errprint("runtime_error: %s\n", e.what());
@@ -1381,34 +1383,32 @@ OMX_ERRORTYPE component::command_state_set_to_idle()
 		err = OMX_ErrorSameState;
 		break;
 	case OMX_StateExecuting:
-		//Flush all ports
-		err = OMX_ErrorNone;
-		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-			OMX_ERRORTYPE tmperr;
-
-			try {
-				it->second.begin_flush();
-				tmperr = it->second.flush_buffers();
-				it->second.end_flush();
-			} catch (const std::runtime_error& e) {
-				errprint("runtime_error: %s\n", e.what());
-				tmperr = OMX_ErrorInsufficientResources;
-			}
-			if (tmperr != OMX_ErrorNone) {
-				err = tmperr;
-				break;
-			}
-		}
-
-		//Wait for all buffer returned to supplier
+		//Flushing all ports
 		try {
+			for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+				if (!it->second.get_enabled()) {
+					continue;
+				}
+				it->second.begin_flush();
+				it->second.flush_buffers();
+			}
+
+			//Wait for all buffer returned to supplier
 			wait_all_port_buffer_returned();
+
+			for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+				if (!it->second.get_enabled()) {
+					continue;
+				}
+				it->second.end_flush();
+			}
 		} catch (const std::runtime_error& e) {
 			errprint("runtime_error: %s\n", e.what());
 			err = OMX_ErrorInsufficientResources;
 			break;
 		}
 
+		err = OMX_ErrorNone;
 		break;
 	default:
 		errprint("invalid state:%s.\n",
@@ -1486,22 +1486,26 @@ OMX_ERRORTYPE component::command_flush(OMX_U32 port_index)
 	OMX_ERRORTYPE err = OMX_ErrorNone, err_handler = OMX_ErrorNone;
 
 	if (port_index == OMX_ALL) {
-		//Flushing all ports
-		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-			ev_results.push_back(it->first);
-			try {
-				it->second.begin_flush();
-				err = it->second.flush_buffers();
-				it->second.end_flush();
-			} catch (const std::runtime_error& e) {
-				errprint("runtime_error: %s\n", e.what());
-				success = false;
-			}
-		}
-
-		//Wait for all buffer returned to supplier
 		try {
+			//Flush all ports
+			for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+				if (!it->second.get_enabled()) {
+					continue;
+				}
+				it->second.begin_flush();
+				it->second.flush_buffers();
+			}
+
+			//Wait for all buffer returned to supplier
 			wait_all_port_buffer_returned();
+
+			for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+				if (!it->second.get_enabled()) {
+					continue;
+				}
+				it->second.end_flush();
+				ev_results.push_back(it->first);
+			}
 		} catch (const std::runtime_error& e) {
 			errprint("runtime_error: %s\n", e.what());
 			err = OMX_ErrorInsufficientResources;
@@ -1509,23 +1513,26 @@ OMX_ERRORTYPE component::command_flush(OMX_U32 port_index)
 		}
 	} else {
 		//Flushing specify ports
-		port_found = find_port(port_index);
-		if (port_found == nullptr) {
-			errprint("invalid output port:%d\n",
-				(int)port_index);
-			return OMX_ErrorBadPortIndex;
-		}
-
-		ev_results.push_back(port_index);
 		try {
-			port_found->begin_flush();
-			err = port_found->flush_buffers();
-			port_found->end_flush();
+			port_found = find_port(port_index);
+			if (port_found == nullptr || !port_found->get_enabled()) {
+				errprint("invalid or disabled port:%d\n",
+					(int)port_index);
+				err = OMX_ErrorBadPortIndex;
+				success = false;
+			} else {
+				port_found->begin_flush();
+				err = port_found->flush_buffers();
 
-			//Wait for all buffer returned to supplier
-			port_found->wait_buffer_returned();
+				//Wait for all buffer returned to supplier
+				port_found->wait_buffer_returned();
+
+				ev_results.push_back(port_index);
+				port_found->end_flush();
+			}
 		} catch (const std::runtime_error& e) {
 			errprint("runtime_error: %s\n", e.what());
+			err = OMX_ErrorInsufficientResources;
 			success = false;
 		}
 	}
