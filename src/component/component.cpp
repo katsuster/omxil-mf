@@ -1498,6 +1498,15 @@ OMX_ERRORTYPE component::command_flush(OMX_U32 port_index)
 				success = false;
 			}
 		}
+
+		//Wait for all buffer returned to supplier
+		try {
+			wait_all_port_buffer_returned();
+		} catch (const std::runtime_error& e) {
+			errprint("runtime_error: %s\n", e.what());
+			err = OMX_ErrorInsufficientResources;
+			success = false;
+		}
 	} else {
 		//Flushing specify ports
 		port_found = find_port(port_index);
@@ -1512,6 +1521,9 @@ OMX_ERRORTYPE component::command_flush(OMX_U32 port_index)
 			port_found->begin_flush();
 			err = port_found->flush_buffers();
 			port_found->end_flush();
+
+			//Wait for all buffer returned to supplier
+			port_found->wait_buffer_returned();
 		} catch (const std::runtime_error& e) {
 			errprint("runtime_error: %s\n", e.what());
 			success = false;
