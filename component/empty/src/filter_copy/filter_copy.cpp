@@ -77,6 +77,7 @@ void filter_copy::run()
 		result = out_port_video->pop_buffer(&pb_out);
 		if (result != OMX_ErrorNone) {
 			errprint("out_port_video.pop_buffer().\n");
+			in_port_video->empty_buffer_done(&pb_in);
 			break;
 		}
 
