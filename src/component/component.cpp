@@ -843,6 +843,11 @@ OMX_ERRORTYPE component::UseBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTY
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
 
+	if (ppBufferHdr == nullptr || pBuffer == nullptr) {
+		errprint("Invalid bufferheader:%p or buffer:%p\n", ppBufferHdr, pBuffer);
+		return OMX_ErrorBadParameter;
+	}
+
 	port_found = find_port(nPortIndex);
 	if (port_found == nullptr) {
 		errprint("invalid port:%d\n", (int)nPortIndex);
@@ -866,6 +871,11 @@ OMX_ERRORTYPE component::AllocateBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEA
 	scoped_log_begin;
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
+
+	if (ppBuffer == nullptr) {
+		errprint("Invalid bufferheader:%p\n", ppBuffer);
+		return OMX_ErrorBadParameter;
+	}
 
 	port_found = find_port(nPortIndex);
 	if (port_found == nullptr) {
