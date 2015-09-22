@@ -81,7 +81,7 @@ public:
 	 * The number of elements in this buffer.
 	 */
 	size_type size() const {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		return bound.size();
 	}
 
@@ -89,7 +89,7 @@ public:
 	 * The largest possible size of this buffer.
 	 */
 	size_type max_size() const {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		return bound.max_size();
 	}
 
@@ -97,7 +97,7 @@ public:
 	 * Is this buffer empty?
 	 */
 	bool empty() const {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		return bound.empty();
 	}
 
@@ -105,7 +105,7 @@ public:
 	 * Is this buffer full?
 	 */
 	bool full() const {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		return bound.full();
 	}
 
@@ -113,7 +113,7 @@ public:
 	 * Change the size of this buffer.
 	 */
 	void resize(size_type new_size) {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		bound.resize(new_size);
 	}
 
@@ -121,7 +121,7 @@ public:
 	 * The maximum number of elements that can be stored in this buffer.
 	 */
 	size_type capacity() const {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		return bound.capacity();
 	}
 
@@ -129,7 +129,7 @@ public:
 	 * Change the capacity of this buffer.
 	 */
 	void set_capacity(size_type new_cap) {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		bound.set_capacity(new_cap);
 	}
 
@@ -137,7 +137,7 @@ public:
 	 * The maximum number of elements in this buffer without overwriting.
 	 */
 	size_type reserve() const {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		return bound.reserve();
 	}
 
@@ -171,13 +171,28 @@ public:
 	// vendor specific
 	//----------------------------------------
 
+	const std::recursive_mutex *get_mutex() const
+	{
+		return &mut;
+	}
+
+	std::recursive_mutex *get_mutex()
+	{
+		return &mut;
+	}
+
+	void notify() {
+		std::unique_lock<std::recursive_mutex> lock(mut);
+		notify_with_lock();
+	}
+
 	/*size_type get_read_position() const {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		return bound.get_read_position();
 	}
 
 	void set_read_position(size_type new_pos) {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 
 		bound.set_read_position(new_pos);
 		cnt_rd = 0;
@@ -185,12 +200,12 @@ public:
 	}*/
 
 	/*size_type get_write_position() const {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		return bound.get_write_position();
 	}
 
 	void set_write_position(size_type new_pos) {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 
 		bound.set_write_position(new_pos);
 		cnt_wr = 0;
@@ -222,7 +237,7 @@ public:
 	 * @return 読み飛ばした数
 	 */
 	/*size_type skip(size_type count) {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 
 		return skip_with_lock(count);
 	}*/
@@ -251,7 +266,7 @@ public:
 	 * @return リングバッファから読み込んだ数
 	 */
 	size_type read_array(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 
 		return read_array_with_lock(buf, count, rdtrans, wrtrans);
 	}
@@ -276,7 +291,7 @@ public:
 	 * @return リングバッファに書き込んだ数
 	 */
 	/*size_type write_array(const T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 
 		return write_array_with_lock(buf, count, rdtrans, wrtrans);
 	}*/
@@ -290,8 +305,8 @@ public:
 	 * @return リングバッファに書き込んだ数
 	 */
 	/*size_type copy_array(this_type *src, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
-		std::unique_lock<std::mutex> lock(mut);
-		std::unique_lock<std::mutex> lock_src(src->mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock_src(src->mut);
 
 		return copy_array_with_lock(src, count, rdtrans, wrtrans);
 	}*/
@@ -307,8 +322,8 @@ public:
 	 * @param count 読み飛ばす数
 	 * @return 読み飛ばした数
 	 */
-	/*size_type skip_fully(size_type count) {
-		std::unique_lock<std::mutex> lock(mut);
+	size_type skip_fully(size_type count) {
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		size_type pos = 0;
 
 		while (count - pos > 0) {
@@ -318,7 +333,7 @@ public:
 		}
 
 		return pos;
-	}*/
+	}
 
 	/**
 	 * 任意の要素をリングバッファから読み込みます。
@@ -348,7 +363,7 @@ public:
 	 * @return リングバッファから読み込んだ数
 	 */
 	size_type read_fully(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		size_type pos = 0;
 
 		while (count - pos > 0) {
@@ -384,7 +399,7 @@ public:
 	 * @return リングバッファに書き込んだ数
 	 */
 	size_type write_fully(const T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 		size_type pos = 0;
 
 		while (count - pos > 0) {
@@ -407,8 +422,8 @@ public:
 	 * @return リングバッファに書き込んだ数
 	 */
 	/*size_type copy_array_fully(this_type *src, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
-		std::unique_lock<std::mutex> lock(mut);
-		std::unique_lock<std::mutex> lock_src(src->mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock_src(src->mut);
 		size_type pos = 0;
 
 		while (count - pos > 0) {
@@ -437,8 +452,8 @@ public:
 	 *
 	 * @param n 要素数
 	 */
-	/*void wait_element(size_type n) {
-		std::unique_lock<std::mutex> lock(mut);
+	void wait_element(size_type n) {
+		std::unique_lock<std::recursive_mutex> lock(mut);
 
 		cond_not_empty.wait(lock, [&] { return shutting_read || bound.size() >= n; });
 		if (shutting_read) {
@@ -446,7 +461,7 @@ public:
 			msg += ": interrupted.";
 			throw std::runtime_error(msg);
 		}
-	}*/
+	}
 
 	/**
 	 * リングバッファに指定された要素数の空きができるまでブロックします。
@@ -456,8 +471,8 @@ public:
 	 *
 	 * @param n 要素数
 	 */
-	/*void wait_space(size_type n) {
-		std::unique_lock<std::mutex> lock(mut);
+	void wait_space(size_type n) {
+		std::unique_lock<std::recursive_mutex> lock(mut);
 
 		cond_not_full.wait(lock, [&] { return shutting_write || bound.reserve() >= n; });
 		if (shutting_write) {
@@ -465,7 +480,7 @@ public:
 			msg += ": interrupted.";
 			throw std::runtime_error(msg);
 		}
-	}*/
+	}
 
 	/**
 	 * 以降の読み出しと書き込みを禁止し、
@@ -495,7 +510,7 @@ public:
 	 * 	変更しない場合は false を指定します
 	 */
 	void shutdown(bool rd, bool wr) {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 
 		if (rd) {
 			shutting_read = true;
@@ -516,7 +531,7 @@ public:
 	 * 	変更しない場合は false を指定します
 	 */
 	void abort_shutdown(bool rd, bool wr) {
-		std::unique_lock<std::mutex> lock(mut);
+		std::unique_lock<std::recursive_mutex> lock(mut);
 
 		if (rd) {
 			shutting_read = false;
@@ -618,7 +633,7 @@ protected:
 	 *
 	 * @param lock リングバッファのロックへの参照
 	 */
-	void wait_element_with_lock(std::unique_lock<std::mutex>& lock) {
+	void wait_element_with_lock(std::unique_lock<std::recursive_mutex>& lock) {
 		cond_not_empty.wait(lock, [&] { return shutting_read || !bound.empty(); });
 		if (shutting_read) {
 			std::string msg(__func__);
@@ -638,7 +653,7 @@ protected:
 	 *
 	 * @param lock リングバッファのロックへの参照
 	 */
-	void wait_space_with_lock(std::unique_lock<std::mutex>& lock) {
+	void wait_space_with_lock(std::unique_lock<std::recursive_mutex>& lock) {
 		cond_not_full.wait(lock, [&] { return shutting_write || !bound.full(); });
 		if (shutting_write) {
 			std::string msg(__func__);
@@ -662,9 +677,9 @@ protected:
 
 private:
 	Container& bound;
-	mutable std::mutex mut;
-	std::condition_variable cond_not_full;
-	std::condition_variable cond_not_empty;
+	mutable std::recursive_mutex mut;
+	std::condition_variable_any cond_not_full;
+	std::condition_variable_any cond_not_empty;
 	uint64_t cnt_rd, cnt_wr;
 	bool shutting_read, shutting_write;
 };

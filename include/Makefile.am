@@ -17,8 +17,6 @@ nobase_libomxil_mf_la_HEADERS = \
 	$(HEADER_DIR)/OMX_Other.h \
 	$(HEADER_DIR)/OMX_Types.h \
 	$(HEADER_DIR)/OMX_Video.h \
-	$(RING_DIR)/bit_buffer.hpp \
-	$(RING_DIR)/bounded_bit_buffer.hpp \
 	$(RING_DIR)/bounded_buffer.hpp \
 	$(RING_DIR)/buffer_base.hpp \
 	$(RING_DIR)/ring_buffer.hpp \

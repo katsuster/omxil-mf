@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <cstddef>
+#include <iterator>
 
 #include "buffer_base.hpp"
 
@@ -30,6 +31,70 @@ public:
 	using buffer_base<T>::get_remain;
 	using buffer_base<T>::get_space;
 
+	class iterator : std::iterator<std::forward_iterator_tag, T> {
+	public:
+		explicit iterator(ring_buffer *buffer)
+			: iterator(buffer, 0) {
+		}
+
+		iterator(ring_buffer *buffer, size_type position)
+			: buf(buffer), pos(position) {
+		}
+
+		~iterator() {
+		}
+
+		iterator(const iterator& obj) {
+			*this = obj;
+		}
+
+		const iterator& operator=(const iterator& obj) {
+			if (this == &obj) {
+				return *this;
+			}
+
+			buf = obj.buf;
+			pos = obj.pos;
+
+			return *this;
+		}
+
+		reference operator*() const {
+			return (*buf)[pos];
+		}
+
+		iterator& operator++() {
+			pos++;
+			return *this;
+		}
+
+		iterator operator++(int) {
+			return iterator(buf, pos++);
+		}
+
+		iterator& operator--() {
+			pos--;
+			return *this;
+		}
+
+		iterator operator--(int) {
+			return iterator(buf, pos--);
+		}
+
+		bool operator==(const iterator& obj) {
+			return (buf == obj.buf) && (pos == obj.pos);
+		}
+
+		bool operator!=(const iterator& obj) {
+			return !(*this == obj);
+		}
+
+	private:
+		ring_buffer *buf;
+		size_type pos;
+
+	};
+
 	ring_buffer(T *buf, size_type l)
 	: buffer_base<T>(buf, l), rd(0), wr(0) {
 		//do nothing
@@ -49,8 +114,14 @@ public:
 	// iterators
 	//----------------------------------------
 
-	//begin
-	//end
+	iterator begin() {
+		iterator(this, 0);
+	}
+
+	iterator end() {
+		iterator(this, size());
+	}
+
 	//rbegin
 	//rend
 
@@ -131,8 +202,21 @@ public:
 	// element access
 	//----------------------------------------
 
-	//front
-	//back
+	reference front() {
+		return get_elem(rd);
+	}
+
+	const_reference front() const {
+		return get_elem(rd);
+	}
+
+	reference back() {
+		return get_elem(rd + size() - 1);
+	}
+
+	const_reference back() const {
+		return get_elem(rd + size() - 1);
+	}
 
 	reference operator[](size_type n) {
 		return get_elem(rd + n);
@@ -195,7 +279,7 @@ public:
 	 * @param count 読み飛ばす数
 	 * @return 読み飛ばした数
 	 */
-	/*size_type skip(size_type count) {
+	size_type skip(size_type count) {
 		count = std::min(count, get_remain(rd, wr, elems()));
 
 		rd += count;
@@ -204,7 +288,7 @@ public:
 		}
 
 		return count;
-	}*/
+	}
 
 	/**
 	 * 配列をリングバッファから読み込みます。
