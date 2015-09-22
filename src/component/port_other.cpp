@@ -1,6 +1,3 @@
-#include <vector>
-#include <mutex>
-
 #include <omxil_mf/component.hpp>
 #include <omxil_mf/port_other.hpp>
 #include <omxil_mf/scoped_log.hpp>
