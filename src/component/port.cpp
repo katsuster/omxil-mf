@@ -361,6 +361,46 @@ OMX_ERRORTYPE port::set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYP
 	return OMX_ErrorNone;
 }
 
+OMX_BOOL port::get_tunneled() const
+{
+	return f_tunneled;
+}
+
+void port::set_tunneled(OMX_BOOL v)
+{
+	f_tunneled = v;
+}
+
+OMX_HANDLETYPE port::get_tunneled_component() const
+{
+	return tunneled_comp;
+}
+
+void port::set_tunneled_component(OMX_HANDLETYPE v)
+{
+	tunneled_comp = v;
+}
+
+OMX_U32 port::get_tunneled_port() const
+{
+	return tunneled_port;
+}
+
+void port::set_tunneled_port(OMX_U32 v)
+{
+	tunneled_port = v;
+}
+
+OMX_BOOL port::get_tunneled_supplier() const
+{
+	return f_tunneled_supplier;
+}
+
+void port::set_tunneled_supplier(OMX_BOOL v)
+{
+	f_tunneled_supplier = v;
+}
+
 OMX_ERRORTYPE port::add_port_format(const port_format& f)
 {
 	formats.push_back(f);
@@ -564,9 +604,75 @@ OMX_ERRORTYPE port::end_flush()
 OMX_ERRORTYPE port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup)
 {
 	scoped_log_begin;
-	//do nothing
+	OMX_PARAM_PORTDEFINITIONTYPE def;
+	OMX_ERRORTYPE result;
+
+	//Change to non-tunneled communication
+	if (omx_comp == nullptr) {
+		return OMX_ErrorNotImplemented;
+		//return OMX_ErrorNone;
+	}
+
+	//Change to tunneled communication
+	def.nSize = sizeof(OMX_PARAM_PORTDEFINITIONTYPE);
+	def.nVersion.s.nVersionMajor = OMX_MF_IL_MAJOR;
+	def.nVersion.s.nVersionMinor = OMX_MF_IL_MINOR;
+	def.nVersion.s.nRevision     = OMX_MF_IL_REVISION;
+	def.nVersion.s.nStep         = OMX_MF_IL_STEP;
+	def.nPortIndex               = index;
+	result = OMX_GetParameter(omx_comp, OMX_IndexParamPortDefinition, &def);
+	if (result != OMX_ErrorNone) {
+		errprint("Cannot get port definition from component %p port %d.\n",
+			omx_comp, (int)index);
+		return result;
+	}
+
+	//Check domain
+	if (get_domain() != def.eDomain) {
+		errprint("Wrong domain '%s' (component %p, port %d is '%s').\n",
+			omx_enum_name::get_OMX_PORTDOMAINTYPE_name(get_domain()),
+			omx_comp, (int)index,
+			omx_enum_name::get_OMX_PORTDOMAINTYPE_name(def.eDomain));
+		return OMX_ErrorPortsNotCompatible;
+	}
+
+	//Check format
+	port_format f_cond = port_format(def);
+	const port_format *f_found = get_port_format(f_cond);
+	if (f_found == nullptr) {
+		errprint("Not supported format (component %p, port %d).\n",
+			omx_comp, (int)index);
+		return OMX_ErrorPortsNotCompatible;
+	}
+	//f_cond.dump(" cond");
+	//f_found->dump("found");
+
+	if (get_dir() == OMX_DirInput) {
+		result = component_tunnel_request_input(omx_comp, index, setup, &def);
+	} else {
+		result = component_tunnel_request_output(omx_comp, index, setup, &def);
+	}
+	if (result != OMX_ErrorNone) {
+		errprint("Cannot tunnel request (component %p, port %d, dir %d(%s)).\n",
+			omx_comp, (int)index, get_dir(),
+			omx_enum_name::get_OMX_DIRTYPE_name(get_dir()));
+		return OMX_ErrorPortsNotCompatible;
+	}
+
+	set_tunneled(OMX_TRUE);
+	set_tunneled_component(omx_comp);
+	set_tunneled_port(index);
+	//set_tunneled_supplier();
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port::component_tunnel_request_input(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup, OMX_PARAM_PORTDEFINITIONTYPE *def)
+{
+	scoped_log_begin;
 
 	/* memo:
+	 *
 	 * struct OMX_TUNNELSETUPTYPE {
 	 * 	OMX_U32 nTunnelFlags;             // bit flags for tunneling
 	 * 	OMX_BUFFERSUPPLIERTYPE eSupplier; // supplier preference
@@ -578,6 +684,15 @@ OMX_ERRORTYPE port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 in
 	 * 	OMX_BufferSupplyOutput,            // output port supplies the buffers
 	 * };
 	 */
+
+	return OMX_ErrorNotImplemented;
+	//return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port::component_tunnel_request_output(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup, OMX_PARAM_PORTDEFINITIONTYPE *def)
+{
+	scoped_log_begin;
+
 
 	return OMX_ErrorNotImplemented;
 	//return OMX_ErrorNone;

@@ -246,7 +246,7 @@ OMX_ERRORTYPE component::GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRI
 
 	if (pComponentName == nullptr || pComponentVersion == nullptr || 
 			pSpecVersion == nullptr || pComponentUUID == nullptr) {
-		errprint("invalid arguments\n");
+		errprint("Invalid arguments\n");
 		return OMX_ErrorBadParameter;
 	}
 
@@ -295,7 +295,7 @@ OMX_ERRORTYPE component::SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE 
 
 		port_found = find_port(nParam);
 		if (port_found == nullptr) {
-			errprint("invalid port: %d\n", (int)nParam);
+			errprint("Invalid port: %d\n", (int)nParam);
 			return OMX_ErrorBadPortIndex;
 		}
 
@@ -303,7 +303,7 @@ OMX_ERRORTYPE component::SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE 
 	case OMX_CommandMarkBuffer:
 		port_found = find_port(nParam);
 		if (port_found == nullptr) {
-			errprint("invalid port: %d\n", (int)nParam);
+			errprint("Invalid port: %d\n", (int)nParam);
 			return OMX_ErrorBadPortIndex;
 		}
 
@@ -344,13 +344,13 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(def, sizeof(OMX_PARAM_PORTDEFINITIONTYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
 		port_found = find_port(def->nPortIndex);
 		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)def->nPortIndex);
+			errprint("Invalid port:%d\n", (int)def->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
@@ -364,20 +364,42 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(supply, sizeof(OMX_PARAM_BUFFERSUPPLIERTYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
 		port_found = find_port(supply->nPortIndex);
 		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)supply->nPortIndex);
+			errprint("Invalid port:%d\n", (int)supply->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
 
-		//FIXME: not implemented
-		throw std::runtime_error("not implemented.");
+		if (!port_found->get_tunneled()) {
+			supply->eBufferSupplier = OMX_BufferSupplyUnspecified;
+			err = OMX_ErrorNone;
+			break;
+		}
 
+		if (port_found->get_tunneled_supplier() &&
+			port_found->get_dir() == OMX_DirInput) {
+			supply->eBufferSupplier = OMX_BufferSupplyInput;
+		} else if (!port_found->get_tunneled_supplier() &&
+			port_found->get_dir() == OMX_DirInput) {
+			supply->eBufferSupplier = OMX_BufferSupplyOutput;
+		} else if (port_found->get_tunneled_supplier() &&
+			port_found->get_dir() == OMX_DirOutput) {
+			supply->eBufferSupplier = OMX_BufferSupplyOutput;
+		} else if (!port_found->get_tunneled_supplier() &&
+			port_found->get_dir() == OMX_DirOutput) {
+			supply->eBufferSupplier = OMX_BufferSupplyInput;
+		} else {
+			errprint("Bug, do not reach here.\n");
+			err = OMX_ErrorUndefined;
+			break;
+		}
+
+		err = OMX_ErrorNone;
 		break;
 	}
 	case OMX_IndexParamAudioInit: {
@@ -385,7 +407,7 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
@@ -399,7 +421,7 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
@@ -413,7 +435,7 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
@@ -427,7 +449,7 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
@@ -444,13 +466,13 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(pf_audio, sizeof(OMX_AUDIO_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
 		port_found = find_port(pf_audio->nPortIndex);
 		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)pf_audio->nPortIndex);
+			errprint("Invalid port:%d\n", (int)pf_audio->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
@@ -484,13 +506,13 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(pf_video, sizeof(OMX_VIDEO_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
 		port_found = find_port(pf_video->nPortIndex);
 		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)pf_video->nPortIndex);
+			errprint("Invalid port:%d\n", (int)pf_video->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
@@ -524,13 +546,13 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(pf_image, sizeof(OMX_IMAGE_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
 		port_found = find_port(pf_image->nPortIndex);
 		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)pf_image->nPortIndex);
+			errprint("Invalid port:%d\n", (int)pf_image->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
@@ -564,13 +586,13 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(pf_other, sizeof(OMX_OTHER_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
 		port_found = find_port(pf_other->nPortIndex);
 		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)pf_other->nPortIndex);
+			errprint("Invalid port:%d\n", (int)pf_other->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
@@ -626,13 +648,13 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(def, sizeof(OMX_PARAM_PORTDEFINITIONTYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
 		port_found = find_port(def->nPortIndex);
 		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)def->nPortIndex);
+			errprint("Invalid port:%d\n", (int)def->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
@@ -651,22 +673,83 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 	}
 	case OMX_IndexParamCompBufferSupplier: {
 		OMX_PARAM_BUFFERSUPPLIERTYPE *supply = static_cast<OMX_PARAM_BUFFERSUPPLIERTYPE *>(ptr);
+		bool changed;
 
 		err = check_omx_header(supply, sizeof(OMX_PARAM_BUFFERSUPPLIERTYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
 		port_found = find_port(supply->nPortIndex);
 		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)supply->nPortIndex);
+			errprint("Invalid port:%d\n", (int)supply->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
 
-		//FIXME: not implemented
-		throw std::runtime_error("not implemented.");
+		if (!port_found->get_tunneled()) {
+			errprint("Not tunneled mode port:%d\n", (int)supply->nPortIndex);
+			err = OMX_ErrorBadPortIndex;
+			break;
+		}
+
+		if (supply->eBufferSupplier == OMX_BufferSupplyUnspecified) {
+			//Cannot overwrite 'unspecified' on other mode
+			err = OMX_ErrorBadParameter;
+			break;
+		}
+
+		changed = false;
+		if (port_found->get_tunneled_supplier() &&
+			port_found->get_dir() == OMX_DirInput) {
+			//Port is SupplyInput
+			if (supply->eBufferSupplier == OMX_BufferSupplyOutput) {
+				//Change to user
+				port_found->set_tunneled_supplier(OMX_FALSE);
+				changed = true;
+			}
+		} else if (!port_found->get_tunneled_supplier() &&
+			port_found->get_dir() == OMX_DirInput) {
+			//Port is SupplyOutput
+			if (supply->eBufferSupplier == OMX_BufferSupplyInput) {
+				//Change to supplier
+				port_found->set_tunneled_supplier(OMX_TRUE);
+				changed = true;
+			}
+		} else if (port_found->get_tunneled_supplier() &&
+			port_found->get_dir() == OMX_DirOutput) {
+			//Port is SupplyOutput
+			if (supply->eBufferSupplier == OMX_BufferSupplyInput) {
+				//Change to user
+				port_found->set_tunneled_supplier(OMX_FALSE);
+				changed = true;
+			}
+		} else if (!port_found->get_tunneled_supplier() &&
+			port_found->get_dir() == OMX_DirOutput) {
+			//Port is SupplyInput
+			if (supply->eBufferSupplier == OMX_BufferSupplyOutput) {
+				//Change to supplier
+				port_found->set_tunneled_supplier(OMX_TRUE);
+				changed = true;
+			}
+		} else {
+			errprint("Bug, do not reach here.\n");
+			err = OMX_ErrorUndefined;
+			break;
+		}
+
+		if (changed) {
+			OMX_PARAM_BUFFERSUPPLIERTYPE bufsup;
+
+			bufsup.nSize           = sizeof(bufsup);
+			bufsup.nVersion        = supply->nVersion;
+			bufsup.nPortIndex      = port_found->get_tunneled_port();
+			bufsup.eBufferSupplier = supply->eBufferSupplier;
+
+			err = OMX_SetParameter(port_found->get_tunneled_component(),
+				OMX_IndexParamCompBufferSupplier, &bufsup);
+		}
 
 		break;
 	}
@@ -678,7 +761,7 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(param, sizeof(OMX_PORT_PARAM_TYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
@@ -695,13 +778,13 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(pf_audio, sizeof(OMX_AUDIO_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
 		port_found = find_port(pf_audio->nPortIndex);
 		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)pf_audio->nPortIndex);
+			errprint("Invalid port:%d\n", (int)pf_audio->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
@@ -715,13 +798,13 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(pf_video, sizeof(OMX_VIDEO_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
 		port_found = find_port(pf_video->nPortIndex);
 		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)pf_video->nPortIndex);
+			errprint("Invalid port:%d\n", (int)pf_video->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
@@ -735,13 +818,13 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(pf_image, sizeof(OMX_IMAGE_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
 		port_found = find_port(pf_image->nPortIndex);
 		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)pf_image->nPortIndex);
+			errprint("Invalid port:%d\n", (int)pf_image->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
@@ -755,13 +838,13 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 		err = check_omx_header(pf_other, sizeof(OMX_OTHER_PARAM_PORTFORMATTYPE));
 		if (err != OMX_ErrorNone) {
-			errprint("invalid header.\n");
+			errprint("Invalid header.\n");
 			break;
 		}
 
 		port_found = find_port(pf_other->nPortIndex);
 		if (port_found == nullptr) {
-			errprint("invalid port:%d\n", (int)pf_other->nPortIndex);
+			errprint("Invalid port:%d\n", (int)pf_other->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
@@ -827,7 +910,7 @@ OMX_ERRORTYPE component::ComponentTunnelRequest(OMX_HANDLETYPE hComponent, OMX_U
 
 	port_found = find_port(nPort);
 	if (port_found == nullptr) {
-		errprint("invalid port:%d\n", (int)nPort);
+		errprint("Invalid port:%d\n", (int)nPort);
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -850,7 +933,7 @@ OMX_ERRORTYPE component::UseBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTY
 
 	port_found = find_port(nPortIndex);
 	if (port_found == nullptr) {
-		errprint("invalid port:%d\n", (int)nPortIndex);
+		errprint("Invalid port:%d\n", (int)nPortIndex);
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -879,7 +962,7 @@ OMX_ERRORTYPE component::AllocateBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEA
 
 	port_found = find_port(nPortIndex);
 	if (port_found == nullptr) {
-		errprint("invalid port:%d\n", (int)nPortIndex);
+		errprint("Invalid port:%d\n", (int)nPortIndex);
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -903,7 +986,7 @@ OMX_ERRORTYPE component::FreeBuffer(OMX_HANDLETYPE hComponent, OMX_U32 nPortInde
 
 	port_found = find_port(nPortIndex);
 	if (port_found == nullptr) {
-		errprint("invalid port:%d\n", (int)nPortIndex);
+		errprint("Invalid port:%d\n", (int)nPortIndex);
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -925,14 +1008,14 @@ OMX_ERRORTYPE component::EmptyThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHE
 		break;
 	default:
 		//NG
-		errprint("invalid state:%s.\n",
+		errprint("Invalid state:%s.\n",
 			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
 		return OMX_ErrorInvalidState;
 	}
 
 	port_found = find_port(pBuffer->nInputPortIndex);
 	if (port_found == nullptr) {
-		errprint("invalid input port:%d\n",
+		errprint("Invalid input port:%d\n",
 			(int)pBuffer->nInputPortIndex);
 		return OMX_ErrorBadPortIndex;
 	}
@@ -955,14 +1038,14 @@ OMX_ERRORTYPE component::FillThisBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEA
 		break;
 	default:
 		//NG
-		errprint("invalid state:%s.\n",
+		errprint("Invalid state:%s.\n",
 			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
 		return OMX_ErrorInvalidState;
 	}
 
 	port_found = find_port(pBuffer->nOutputPortIndex);
 	if (port_found == nullptr) {
-		errprint("invalid output port:%d\n",
+		errprint("Invalid output port:%d\n",
 			(int)pBuffer->nOutputPortIndex);
 		return OMX_ErrorBadPortIndex;
 	}
@@ -982,7 +1065,7 @@ OMX_ERRORTYPE component::SetCallbacks(OMX_HANDLETYPE hComponent, OMX_CALLBACKTYP
 		break;
 	default:
 		//NG
-		errprint("invalid state:%s.\n",
+		errprint("Invalid state:%s.\n",
 			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
 		return OMX_ErrorInvalidState;
 	}
@@ -1339,7 +1422,7 @@ OMX_ERRORTYPE component::command_state_set_to_loaded()
 		err = OMX_ErrorNone;
 		break;
 	default:
-		errprint("invalid state:%s.\n",
+		errprint("Invalid state:%s.\n",
 			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
 		err = OMX_ErrorInvalidState;
 		break;
@@ -1411,7 +1494,7 @@ OMX_ERRORTYPE component::command_state_set_to_idle()
 		err = OMX_ErrorNone;
 		break;
 	default:
-		errprint("invalid state:%s.\n",
+		errprint("Invalid state:%s.\n",
 			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
 
 		err = OMX_ErrorInvalidState;
@@ -1445,7 +1528,7 @@ OMX_ERRORTYPE component::command_state_set_to_executing()
 		err = OMX_ErrorSameState;
 		break;
 	default:
-		errprint("invalid state:%s.\n",
+		errprint("Invalid state:%s.\n",
 			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
 
 		err = OMX_ErrorInvalidState;
@@ -1516,7 +1599,7 @@ OMX_ERRORTYPE component::command_flush(OMX_U32 port_index)
 		try {
 			port_found = find_port(port_index);
 			if (port_found == nullptr || !port_found->get_enabled()) {
-				errprint("invalid or disabled port:%d\n",
+				errprint("Invalid or disabled port:%d\n",
 					(int)port_index);
 				err = OMX_ErrorBadPortIndex;
 				success = false;
@@ -1614,16 +1697,17 @@ OMX_ERRORTYPE component::check_omx_header(const void *p, size_t size) const
 	const OMX_MF_HEADERTYPE *h = reinterpret_cast<const OMX_MF_HEADERTYPE *>(p);
 
 	if (h == nullptr) {
+		errprint("Header is null.\n");
 		return OMX_ErrorBadParameter;
 	}
 	if (h->nSize != size) {
-		errprint("invalid nSize(%d) != size:%d.\n",
+		errprint("Invalid nSize(%d) != size:%d.\n",
 			(int)h->nSize, (int)size);
 		return OMX_ErrorBadParameter;
 	}
 	if (h->nVersion.s.nVersionMajor != OMX_MF_IL_MAJOR ||
 		h->nVersion.s.nVersionMinor > OMX_MF_IL_MINOR) {
-		errprint("invalid version %d.%d required.\n",
+		errprint("Invalid version %d.%d required.\n",
 			h->nVersion.s.nVersionMajor,
 			h->nVersion.s.nVersionMinor);
 		return OMX_ErrorVersionMismatch;

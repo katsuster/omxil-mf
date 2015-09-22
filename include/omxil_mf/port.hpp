@@ -29,6 +29,15 @@ public:
 	//disable default constructor
 	port() = delete;
 
+	/**
+	 * ポートを作成します。
+	 *
+	 * NOTE:
+	 * ポートのインデックス番号は不変です。
+	 *
+	 * @param ind ポートのインデックス番号
+	 * @param c   ポートが所属するコンポーネント
+	 */
 	port(int ind, component *c);
 
 	virtual ~port();
@@ -331,6 +340,18 @@ public:
 	 */
 	virtual OMX_ERRORTYPE set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v);
 
+	virtual OMX_BOOL get_tunneled() const;
+	virtual void set_tunneled(OMX_BOOL v);
+
+	virtual OMX_HANDLETYPE get_tunneled_component() const;
+	virtual void set_tunneled_component(OMX_HANDLETYPE v);
+
+	virtual OMX_U32 get_tunneled_port() const;
+	virtual void set_tunneled_port(OMX_U32 v);
+
+	virtual OMX_BOOL get_tunneled_supplier() const;
+	virtual void set_tunneled_supplier(OMX_BOOL v);
+
 	/**
 	 * ポートがサポートするデータ形式を追加します。
 	 *
@@ -565,6 +586,15 @@ public:
 	 */
 	virtual OMX_ERRORTYPE end_flush();
 
+	/**
+	 * 指定されたコンポーネントのポートと、トンネル接続します。
+	 *
+	 * @param omx_comp OpenMAX IL コンポーネント、
+	 *                 トンネル接続を解除する場合は nullptr
+	 * @param index    コンポーネントのポート番号
+	 * @param setup    トンネル接続の設定
+	 * @return OpenMAX エラー値
+	 */
 	virtual OMX_ERRORTYPE component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup);
 
 	virtual OMX_ERRORTYPE allocate_tunnel_buffer(OMX_U32 index);
@@ -801,6 +831,36 @@ protected:
 	 */
 	virtual bool is_broken();
 
+	/**
+	 * 指定されたコンポーネントのポートと、トンネル接続します。
+	 * （入力ポート用）
+	 *
+	 * NOTE: この関数は引数のエラーチェックをしません。
+	 *
+	 * @param omx_comp OpenMAX IL コンポーネント、
+	 *                 トンネル接続を解除する場合は nullptr
+	 * @param index    コンポーネントのポート番号
+	 * @param setup    トンネル接続の設定
+	 * @param def      ポートの定義情報
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE component_tunnel_request_input(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup, OMX_PARAM_PORTDEFINITIONTYPE *def);
+
+	/**
+	 * 指定されたコンポーネントのポートと、トンネル接続します。
+	 * （出力ポート用）
+	 *
+	 * NOTE: この関数は引数のエラーチェックをしません。
+	 *
+	 * @param omx_comp OpenMAX IL コンポーネント、
+	 *                 トンネル接続を解除する場合は nullptr
+	 * @param index    コンポーネントのポート番号
+	 * @param setup    トンネル接続の設定
+	 * @param def      ポートの定義情報
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE component_tunnel_request_output(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup, OMX_PARAM_PORTDEFINITIONTYPE *def);
+
 	//----------------------------------------
 	// コンポーネント利用者へのバッファ返却スレッド
 	//----------------------------------------
@@ -837,6 +897,7 @@ private:
 	//待機の強制解除フラグ
 	bool shutting_read, shutting_write;
 
+	//ポートが所属するコンポーネント
 	component *comp;
 
 	//以下 OMX_PARAM_PORTDEFINITIONTYPE に基づくメンバ
@@ -854,7 +915,17 @@ private:
 
 	//以上 OMX_PARAM_PORTDEFINITIONTYPE に基づくメンバ
 
+	//ポートに使用可能なバッファが一つもないことを示すフラグ
 	OMX_BOOL f_no_buffer;
+
+	//ポートがトンネルモードかどうか
+	OMX_BOOL f_tunneled;
+	//トンネル接続先のポートが所属するコンポーネント
+	OMX_HANDLETYPE tunneled_comp;
+	//トンネル接続先のポート
+	OMX_U32 tunneled_port;
+	//バッファ供給側（Supplier）か、使用側（User）か
+	OMX_BOOL f_tunneled_supplier;
 
 	//ポートがサポートするフォーマットのリスト
 	//OMX_GetParameter(OMX_IndexParamXxxxxPortFormat) にて使用します。
