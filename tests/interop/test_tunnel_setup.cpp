@@ -274,6 +274,7 @@ int main(int argc, char *argv[])
 	//
 	//TODO: Process some buffers...
 	//
+	usleep(1000000);
 
 
 	//Set StateIdle

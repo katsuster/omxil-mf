@@ -132,27 +132,6 @@ public:
 	virtual port *find_port(OMX_U32 index);
 
 	/**
-	 * 全ての有効なポートが 'populated' になるまで待ちます。
-	 *
-	 * @param v 待ちたい状態
-	 * 	OMX_TRUE なら populated になるまで待ち、
-	 * 	OMX_FALSE なら populated ではなくなるまで待ちます。
-	 */
-	virtual void wait_all_port_populated(OMX_BOOL v);
-
-	/**
-	 * 全ての有効なポートのバッファが全て解放されるまで待ちます。
-	 *
-	 * 注: 'no buffer' はこのライブラリ独自の用語です。
-	 * OpenMAX IL の用語ではありません。
-	 *
-	 * @param v 待ちたい状態
-	 * 	OMX_TRUE なら no buffer になるまで待ち、
-	 * 	OMX_FALSE なら no buffer ではなくなるまで待ちます。
-	 */
-	virtual void wait_all_port_no_buffer(OMX_BOOL v);
-
-	/**
 	 * 全ての有効なポートがバッファを返却するまで待ちます。
 	 */
 	virtual void wait_all_port_buffer_returned();
@@ -355,6 +334,17 @@ protected:
 	/**
 	 * OMX_SendCommand にて送られたコマンドを処理します。
 	 *
+	 * OMX_SendCommand(OMX_CommandStateSet, OMX_StateLoaded...) かつ
+	 * 現在の状態が OMX_StateIdle のとき
+	 * に対応します。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE command_state_set_to_loaded_from_idle();
+
+	/**
+	 * OMX_SendCommand にて送られたコマンドを処理します。
+	 *
 	 * OMX_SendCommand(OMX_CommandStateSet, OMX_StateIdle...)
 	 * に対応します。
 	 *
@@ -365,12 +355,45 @@ protected:
 	/**
 	 * OMX_SendCommand にて送られたコマンドを処理します。
 	 *
+	 * OMX_SendCommand(OMX_CommandStateSet, OMX_StateIdle...) かつ
+	 * 現在の状態が OMX_StateLoaded のとき
+	 * に対応します。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE command_state_set_to_idle_from_loaded();
+
+	/**
+	 * OMX_SendCommand にて送られたコマンドを処理します。
+	 *
+	 * OMX_SendCommand(OMX_CommandStateSet, OMX_StateIdle...) かつ
+	 * 現在の状態が OMX_StateExecuting のとき
+	 * に対応します。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE command_state_set_to_idle_from_executing();
+
+	/**
+	 * OMX_SendCommand にて送られたコマンドを処理します。
+	 *
 	 * OMX_SendCommand(OMX_CommandStateSet, OMX_StateExecuting...)
 	 * に対応します。
 	 *
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE command_state_set_to_executing();
+
+	/**
+	 * OMX_SendCommand にて送られたコマンドを処理します。
+	 *
+	 * OMX_SendCommand(OMX_CommandStateSet, OMX_StateExecuting...) かつ
+	 * 現在の状態が OMX_StateIdle のとき
+	 * に対応します。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE command_state_set_to_executing_from_idle();
 
 	/**
 	 * OMX_SendCommand にて送られたコマンドを処理します。

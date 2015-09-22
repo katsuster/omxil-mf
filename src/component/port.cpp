@@ -605,7 +605,7 @@ OMX_ERRORTYPE port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 in
 {
 	scoped_log_begin;
 	OMX_PARAM_PORTDEFINITIONTYPE def;
-	OMX_ERRORTYPE result;
+	OMX_ERRORTYPE err;
 
 	//Change to non-tunneled communication
 	if (omx_comp == nullptr) {
@@ -624,11 +624,11 @@ OMX_ERRORTYPE port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 in
 	def.nVersion.s.nRevision     = OMX_MF_IL_REVISION;
 	def.nVersion.s.nStep         = OMX_MF_IL_STEP;
 	def.nPortIndex               = index;
-	result = OMX_GetParameter(omx_comp, OMX_IndexParamPortDefinition, &def);
-	if (result != OMX_ErrorNone) {
+	err = OMX_GetParameter(omx_comp, OMX_IndexParamPortDefinition, &def);
+	if (err != OMX_ErrorNone) {
 		errprint("Cannot get port definition from component:%p port:%d.\n",
 			omx_comp, (int)index);
-		return result;
+		return err;
 	}
 
 	//Check domain
@@ -653,12 +653,18 @@ OMX_ERRORTYPE port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 in
 
 	//OMX_SetupTunnel() API は Output -> Input の順で、
 	//ComponentTunnelRequest を呼び出す
-	if (get_dir() == OMX_DirInput) {
-		result = component_tunnel_request_input(omx_comp, index, setup, &def);
-	} else {
-		result = component_tunnel_request_output(omx_comp, index, setup, &def);
+	switch (get_dir()) {
+	case OMX_DirInput:
+		err = component_tunnel_request_input(omx_comp, index, setup, &def);
+		break;
+	case OMX_DirOutput:
+		err = component_tunnel_request_output(omx_comp, index, setup, &def);
+		break;
+	default:
+		errprint("Unknown direction.\n");
+		err = OMX_ErrorPortsNotCompatible;
 	}
-	if (result != OMX_ErrorNone) {
+	if (err != OMX_ErrorNone) {
 		errprint("Cannot tunnel request (component:%p, port:%d, dir:%d(%s)).\n",
 			omx_comp, (int)index, get_dir(),
 			omx_enum_name::get_OMX_DIRTYPE_name(get_dir()));
@@ -672,7 +678,7 @@ OMX_ERRORTYPE port::component_tunnel_request_input(OMX_HANDLETYPE omx_comp, OMX_
 {
 	scoped_log_begin;
 	OMX_PARAM_BUFFERSUPPLIERTYPE sup;
-	OMX_ERRORTYPE result;
+	OMX_ERRORTYPE err;
 
 	sup.nSize                    = sizeof(sup);
 	sup.nVersion.s.nVersionMajor = OMX_MF_IL_MAJOR;
@@ -680,11 +686,11 @@ OMX_ERRORTYPE port::component_tunnel_request_input(OMX_HANDLETYPE omx_comp, OMX_
 	sup.nVersion.s.nRevision     = OMX_MF_IL_REVISION;
 	sup.nVersion.s.nStep         = OMX_MF_IL_STEP;
 	sup.nPortIndex               = index;
-	result = OMX_GetParameter(omx_comp, OMX_IndexParamCompBufferSupplier, &sup);
-	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Failed to get CompBufferSupplier param. (comp:%p, port:%d).\n",
+	err = OMX_GetParameter(omx_comp, OMX_IndexParamCompBufferSupplier, &sup);
+	if (err != OMX_ErrorNone) {
+		errprint("Failed to get CompBufferSupplier param. (comp:%p, port:%d).\n",
 			omx_comp, (int)index);
-		return result;
+		return err;
 	}
 
 	//Setup tunneled mode
@@ -709,11 +715,11 @@ OMX_ERRORTYPE port::component_tunnel_request_input(OMX_HANDLETYPE omx_comp, OMX_
 	}
 
 	//Negotiation
-	result = OMX_SetParameter(omx_comp, OMX_IndexParamCompBufferSupplier, &sup);
-	if (result != OMX_ErrorNone) {
-		fprintf(stderr, "Failed to negotiation. (comp:%p, port:%d).\n",
+	err = OMX_SetParameter(omx_comp, OMX_IndexParamCompBufferSupplier, &sup);
+	if (err != OMX_ErrorNone) {
+		errprint("Failed to negotiation. (comp:%p, port:%d).\n",
 			omx_comp, (int)index);
-		return result;
+		return err;
 	}
 
 	return OMX_ErrorNone;
@@ -738,22 +744,148 @@ OMX_ERRORTYPE port::component_tunnel_request_output(OMX_HANDLETYPE omx_comp, OMX
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE port::allocate_tunnel_buffer(OMX_U32 index)
+OMX_ERRORTYPE port::allocate_tunnel_buffers()
 {
 	scoped_log_begin;
-	//do nothing
+	OMX_PARAM_PORTDEFINITIONTYPE def;
+	OMX_U32 buffercount, buffersize;
+	OMX_U8 *backbuf = nullptr;
+	port_buffer *pb = nullptr;
+	OMX_BUFFERHEADERTYPE *header = nullptr;
+	OMX_U32 i;
+	OMX_ERRORTYPE err, result;
 
-	return OMX_ErrorNotImplemented;
-	//return OMX_ErrorNone;
+	if (!get_enabled()) {
+		errprint("Port %d is disabled.\n",
+			(int)get_port_index());
+		return OMX_ErrorIncorrectStateOperation;
+	}
+
+	if (!get_tunneled() || !get_tunneled_supplier()) {
+		errprint("Not tunneled nor supplier. (comp:%p, port:%d).\n",
+			get_component(), (int)get_port_index());
+		return OMX_ErrorBadPortIndex;
+	}
+
+	//Determine count and size of buffers
+	def.nSize = sizeof(OMX_PARAM_PORTDEFINITIONTYPE);
+	def.nVersion.s.nVersionMajor = OMX_MF_IL_MAJOR;
+	def.nVersion.s.nVersionMinor = OMX_MF_IL_MINOR;
+	def.nVersion.s.nRevision     = OMX_MF_IL_REVISION;
+	def.nVersion.s.nStep         = OMX_MF_IL_STEP;
+	def.nPortIndex               = get_tunneled_port();
+	err = OMX_GetParameter(get_tunneled_component(), OMX_IndexParamPortDefinition, &def);
+	if (err != OMX_ErrorNone) {
+		errprint("Cannot get port definition from component:%p port:%d.\n",
+			get_tunneled_component(), (int)get_tunneled_port());
+		return err;
+	}
+
+	buffercount = std::max(def.nBufferCountActual, get_buffer_count_actual());
+	buffersize  = std::max(def.nBufferSize, get_buffer_size());
+
+	//Wait for accept OMX_UseBuffer() calls
+	//FIXME: not implemented
+
+	for (i = 0; i < buffercount; i++) {
+		//Allocate
+		backbuf = nullptr;
+		pb = nullptr;
+		header = nullptr;
+
+		try {
+			//allocate back buffer of OpenMAX buffer
+			backbuf = new OMX_U8[buffersize];
+
+			//allocate buffer of port
+			pb = new port_buffer();
+		} catch (const std::bad_alloc& e) {
+			errprint("Failed to allocate '%s'.\n", e.what());
+			err = OMX_ErrorInsufficientResources;
+			goto err_out;
+		}
+
+		//Use
+		err = OMX_UseBuffer(get_tunneled_component(), &header,
+			get_tunneled_port(), pb, buffersize, backbuf);
+		if (err != OMX_ErrorNone) {
+			errprint("Failed to OMX_UseBuffer (component:%p, port:%d).\n",
+				get_tunneled_component(), (int)get_tunneled_port());
+			err = OMX_ErrorInsufficientResources;
+			goto err_out;
+		}
+
+		{
+			std::lock_guard<std::recursive_mutex> lk_port(mut);
+			std::lock_guard<std::recursive_mutex> lk_buf(mut_list_bufs);
+
+			//init buffer of port
+			pb->p           = this;
+			pb->f_allocate  = true;
+			pb->header      = header;
+			pb->index       = 0;
+
+			list_bufs.push_back(pb);
+			update_buffer_status();
+		}
+	}
+
+	//success
+	err = OMX_ErrorNone;
+
+	return err;
+
+err_out:
+	result = OMX_FreeBuffer(get_tunneled_component(), get_tunneled_port(), header);
+	if (result != OMX_ErrorNone) {
+		errprint("Failed to OMX_FreeBuffer (bufheader:%p, component:%p, port:%d).\n",
+			header, get_tunneled_component(), (int)get_tunneled_port());
+		//Ignore error
+	}
+
+	delete[] backbuf;
+	delete pb;
+	free_tunnel_buffers();
+
+	return err;
 }
 
-OMX_ERRORTYPE port::free_tunnel_buffer(OMX_U32 index)
+OMX_ERRORTYPE port::free_tunnel_buffers()
 {
 	scoped_log_begin;
-	//do nothing
+	OMX_BUFFERHEADERTYPE *header;
+	OMX_ERRORTYPE err;
 
-	return OMX_ErrorNotImplemented;
-	//return OMX_ErrorNone;
+	if (!get_enabled()) {
+		errprint("Port %d is disabled.\n",
+			(int)get_port_index());
+		return OMX_ErrorIncorrectStateOperation;
+	}
+
+	if (!get_tunneled() || !get_tunneled_supplier()) {
+		errprint("Not tunneled nor supplier. (comp:%p, port:%d).\n",
+			get_component(), (int)get_port_index());
+		return OMX_ErrorBadPortIndex;
+	}
+
+	for (port_buffer *pb : list_bufs) {
+		header = pb->header;
+
+		err = OMX_FreeBuffer(get_tunneled_component(), get_tunneled_port(), header);
+		if (err != OMX_ErrorNone) {
+			errprint("Failed to OMX_FreeBuffer (bufheader:%p, component:%p, port:%d).\n",
+				header, get_tunneled_component(), (int)get_tunneled_port());
+			//Ignore error
+		}
+
+		delete pb;
+		delete[] header->pBuffer;
+	}
+
+	list_bufs.clear();
+	update_buffer_status();
+
+	return OMX_ErrorNone;
 }
 
 OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size, OMX_U8 *buf)
@@ -763,10 +895,21 @@ OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX
 	OMX_BUFFERHEADERTYPE *header = nullptr;
 	OMX_ERRORTYPE err;
 
+	if (bufhead == nullptr || buf == nullptr) {
+		errprint("Invalid bufferheader:%p or buffer:%p\n", bufhead, buf);
+		return OMX_ErrorBadParameter;
+	}
+
 	if (!get_enabled()) {
-		errprint("port %d is disabled.\n",
+		errprint("Port %d is disabled.\n",
 			(int)get_port_index());
 		return OMX_ErrorIncorrectStateOperation;
+	}
+
+	if (size < get_buffer_size()) {
+		errprint("Invalid buffer size (buffer size:%d < minimum size:%d).\n",
+			(int)size, (int)get_buffer_size());
+		return OMX_ErrorBadPortIndex;
 	}
 
 	try {
@@ -776,7 +919,7 @@ OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX
 		//allocate OpenMAX BUFFERHEADER
 		header = new OMX_BUFFERHEADERTYPE();
 	} catch (const std::bad_alloc& e) {
-		errprint("failed to allocate '%s'.\n", e.what());
+		errprint("Failed to allocate '%s'.\n", e.what());
 		err = OMX_ErrorInsufficientResources;
 		goto err_out;
 	}
@@ -803,14 +946,17 @@ OMX_ERRORTYPE port::use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX
 		header->nOffset              = 0;
 		header->pAppPrivate          = priv;
 		header->pPlatformPrivate     = pb;
-		if (get_dir() == OMX_DirInput) {
+		switch (get_dir()) {
+		case OMX_DirInput:
 			header->pInputPortPrivate  = nullptr;
 			header->nInputPortIndex    = get_port_index();
-		} else if (get_dir() == OMX_DirOutput) {
+			break;
+		case OMX_DirOutput:
 			header->pOutputPortPrivate = nullptr;
 			header->nOutputPortIndex   = get_port_index();
-		} else {
-			errprint("unknown direction.\n");
+			break;
+		default:
+			errprint("Unknown direction.\n");
 			err = OMX_ErrorBadPortIndex;
 			goto err_out;
 		}
@@ -847,10 +993,21 @@ OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv
 	OMX_BUFFERHEADERTYPE *header = nullptr;
 	OMX_ERRORTYPE err;
 
+	if (bufhead == nullptr) {
+		errprint("Invalid bufferheader:%p\n", bufhead);
+		return OMX_ErrorBadParameter;
+	}
+
 	if (!get_enabled()) {
-		errprint("port %d is disabled.\n",
+		errprint("Port %d is disabled.\n",
 			(int)get_port_index());
 		return OMX_ErrorIncorrectStateOperation;
+	}
+
+	if (size < get_buffer_size()) {
+		errprint("Invalid buffer size (allocated size:%d < minimum size:%d).\n",
+			(int)size, (int)get_buffer_size());
+		return OMX_ErrorBadPortIndex;
 	}
 
 	try {
@@ -863,7 +1020,7 @@ OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv
 		//allocate OpenMAX BUFFERHEADER
 		header = new OMX_BUFFERHEADERTYPE();
 	} catch (const std::bad_alloc& e) {
-		errprint("failed to allocate '%s'.\n", e.what());
+		errprint("Failed to allocate '%s'.\n", e.what());
 		err = OMX_ErrorInsufficientResources;
 		goto err_out;
 	}
@@ -890,14 +1047,17 @@ OMX_ERRORTYPE port::allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv
 		header->nOffset              = 0;
 		header->pAppPrivate          = priv;
 		header->pPlatformPrivate     = pb;
-		if (get_dir() == OMX_DirInput) {
+		switch (get_dir()) {
+		case OMX_DirInput:
 			header->pInputPortPrivate  = nullptr;
 			header->nInputPortIndex    = get_port_index();
-		} else if (get_dir() == OMX_DirOutput) {
+			break;
+		case OMX_DirOutput:
 			header->pOutputPortPrivate = nullptr;
 			header->nOutputPortIndex   = get_port_index();
-		} else {
-			errprint("unknown direction.\n");
+			break;
+		default:
+			errprint("Unknown direction.\n");
 			err = OMX_ErrorBadPortIndex;
 			goto err_out;
 		}
@@ -935,6 +1095,11 @@ OMX_ERRORTYPE port::free_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 	std::vector<port_buffer *>::iterator it;
 	port_buffer *pb;
 	bool deleted = false;
+
+	if (bufhead == nullptr) {
+		//Do nothing
+		return OMX_ErrorNone;
+	}
 
 	for (it = list_bufs.begin(); it != list_bufs.end(); it++) {
 		pb = *it;
@@ -1213,12 +1378,22 @@ void *port::buffer_done()
 		err_handler = OMX_ErrorNone;
 		f_callback = true;
 
-		//callback Done event
-		if (pb.p->get_dir() == OMX_DirInput) {
-			err = comp->EmptyBufferDone(&pb);
-		} else if (pb.p->get_dir() == OMX_DirOutput) {
-			err = comp->FillBufferDone(&pb);
-		} else {
+		switch (pb.p->get_dir()) {
+		case OMX_DirInput:
+			if (pb.p->get_tunneled()) {
+				err = OMX_FillThisBuffer(pb.p->get_tunneled_component(), pb.header);
+			} else {
+				err = comp->EmptyBufferDone(&pb);
+			}
+			break;
+		case OMX_DirOutput:
+			if (pb.p->get_tunneled()) {
+				err = OMX_EmptyThisBuffer(pb.p->get_tunneled_component(), pb.header);
+			} else {
+				err = comp->FillBufferDone(&pb);
+			}
+			break;
+		default:
 			errprint("unknown direction.\n");
 			err = OMX_ErrorBadPortIndex;
 		}

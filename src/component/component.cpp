@@ -186,28 +186,6 @@ port *component::find_port(OMX_U32 index)
 	return &ret->second;
 }
 
-void component::wait_all_port_populated(OMX_BOOL v)
-{
-	scoped_log_begin;
-
-	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-		if (it->second.get_enabled()) {
-			it->second.wait_populated(v);
-		}
-	}
-}
-
-void component::wait_all_port_no_buffer(OMX_BOOL v)
-{
-	scoped_log_begin;
-
-	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-		if (it->second.get_enabled()) {
-			it->second.wait_no_buffer(v);
-		}
-	}
-}
-
 void component::wait_all_port_buffer_returned()
 {
 	scoped_log_begin;
@@ -381,19 +359,22 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
-		if (port_found->get_tunneled_supplier() &&
-			port_found->get_dir() == OMX_DirInput) {
-			supply->eBufferSupplier = OMX_BufferSupplyInput;
-		} else if (!port_found->get_tunneled_supplier() &&
-			port_found->get_dir() == OMX_DirInput) {
-			supply->eBufferSupplier = OMX_BufferSupplyOutput;
-		} else if (port_found->get_tunneled_supplier() &&
-			port_found->get_dir() == OMX_DirOutput) {
-			supply->eBufferSupplier = OMX_BufferSupplyOutput;
-		} else if (!port_found->get_tunneled_supplier() &&
-			port_found->get_dir() == OMX_DirOutput) {
-			supply->eBufferSupplier = OMX_BufferSupplyInput;
-		} else {
+		switch (port_found->get_dir()) {
+		case OMX_DirInput:
+			if (port_found->get_tunneled_supplier()) {
+				supply->eBufferSupplier = OMX_BufferSupplyInput;
+			} else {
+				supply->eBufferSupplier = OMX_BufferSupplyOutput;
+			}
+			break;
+		case OMX_DirOutput:
+			if (port_found->get_tunneled_supplier()) {
+				supply->eBufferSupplier = OMX_BufferSupplyOutput;
+			} else {
+				supply->eBufferSupplier = OMX_BufferSupplyInput;
+			}
+			break;
+		default:
 			errprint("Bug, do not reach here.\n");
 			err = OMX_ErrorUndefined;
 			break;
@@ -701,43 +682,38 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		}
 
 		changed = false;
-		if (port_found->get_tunneled_supplier() &&
-			port_found->get_dir() == OMX_DirInput) {
-			//Port is SupplyInput
-			if (supply->eBufferSupplier == OMX_BufferSupplyOutput) {
-				//Change to user
+		switch (port_found->get_dir()) {
+		case OMX_DirInput:
+			if (port_found->get_tunneled_supplier() &&
+				supply->eBufferSupplier == OMX_BufferSupplyOutput) {
+				//Port is SupplyInput, change to user
 				dprint("Input port: input supplier -> output supplier.\n");
 				port_found->set_tunneled_supplier(OMX_FALSE);
 				changed = true;
-			}
-		} else if (!port_found->get_tunneled_supplier() &&
-			port_found->get_dir() == OMX_DirInput) {
-			//Port is SupplyOutput
-			if (supply->eBufferSupplier == OMX_BufferSupplyInput) {
-				//Change to supplier
+			} else if (!port_found->get_tunneled_supplier() &&
+				supply->eBufferSupplier == OMX_BufferSupplyInput) {
+				//Port is SupplyOutput, change to supplier
 				dprint("Input port: output supplier -> input supplier.\n");
 				port_found->set_tunneled_supplier(OMX_TRUE);
 				changed = true;
 			}
-		} else if (port_found->get_tunneled_supplier() &&
-			port_found->get_dir() == OMX_DirOutput) {
-			//Port is SupplyOutput
-			if (supply->eBufferSupplier == OMX_BufferSupplyInput) {
-				//Change to user
+			break;
+		case OMX_DirOutput:
+			if (port_found->get_tunneled_supplier() &&
+				supply->eBufferSupplier == OMX_BufferSupplyInput) {
+				//Port is SupplyOutput, change to user
 				dprint("Output port: output supplier -> input supplier.\n");
 				port_found->set_tunneled_supplier(OMX_FALSE);
 				changed = true;
-			}
-		} else if (!port_found->get_tunneled_supplier() &&
-			port_found->get_dir() == OMX_DirOutput) {
-			//Port is SupplyInput
-			if (supply->eBufferSupplier == OMX_BufferSupplyOutput) {
-				//Change to supplier
+			} else if (!port_found->get_tunneled_supplier() &&
+				supply->eBufferSupplier == OMX_BufferSupplyOutput) {
+				//Port is SupplyInput, change to supplier
 				dprint("Output port: input supplier -> output supplier.\n");
 				port_found->set_tunneled_supplier(OMX_TRUE);
 				changed = true;
 			}
-		} else {
+			break;
+		default:
 			errprint("Bug, do not reach here.\n");
 			err = OMX_ErrorUndefined;
 			break;
@@ -936,20 +912,9 @@ OMX_ERRORTYPE component::UseBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTY
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
 
-	if (ppBufferHdr == nullptr || pBuffer == nullptr) {
-		errprint("Invalid bufferheader:%p or buffer:%p\n", ppBufferHdr, pBuffer);
-		return OMX_ErrorBadParameter;
-	}
-
 	port_found = find_port(nPortIndex);
 	if (port_found == nullptr) {
 		errprint("Invalid port:%d\n", (int)nPortIndex);
-		return OMX_ErrorBadPortIndex;
-	}
-
-	if (nSizeBytes < port_found->get_buffer_size()) {
-		errprint("buffer size(%d) < minimum size(%d)\n",
-			(int)nSizeBytes, (int)port_found->get_buffer_size());
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -965,20 +930,9 @@ OMX_ERRORTYPE component::AllocateBuffer(OMX_HANDLETYPE hComponent, OMX_BUFFERHEA
 	port *port_found = nullptr;
 	OMX_ERRORTYPE err;
 
-	if (ppBuffer == nullptr) {
-		errprint("Invalid bufferheader:%p\n", ppBuffer);
-		return OMX_ErrorBadParameter;
-	}
-
 	port_found = find_port(nPortIndex);
 	if (port_found == nullptr) {
 		errprint("Invalid port:%d\n", (int)nPortIndex);
-		return OMX_ErrorBadPortIndex;
-	}
-
-	if (nSizeBytes < port_found->get_buffer_size()) {
-		errprint("allocate size(%d) < minimum size(%d)\n",
-			(int)nSizeBytes, (int)port_found->get_buffer_size());
 		return OMX_ErrorBadPortIndex;
 	}
 
@@ -1390,46 +1344,11 @@ OMX_ERRORTYPE component::command_state_set_to_loaded()
 		break;
 	case OMX_StateIdle:
 		try {
-			//Prepare to flush all ports
-			for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-				if (!it->second.get_enabled()) {
-					continue;
-				}
-				it->second.begin_flush();
-			}
-
-			//Stop & wait main thread
-			stop_running();
-			th_main->join();
-			delete th_main;
-			th_main = nullptr;
-
-			for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-				if (!it->second.get_enabled()) {
-					continue;
-				}
-				it->second.flush_buffers();
-			}
-
-			//Wait for all buffer returned to supplier
-			wait_all_port_buffer_returned();
-
-			for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-				if (!it->second.get_enabled()) {
-					continue;
-				}
-				it->second.end_flush();
-			}
-
-			//Wait for all enabled port to be not populated
-			wait_all_port_no_buffer(OMX_TRUE);
+			err = command_state_set_to_loaded_from_idle();
 		} catch (const std::runtime_error& e) {
 			errprint("runtime_error: %s\n", e.what());
 			err = OMX_ErrorInsufficientResources;
-			break;
 		}
-
-		err = OMX_ErrorNone;
 		break;
 	default:
 		errprint("Invalid state:%s.\n",
@@ -1445,6 +1364,67 @@ OMX_ERRORTYPE component::command_state_set_to_loaded()
 	return OMX_ErrorNone;
 }
 
+OMX_ERRORTYPE component::command_state_set_to_loaded_from_idle()
+{
+	scoped_log_begin;
+	OMX_ERRORTYPE err, errtmp;
+
+	//Prepare to flush all ports
+	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+		if (!it->second.get_enabled()) {
+			continue;
+		}
+		it->second.begin_flush();
+	}
+
+	//Stop & wait main thread
+	stop_running();
+	th_main->join();
+	delete th_main;
+	th_main = nullptr;
+
+	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+		if (!it->second.get_enabled()) {
+			continue;
+		}
+		it->second.flush_buffers();
+	}
+
+	//Wait for all buffer returned to supplier
+	wait_all_port_buffer_returned();
+
+	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+		if (!it->second.get_enabled()) {
+			continue;
+		}
+		it->second.end_flush();
+	}
+
+	err = OMX_ErrorNone;
+	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+		if (!it->second.get_enabled()) {
+			//Disabled port, skip
+			continue;
+		}
+
+		if (it->second.get_tunneled() && it->second.get_tunneled_supplier()) {
+			//Tunneled and Supplier port
+			//Free buffers for tunneled port
+			errtmp = it->second.free_tunnel_buffers();
+			if (errtmp != OMX_ErrorNone) {
+				errprint("Failed to free_tunnel_buffers().\n");
+				err = errtmp;
+			}
+		} else {
+			//Other
+			//Wait for all enabled port to be "no buffer"
+			it->second.wait_no_buffer(OMX_TRUE);
+		}
+	}
+
+	return err;
+}
+
 OMX_ERRORTYPE component::command_state_set_to_idle()
 {
 	scoped_log_begin;
@@ -1452,61 +1432,27 @@ OMX_ERRORTYPE component::command_state_set_to_idle()
 
 	switch (get_state()) {
 	case OMX_StateLoaded:
-		//Wait for all enabled port to be populated
 		try {
-			wait_all_port_populated(OMX_TRUE);
+			err = command_state_set_to_idle_from_loaded();
 		} catch (const std::runtime_error& e) {
 			errprint("runtime_error: %s\n", e.what());
 			err = OMX_ErrorInsufficientResources;
-			break;
 		}
-
-		try {
-			//Start main thread
-			th_main = new std::thread(component_thread_main, get_omx_component());
-		} catch (const std::bad_alloc& e) {
-			errprint("failed to create main thread '%s'.\n", e.what());
-			err = OMX_ErrorInsufficientResources;
-			break;
-		}
-
-		err = OMX_ErrorNone;
 		break;
 	case OMX_StateIdle:
 		err = OMX_ErrorSameState;
 		break;
 	case OMX_StateExecuting:
-		//Flushing all ports
 		try {
-			for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-				if (!it->second.get_enabled()) {
-					continue;
-				}
-				it->second.begin_flush();
-				it->second.flush_buffers();
-			}
-
-			//Wait for all buffer returned to supplier
-			wait_all_port_buffer_returned();
-
-			for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-				if (!it->second.get_enabled()) {
-					continue;
-				}
-				it->second.end_flush();
-			}
+			err = command_state_set_to_idle_from_executing();
 		} catch (const std::runtime_error& e) {
 			errprint("runtime_error: %s\n", e.what());
 			err = OMX_ErrorInsufficientResources;
-			break;
 		}
-
-		err = OMX_ErrorNone;
 		break;
 	default:
 		errprint("Invalid state:%s.\n",
 			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
-
 		err = OMX_ErrorInvalidState;
 		break;
 	}
@@ -1518,6 +1464,75 @@ OMX_ERRORTYPE component::command_state_set_to_idle()
 	return err;
 }
 
+OMX_ERRORTYPE component::command_state_set_to_idle_from_loaded()
+{
+	scoped_log_begin;
+	OMX_ERRORTYPE err, errtmp;
+
+	err = OMX_ErrorNone;
+	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+		if (!it->second.get_enabled()) {
+			//Disabled port, skip
+			continue;
+		}
+
+		if (it->second.get_tunneled() && it->second.get_tunneled_supplier()) {
+			//Tunneled and Supplier port
+			//Allocate buffers for tunneled port
+			errtmp = it->second.allocate_tunnel_buffers();
+			if (errtmp != OMX_ErrorNone) {
+				errprint("Failed to allocate_tunnel_buffer().\n");
+				err = errtmp;
+			}
+		} else if (it->second.get_tunneled() && !it->second.get_tunneled_supplier()) {
+			//Tunneled and User port
+			//Notify to accept OMX_UseBuffer() calls
+			//FIXME: not implemented
+			err = OMX_ErrorNone;//OMX_ErrorNotImplemented;
+		} else {
+			//Other
+			//Wait for all enabled port to be populated
+			it->second.wait_populated(OMX_TRUE);
+		}
+	}
+
+	try {
+		//Start main thread
+		th_main = new std::thread(component_thread_main, get_omx_component());
+	} catch (const std::bad_alloc& e) {
+		errprint("failed to create main thread '%s'.\n", e.what());
+		return OMX_ErrorInsufficientResources;
+	}
+
+	return err;
+}
+
+OMX_ERRORTYPE component::command_state_set_to_idle_from_executing()
+{
+	scoped_log_begin;
+
+	//Flushing all ports
+	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+		if (!it->second.get_enabled()) {
+			continue;
+		}
+		it->second.begin_flush();
+		it->second.flush_buffers();
+	}
+
+	//Wait for all buffer returned to supplier
+	wait_all_port_buffer_returned();
+
+	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+		if (!it->second.get_enabled()) {
+			continue;
+		}
+		it->second.end_flush();
+	}
+
+	return OMX_ErrorNone;
+}
+
 OMX_ERRORTYPE component::command_state_set_to_executing()
 {
 	scoped_log_begin;
@@ -1525,14 +1540,7 @@ OMX_ERRORTYPE component::command_state_set_to_executing()
 
 	switch (get_state()) {
 	case OMX_StateIdle:
-		//メイン処理が始まってから状態を切り替える
-		{
-			std::unique_lock<std::mutex> lock(mut);
-			cond.wait(lock, [&] { return broken || should_run(); });
-			error_if_broken(lock);
-		}
-
-		err = OMX_ErrorNone;
+		err = command_state_set_to_executing_from_idle();
 		break;
 	case OMX_StateExecuting:
 		err = OMX_ErrorSameState;
@@ -1550,6 +1558,18 @@ OMX_ERRORTYPE component::command_state_set_to_executing()
 	}
 
 	return err;
+}
+
+OMX_ERRORTYPE component::command_state_set_to_executing_from_idle()
+{
+	//メイン処理が始まってから状態を切り替える
+	{
+		std::unique_lock<std::mutex> lock(mut);
+		cond.wait(lock, [&] { return broken || should_run(); });
+		error_if_broken(lock);
+	}
+
+	return OMX_ErrorNone;
 }
 
 OMX_ERRORTYPE component::command_state_set_to_pause()

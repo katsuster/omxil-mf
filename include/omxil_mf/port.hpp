@@ -597,9 +597,21 @@ public:
 	 */
 	virtual OMX_ERRORTYPE component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup);
 
-	virtual OMX_ERRORTYPE allocate_tunnel_buffer(OMX_U32 index);
+	/**
+	 * トンネル接続先のポート用のバッファを確保し、
+	 * トンネル接続先のポートに OMX_UseBuffer で渡します。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE allocate_tunnel_buffers();
 
-	virtual OMX_ERRORTYPE free_tunnel_buffer(OMX_U32 index);
+	/**
+	 * トンネル接続先のポートに OMX_FreeBuffer でバッファを解放させ、
+	 * 確保していたバッファを削除します。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE free_tunnel_buffers();
 
 	/**
 	 * コンポーネント外部で確保されたバッファを、

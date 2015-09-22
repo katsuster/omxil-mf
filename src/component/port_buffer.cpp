@@ -24,14 +24,13 @@ bool port_buffer::full() const
 
 size_t port_buffer::remain() const
 {
-	if (p->get_dir() == OMX_DirInput) {
-		//input
+	switch (p->get_dir()) {
+	case OMX_DirInput:
 		return header->nFilledLen;
-	} else if (p->get_dir() == OMX_DirOutput) {
-		//output
+	case OMX_DirOutput:
 		return header->nAllocLen - index - header->nFilledLen;
-	} else {
-		errprint("unknown port direction.\n");
+	default:
+		errprint("Unknown port direction.\n");
 		return 0;
 	}
 }
@@ -96,14 +95,13 @@ uint8_t *port_buffer::get_ptr()
 
 size_t port_buffer::get_index() const
 {
-	if (p->get_dir() == OMX_DirInput) {
-		//input
+	switch (p->get_dir()) {
+	case OMX_DirInput:
 		return index;
-	} else if (p->get_dir() == OMX_DirOutput) {
-		//output
+	case OMX_DirOutput:
 		return index + header->nFilledLen;
-	} else {
-		errprint("unknown port direction.\n");
+	default:
+		errprint("Unknown port direction.\n");
 		return 0;
 	}
 }
@@ -112,15 +110,14 @@ void port_buffer::set_index(size_t new_index)
 {
 	size_t skip_size = new_index - get_index();
 
-	if (p->get_dir() == OMX_DirInput) {
-		//input
+	switch (p->get_dir()) {
+	case OMX_DirInput:
 		index = new_index;
 		header->nFilledLen -= skip_size;
-	} else if (p->get_dir() == OMX_DirOutput) {
-		//output
+	case OMX_DirOutput:
 		header->nFilledLen += skip_size;
-	} else {
-		errprint("unknown port direction.\n");
+	default:
+		errprint("Unknown port direction.\n");
 	}
 }
 
