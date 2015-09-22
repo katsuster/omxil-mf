@@ -689,7 +689,7 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 		}
 
 		if (!port_found->get_tunneled()) {
-			errprint("Not tunneled mode port:%d\n", (int)supply->nPortIndex);
+			errprint("Not tunneled mode (port:%d)\n", (int)supply->nPortIndex);
 			err = OMX_ErrorBadPortIndex;
 			break;
 		}
@@ -706,6 +706,7 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			//Port is SupplyInput
 			if (supply->eBufferSupplier == OMX_BufferSupplyOutput) {
 				//Change to user
+				dprint("Input port: input supplier -> output supplier.\n");
 				port_found->set_tunneled_supplier(OMX_FALSE);
 				changed = true;
 			}
@@ -714,6 +715,7 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			//Port is SupplyOutput
 			if (supply->eBufferSupplier == OMX_BufferSupplyInput) {
 				//Change to supplier
+				dprint("Input port: output supplier -> input supplier.\n");
 				port_found->set_tunneled_supplier(OMX_TRUE);
 				changed = true;
 			}
@@ -722,6 +724,7 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			//Port is SupplyOutput
 			if (supply->eBufferSupplier == OMX_BufferSupplyInput) {
 				//Change to user
+				dprint("Output port: output supplier -> input supplier.\n");
 				port_found->set_tunneled_supplier(OMX_FALSE);
 				changed = true;
 			}
@@ -730,6 +733,7 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			//Port is SupplyInput
 			if (supply->eBufferSupplier == OMX_BufferSupplyOutput) {
 				//Change to supplier
+				dprint("Output port: input supplier -> output supplier.\n");
 				port_found->set_tunneled_supplier(OMX_TRUE);
 				changed = true;
 			}
@@ -749,6 +753,12 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 
 			err = OMX_SetParameter(port_found->get_tunneled_component(),
 				OMX_IndexParamCompBufferSupplier, &bufsup);
+			if (err != OMX_ErrorNone) {
+				errprint("Change buffer supplier failed (comp:%p, port:%d).\n",
+					port_found->get_tunneled_component(),
+					(int)port_found->get_tunneled_port());
+				break;
+			}
 		}
 
 		break;

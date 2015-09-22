@@ -181,6 +181,8 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_SetupTunnel(OMX_IN OMX_HANDLETYPE hOutput
 	OMX_TUNNELSETUPTYPE tunnel;
 	OMX_ERRORTYPE result_out = OMX_ErrorNone, result_in = OMX_ErrorNone;
 
+	//OpenMAX IL 1.2.0: Figure 3-11 Tunnel Setup
+
 	// +----+----------+---------+----------+---------+-------------------------+
 	// | No | output   | err_out | input    | err_in  | result                  |
 	// +----+----------+---------+----------+---------+-------------------------+
@@ -213,7 +215,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_SetupTunnel(OMX_IN OMX_HANDLETYPE hOutput
 			errprint("Failed to ComponentTunnelRequest(out)(case 2), "
 				"comp '%p' out-port '%d' -> comp '%p' in-port '%d'.\n",
 				comp_out, (int)nPortOutput,
-				comp_in, (int)nPortOutput);
+				comp_in, (int)nPortInput);
 			return result_out;
 		}
 	}
@@ -226,16 +228,15 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_SetupTunnel(OMX_IN OMX_HANDLETYPE hOutput
 			errprint("Failed to ComponentTunnelRequest(in), "
 				"comp '%p' out-port '%d' -> comp '%p' in-port '%d'.\n",
 				comp_out, (int)nPortOutput,
-				comp_in, (int)nPortOutput);
+				comp_in, (int)nPortInput);
 		}
 	}
 
 	if (comp_out != nullptr && comp_in != nullptr && result_in != OMX_ErrorNone) {
 		//Failed, case No.3
 		errprint("Failed to ComponentTunnelRequest(case 3), "
-			"comp '%p' out-port '%d' -> comp '%p' in-port '%d'.\n",
-			comp_out, (int)nPortOutput,
-			comp_in, (int)nPortOutput);
+			"reset comp '%p' out-port '%d' mode.\n",
+			comp_out, (int)nPortOutput);
 
 		//Release output port, if failed to tunnel
 		result_out = comp_out->ComponentTunnelRequest(hOutput, nPortOutput,
@@ -253,7 +254,7 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_SetupTunnel(OMX_IN OMX_HANDLETYPE hOutput
 		errprint("Failed to ComponentTunnelRequest(case 4), "
 			"comp '%p' out-port '%d' -> comp '%p' in-port '%d'.\n",
 			comp_out, (int)nPortOutput,
-			comp_in, (int)nPortOutput);
+			comp_in, (int)nPortInput);
 
 		return result_in;
 	}

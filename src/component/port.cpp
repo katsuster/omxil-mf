@@ -609,8 +609,12 @@ OMX_ERRORTYPE port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 in
 
 	//Change to non-tunneled communication
 	if (omx_comp == nullptr) {
-		return OMX_ErrorNotImplemented;
-		//return OMX_ErrorNone;
+		set_tunneled(OMX_FALSE);
+		set_tunneled_component(nullptr);
+		set_tunneled_port(0);
+		set_tunneled_supplier(OMX_FALSE);
+
+		return OMX_ErrorNone;
 	}
 
 	//Change to tunneled communication
@@ -622,14 +626,14 @@ OMX_ERRORTYPE port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 in
 	def.nPortIndex               = index;
 	result = OMX_GetParameter(omx_comp, OMX_IndexParamPortDefinition, &def);
 	if (result != OMX_ErrorNone) {
-		errprint("Cannot get port definition from component %p port %d.\n",
+		errprint("Cannot get port definition from component:%p port:%d.\n",
 			omx_comp, (int)index);
 		return result;
 	}
 
 	//Check domain
 	if (get_domain() != def.eDomain) {
-		errprint("Wrong domain '%s' (component %p, port %d is '%s').\n",
+		errprint("Wrong domain '%s' (component:%p, port:%d is '%s').\n",
 			omx_enum_name::get_OMX_PORTDOMAINTYPE_name(get_domain()),
 			omx_comp, (int)index,
 			omx_enum_name::get_OMX_PORTDOMAINTYPE_name(def.eDomain));
@@ -640,29 +644,26 @@ OMX_ERRORTYPE port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 in
 	port_format f_cond = port_format(def);
 	const port_format *f_found = get_port_format(f_cond);
 	if (f_found == nullptr) {
-		errprint("Not supported format (component %p, port %d).\n",
+		errprint("Not supported format (component:%p, port:%d).\n",
 			omx_comp, (int)index);
 		return OMX_ErrorPortsNotCompatible;
 	}
 	//f_cond.dump(" cond");
 	//f_found->dump("found");
 
+	//OMX_SetupTunnel() API は Output -> Input の順で、
+	//ComponentTunnelRequest を呼び出す
 	if (get_dir() == OMX_DirInput) {
 		result = component_tunnel_request_input(omx_comp, index, setup, &def);
 	} else {
 		result = component_tunnel_request_output(omx_comp, index, setup, &def);
 	}
 	if (result != OMX_ErrorNone) {
-		errprint("Cannot tunnel request (component %p, port %d, dir %d(%s)).\n",
+		errprint("Cannot tunnel request (component:%p, port:%d, dir:%d(%s)).\n",
 			omx_comp, (int)index, get_dir(),
 			omx_enum_name::get_OMX_DIRTYPE_name(get_dir()));
 		return OMX_ErrorPortsNotCompatible;
 	}
-
-	set_tunneled(OMX_TRUE);
-	set_tunneled_component(omx_comp);
-	set_tunneled_port(index);
-	//set_tunneled_supplier();
 
 	return OMX_ErrorNone;
 }
@@ -670,32 +671,71 @@ OMX_ERRORTYPE port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 in
 OMX_ERRORTYPE port::component_tunnel_request_input(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup, OMX_PARAM_PORTDEFINITIONTYPE *def)
 {
 	scoped_log_begin;
+	OMX_PARAM_BUFFERSUPPLIERTYPE sup;
+	OMX_ERRORTYPE result;
 
-	/* memo:
-	 *
-	 * struct OMX_TUNNELSETUPTYPE {
-	 * 	OMX_U32 nTunnelFlags;             // bit flags for tunneling
-	 * 	OMX_BUFFERSUPPLIERTYPE eSupplier; // supplier preference
-	 * };
-	 *
-	 * enum OMX_BUFFERSUPPLIERTYPE {
-	 * 	OMX_BufferSupplyUnspecified = 0x0, // port supplying the buffers is unspecified, or don't care
-	 * 	OMX_BufferSupplyInput,             // input port supplies the buffers
-	 * 	OMX_BufferSupplyOutput,            // output port supplies the buffers
-	 * };
-	 */
+	sup.nSize                    = sizeof(sup);
+	sup.nVersion.s.nVersionMajor = OMX_MF_IL_MAJOR;
+	sup.nVersion.s.nVersionMinor = OMX_MF_IL_MINOR;
+	sup.nVersion.s.nRevision     = OMX_MF_IL_REVISION;
+	sup.nVersion.s.nStep         = OMX_MF_IL_STEP;
+	sup.nPortIndex               = index;
+	result = OMX_GetParameter(omx_comp, OMX_IndexParamCompBufferSupplier, &sup);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "Failed to get CompBufferSupplier param. (comp:%p, port:%d).\n",
+			omx_comp, (int)index);
+		return result;
+	}
 
-	return OMX_ErrorNotImplemented;
-	//return OMX_ErrorNone;
+	//Setup tunneled mode
+	if (setup->nTunnelFlags & OMX_PORTTUNNELFLAG_READONLY) {
+		//FIXME: not implemented
+		return OMX_ErrorNotImplemented;
+	}
+
+	set_tunneled(OMX_TRUE);
+	set_tunneled_component(omx_comp);
+	set_tunneled_port(index);
+
+	//TODO: SupplyInput, SupplyOutput どちらにすべきかわからない
+	//規格には特に言及無し、後で変えられるからどちらでも良い？
+	//とりあえず SupplyInput にしておく
+	if (1) {
+		set_tunneled_supplier(OMX_TRUE);
+		sup.eBufferSupplier = OMX_BufferSupplyInput;
+	} else {
+		set_tunneled_supplier(OMX_FALSE);
+		sup.eBufferSupplier = OMX_BufferSupplyOutput;
+	}
+
+	//Negotiation
+	result = OMX_SetParameter(omx_comp, OMX_IndexParamCompBufferSupplier, &sup);
+	if (result != OMX_ErrorNone) {
+		fprintf(stderr, "Failed to negotiation. (comp:%p, port:%d).\n",
+			omx_comp, (int)index);
+		return result;
+	}
+
+	return OMX_ErrorNone;
 }
 
 OMX_ERRORTYPE port::component_tunnel_request_output(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup, OMX_PARAM_PORTDEFINITIONTYPE *def)
 {
 	scoped_log_begin;
 
+	//Out 側を supplier としてネゴシエーションを始める
+	//もし In 側にとって都合が悪ければ、
+	//In 側の ComponentTunnelRequest が訂正するはず
+	set_tunneled(OMX_TRUE);
+	set_tunneled_component(omx_comp);
+	set_tunneled_port(index);
+	set_tunneled_supplier(OMX_TRUE);
 
-	return OMX_ErrorNotImplemented;
-	//return OMX_ErrorNone;
+	//現在 nTunnelFlags に設定すべき値はない
+	//setup->nTunnelFlags = ;
+	setup->eSupplier    = OMX_BufferSupplyOutput;
+
+	return OMX_ErrorNone;
 }
 
 OMX_ERRORTYPE port::allocate_tunnel_buffer(OMX_U32 index)

@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 		dump_port_param_type(&param_v[i]);
 	}
 
-	//Set ParamCompBufferSupplier (expected failure)
+	//Get and Set ParamCompBufferSupplier (expected failure)
 	{
 		OMX_PARAM_BUFFERSUPPLIERTYPE sup;
 
@@ -197,23 +197,38 @@ int main(int argc, char *argv[])
 		sup.nVersion.s.nRevision     = 0;
 		sup.nVersion.s.nStep         = 0;
 		sup.nPortIndex      = param_v[0].nStartPortNumber;
+
+		result = OMX_GetParameter(comp[0]->get_component(),
+			OMX_IndexParamCompBufferSupplier, &sup);
+		if (result != OMX_ErrorNone) {
+			fprintf(stderr, "Failed to GetParameter(IndexParamCompBufferSupplier, ...) (comp:%d, port:%d).\n",
+				0, (int)param_v[0].nStartPortNumber);
+			goto err_out2;
+		}
+		if (sup.eBufferSupplier != OMX_BufferSupplyUnspecified) {
+			fprintf(stderr, "Already tunneled mode? (comp:%d, port:%d).\n",
+				0, (int)param_v[0].nStartPortNumber);
+			goto err_out2;
+		}
+
 		sup.eBufferSupplier = OMX_BufferSupplyInput;
 
 		result = OMX_SetParameter(comp[0]->get_component(),
 			OMX_IndexParamCompBufferSupplier, &sup);
 		if (result == OMX_ErrorNone) {
-			fprintf(stderr, "Cannot detect non-tunnel mode(comp%d, port%d) "
+			fprintf(stderr, "Cannot detect non-tunnel mode(comp:%d, port:%d) "
 				"in SetParameter(OMX_IndexParamCompBufferSupplier, ...).\n",
 				0, (int)param_v[0].nStartPortNumber);
 			goto err_out2;
 		}
 	}
+
 	//Setup tunnel
 	{
 		result = OMX_SetupTunnel(comp[0]->get_component(), param_v[0].nStartPortNumber,
 			comp[1]->get_component(), param_v[1].nStartPortNumber);
 		if (result != OMX_ErrorNone) {
-			fprintf(stderr, "OMX_SetupTunnel(comp%d:%d, comp%d:%d) failed.\n",
+			fprintf(stderr, "OMX_SetupTunnel(comp:%d:%d, comp:%d:%d) failed.\n",
 				0, (int)param_v[0].nStartPortNumber,
 				1, (int)param_v[1].nStartPortNumber);
 			goto err_out2;
