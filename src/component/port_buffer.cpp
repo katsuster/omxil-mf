@@ -114,8 +114,10 @@ void port_buffer::set_index(size_t new_index)
 	case OMX_DirInput:
 		index = new_index;
 		header->nFilledLen -= skip_size;
+		break;
 	case OMX_DirOutput:
 		header->nFilledLen += skip_size;
+		break;
 	default:
 		errprint("Unknown port direction.\n");
 	}
