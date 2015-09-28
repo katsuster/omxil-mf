@@ -219,7 +219,7 @@ public:
 		notify_with_lock();
 	}
 
-	/*size_type get_read_position() const {
+	size_type get_read_position() const {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		return bound.get_read_position();
 	}
@@ -230,14 +230,14 @@ public:
 		bound.set_read_position(new_pos);
 		cnt_rd = 0;
 		notify_with_lock();
-	}*/
+	}
 
-	/*size_type get_write_position() const {
+	size_type get_write_position() const {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		return bound.get_write_position();
 	}
 
-	void set_write_position(size_type new_pos) {
+	/*void set_write_position(size_type new_pos) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 
 		bound.set_write_position(new_pos);
@@ -250,18 +250,18 @@ public:
 	 *
 	 * @return 読み出した要素の総数
 	 */
-	/*uint64_t get_read_count() const {
+	uint64_t get_read_count() const {
 		return cnt_rd;
-	}*/
+	}
 
 	/**
 	 * 書き込んだ要素の総数を取得します。
 	 *
 	 * @return 書き込んだ要素の総数
 	 */
-	/*uint64_t get_write_count() const {
+	uint64_t get_write_count() const {
 		return cnt_wr;
-	}*/
+	}
 
 	/**
 	 * 要素を読み飛ばします。
@@ -281,14 +281,14 @@ public:
 	 * @param transform 変換関数
 	 * @return 任意の要素
 	 */
-	/*template <class U>
+	template <class U>
 	U read(transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
 		U buf;
 
 		read_array(reinterpret_cast<T *>(&buf), sizeof(U), rdtrans, wrtrans);
 
 		return buf;
-	}*/
+	}
 
 	/**
 	 * 配列をリングバッファから読み込みます。

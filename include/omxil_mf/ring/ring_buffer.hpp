@@ -60,7 +60,11 @@ public:
 			return *this;
 		}
 
-		reference operator*() const {
+		const_reference operator*() const {
+			return (*buf)[pos];
+		}
+
+		reference operator*() {
 			return (*buf)[pos];
 		}
 
@@ -82,31 +86,47 @@ public:
 			return iterator(buf, pos--);
 		}
 
+		iterator operator+(int off) const {
+			return iterator(buf, pos + off);
+		}
+
+		iterator operator-(int off) const {
+			return iterator(buf, pos - off);
+		}
+
+		int operator-(const iterator& obj) {
+			return pos - obj.pos;
+		}
+
+		const_reference operator[](size_type off) const {
+			return (*buf)[pos + off];
+		}
+
 		reference operator[](size_type off) {
 			return (*buf)[pos + off];
 		}
 
-		bool operator==(const iterator& obj) {
+		bool operator==(const iterator& obj) const {
 			return (buf == obj.buf) && (pos == obj.pos);
 		}
 
-		bool operator!=(const iterator& obj) {
+		bool operator!=(const iterator& obj) const {
 			return !(*this == obj);
 		}
 
-		bool operator<(const iterator& obj) {
+		bool operator<(const iterator& obj) const {
 			return (buf == obj.buf) && (pos < obj.pos);
 		}
 
-		bool operator>(const iterator& obj) {
+		bool operator>(const iterator& obj) const {
 			return !(*this < obj) && (*this != obj);
 		}
 
-		bool operator<=(const iterator& obj) {
+		bool operator<=(const iterator& obj) const {
 			return (*this < obj) && (*this == obj);
 		}
 
-		bool operator>=(const iterator& obj) {
+		bool operator>=(const iterator& obj) const {
 			return !(*this < obj);
 		}
 
