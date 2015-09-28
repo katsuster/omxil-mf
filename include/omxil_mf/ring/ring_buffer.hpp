@@ -26,6 +26,7 @@ public:
 
 	using buffer_base<T>::no_transform;
 	using buffer_base<T>::elems;
+	using buffer_base<T>::get_elem;
 	using buffer_base<T>::read_array;
 	using buffer_base<T>::write_array;
 	using buffer_base<T>::get_remain;
@@ -81,12 +82,32 @@ public:
 			return iterator(buf, pos--);
 		}
 
+		reference operator[](size_type off) {
+			return (*buf)[pos + off];
+		}
+
 		bool operator==(const iterator& obj) {
 			return (buf == obj.buf) && (pos == obj.pos);
 		}
 
 		bool operator!=(const iterator& obj) {
 			return !(*this == obj);
+		}
+
+		bool operator<(const iterator& obj) {
+			return (buf == obj.buf) && (pos < obj.pos);
+		}
+
+		bool operator>(const iterator& obj) {
+			return !(*this < obj) && (*this != obj);
+		}
+
+		bool operator<=(const iterator& obj) {
+			return (*this < obj) && (*this == obj);
+		}
+
+		bool operator>=(const iterator& obj) {
+			return !(*this < obj);
 		}
 
 	private:
@@ -115,11 +136,11 @@ public:
 	//----------------------------------------
 
 	iterator begin() {
-		iterator(this, 0);
+		return iterator(this, 0);
 	}
 
 	iterator end() {
-		iterator(this, size());
+		return iterator(this, size());
 	}
 
 	//rbegin

@@ -171,16 +171,49 @@ public:
 	// vendor specific
 	//----------------------------------------
 
-	const std::recursive_mutex *get_mutex() const
+	/**
+	 * 内部バッファを返します。
+	 *
+	 * @return 内部バッファへの参照
+	 */
+	const Container& container() const
 	{
-		return &mut;
+		return bound;
 	}
 
-	std::recursive_mutex *get_mutex()
+	/**
+	 * 内部バッファを返します。
+	 *
+	 * @return 内部バッファへの参照
+	 */
+	Container& container()
 	{
-		return &mut;
+		return bound;
 	}
 
+	/**
+	 * バッファをロックするための mutex オブジェクトを返します。
+	 *
+	 * @return mutex オブジェクトへの参照
+	 */
+	const std::recursive_mutex& mutex() const
+	{
+		return mut;
+	}
+
+	/**
+	 * バッファをロックするための mutex オブジェクトを返します。
+	 *
+	 * @return mutex オブジェクトへの参照
+	 */
+	std::recursive_mutex& mutex()
+	{
+		return mut;
+	}
+
+	/**
+	 * バッファに変更を加えたことを他のスレッドに通知します。
+	 */
 	void notify() {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		notify_with_lock();

@@ -108,7 +108,7 @@ protected:
 	 * @param  n インデックス
 	 * @return 指定されたインデックスが指す要素
 	 */
-	T& get_elem(size_type n) {
+	reference get_elem(size_type n) {
 		return start[get_index(n)];
 	}
 
@@ -118,7 +118,7 @@ protected:
 	 * @param  n インデックス
 	 * @return 指定されたインデックスが指す要素
 	 */
-	const T& get_elem(size_type n) const {
+	const_reference get_elem(size_type n) const {
 		return start[get_index(n)];
 	}
 
