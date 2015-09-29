@@ -161,17 +161,23 @@ OMX_ERRORTYPE port_audio::get_port_format_index(const port_format& f, size_t *in
 		const OMX_AUDIO_PARAM_PORTFORMATTYPE *e = elem.get_format_audio();
 		if (e == nullptr) {
 			//not audio
+			i++;
 			continue;
 		}
 
-		if (t->eEncoding == e->eEncoding) {
-			//found
-			if (ind != nullptr) {
-				*ind = i;
-			}
-			return OMX_ErrorNone;
+		if (t->eEncoding != OMX_AUDIO_CodingUnused &&
+			e->eEncoding != OMX_AUDIO_CodingUnused &&
+			t->eEncoding != e->eEncoding) {
+			errprint("Invalid audio encoding format.\n");
+			i++;
+			continue;
 		}
-		i++;
+
+		//found
+		if (ind != nullptr) {
+			*ind = i;
+		}
+		return OMX_ErrorNone;
 	}
 
 	//not found

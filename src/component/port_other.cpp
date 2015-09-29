@@ -116,17 +116,22 @@ OMX_ERRORTYPE port_other::get_port_format_index(const port_format& f, size_t *in
 		const OMX_OTHER_PARAM_PORTFORMATTYPE *e = elem.get_format_other();
 		if (e == nullptr) {
 			//not other
+			i++;
 			continue;
 		}
 
-		if (t->eFormat == e->eFormat) {
-			//found
-			if (ind != nullptr) {
-				*ind = i;
-			}
-			return OMX_ErrorNone;
+		//不定値がない
+		if (t->eFormat != e->eFormat) {
+			errprint("Invalid other format.\n");
+			i++;
+			continue;
 		}
-		i++;
+
+		//found
+		if (ind != nullptr) {
+			*ind = i;
+		}
+		return OMX_ErrorNone;
 	}
 
 	//not found

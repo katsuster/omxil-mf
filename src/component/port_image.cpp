@@ -245,18 +245,30 @@ OMX_ERRORTYPE port_image::get_port_format_index(const port_format& f, size_t *in
 		const OMX_IMAGE_PARAM_PORTFORMATTYPE *e = elem.get_format_image();
 		if (e == nullptr) {
 			//not image
+			i++;
 			continue;
 		}
 
-		if ((t->eCompressionFormat == OMX_IMAGE_CodingUnused || t->eCompressionFormat == e->eCompressionFormat) &&
-			(t->eColorFormat == OMX_COLOR_FormatUnused || t->eColorFormat == e->eColorFormat)) {
-			//found
-			if (ind != nullptr) {
-				*ind = i;
-			}
-			return OMX_ErrorNone;
+		if (t->eCompressionFormat != OMX_IMAGE_CodingUnused &&
+			e->eCompressionFormat != OMX_IMAGE_CodingUnused &&
+			t->eCompressionFormat != e->eCompressionFormat) {
+			errprint("Invalid image compression format.\n");
+			i++;
+			continue;
 		}
-		i++;
+		if (t->eColorFormat != OMX_COLOR_FormatUnused &&
+			e->eColorFormat != OMX_COLOR_FormatUnused &&
+			t->eColorFormat != e->eColorFormat) {
+			errprint("Invalid image color format.\n");
+			i++;
+			continue;
+		}
+
+		//found
+		if (ind != nullptr) {
+			*ind = i;
+		}
+		return OMX_ErrorNone;
 	}
 
 	//not found

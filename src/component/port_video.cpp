@@ -275,19 +275,37 @@ OMX_ERRORTYPE port_video::get_port_format_index(const port_format& f, size_t *in
 		const OMX_VIDEO_PARAM_PORTFORMATTYPE *e = elem.get_format_video();
 		if (e == nullptr) {
 			//not video
+			i++;
 			continue;
 		}
 
-		if ((t->eCompressionFormat == OMX_VIDEO_CodingUnused || t->eCompressionFormat == e->eCompressionFormat) &&
-			(t->eColorFormat == OMX_COLOR_FormatUnused || t->eColorFormat == e->eColorFormat) &&
-			(t->xFramerate == 0 || t->xFramerate == e->xFramerate)) {
-			//found
-			if (ind != nullptr) {
-				*ind = i;
-			}
-			return OMX_ErrorNone;
+		if (t->eCompressionFormat != OMX_VIDEO_CodingUnused &&
+			e->eCompressionFormat != OMX_VIDEO_CodingUnused &&
+			t->eCompressionFormat != e->eCompressionFormat) {
+			errprint("Invalid video compression format.\n");
+			i++;
+			continue;
 		}
-		i++;
+		if (t->eColorFormat != OMX_COLOR_FormatUnused &&
+			e->eColorFormat != OMX_COLOR_FormatUnused &&
+			t->eColorFormat != e->eColorFormat) {
+			errprint("Invalid video color format.\n");
+			i++;
+			continue;
+		}
+		if (t->xFramerate != 0 &&
+			e->xFramerate != 0 &&
+			t->xFramerate != e->xFramerate) {
+			errprint("Invalid video framerate.\n");
+			i++;
+			continue;
+		}
+
+		//found
+		if (ind != nullptr) {
+			*ind = i;
+		}
+		return OMX_ErrorNone;
 	}
 
 	//not found
