@@ -259,7 +259,7 @@ OMX_ERRORTYPE port_video::get_port_format_index(const port_format& f, size_t *in
 
 	if (t == nullptr) {
 		//not video
-		errprint("argument has not video.\n");
+		errprint("Format is not video.\n");
 		return OMX_ErrorBadParameter;
 	}
 
@@ -267,7 +267,7 @@ OMX_ERRORTYPE port_video::get_port_format_index(const port_format& f, size_t *in
 	if (t->eCompressionFormat == OMX_VIDEO_CodingUnused &&
 		t->eColorFormat == OMX_COLOR_FormatUnused &&
 		t->xFramerate == 0) {
-		errprint("argument has invalid video condition.\n");
+		errprint("Invalid video condition.\n");
 		return OMX_ErrorBadParameter;
 	}
 
@@ -279,24 +279,15 @@ OMX_ERRORTYPE port_video::get_port_format_index(const port_format& f, size_t *in
 			continue;
 		}
 
-		if (t->eCompressionFormat != OMX_VIDEO_CodingUnused &&
-			e->eCompressionFormat != OMX_VIDEO_CodingUnused &&
-			t->eCompressionFormat != e->eCompressionFormat) {
-			errprint("Invalid video compression format.\n");
-			i++;
-			continue;
-		}
-		if (t->eColorFormat != OMX_COLOR_FormatUnused &&
-			e->eColorFormat != OMX_COLOR_FormatUnused &&
-			t->eColorFormat != e->eColorFormat) {
-			errprint("Invalid video color format.\n");
-			i++;
-			continue;
-		}
-		if (t->xFramerate != 0 &&
-			e->xFramerate != 0 &&
-			t->xFramerate != e->xFramerate) {
-			errprint("Invalid video framerate.\n");
+		if ((t->eCompressionFormat != OMX_VIDEO_CodingUnused &&
+				e->eCompressionFormat != OMX_VIDEO_CodingUnused &&
+				t->eCompressionFormat != e->eCompressionFormat) ||
+			(t->eColorFormat != OMX_COLOR_FormatUnused &&
+				e->eColorFormat != OMX_COLOR_FormatUnused &&
+				t->eColorFormat != e->eColorFormat) ||
+			(t->xFramerate != 0 &&
+				e->xFramerate != 0 &&
+				t->xFramerate != e->xFramerate)) {
 			i++;
 			continue;
 		}
@@ -307,6 +298,16 @@ OMX_ERRORTYPE port_video::get_port_format_index(const port_format& f, size_t *in
 		}
 		return OMX_ErrorNone;
 	}
+
+	errprint("Not found specified video format.\n"
+		"    eCompressionFormat:0x%08x(%s), \n"
+		"    eColorFormat      :0x%08x(%s), \n"
+		"    xFramerate        :0x%08x.\n",
+		(int)t->eCompressionFormat,
+		omx_enum_name::get_OMX_VIDEO_CODINGTYPE_name(t->eCompressionFormat),
+		(int)t->eColorFormat,
+		omx_enum_name::get_OMX_COLOR_FORMATTYPE_name(t->eColorFormat),
+		(int)t->xFramerate);
 
 	//not found
 	return OMX_ErrorUnsupportedSetting;

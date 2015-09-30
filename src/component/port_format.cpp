@@ -1,7 +1,7 @@
-
 #include <omxil_mf/port_format.hpp>
 #include <omxil_mf/scoped_log.hpp>
-#include <util/omx_enum_name.hpp>
+
+#include "util/omx_enum_name.hpp"
 
 namespace mf {
 

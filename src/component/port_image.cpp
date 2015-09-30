@@ -230,14 +230,14 @@ OMX_ERRORTYPE port_image::get_port_format_index(const port_format& f, size_t *in
 
 	if (t == nullptr) {
 		//not image
-		errprint("argument has not image.\n");
+		errprint("Format is not image.\n");
 		return OMX_ErrorBadParameter;
 	}
 
 	//全て不定の場合はエラーとする
 	if (t->eCompressionFormat == OMX_IMAGE_CodingUnused &&
 		t->eColorFormat == OMX_COLOR_FormatUnused) {
-		errprint("argument has invalid image condition.\n");
+		errprint("Invalid image condition.\n");
 		return OMX_ErrorBadParameter;
 	}
 
@@ -249,17 +249,12 @@ OMX_ERRORTYPE port_image::get_port_format_index(const port_format& f, size_t *in
 			continue;
 		}
 
-		if (t->eCompressionFormat != OMX_IMAGE_CodingUnused &&
-			e->eCompressionFormat != OMX_IMAGE_CodingUnused &&
-			t->eCompressionFormat != e->eCompressionFormat) {
-			errprint("Invalid image compression format.\n");
-			i++;
-			continue;
-		}
-		if (t->eColorFormat != OMX_COLOR_FormatUnused &&
-			e->eColorFormat != OMX_COLOR_FormatUnused &&
-			t->eColorFormat != e->eColorFormat) {
-			errprint("Invalid image color format.\n");
+		if ((t->eCompressionFormat != OMX_IMAGE_CodingUnused &&
+				e->eCompressionFormat != OMX_IMAGE_CodingUnused &&
+				t->eCompressionFormat != e->eCompressionFormat) ||
+			(t->eColorFormat != OMX_COLOR_FormatUnused &&
+				e->eColorFormat != OMX_COLOR_FormatUnused &&
+				t->eColorFormat != e->eColorFormat)) {
 			i++;
 			continue;
 		}
@@ -270,6 +265,14 @@ OMX_ERRORTYPE port_image::get_port_format_index(const port_format& f, size_t *in
 		}
 		return OMX_ErrorNone;
 	}
+
+	errprint("Not found specified image format.\n"
+		"    eCompressionFormat:0x%08x(%s), \n"
+		"    eColorFormat      :0x%08x(%s).\n",
+		(int)t->eCompressionFormat,
+		omx_enum_name::get_OMX_IMAGE_CODINGTYPE_name(t->eCompressionFormat),
+		(int)t->eColorFormat,
+		omx_enum_name::get_OMX_COLOR_FORMATTYPE_name(t->eColorFormat));
 
 	//not found
 	return OMX_ErrorUnsupportedSetting;

@@ -147,13 +147,13 @@ OMX_ERRORTYPE port_audio::get_port_format_index(const port_format& f, size_t *in
 
 	if (t == nullptr) {
 		//not audio
-		errprint("argument has not audio.\n");
+		errprint("Format is not audio.\n");
 		return OMX_ErrorBadParameter;
 	}
 
 	//全て不定の場合はエラーとする
 	if (t->eEncoding == OMX_AUDIO_CodingUnused) {
-		errprint("argument has invalid audio condition.\n");
+		errprint("Invalid audio condition.\n");
 		return OMX_ErrorBadParameter;
 	}
 
@@ -168,7 +168,6 @@ OMX_ERRORTYPE port_audio::get_port_format_index(const port_format& f, size_t *in
 		if (t->eEncoding != OMX_AUDIO_CodingUnused &&
 			e->eEncoding != OMX_AUDIO_CodingUnused &&
 			t->eEncoding != e->eEncoding) {
-			errprint("Invalid audio encoding format.\n");
 			i++;
 			continue;
 		}
@@ -179,6 +178,11 @@ OMX_ERRORTYPE port_audio::get_port_format_index(const port_format& f, size_t *in
 		}
 		return OMX_ErrorNone;
 	}
+
+	errprint("Not found specified audio format.\n"
+		"    eEncoding:0x%08x(%s).\n",
+		(int)t->eEncoding,
+		omx_enum_name::get_OMX_AUDIO_CODINGTYPE_name(t->eEncoding));
 
 	//not found
 	return OMX_ErrorUnsupportedSetting;

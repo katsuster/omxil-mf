@@ -106,7 +106,7 @@ OMX_ERRORTYPE port_other::get_port_format_index(const port_format& f, size_t *in
 
 	if (t == nullptr) {
 		//not other
-		errprint("argument has not other.\n");
+		errprint("Format is not omx_other.\n");
 		return OMX_ErrorBadParameter;
 	}
 
@@ -122,7 +122,6 @@ OMX_ERRORTYPE port_other::get_port_format_index(const port_format& f, size_t *in
 
 		//不定値がない
 		if (t->eFormat != e->eFormat) {
-			errprint("Invalid other format.\n");
 			i++;
 			continue;
 		}
@@ -133,6 +132,11 @@ OMX_ERRORTYPE port_other::get_port_format_index(const port_format& f, size_t *in
 		}
 		return OMX_ErrorNone;
 	}
+
+	errprint("Not found specified other format.\n"
+		"    eFormat:0x%08x(%s).\n",
+		(int)t->eFormat,
+		omx_enum_name::get_OMX_OTHER_FORMATTYPE_name(t->eFormat));
 
 	//not found
 	return OMX_ErrorUnsupportedSetting;
