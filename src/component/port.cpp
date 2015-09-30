@@ -19,6 +19,8 @@ port::port(int ind, component *c)
 	domain(OMX_PortDomainMax),
 	buffers_contiguous(OMX_FALSE), buffer_alignment(0),
 	f_no_buffer(OMX_TRUE),
+	f_tunneled(OMX_FALSE), tunneled_comp(nullptr),
+	tunneled_port(0), f_tunneled_supplier(OMX_FALSE),
 	default_format(-1),
 	ring_send(nullptr), bound_send(nullptr),
 	ring_ret(nullptr), bound_ret(nullptr), th_ret(nullptr)
