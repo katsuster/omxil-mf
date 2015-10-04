@@ -242,7 +242,7 @@ OMX_ERRORTYPE component::GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRI
 	//uuid
 	memset(*pComponentUUID, 0, sizeof(*pComponentUUID));
 	uuid[0] = (uint64_t)this;
-	uuid[1] = getpid();
+	uuid[1] = get_process_id();
 	uuid[2] = 0;
 	uuid[3] = 0;
 	memmove(*pComponentUUID, uuid, sizeof(uuid));
@@ -1264,6 +1264,7 @@ void *component::accept_command()
 			errprint("unsupported index:%d.\n",
 				(int)cmd.cmd);
 			f_callback = false;
+			event_data = nullptr;
 			break;
 		}
 

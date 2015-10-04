@@ -44,7 +44,7 @@ public:
 	//親クラス
 	typedef omx_reflector super;
 	//ポート一覧表の型
-	typedef typename std::map<OMX_U32, port&> portmap_t;
+	typedef std::map<OMX_U32, port&> portmap_t;
 
 	//disable default constructor
 	component() = delete;
