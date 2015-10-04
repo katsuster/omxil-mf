@@ -1,0 +1,232 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FB45CAB2-2948-47A1-AED9-59E97AEF4F55}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>omxilmf</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>omxil_mf</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NOMINMAX;_DEBUG;_WINDOWS;_USRDLL;OMXILMF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\..\include;..\..\src</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile />
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
+      <FunctionLevelLinking>
+      </FunctionLevelLinking>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <ModuleDefinitionFile>..\..\src\api\windll.def</ModuleDefinitionFile>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;OMXILMF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NOMINMAX;NDEBUG;_WINDOWS;_USRDLL;OMXILMF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>..\..\include;..\..\src</AdditionalIncludeDirectories>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PrecompiledHeaderFile />
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ModuleDefinitionFile>..\..\src\api\windll.def</ModuleDefinitionFile>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;OMXILMF_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\omxil_mf\component.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\dprint.h" />
+    <ClInclude Include="..\..\include\omxil_mf\omxil_mf.h" />
+    <ClInclude Include="..\..\include\omxil_mf\omx_reflector.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\port.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\port_audio.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\port_buffer.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\port_format.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\port_image.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\port_other.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\port_video.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\ring\bit_stream.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\ring\bounded_buffer.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\ring\buffer_base.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\ring\ring_buffer.hpp" />
+    <ClInclude Include="..\..\include\omxil_mf\scoped_log.hpp" />
+    <ClInclude Include="..\..\include\OMX_Audio.h" />
+    <ClInclude Include="..\..\include\OMX_Component.h" />
+    <ClInclude Include="..\..\include\OMX_ContentPipe.h" />
+    <ClInclude Include="..\..\include\OMX_Core.h" />
+    <ClInclude Include="..\..\include\OMX_Image.h" />
+    <ClInclude Include="..\..\include\OMX_Index.h" />
+    <ClInclude Include="..\..\include\OMX_IVCommon.h" />
+    <ClInclude Include="..\..\include\OMX_Other.h" />
+    <ClInclude Include="..\..\include\OMX_Types.h" />
+    <ClInclude Include="..\..\include\OMX_Video.h" />
+    <ClInclude Include="..\..\src\api\consts.hpp" />
+    <ClInclude Include="..\..\src\regist\register_component.hpp" />
+    <ClInclude Include="..\..\src\util\omx_enum_name.hpp" />
+    <ClInclude Include="..\..\src\util\util.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\api\omxil.cpp" />
+    <ClCompile Include="..\..\src\api\omxil_mf.cpp" />
+    <ClCompile Include="..\..\src\api\windll.cpp" />
+    <ClCompile Include="..\..\src\component\component.cpp" />
+    <ClCompile Include="..\..\src\component\omx_reflector.cpp" />
+    <ClCompile Include="..\..\src\component\port.cpp" />
+    <ClCompile Include="..\..\src\component\port_audio.cpp" />
+    <ClCompile Include="..\..\src\component\port_buffer.cpp" />
+    <ClCompile Include="..\..\src\component\port_format.cpp" />
+    <ClCompile Include="..\..\src\component\port_image.cpp" />
+    <ClCompile Include="..\..\src\component\port_other.cpp" />
+    <ClCompile Include="..\..\src\component\port_video.cpp" />
+    <ClCompile Include="..\..\src\debug\dprint.cpp" />
+    <ClCompile Include="..\..\src\regist\register_component.cpp" />
+    <ClCompile Include="..\..\src\util\omx_audio_enum_name.cpp" />
+    <ClCompile Include="..\..\src\util\omx_component_enum_name.cpp" />
+    <ClCompile Include="..\..\src\util\omx_core_enum_name.cpp" />
+    <ClCompile Include="..\..\src\util\omx_image_enum_name.cpp" />
+    <ClCompile Include="..\..\src\util\omx_index_enum_name.cpp" />
+    <ClCompile Include="..\..\src\util\omx_ivcommon_enum_name.cpp" />
+    <ClCompile Include="..\..\src\util\omx_other_enum_name.cpp" />
+    <ClCompile Include="..\..\src\util\omx_types_enum_name.cpp" />
+    <ClCompile Include="..\..\src\util\omx_video_enum_name.cpp" />
+    <ClCompile Include="..\..\src\util\util.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ソース ファイル\api">
+      <UniqueIdentifier>{a033629c-5e80-466f-b04f-ac928c7713ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\omxil_mf">
+      <UniqueIdentifier>{dc3f1868-7218-4d61-87a1-fa6eeb7e1967}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\omxil_mf\ring">
+      <UniqueIdentifier>{d17900d8-8778-41ec-a8ca-76e32848e155}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\component">
+      <UniqueIdentifier>{601a453b-d2b0-4fa7-810b-659cb058f077}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\debug">
+      <UniqueIdentifier>{c22464f4-7b5b-4a04-aad4-81d9b5d19427}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\regist">
+      <UniqueIdentifier>{083c5fd2-6905-4dad-8c68-534dc566a000}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\util">
+      <UniqueIdentifier>{d9850242-70ae-4e71-a46a-727e58d670ca}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\api\windll.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\api\omxil.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\api\omxil_mf.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\component\component.cpp">
+      <Filter>ソース ファイル\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\component\omx_reflector.cpp">
+      <Filter>ソース ファイル\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\component\port.cpp">
+      <Filter>ソース ファイル\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\component\port_audio.cpp">
+      <Filter>ソース ファイル\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\component\port_buffer.cpp">
+      <Filter>ソース ファイル\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\component\port_format.cpp">
+      <Filter>ソース ファイル\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\component\port_image.cpp">
+      <Filter>ソース ファイル\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\component\port_other.cpp">
+      <Filter>ソース ファイル\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\component\port_video.cpp">
+      <Filter>ソース ファイル\component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\debug\dprint.cpp">
+      <Filter>ソース ファイル\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\regist\register_component.cpp">
+      <Filter>ソース ファイル\regist</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\omx_audio_enum_name.cpp">
+      <Filter>ソース ファイル\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\omx_component_enum_name.cpp">
+      <Filter>ソース ファイル\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\omx_core_enum_name.cpp">
+      <Filter>ソース ファイル\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\omx_image_enum_name.cpp">
+      <Filter>ソース ファイル\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\omx_index_enum_name.cpp">
+      <Filter>ソース ファイル\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\omx_ivcommon_enum_name.cpp">
+      <Filter>ソース ファイル\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\omx_other_enum_name.cpp">
+      <Filter>ソース ファイル\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\omx_types_enum_name.cpp">
+      <Filter>ソース ファイル\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\omx_video_enum_name.cpp">
+      <Filter>ソース ファイル\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\util\util.cpp">
+      <Filter>ソース ファイル\util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\OMX_Audio.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\OMX_Component.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\OMX_ContentPipe.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\OMX_Core.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\OMX_Image.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\OMX_Index.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\OMX_IVCommon.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\OMX_Other.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\OMX_Types.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\OMX_Video.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\component.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\dprint.h">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\omx_reflector.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\omxil_mf.h">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\port.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\port_audio.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\port_buffer.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\port_format.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\port_image.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\port_other.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\port_video.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\scoped_log.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\ring\bit_stream.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf\ring</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\ring\bounded_buffer.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf\ring</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\ring\buffer_base.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf\ring</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\ring\ring_buffer.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf\ring</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\api\consts.hpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\regist\register_component.hpp">
+      <Filter>ソース ファイル\regist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\util\omx_enum_name.hpp">
+      <Filter>ソース ファイル\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\util\util.hpp">
+      <Filter>ソース ファイル\util</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

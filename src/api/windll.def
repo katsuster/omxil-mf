@@ -1,0 +1,3 @@
+LIBRARY omxil_mf
+EXPORTS
+  OMX_Init @1
