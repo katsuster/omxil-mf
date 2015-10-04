@@ -1,4 +1,4 @@
-#ifndef OMX_MF_REFLECTOR_HPP__
+﻿#ifndef OMX_MF_REFLECTOR_HPP__
 #define OMX_MF_REFLECTOR_HPP__
 
 #include <string>

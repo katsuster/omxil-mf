@@ -1,4 +1,4 @@
-#ifndef OMX_MF_UTIL_HPP__
+﻿#ifndef OMX_MF_UTIL_HPP__
 #define OMX_MF_UTIL_HPP__
 
 #include <cstdint>

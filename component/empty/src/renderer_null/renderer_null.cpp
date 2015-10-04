@@ -1,4 +1,4 @@
-
+﻿
 #include "renderer_null/renderer_null.hpp"
 
 namespace mf {

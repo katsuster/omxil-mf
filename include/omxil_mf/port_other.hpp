@@ -1,4 +1,4 @@
-#ifndef OMX_MF_PORT_OTHER_HPP__
+﻿#ifndef OMX_MF_PORT_OTHER_HPP__
 #define OMX_MF_PORT_OTHER_HPP__
 
 #include <OMX_Component.h>

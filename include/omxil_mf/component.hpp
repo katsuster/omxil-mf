@@ -1,4 +1,4 @@
-#ifndef OMX_MF_COMPONENT_HPP__
+﻿#ifndef OMX_MF_COMPONENT_HPP__
 #define OMX_MF_COMPONENT_HPP__
 
 #include <map>

@@ -1,4 +1,4 @@
-
+﻿
 #ifndef OMXIL_UTILS_H__
 #define OMXIL_UTILS_H__
 

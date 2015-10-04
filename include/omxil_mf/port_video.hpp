@@ -1,4 +1,4 @@
-#ifndef OMX_MF_PORT_VIDEO_HPP__
+﻿#ifndef OMX_MF_PORT_VIDEO_HPP__
 #define OMX_MF_PORT_VIDEO_HPP__
 
 #include <OMX_Component.h>

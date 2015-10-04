@@ -1,4 +1,4 @@
-
+﻿
 #ifndef OMX_MF_COMPONENT_EMPTY__ENTRY_H__
 #define OMX_MF_COMPONENT_EMPTY__ENTRY_H__
 

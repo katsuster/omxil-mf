@@ -1,4 +1,4 @@
-#ifndef OMX_MF_SCOPED_LOG_HPP__
+﻿#ifndef OMX_MF_SCOPED_LOG_HPP__
 #define OMX_MF_SCOPED_LOG_HPP__
 
 #include <omxil_mf/dprint.h>

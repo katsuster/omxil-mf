@@ -1,4 +1,4 @@
-#ifndef RING_BUFFER_HPP__
+﻿#ifndef RING_BUFFER_HPP__
 #define RING_BUFFER_HPP__
 
 #include <algorithm>

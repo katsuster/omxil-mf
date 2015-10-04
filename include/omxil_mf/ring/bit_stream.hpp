@@ -1,4 +1,4 @@
-#ifndef BIT_STREAM_HPP__
+﻿#ifndef BIT_STREAM_HPP__
 #define BIT_STREAM_HPP__
 
 #include <cstdint>

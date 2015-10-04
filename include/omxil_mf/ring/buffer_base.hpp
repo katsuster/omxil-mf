@@ -1,4 +1,4 @@
-#ifndef BUFFER_BASE_HPP__
+﻿#ifndef BUFFER_BASE_HPP__
 #define BUFFER_BASE_HPP__
 
 #include <cstddef>

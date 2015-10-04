@@ -1,4 +1,4 @@
-#ifndef OMX_MF_PORT_BUFFER_HPP__
+﻿#ifndef OMX_MF_PORT_BUFFER_HPP__
 #define OMX_MF_PORT_BUFFER_HPP__
 
 #include <cstdint>

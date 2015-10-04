@@ -1,4 +1,4 @@
-#ifndef BOUNDED_BUFFER_HPP__
+﻿#ifndef BOUNDED_BUFFER_HPP__
 #define BOUNDED_BUFFER_HPP__
 
 #include <algorithm>

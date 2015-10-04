@@ -1,4 +1,4 @@
-#ifndef OMX_MF_PORT_AUDIO_HPP__
+﻿#ifndef OMX_MF_PORT_AUDIO_HPP__
 #define OMX_MF_PORT_AUDIO_HPP__
 
 #include <OMX_Component.h>
