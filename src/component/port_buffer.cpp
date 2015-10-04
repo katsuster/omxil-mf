@@ -7,7 +7,7 @@
 
 namespace mf {
 
-bool port_buffer::size() const
+size_t port_buffer::size() const
 {
 	return header->nFilledLen;
 }

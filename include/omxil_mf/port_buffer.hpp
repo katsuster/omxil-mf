@@ -62,7 +62,7 @@ public:
 	/**
 	 * OpenMAX バッファに格納されている要素数を取得します。
 	 */
-	bool size() const;
+	size_t size() const;
 
 	/**
 	 * OpenMAX バッファが空かどうかを返します。
