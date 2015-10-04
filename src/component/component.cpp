@@ -3,8 +3,6 @@
 #include <map>
 #include <mutex>
 #include <condition_variable>
-#include <pthread.h>
-#include <sys/prctl.h>
 
 #include <OMX_Component.h>
 #include <OMX_Core.h>
@@ -18,6 +16,7 @@
 #include <omxil_mf/scoped_log.hpp>
 
 #include "api/consts.hpp"
+#include "util/util.hpp"
 #include "util/omx_enum_name.hpp"
 
 namespace mf {
@@ -1774,7 +1773,7 @@ void *component::accept_command_thread_main(OMX_COMPONENTTYPE *arg)
 		//スレッド名をつける
 		thname = "omx:cmd:";
 		thname += comp->get_name();
-		prctl(PR_SET_NAME, thname.c_str());
+		set_thread_name(thname.c_str());
 
 		comp->accept_command();
 	} catch (const std::runtime_error& e) {
@@ -1790,12 +1789,12 @@ void *component::component_thread_main(OMX_COMPONENTTYPE *arg)
 	std::string thname;
 	component *comp = get_instance(arg);
 
-	//スレッド名をつける
-	thname = "omx:run:";
-	thname += comp->get_name();
-	prctl(PR_SET_NAME, thname.c_str());
-
 	try {
+		//スレッド名をつける
+		thname = "omx:run:";
+		thname += comp->get_name();
+		set_thread_name(thname.c_str());
+
 		//Idle 状態になってから開始する
 		comp->wait_state(OMX_StateIdle);
 

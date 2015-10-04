@@ -1,10 +1,9 @@
-#include <sys/prctl.h>
-
 #include <omxil_mf/component.hpp>
 #include <omxil_mf/port.hpp>
 #include <omxil_mf/scoped_log.hpp>
 
 #include "api/consts.hpp"
+#include "util/util.hpp"
 #include "util/omx_enum_name.hpp"
 
 //port クラス
@@ -1425,7 +1424,7 @@ void *port::buffer_done_thread_main(port *p)
 		thname += std::to_string(p->get_port_index());
 		thname += ":";
 		thname += p->get_component()->get_name();
-		prctl(PR_SET_NAME, thname.c_str());
+		set_thread_name(thname.c_str());
 
 		p->buffer_done();
 	} catch (const std::runtime_error& e) {

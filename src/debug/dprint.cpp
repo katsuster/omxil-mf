@@ -4,7 +4,16 @@
 
 #include <omxil_mf/dprint.h>
 
+//For autoconf
+#if defined(__linux__)
 #include "config.h"
+#endif
+
+//For VC++
+#if defined(_MSC_VER) && defined(_DEBUG)
+#define ENABLE_DEBUG
+#endif
+
 
 #ifdef ENABLE_DEBUG
 #define DPRINT_LEVEL_DEFAULT    DPRINT_LEVEL_DEBUG

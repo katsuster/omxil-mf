@@ -13,11 +13,11 @@ namespace mf {
 class scoped_log {
 public:
 	scoped_log(const char *f, int n) : func(f), num(n) {
-		dprint_cont("[% 5d] in  %s:%d\n", (int)gettid(), func, num);
+		dprint_cont("[% 5d] in  %s:%d\n", (int)thread_id(), func, num);
 	}
 
 	~scoped_log() {
-		dprint_cont("[% 5d] out %s\n", (int)gettid(), func);
+		dprint_cont("[% 5d] out %s\n", (int)thread_id(), func);
 	}
 
 private:

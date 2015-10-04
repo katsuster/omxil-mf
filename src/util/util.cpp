@@ -1,16 +1,39 @@
 #include "util/util.hpp"
 
+#if defined(__linux__)
+#include <unistd.h>
+#include <sys/prctl.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+#elif defined(_WINDOWS)
+#include <windows.h>
+#endif
+
 namespace mf {
 
-/**
- * do 4bytes-swap.
- *
- * v      : 0x00010203
- * return : 0x03020100
- *
- * @param v unsigned value
- * @return swapped value
- */
+int get_thread_id()
+{
+#if defined(__linux__)
+	//Linux
+	return (int)syscall(SYS_gettid);
+#elif defined(_WINDOWS)
+	//Windows
+	return (int)GetCurrentThreadId();
+#endif
+	//Other
+	return 0;
+}
+
+int set_thread_name(const char *name)
+{
+#if defined(__linux__)
+	//Linux
+	return prctl(PR_SET_NAME, name);
+#endif
+	//Other
+	return 0;
+}
+
 uint32_t rev32(uint32_t v)
 {
 #ifdef __arm__
@@ -23,15 +46,6 @@ uint32_t rev32(uint32_t v)
 	return v;
 }
 
-/**
- * do 2bytes-swap.
- *
- * v      : 0x0001
- * return : 0x0100
- *
- * @param v unsigned value
- * @return swapped value
- */
 uint16_t rev16(uint16_t v)
 {
 	v = ((v & 0x00ff) <<  8) | ((v & 0xff00) >>  8);

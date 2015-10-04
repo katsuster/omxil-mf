@@ -2,9 +2,13 @@
 #ifndef OMX_MF_DPRINT_HPP__
 #define OMX_MF_DPRINT_HPP__
 
+#if defined(__linux__)
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
+#elif defined(_WINDOWS)
+#include <windows.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,27 +28,38 @@ extern "C" {
 #define DPRINT_LEVEL_ERROR     3
 #define DPRINT_LEVEL_DEBUG     5
 
-#define gettid()    ((pid_t)syscall(SYS_gettid))
+#if defined(__linux__)
+/* Linux */
+#define thread_id()    ((pid_t)syscall(SYS_gettid))
+#elif defined(_WINDOWS)
+/* Windows */
+#define thread_id()    GetCurrentThreadId();
+#endif
+
+#if defined(__GNUC__)
+/* For GCC */
+#define DPRINT_FUNC    __func__
+/* #define DPRINT_FUNC    __PRETTY_FUNCTION__ */
 
 int OMX_MF_set_debug_level(int level);
 int OMX_MF_print_cont(int level, const char *fmt, ...) __attribute__((format(printf, 2, 3)));
+#else
+/* Others */
+#define DPRINT_FUNC    __func__
+
+int OMX_MF_set_debug_level(int level);
+int OMX_MF_print_cont(int level, const char *fmt, ...);
+#endif
 
 #define fatalprint_cont(fmt, ...)    OMX_MF_print_cont(DPRINT_LEVEL_FATAL, fmt, ##__VA_ARGS__)
 #define errprint_cont(fmt, ...)      OMX_MF_print_cont(DPRINT_LEVEL_ERROR, fmt, ##__VA_ARGS__)
 #define dprint_cont(fmt, ...)        OMX_MF_print_cont(DPRINT_LEVEL_DEBUG, fmt, ##__VA_ARGS__)
 
-#ifdef __GNUC__
-#define DPRINT_FUNC    __func__
-/* #define DPRINT_FUNC    __PRETTY_FUNCTION__ */
-#else
-#define DPRINT_FUNC    __func__
-#endif
-
-#define fatalprint(fmt, ...)    fatalprint_cont("[% 5d]     %s:%d: " fmt, (int)gettid(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
-#define errprint(fmt, ...)      errprint_cont("[% 5d]     %s:%d: " fmt, (int)gettid(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
-#define dprint_in(fmt, ...)     dprint_cont("[% 5d] in  %s:%d: " fmt, (int)gettid(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
-#define dprint_out(fmt, ...)    dprint_cont("[% 5d] out %s:%d: " fmt, (int)gettid(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
-#define dprint(fmt, ...)        dprint_cont("[% 5d]     %s:%d: " fmt, (int)gettid(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
+#define fatalprint(fmt, ...)    fatalprint_cont("[% 5d]     %s:%d: " fmt, (int)thread_id(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
+#define errprint(fmt, ...)      errprint_cont("[% 5d]     %s:%d: " fmt, (int)thread_id(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
+#define dprint_in(fmt, ...)     dprint_cont("[% 5d] in  %s:%d: " fmt, (int)thread_id(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
+#define dprint_out(fmt, ...)    dprint_cont("[% 5d] out %s:%d: " fmt, (int)thread_id(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
+#define dprint(fmt, ...)        dprint_cont("[% 5d]     %s:%d: " fmt, (int)thread_id(), DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
 
 #ifdef __cplusplus
 } /* extern "C" */

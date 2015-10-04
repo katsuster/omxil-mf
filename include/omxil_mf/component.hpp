@@ -1,13 +1,10 @@
 #ifndef OMX_MF_COMPONENT_HPP__
 #define OMX_MF_COMPONENT_HPP__
 
-#include <cstdarg>
 #include <map>
 #include <mutex>
 #include <condition_variable>
 #include <thread>
-
-#include <sys/prctl.h>
 
 #include <OMX_Component.h>
 #include <OMX_Core.h>

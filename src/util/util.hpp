@@ -6,6 +6,21 @@
 namespace mf {
 
 /**
+ * Get thread ID.
+ *
+ * @return Converted Thread ID to int value.
+ */
+int get_thread_id();
+
+/**
+ * Set thread name.
+ *
+ * @param name Name of thread.
+ * @return 0 is success, -1 is error.
+ */
+int set_thread_name(const char *name);
+
+/**
  * do 4bytes-swap.
  *
  * v      : 0x00010203
