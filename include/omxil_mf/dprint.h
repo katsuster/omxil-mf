@@ -33,7 +33,7 @@ extern "C" {
 #define thread_id()    ((pid_t)syscall(SYS_gettid))
 #elif defined(_WINDOWS)
 /* Windows */
-#define thread_id()    GetCurrentThreadId();
+#define thread_id()    GetCurrentThreadId()
 #endif
 
 #if defined(__GNUC__)
