@@ -28,6 +28,31 @@ int get_thread_id();
 int set_thread_name(const char *name);
 
 /**
+ * Load a dynamic link library.
+ *
+ * @param name Path of library.
+ * @return Handle of loaded library, nullptr is error.
+ */
+void *open_library(const char *name);
+
+/**
+ * Get specified function address of the library.
+ *
+ * @param handle Handle of the loaded library.
+ * @param name   Name of function
+ * @return Pointer of the function, nullptr is error.
+ */
+void *get_symbol(void *handle, const char *name);
+
+/**
+ * Unload a dynamic link library.
+ *
+ * @param handle Handle of the loaded library.
+ * @return 0 is success, -1 is error.
+ */
+int close_library(void *handle);
+
+/**
  * do 4bytes-swap.
  *
  * v      : 0x00010203

@@ -3,8 +3,6 @@
 #include <fstream>
 #include <mutex>
 
-#include <dlfcn.h>
-
 #include <OMX_Core.h>
 
 #include <omxil_mf/omxil_mf.h>
@@ -12,6 +10,7 @@
 #include <omxil_mf/scoped_log.hpp>
 
 #include "regist/register_component.hpp"
+#include "util/util.hpp"
 
 namespace mf {
 
@@ -345,7 +344,7 @@ void register_component::load_components(void)
 		}
 
 		//load library, get entry function
-		libhandle = dlopen(libname.c_str(), RTLD_LAZY);
+		libhandle = open_library(libname.c_str());
 		if (libhandle == nullptr) {
 			//not found or error
 			errprint("Library '%s' is not found. "
@@ -355,7 +354,7 @@ void register_component::load_components(void)
 		}
 
 		entry_func = (OMX_MF_ENTRY_FUNC)
-			dlsym(libhandle, OMX_MF_ENTRY_FUNCNAME);
+			get_symbol(libhandle, OMX_MF_ENTRY_FUNCNAME);
 		if (entry_func == nullptr) {
 			//not have entry func
 			errprint("Library '%s' does not have entry '%s'. "
@@ -379,7 +378,7 @@ void register_component::load_components(void)
 			map_lib_name.insert(map_library_type::value_type(libname, libhandle));
 		} else {
 			//failed, clean up
-			result = dlclose(libhandle);
+			result = close_library(libhandle);
 			if (result != 0) {
 				errprint("Library '%s' cannot close. "
 						"Ignored.\n",
@@ -396,7 +395,7 @@ void register_component::unload_components(void)
 	int result;
 
 	for (auto& elem: map_lib_name) {
-		result = dlclose(elem.second);
+		result = close_library(elem.second);
 		if (result != 0) {
 			errprint("Library '%s' cannot close. "
 					"Ignored.\n",

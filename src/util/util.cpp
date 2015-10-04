@@ -2,6 +2,7 @@
 
 #if defined(__linux__)
 #include <unistd.h>
+#include <dlfcn.h>
 #include <sys/prctl.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
@@ -45,6 +46,45 @@ int set_thread_name(const char *name)
 #endif
 	//Other
 	return 0;
+}
+
+void *open_library(const char *name)
+{
+#if defined(__linux__)
+	//Linux
+	return dlopen(name, RTLD_LAZY);
+#elif defined(_WINDOWS)
+	//Windows
+	return LoadLibraryEx((LPCWSTR)name, nullptr, 0);
+#endif
+	//Other, always failed
+	return nullptr;
+}
+
+void *get_symbol(void *handle, const char *name)
+{
+#if defined(__linux__)
+	//Linux
+	return dlsym(handle, name);
+#elif defined(_WINDOWS)
+	//Windows
+	return GetProcAddress((HMODULE)handle, name);
+#endif
+	//Other, always failed
+	return nullptr;
+}
+
+int close_library(void *handle)
+{
+#if defined(__linux__)
+	//Linux
+	return dlclose(handle);
+#elif defined(_WINDOWS)
+	//Windows
+	return CloseHandle(handle);
+#endif
+	//Other, always failed
+	return -1;
 }
 
 uint32_t rev32(uint32_t v)
