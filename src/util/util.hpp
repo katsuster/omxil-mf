@@ -1,9 +1,16 @@
-﻿#ifndef OMX_MF_UTIL_HPP__
+#ifndef OMX_MF_UTIL_HPP__
 #define OMX_MF_UTIL_HPP__
 
 #include <cstdint>
 
 namespace mf {
+
+/**
+ * Get process ID.
+ *
+ * @return Converted Process ID to int value.
+ */
+int get_process_id();
 
 /**
  * Get thread ID.

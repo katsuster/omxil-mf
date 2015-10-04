@@ -1,4 +1,4 @@
-﻿#include "util/util.hpp"
+#include "util/util.hpp"
 
 #if defined(__linux__)
 #include <unistd.h>
@@ -10,6 +10,19 @@
 #endif
 
 namespace mf {
+
+int get_process_id()
+{
+#if defined(__linux__)
+	//Linux
+	return (int)getpid();
+#elif defined(_WINDOWS)
+	//Windows
+	return (int)GetCurrentProcessId();
+#endif
+	//Other
+	return 0;
+}
 
 int get_thread_id()
 {
