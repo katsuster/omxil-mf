@@ -32,7 +32,7 @@ public:
 	using buffer_base<T>::get_remain;
 	using buffer_base<T>::get_space;
 
-	class iterator : std::iterator<std::forward_iterator_tag, T> {
+	class iterator : public std::iterator<std::forward_iterator_tag, T> {
 	public:
 		explicit iterator(ring_buffer *buffer)
 			: iterator(buffer, 0) {
