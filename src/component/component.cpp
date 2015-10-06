@@ -647,7 +647,7 @@ OMX_ERRORTYPE component::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
-		port_found->set_definition_from_client(*def);
+		err = port_found->set_definition_from_client(*def);
 
 		break;
 	}
