@@ -242,7 +242,7 @@ OMX_ERRORTYPE component::GetComponentVersion(OMX_HANDLETYPE hComponent, OMX_STRI
 
 	//uuid
 	memset(*pComponentUUID, 0, sizeof(*pComponentUUID));
-	uuid[0] = (uint64_t)this;
+	uuid[0] = (uintptr_t)this;
 	uuid[1] = get_process_id();
 	uuid[2] = 0;
 	uuid[3] = 0;
@@ -1275,7 +1275,7 @@ void *component::accept_command()
 	//callback するかしないか
 	bool f_callback;
 	//EventHandler の引数
-	OMX_U32 data1, data2;
+	OMX_U32 data1 = 0, data2 = 0;
 	OMX_PTR event_data;
 	OMX_ERRORTYPE err, err_handler;
 
