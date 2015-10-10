@@ -1,4 +1,5 @@
 ﻿#include <cstdarg>
+#include <cstdint>
 #include <deque>
 #include <map>
 #include <mutex>
@@ -1076,11 +1077,92 @@ OMX_ERRORTYPE component::ComponentRoleEnum(OMX_HANDLETYPE hComponent, OMX_U8 *cR
 OMX_ERRORTYPE component::EventHandler(OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_U32 nData2, OMX_PTR pEventData)
 {
 	scoped_log_begin;
+	bool dump_all = false;
 	OMX_ERRORTYPE err;
 
-	dprint("eEvent:%s, nData1:%s\n",
-		omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
-		omx_enum_name::get_OMX_COMMANDTYPE_name((OMX_COMMANDTYPE)nData1));
+	switch (eEvent) {
+	case OMX_EventCmdComplete: {
+		OMX_COMMANDTYPE cmd = static_cast<OMX_COMMANDTYPE>(nData1);
+		OMX_STATETYPE sta = static_cast<OMX_STATETYPE>(nData2);
+		OMX_ERRORTYPE ret = static_cast<OMX_ERRORTYPE>(reinterpret_cast<intptr_t>(pEventData));
+
+		switch (cmd) {
+		case OMX_CommandStateSet:
+			dprint("eEvent:%s, Command:%d(%s), Reached:%d(%s), Error:%d(%s).\n",
+				omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
+				(int)cmd, omx_enum_name::get_OMX_COMMANDTYPE_name(cmd),
+				(int)sta, omx_enum_name::get_OMX_STATETYPE_name(sta),
+				(int)ret, omx_enum_name::get_OMX_ERRORTYPE_name(ret));
+			break;
+		case OMX_CommandFlush:
+		case OMX_CommandPortDisable:
+		case OMX_CommandPortEnable:
+		case OMX_CommandMarkBuffer:
+			dprint("eEvent:%s, Command:%d(%s), Port:%d, Error:%d(%s).\n",
+				omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
+				(int)cmd, omx_enum_name::get_OMX_COMMANDTYPE_name(cmd),
+				(int)nData2,
+				(int)ret, omx_enum_name::get_OMX_ERRORTYPE_name(ret));
+			break;
+		default:
+			//Unknown
+			dump_all = true;
+			break;
+		}
+		break;
+	}
+	case OMX_EventError:
+		dprint("eEvent:%s, Error:%d(%s), Additional:0x%08x\n",
+			omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
+			(int)nData1, omx_enum_name::get_OMX_ERRORTYPE_name((OMX_ERRORTYPE)nData1),
+			(int)nData2);
+		break;
+	case OMX_EventMark:
+		dprint("eEvent:%s, Data:0x%p\n",
+			omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
+			pEventData);
+		break;
+	case OMX_EventPortSettingsChanged:
+		dprint("eEvent:%s, Port:%d, Param:%d(%s).\n",
+			omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
+			(int)nData1,
+			(int)nData2, omx_enum_name::get_OMX_INDEXTYPE_name((OMX_INDEXTYPE)nData2));
+		break;
+	case OMX_EventBufferFlag:
+		dprint("eEvent:%s, Port:%d, Flags:0x%08x.\n",
+			omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
+			(int)nData1,
+			(int)nData2);
+		break;
+	case OMX_EventResourcesAcquired:
+	case OMX_EventComponentResumed:
+	case OMX_EventDynamicResourcesAvailable:
+	//case OMX_EventPortFormatDetected:
+		break;
+	//case OMX_EventIndexSettingChanged:
+		dprint("eEvent:%s, Port:%d, Param:%d(%s).\n",
+			omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
+			(int)nData1,
+			(int)nData2, omx_enum_name::get_OMX_INDEXTYPE_name((OMX_INDEXTYPE)nData2));
+		break;
+	//case OMX_EventPortNeedsDisable:
+	//case OMX_EventPortNeedsFlush:
+		dprint("eEvent:%s, Port:%d, Requested:%d.\n",
+			omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
+			(int)nData1,
+			(int)nData2);
+		break;
+	default:
+		//Unknown
+		dump_all = true;
+		break;
+	}
+
+	if (dump_all) {
+		dprint("eEvent:%s, nData1:0x%08x, nData2:0x%08x, pEventData:0x%p\n",
+			omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
+			(int)nData1, (int)nData2, pEventData);
+	}
 
 	err = omx_cbs.EventHandler(get_omx_component(), omx_cbs_priv,
 		eEvent, nData1, nData2, pEventData);
@@ -1265,6 +1347,7 @@ void *component::accept_command()
 				(int)cmd.cmd);
 			f_callback = false;
 			event_data = nullptr;
+
 			break;
 		}
 

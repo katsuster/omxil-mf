@@ -213,12 +213,13 @@ const char *omx_enum_name::get_OMX_ERRORTYPE_name(OMX_ERRORTYPE id)
 		break;
 	}
 
-	if (OMX_ErrorKhronosExtensions <= id && 
-		id < OMX_ErrorVendorStartUnused) {
+	//OMX_ERRORTYPE is 'signed' int and negative value
+	if (OMX_ErrorVendorStartUnused <= id &&
+		id < OMX_ErrorKhronosExtensions) {
 		name = "(OMX_ErrorKhronosExtensions)";
 	}
-	if (OMX_ErrorVendorStartUnused <= id && 
-		id < OMX_ErrorMax) {
+	if (OMX_ErrorMax <= id &&
+		id < OMX_ErrorVendorStartUnused) {
 		name = "(OMX_ErrorVendorStartUnused)";
 	}
 
