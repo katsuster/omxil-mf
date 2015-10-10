@@ -51,64 +51,6 @@ public:
 	virtual const char *get_name() const;
 
 	/**
-	 * ポートからの読み出し、または書き込みを禁止し、
-	 * 全ての待機しているスレッドを強制的に解除（シャットダウン）します。
-	 *
-	 * 強制解除されたスレッドは runtime_error をスローします。
-	 *
-	 * @param rd 以降の読み出しを禁止し、
-	 * 	読み出しの待機状態を解除する場合は true、
-	 * 	変更しない場合は false を指定します
-	 * @param wr 以降の書き込みを禁止し、
-	 * 	書き込みの待機状態を解除する場合は true、
-	 * 	変更しない場合は false を指定します
-	 */
-	virtual void shutdown(bool rd, bool wr);
-
-	/**
-	 * シャットダウン処理を中止し、
-	 * ポートからの読み出し、または書き込みを許可します。
-	 *
-	 * FIXME: シャットダウン処理の中止後、
-	 * ポートがシャットダウン前と同様に動作するかどうかは、
-	 * 各ポートの実装に依存します。
-	 *
-	 * @param rd 以降の読み出しを許可する場合は true、
-	 * 	変更しない場合は false を指定します
-	 * @param wr 以降の書き込みを許可する場合は true、
-	 * 	変更しない場合は false を指定します
-	 */
-	virtual void abort_shutdown(bool rd, bool wr);
-
-	/**
-	 * 読み出し側のシャットダウン処理中かどうかを取得します。
-	 *
-	 * @return 処理中ならば true、そうでなければ false
-	 */
-	virtual bool is_shutting_read();
-
-	/**
-	 * 書き込み側のシャットダウン処理中かどうかを取得します。
-	 *
-	 * @return 処理中ならば true、そうでなければ false
-	 */
-	virtual bool is_shutting_write();
-
-	/**
-	 * ポートが所属するコンポーネントを取得します。
-	 *
-	 * @return コンポーネントへのポインタ、属していなければ nullptr
-	 */
-	virtual const component *get_component() const;
-
-	/**
-	 * ポートが所属するコンポーネントを取得します。
-	 *
-	 * @return コンポーネントへのポインタ、属していなければ nullptr
-	 */
-	virtual component *get_component();
-
-	/**
 	 * ポートのインデックスを取得します。
 	 *
 	 * @return ポートのインデックス
@@ -173,6 +115,64 @@ public:
 	virtual void set_buffer_alignment(OMX_U32 v);
 
 
+	/**
+	 * ポートが所属するコンポーネントを取得します。
+	 *
+	 * @return コンポーネントへのポインタ、属していなければ nullptr
+	 */
+	virtual const component *get_component() const;
+
+	/**
+	 * ポートが所属するコンポーネントを取得します。
+	 *
+	 * @return コンポーネントへのポインタ、属していなければ nullptr
+	 */
+	virtual component *get_component();
+
+	/**
+	 * ポートからの読み出し、または書き込みを禁止し、
+	 * 全ての待機しているスレッドを強制的に解除（シャットダウン）します。
+	 *
+	 * 強制解除されたスレッドは runtime_error をスローします。
+	 *
+	 * @param rd 以降の読み出しを禁止し、
+	 * 	読み出しの待機状態を解除する場合は true、
+	 * 	変更しない場合は false を指定します
+	 * @param wr 以降の書き込みを禁止し、
+	 * 	書き込みの待機状態を解除する場合は true、
+	 * 	変更しない場合は false を指定します
+	 */
+	virtual void shutdown(bool rd, bool wr);
+
+	/**
+	 * シャットダウン処理を中止し、
+	 * ポートからの読み出し、または書き込みを許可します。
+	 *
+	 * FIXME: シャットダウン処理の中止後、
+	 * ポートがシャットダウン前と同様に動作するかどうかは、
+	 * 各ポートの実装に依存します。
+	 *
+	 * @param rd 以降の読み出しを許可する場合は true、
+	 * 	変更しない場合は false を指定します
+	 * @param wr 以降の書き込みを許可する場合は true、
+	 * 	変更しない場合は false を指定します
+	 */
+	virtual void abort_shutdown(bool rd, bool wr);
+
+	/**
+	 * 読み出し側のシャットダウン処理中かどうかを取得します。
+	 *
+	 * @return 処理中ならば true、そうでなければ false
+	 */
+	virtual bool is_shutting_read() const;
+
+	/**
+	 * 書き込み側のシャットダウン処理中かどうかを取得します。
+	 *
+	 * @return 処理中ならば true、そうでなければ false
+	 */
+	virtual bool is_shutting_write() const;
+
 	virtual OMX_BOOL get_no_buffer() const;
 	virtual void set_no_buffer(OMX_BOOL v);
 
@@ -199,7 +199,7 @@ public:
 	 * 	OMX_TRUE なら no buffer になるまで待ち、
 	 * 	OMX_FALSE なら no buffer ではなくなるまで待ちます。
 	 */
-	virtual void wait_no_buffer(OMX_BOOL v);
+	virtual void wait_no_buffer(OMX_BOOL v) const;
 
 	/**
 	 * ポートの 'populated', 'no buffer' 状態を更新します。
@@ -231,7 +231,7 @@ public:
 	 * 全てのバッファを EmptyBufferDone あるいは FillBufferDone にて、
 	 * 返却するまで待ちます。
 	 */
-	virtual void wait_buffer_returned();
+	virtual void wait_buffer_returned() const;
 
 	/**
 	 * Get OpenMAX IL definition data of this port.
@@ -700,7 +700,7 @@ public:
 	 * @param bufhead OpenMAX バッファヘッダ
 	 * @return 指定したバッファが見つかれば true、見つからなければ false
 	 */
-	virtual bool find_buffer(OMX_BUFFERHEADERTYPE *bufhead);
+	virtual bool find_buffer(const OMX_BUFFERHEADERTYPE *bufhead) const;
 
 	/**
 	 * バッファを検索します。
@@ -711,8 +711,25 @@ public:
 	 * @param pb ポートバッファ
 	 * @return 指定したバッファが見つかれば true、見つからなければ false
 	 */
-	virtual bool find_buffer(port_buffer *pb);
+	virtual bool find_buffer(const port_buffer *pb) const;
 
+	/**
+	 * クライアントから受け取ったが、
+	 * クライアントに返していないバッファをリストに追加します。
+	 *
+	 * @param pb ポートバッファ
+	 * @return OpenMAX エラー値
+	 */
+	OMX_ERRORTYPE add_held_buffer(const port_buffer *pb);
+
+	/**
+	 * クライアントから受け取ったが、
+	 * クライアントに返していないバッファをリストから削除します。
+	 *
+	 * @param pb ポートバッファ
+	 * @return OpenMAX エラー値
+	 */
+	OMX_ERRORTYPE remove_held_buffer(const port_buffer *pb);
 
 	//----------------------------------------
 	// コンポーネント利用者 → コンポーネントへのバッファ送付
@@ -831,7 +848,7 @@ protected:
 	 *
 	 * @param lock ポートのロック
 	 */
-	virtual void error_if_broken(std::unique_lock<std::recursive_mutex>& lock);
+	virtual void error_if_broken(std::unique_lock<std::recursive_mutex>& lock) const;
 
 	/**
 	 * ポートの待ちを強制キャンセルすべきかを取得します。
@@ -841,7 +858,7 @@ protected:
 	 *
 	 * @return 強制キャンセルすべきであれば true、そうでなければ false
 	 */
-	virtual bool is_broken();
+	virtual bool is_broken() const;
 
 	/**
 	 * 指定されたコンポーネントのポートと、トンネル接続します。
@@ -903,14 +920,9 @@ protected:
 
 private:
 	//ポートのロック
-	std::recursive_mutex mut;
+	mutable std::recursive_mutex mut;
 	//ポートの状態変数
-	std::condition_variable_any cond;
-	//待機の強制解除フラグ
-	bool shutting_read, shutting_write;
-
-	//ポートが所属するコンポーネント
-	component *comp;
+	mutable std::condition_variable_any cond;
 
 	//以下 OMX_PARAM_PORTDEFINITIONTYPE に基づくメンバ
 
@@ -926,6 +938,13 @@ private:
 	OMX_U32 buffer_alignment;
 
 	//以上 OMX_PARAM_PORTDEFINITIONTYPE に基づくメンバ
+
+
+	//ポートが所属するコンポーネント
+	component *comp;
+
+	//待機の強制解除フラグ
+	bool shutting_read, shutting_write;
 
 	//ポートに使用可能なバッファが一つもないことを示すフラグ
 	OMX_BOOL f_no_buffer;
@@ -947,7 +966,13 @@ private:
 
 	//使用可能バッファ登録リスト
 	std::vector<port_buffer *> list_bufs;
-	std::recursive_mutex mut_list_bufs;
+	mutable std::recursive_mutex mut_list_bufs;
+
+	//クライアントから受け取ったが、クライアントに返していない
+	//バッファのリスト
+	//ポートのフラッシュ時にリスト内のバッファを強制的に返却します。
+	std::vector<port_buffer> list_held_bufs;
+	mutable std::recursive_mutex mut_list_held_bufs;
 
 	//バッファ送出用リングバッファ
 	ring_buffer<port_buffer> *ring_send;

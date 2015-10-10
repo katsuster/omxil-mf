@@ -11,12 +11,12 @@
 namespace mf {
 
 port::port(int ind, component *c)
-	: shutting_read(false), shutting_write(false), comp(c),
-	port_index(ind), dir(OMX_DirMax),
+	: port_index(ind), dir(OMX_DirMax),
 	buffer_count_actual(0), buffer_count_min(0), buffer_size(0),
 	f_enabled(OMX_TRUE), f_populated(OMX_FALSE),
 	domain(OMX_PortDomainMax),
 	buffers_contiguous(OMX_FALSE), buffer_alignment(0),
+	comp(c), shutting_read(false), shutting_write(false),
 	f_no_buffer(OMX_TRUE),
 	f_tunneled(OMX_FALSE), tunneled_comp(nullptr),
 	tunneled_port(0), f_tunneled_supplier(OMX_FALSE),
@@ -85,55 +85,6 @@ port::~port()
 const char *port::get_name() const
 {
 	return "port";
-}
-
-const component *port::get_component() const
-{
-	return comp;
-}
-
-
-component *port::get_component()
-{
-	return comp;
-}
-
-void port::shutdown(bool rd, bool wr)
-{
-	scoped_log_begin;
-	std::lock_guard<std::recursive_mutex> lk_port(mut);
-
-	if (rd) {
-		shutting_read = true;
-	}
-	if (wr) {
-		shutting_write = true;
-	}
-	cond.notify_all();
-}
-
-void port::abort_shutdown(bool rd, bool wr)
-{
-	scoped_log_begin;
-	std::lock_guard<std::recursive_mutex> lk_port(mut);
-
-	if (rd) {
-		shutting_read = false;
-	}
-	if (wr) {
-		shutting_write = false;
-	}
-	cond.notify_all();
-}
-
-bool port::is_shutting_read()
-{
-	return shutting_read;
-}
-
-bool port::is_shutting_write()
-{
-	return shutting_write;
 }
 
 
@@ -260,6 +211,55 @@ void port::set_buffer_alignment(OMX_U32 v)
 //以上 OMX_PARAM_PORTDEFINITIONTYPE に基づくメンバ
 
 
+const component *port::get_component() const
+{
+	return comp;
+}
+
+
+component *port::get_component()
+{
+	return comp;
+}
+
+void port::shutdown(bool rd, bool wr)
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
+
+	if (rd) {
+		shutting_read = true;
+	}
+	if (wr) {
+		shutting_write = true;
+	}
+	cond.notify_all();
+}
+
+void port::abort_shutdown(bool rd, bool wr)
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
+
+	if (rd) {
+		shutting_read = false;
+	}
+	if (wr) {
+		shutting_write = false;
+	}
+	cond.notify_all();
+}
+
+bool port::is_shutting_read() const
+{
+	return shutting_read;
+}
+
+bool port::is_shutting_write() const
+{
+	return shutting_write;
+}
+
 OMX_BOOL port::get_no_buffer() const
 {
 	return f_no_buffer;
@@ -274,7 +274,7 @@ void port::set_no_buffer(OMX_BOOL v)
 	cond.notify_all();
 }
 
-void port::wait_no_buffer(OMX_BOOL v)
+void port::wait_no_buffer(OMX_BOOL v) const
 {
 	scoped_log_begin;
 	std::unique_lock<std::recursive_mutex> lk_port(mut);
@@ -298,12 +298,13 @@ void port::update_buffer_status()
 	}
 }
 
-void port::wait_buffer_returned()
+void port::wait_buffer_returned() const
 {
 	scoped_log_begin;
 	std::unique_lock<std::recursive_mutex> lk_port(mut);
 
-	cond.wait(lk_port, [&] { return is_broken() || bound_ret->size() == 0; });
+	cond.wait(lk_port, [&] { return is_broken() ||
+		bound_send->get_write_count() == bound_ret->get_read_count(); });
 	error_if_broken(lk_port);
 }
 
@@ -555,12 +556,22 @@ OMX_ERRORTYPE port::flush_buffers()
 {
 	scoped_log_begin;
 	std::unique_lock<std::recursive_mutex> lk_port(mut);
+	std::vector<port_buffer> list_held_copy = list_held_bufs;
 
 	if (!get_enabled()) {
 		errprint("port %d is disabled.\n",
 			(int)get_port_index());
 		return OMX_ErrorIncorrectStateOperation;
 	}
+
+	//TODO: クライアントから受け取ったが返していないバッファを返却する
+	//      flush メソッドとコンポーネントが同時に動作すると、
+	//      同一のバッファが 2回返却されるかのうせいがある。
+	//      返却する前に、コンポーネント側の動作を確実に止める必要がある。
+	//for (port_buffer pb_held : list_held_copy) {
+	//	bound_ret->write_fully(&pb_held, 1);
+	//	cond.notify_all();
+	//}
 
 	//NOTE: flush の前に shutdown し、
 	//バッファ処理要求の read/write を停止させる必要があります。
@@ -1138,7 +1149,7 @@ OMX_ERRORTYPE port::free_buffer(port_buffer *pb)
 	return free_buffer(pb->header);
 }
 
-bool port::find_buffer(OMX_BUFFERHEADERTYPE *bufhead)
+bool port::find_buffer(const OMX_BUFFERHEADERTYPE *bufhead) const
 {
 	std::lock_guard<std::recursive_mutex> lk_buf(mut_list_bufs);
 
@@ -1152,9 +1163,39 @@ bool port::find_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 	return false;
 }
 
-bool port::find_buffer(port_buffer *pb)
+bool port::find_buffer(const port_buffer *pb) const
 {
 	return find_buffer(pb->header);
+}
+
+OMX_ERRORTYPE port::add_held_buffer(const port_buffer *pb)
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lk_held(mut_list_held_bufs);
+
+	list_held_bufs.push_back(*pb);
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port::remove_held_buffer(const port_buffer *pb)
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lk_held(mut_list_held_bufs);
+
+	for (auto it = list_held_bufs.begin(); it != list_held_bufs.end(); it++) {
+		if (it->header->pBuffer == pb->header->pBuffer) {
+			//found
+			list_held_bufs.erase(it);
+			return OMX_ErrorNone;
+		}
+	}
+
+	//not found
+	errprint("port_buffer:%p (buffer:%p) is not found.\n",
+		pb, pb->header->pBuffer);
+
+	return OMX_ErrorBadParameter;
 }
 
 
@@ -1218,11 +1259,14 @@ OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 		pb.header     = bufhead;
 		pb.index      = bufhead->nOffset;
 
+		add_held_buffer(&pb);
 		bound_send->write_fully(&pb, 1);
 
 		err = OMX_ErrorNone;
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: %s\n", e.what());
+
+		remove_held_buffer(&pb);
 
 		err = OMX_ErrorInsufficientResources;
 	}
@@ -1342,7 +1386,7 @@ const std::vector<port_format>& port::get_port_format_list() const
 	return formats;
 }
 
-void port::error_if_broken(std::unique_lock<std::recursive_mutex>& lk_port)
+void port::error_if_broken(std::unique_lock<std::recursive_mutex>& lk_port) const
 {
 	if (is_broken()) {
 		std::string msg(__func__);
@@ -1351,7 +1395,7 @@ void port::error_if_broken(std::unique_lock<std::recursive_mutex>& lk_port)
 	}
 }
 
-bool port::is_broken()
+bool port::is_broken() const
 {
 	return is_shutting_read() && is_shutting_write();
 }
@@ -1372,6 +1416,8 @@ void *port::buffer_done()
 		//blocked read
 		bound_ret->read_fully(&pb, 1);
 		cond.notify_all();
+
+		remove_held_buffer(&pb);
 
 		comp = pb.p->get_component();
 
