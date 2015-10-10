@@ -113,7 +113,7 @@ void component::set_state(OMX_STATETYPE s)
 	cond.notify_all();
 }
 
-void component::wait_state(OMX_STATETYPE s)
+void component::wait_state(OMX_STATETYPE s) const
 {
 	std::unique_lock<std::mutex> lock(mut);
 
@@ -121,7 +121,7 @@ void component::wait_state(OMX_STATETYPE s)
 	error_if_broken(lock);
 }
 
-void component::wait_state_multiple(int cnt, ...)
+void component::wait_state_multiple(int cnt, ...) const
 {
 	std::unique_lock<std::mutex> lock(mut);
 	va_list ap;
@@ -173,11 +173,9 @@ const void *component::get_callbacks_data() const
 	return omx_cbs_priv;
 }
 
-port *component::find_port(OMX_U32 index)
+const port *component::find_port(OMX_U32 index) const
 {
-	component::portmap_t::iterator ret;
-
-	ret = map_ports.find(index);
+	auto ret = map_ports.find(index);
 	if (ret == map_ports.end()) {
 		//not found
 		return nullptr;
@@ -186,7 +184,18 @@ port *component::find_port(OMX_U32 index)
 	return &ret->second;
 }
 
-void component::wait_all_port_buffer_returned()
+port *component::find_port(OMX_U32 index)
+{
+	auto ret = map_ports.find(index);
+	if (ret == map_ports.end()) {
+		//not found
+		return nullptr;
+	}
+
+	return &ret->second;
+}
+
+void component::wait_all_port_buffer_returned() const
 {
 	scoped_log_begin;
 
@@ -197,13 +206,7 @@ void component::wait_all_port_buffer_returned()
 	}
 }
 
-void component::run()
-{
-	scoped_log_begin;
-	//do nothing
-}
-
-bool component::should_run()
+bool component::should_run() const
 {
 	return running_main;
 }
@@ -1138,20 +1141,21 @@ OMX_ERRORTYPE component::EventHandler(OMX_EVENTTYPE eEvent, OMX_U32 nData1, OMX_
 	case OMX_EventComponentResumed:
 	case OMX_EventDynamicResourcesAvailable:
 	//case OMX_EventPortFormatDetected:
+		dump_all = true;
 		break;
 	//case OMX_EventIndexSettingChanged:
-		dprint("eEvent:%s, Port:%d, Param:%d(%s).\n",
-			omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
-			(int)nData1,
-			(int)nData2, omx_enum_name::get_OMX_INDEXTYPE_name((OMX_INDEXTYPE)nData2));
-		break;
+	//	dprint("eEvent:%s, Port:%d, Param:%d(%s).\n",
+	//		omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
+	//		(int)nData1,
+	//		(int)nData2, omx_enum_name::get_OMX_INDEXTYPE_name((OMX_INDEXTYPE)nData2));
+	//	break;
 	//case OMX_EventPortNeedsDisable:
 	//case OMX_EventPortNeedsFlush:
-		dprint("eEvent:%s, Port:%d, Requested:%d.\n",
-			omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
-			(int)nData1,
-			(int)nData2);
-		break;
+	//	dprint("eEvent:%s, Port:%d, Requested:%d.\n",
+	//		omx_enum_name::get_OMX_EVENTTYPE_name(eEvent),
+	//		(int)nData1,
+	//		(int)nData2);
+	//	break;
 	default:
 		//Unknown
 		dump_all = true;
@@ -1214,16 +1218,13 @@ OMX_ERRORTYPE component::FillBufferDone(port_buffer *pb)
 
 
 /*
- * protected functions
+ * protected functions (Maybe override by derived classes)
  */
 
-void component::error_if_broken(std::unique_lock<std::mutex>& lock)
+void component::run()
 {
-	if (broken) {
-		std::string msg(__func__);
-		msg += ": interrupted.";
-		throw std::runtime_error(msg);
-	}
+	scoped_log_begin;
+	//do nothing
 }
 
 OMX_U32 component::get_audio_ports()
@@ -1264,6 +1265,20 @@ OMX_U32 component::get_other_ports()
 OMX_U32 component::get_other_start_port()
 {
 	return 0;
+}
+
+
+/*
+ * protected functions (API for derived classes)
+ */
+
+void component::error_if_broken(std::unique_lock<std::mutex>& lock) const
+{
+	if (broken) {
+		std::string msg(__func__);
+		msg += ": interrupted.";
+		throw std::runtime_error(msg);
+	}
 }
 
 void *component::accept_command()

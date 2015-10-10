@@ -82,7 +82,7 @@ public:
 	 *
 	 * @param s 待ちたいコンポーネントの状態
 	 */
-	virtual void wait_state(OMX_STATETYPE s);
+	virtual void wait_state(OMX_STATETYPE s) const;
 
 	/**
 	 * OpenMAX コンポーネントの状態変化を待ちます。
@@ -96,7 +96,7 @@ public:
 	 * @param cnt 待ちたいコンポーネントの状態の数（16個以下）
 	 * @param ... 待ちたいコンポーネントの状態
 	 */
-	virtual void wait_state_multiple(int cnt, ...);
+	virtual void wait_state_multiple(int cnt, ...) const;
 
 	/**
 	 * 全ての待機しているスレッドを強制的に解除します。
@@ -126,41 +126,27 @@ public:
 	 * @param index ポート番号
 	 * @return ポートへのポインタ、存在しない場合は nullptr
 	 */
+	virtual const port *find_port(OMX_U32 index) const;
+
+	/**
+	 * 指定された番号のポートを検索します。
+	 *
+	 * @param index ポート番号
+	 * @return ポートへのポインタ、存在しない場合は nullptr
+	 */
 	virtual port *find_port(OMX_U32 index);
 
 	/**
 	 * 全ての有効なポートがバッファを返却するまで待ちます。
 	 */
-	virtual void wait_all_port_buffer_returned();
-
-	/**
-	 * コンポーネントのメイン処理を行います。
-	 *
-	 * FIXME: このメンバ関数は純粋仮想関数にしないでください。
-	 * 
-	 * このメンバ関数は何もしませんが、
-	 * コンポーネント破棄の途中で呼び出される可能性があるため、
-	 * 純粋仮想関数として定義するとプロセスがクラッシュします。
-	 *
-	 * 実行中のコンポーネントを OMX_FreeHandle にて破棄するとき、
-	 * 1) 派生クラスのデストラクタ
-	 * 2) このクラスのデストラクタ
-	 * の順に呼び出されます。
-	 *
-	 * 派生クラスのデストラクタが終了した時点で、
-	 * 派生クラスの virtual メンバ関数は呼び出せなくなります。
-	 * 2) の時点で th_main スレッドが run() を呼び出すと、
-	 * 本来呼び出すべきだった派生クラスの run() は呼ばれず、
-	 * このクラスの run() が呼ばれ、プロセスがクラッシュします。
-	 */
-	virtual void run();
+	virtual void wait_all_port_buffer_returned() const;
 
 	/**
 	 * コンポーネントのメイン処理の実行を続けるべきか取得します。
 	 *
 	 * @return 実行を続けるべきなら true、停止すべきなら false
 	 */
-	virtual bool should_run();
+	virtual bool should_run() const;
 
 	/**
 	 * コンポーネントのメイン処理の中断を要求します。
@@ -201,12 +187,28 @@ public:
 
 protected:
 	/**
-	 * OpenMAX コンポーネントの待ちを強制キャンセルすべきか、
-	 * そうでないかをチェックし、キャンセルすべきなら例外をスローします。
+	 * コンポーネントのメイン処理を行います。
 	 *
-	 * @param lock コンポーネントのロック
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * FIXME: このメンバ関数は純粋仮想関数にしないでください。
+	 *
+	 * このメンバ関数は何もしませんが、
+	 * コンポーネント破棄の途中で呼び出される可能性があるため、
+	 * 純粋仮想関数として定義するとプロセスがクラッシュします。
+	 *
+	 * 実行中のコンポーネントを OMX_FreeHandle にて破棄するとき、
+	 * 1) 派生クラスのデストラクタ
+	 * 2) このクラスのデストラクタ
+	 * の順に呼び出されます。
+	 *
+	 * 派生クラスのデストラクタが終了した時点で、
+	 * 派生クラスの virtual メンバ関数は呼び出せなくなります。
+	 * 2) の時点で th_main スレッドが run() を呼び出すと、
+	 * 本来呼び出すべきだった派生クラスの run() は呼ばれず、
+	 * このクラスの run() が呼ばれ、プロセスがクラッシュします。
 	 */
-	virtual void error_if_broken(std::unique_lock<std::mutex>& lock);
+	virtual void run();
 
 	/**
 	 * OMX_GetParameter(OMX_IndexParamAudioInit) にて返す、
@@ -287,6 +289,16 @@ protected:
 	 * 必要に応じて派生クラスにてオーバライドしてください。
 	 */
 	virtual OMX_U32 get_other_start_port();
+
+
+protected:
+	/**
+	 * OpenMAX コンポーネントの待ちを強制キャンセルすべきか、
+	 * そうでないかをチェックし、キャンセルすべきなら例外をスローします。
+	 *
+	 * @param lock コンポーネントのロック
+	 */
+	virtual void error_if_broken(std::unique_lock<std::mutex>& lock) const;
 
 	/**
 	 * OMX_SendCommand にて送られたコマンドを処理します。
@@ -522,9 +534,9 @@ protected:
 
 private:
 	//コンポーネントのロック
-	std::mutex mut;
+	mutable std::mutex mut;
 	//コンポーネントの状態変数
-	std::condition_variable cond;
+	mutable std::condition_variable cond;
 	//待機の強制解除フラグ
 	bool broken;
 
