@@ -298,16 +298,6 @@ void port::update_buffer_status()
 	}
 }
 
-void port::wait_buffer_returned() const
-{
-	scoped_log_begin;
-	std::unique_lock<std::recursive_mutex> lk_port(mut);
-
-	cond.wait(lk_port, [&] { return is_broken() ||
-		bound_send->get_write_count() == bound_ret->get_read_count(); });
-	error_if_broken(lk_port);
-}
-
 const OMX_PARAM_PORTDEFINITIONTYPE *port::get_definition() const
 {
 	scoped_log_begin;
@@ -611,6 +601,16 @@ OMX_ERRORTYPE port::end_flush()
 	bound_send->abort_shutdown(true, true);
 
 	return OMX_ErrorNone;
+}
+
+void port::wait_buffer_returned() const
+{
+	scoped_log_begin;
+	std::unique_lock<std::recursive_mutex> lk_port(mut);
+
+	cond.wait(lk_port, [&] { return is_broken() ||
+		bound_send->get_write_count() == bound_ret->get_read_count(); });
+	error_if_broken(lk_port);
 }
 
 OMX_ERRORTYPE port::component_tunnel_request(OMX_HANDLETYPE omx_comp, OMX_U32 index, OMX_TUNNELSETUPTYPE *setup)

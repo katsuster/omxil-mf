@@ -211,13 +211,66 @@ public:
 	 */
 	virtual void wait_populated(OMX_BOOL v);
 
+	/**
+	 * ポートの種別を取得します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::eDomain に相当します。
+	 *
+	 * @return ポートの種別
+	 */
 	virtual OMX_PORTDOMAINTYPE get_domain() const;
+
+	/**
+	 * ポートの種別を設定します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::eDomain に相当します。
+	 *
+	 * @param v ポートの種別
+	 */
 	virtual void set_domain(OMX_PORTDOMAINTYPE v);
 
+	/**
+	 * バッファが物理アドレス上連続でなければならないかどうかを取得します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::bBuffersContiguous に相当します。
+	 *
+	 * @return 物理アドレス上連続でなければならないならば OMX_TRUE、
+	 * そうでなければ OMX_FALSE
+	 */
 	virtual OMX_BOOL get_buffers_contiguous() const;
+
+	/**
+	 * バッファが物理アドレス上連続でなければならないかどうかを設定します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::bBuffersContiguous に相当します。
+	 *
+	 * @param v 物理アドレス上連続でなければならないならば OMX_TRUE、
+	 * そうでなければ OMX_FALSE
+	 */
 	virtual void set_buffers_contiguous(OMX_BOOL v);
 
+	/**
+	 * バッファをアラインメントすべきアドレスを取得します。
+	 *
+	 * 例えば 4 ならば、バッファは 4バイト境界に
+	 * アラインメントされていなければなりません。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::nBufferAlignment に相当します。
+	 *
+	 * @return アラインメントすべきアドレス、0 ならばアラインメント不要
+	 */
 	virtual OMX_U32 get_buffer_alignment() const;
+
+	/**
+	 * バッファをアラインメントすべきアドレスを設定します。
+	 *
+	 * 例えば 4 ならば、バッファは 4バイト境界に
+	 * アラインメントされていなければなりません。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::nBufferAlignment に相当します。
+	 *
+	 * @param v アラインメントすべきアドレス、0 ならばアラインメント不要
+	 */
 	virtual void set_buffer_alignment(OMX_U32 v);
 
 
@@ -279,7 +332,34 @@ public:
 	 */
 	virtual bool is_shutting_write() const;
 
+	/**
+	 * ポートのバッファが全て解放されているかどうか取得します。
+	 *
+	 * 注: 'no buffer' はこのライブラリ独自の用語です。
+	 * OpenMAX IL の用語ではありません。
+	 *
+	 * 'no buffer' とはポートが enabled であり、なおかつ、
+	 * OMX_FreeBuffer にて全てのバッファが解放され、
+	 * OMX_StateLoaded に遷移する準備ができている状態を指します。
+	 *
+	 * @return バッファが全て解放されていれば OMX_TRUE、
+	 * そうでなければ OMX_FALSE
+	 */
 	virtual OMX_BOOL get_no_buffer() const;
+
+	/**
+	 * ポートのバッファが全て解放されているかどうか設定します。
+	 *
+	 * 注: 'no buffer' はこのライブラリ独自の用語です。
+	 * OpenMAX IL の用語ではありません。
+	 *
+	 * 'no buffer' とはポートが enabled であり、なおかつ、
+	 * OMX_FreeBuffer にて全てのバッファが解放され、
+	 * OMX_StateLoaded に遷移する準備ができている状態を指します。
+	 *
+	 * @param v バッファが全て解放されていれば OMX_TRUE、
+	 * そうでなければ OMX_FALSE
+	 */
 	virtual void set_no_buffer(OMX_BOOL v);
 
 	/**
@@ -332,12 +412,6 @@ public:
 	 * </pre>
 	 */
 	virtual void update_buffer_status();
-
-	/**
-	 * 全てのバッファを EmptyBufferDone あるいは FillBufferDone にて、
-	 * 返却するまで待ちます。
-	 */
-	virtual void wait_buffer_returned() const;
 
 	/**
 	 * Get OpenMAX IL definition data of this port.
@@ -690,6 +764,12 @@ public:
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE end_flush();
+
+	/**
+	 * 全てのバッファを EmptyBufferDone あるいは FillBufferDone にて、
+	 * 返却するまで待ちます。
+	 */
+	virtual void wait_buffer_returned() const;
 
 	/**
 	 * 指定されたコンポーネントのポートと、トンネル接続します。
