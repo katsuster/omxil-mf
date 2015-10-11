@@ -53,6 +53,8 @@ public:
 	/**
 	 * ポートのインデックスを取得します。
 	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::nPortIndex に相当します。
+	 *
 	 * @return ポートのインデックス
 	 */
 	virtual OMX_U32 get_port_index() const;
@@ -60,26 +62,130 @@ public:
 	/**
 	 * ポートのインデックスを設定します。
 	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::nPortIndex に相当します。
+	 *
 	 * @param v ポートのインデックス
 	 */
 	virtual void set_port_index(OMX_U32 v);
 
+	/**
+	 * ポートの入出力方向を取得します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::eDir に相当します。
+	 *
+	 * @return ポートの入出力方向
+	 */
 	virtual OMX_DIRTYPE get_dir() const;
+
+	/**
+	 * ポートの入出力方向を設定します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::eDir に相当します。
+	 *
+	 * @param v ポートの入出力方向
+	 */
 	virtual void set_dir(OMX_DIRTYPE v);
 
+	/**
+	 * ポートが持つバッファ数を取得します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::nBufferCountActual に相当します。
+	 *
+	 * @return ポートが持つバッファ数
+	 */
 	virtual OMX_U32 get_buffer_count_actual() const;
+
+	/**
+	 * ポートが持つバッファ数を設定します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::nBufferCountActual に相当します。
+	 *
+	 * @param v ポートが持つバッファ数
+	 */
 	virtual void set_buffer_count_actual(OMX_U32 v);
 
+	/**
+	 * ポートが持つ最小のバッファ数を取得します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::nBufferCountMin に相当します。
+	 *
+	 * @return ポートの最小バッファ数
+	 */
 	virtual OMX_U32 get_buffer_count_min() const;
+
+	/**
+	 * ポートが持つ最小のバッファ数を設定します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::nBufferCountMin に相当します。
+	 *
+	 * @param v ポートの最小バッファ数
+	 */
 	virtual void set_buffer_count_min(OMX_U32 v);
 
+	/**
+	 * ポートのバッファサイズを取得します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::nBufferSize に相当します。
+	 *
+	 * @return ポートのバッファサイズ
+	 */
 	virtual OMX_U32 get_buffer_size() const;
+
+	/**
+	 * ポートのバッファサイズを設定します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::nBufferSize に相当します。
+	 *
+	 * @param v ポートのバッファサイズ
+	 */
 	virtual void set_buffer_size(OMX_U32 v);
 
+	/**
+	 * ポートの有効、無効を取得します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::bEnabled に相当します。
+	 *
+	 * @return ポートが有効ならば OMX_TRUE、無効 ならば OMX_FALSE
+	 */
 	virtual OMX_BOOL get_enabled() const;
+
+	/**
+	 * ポートの有効、無効を設定します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::bEnabled に相当します。
+	 *
+	 * @param v ポートが有効ならば OMX_TRUE、無効ならば OMX_FALSE
+	 */
 	virtual void set_enabled(OMX_BOOL v);
 
+	/**
+	 * ポートが 'populated' かどうかを取得します。
+	 *
+	 * 'populated' とはポートが enabled であり、なおかつ、
+	 * nBufferCountActual で示す数だけ、
+	 * OMX_UseBuffer または OMX_AllocateBuffer にてバッファが確保され、
+	 * OMX_StateIdle に遷移する準備ができている状態を指します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::bPopulated に相当します。
+	 *
+	 * @return ポートが 'populated' ならば OMX_TRUE、
+	 * そうでなければ OMX_FALSE
+	 */
 	virtual OMX_BOOL get_populated() const;
+
+	/**
+	 * ポートが 'populated' かどうかを設定します。
+	 *
+	 * 'populated' とはポートが enabled であり、なおかつ、
+	 * nBufferCountActual で示す数だけ、
+	 * OMX_UseBuffer または OMX_AllocateBuffer にてバッファが確保され、
+	 * OMX_StateIdle に遷移する準備ができている状態を指します。
+	 *
+	 * OMX_PARAM_PORTDEFINITIONTYPE::bPopulated に相当します。
+	 *
+	 * @param v ポートが 'populated' ならば OMX_TRUE、
+	 * そうでなければ OMX_FALSE
+	 */
 	virtual void set_populated(OMX_BOOL v);
 
 	/**
@@ -496,7 +602,6 @@ public:
 	 * get_port_format(default_format_index);
 	 * </pre>
 	 *
-	 * @param index データ形式のインデックス
 	 * @return データ形式へのポインタ
 	 */
 	virtual const port_format *get_default_format() const;
@@ -526,7 +631,7 @@ public:
 	 * port->set_port_format(&pfmt);
 	 * </pre>
 	 *
-	 * @param index データ形式のインデックス
+	 * @param f ポートのデータ形式
 	 * @return OpenMAX エラー値
 	 *     OMX_ErrorBadParameter      : データ形式に何も指定していない、
 	 *                                  もしくは矛盾している
@@ -640,6 +745,9 @@ public:
 	 * </pre>
 	 *
 	 * @param bufhead OpenMAX バッファヘッダを受け取るためのポインタ
+	 * @param priv    アプリケーション（pAppPrivate）で使うデータのポインタ
+	 * @param size    バッファサイズ
+	 * @param buf     バッファ
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE use_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size, OMX_U8 *buf);
@@ -671,6 +779,8 @@ public:
 	 * </pre>
 	 *
 	 * @param bufhead OpenMAX バッファヘッダを受け取るためのポインタ
+	 * @param priv    アプリケーション（pAppPrivate）で使うデータのポインタ
+	 * @param size    確保するバッファサイズ
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE allocate_buffer(OMX_BUFFERHEADERTYPE **bufhead, OMX_PTR priv, OMX_U32 size);

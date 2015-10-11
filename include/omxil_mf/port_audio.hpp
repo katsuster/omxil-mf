@@ -55,7 +55,7 @@ public:
 	 * }
 	 * </pre>
 	 *
-	 * @return port definition data of OpenMAX IL
+	 * @return Port definition data
 	 */
 	virtual const OMX_PARAM_PORTDEFINITIONTYPE *get_definition() const override;
 
@@ -78,6 +78,7 @@ public:
 	 * }
 	 * </pre>
 	 *
+	 * @param v Port definition data
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v) override;
@@ -101,6 +102,7 @@ public:
 	 * }
 	 * </pre>
 	 *
+	 * @param v Port definition data
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE set_definition_from_client(const OMX_PARAM_PORTDEFINITIONTYPE& v) override;
@@ -120,7 +122,6 @@ public:
 	/**
 	 * ポートがデフォルトでサポートするオーディオデータ形式を取得します。
 	 *
-	 * @param index データ形式のインデックス
 	 * @return データ形式へのポインタ
 	 */
 	virtual const OMX_AUDIO_PARAM_PORTFORMATTYPE *get_default_format_audio() const;

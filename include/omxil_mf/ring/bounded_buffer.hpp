@@ -278,7 +278,8 @@ public:
 	/**
 	 * 任意の要素をリングバッファから読み込みます。
 	 *
-	 * @param transform 変換関数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 * @return 任意の要素
 	 */
 	template <class U>
@@ -293,9 +294,10 @@ public:
 	/**
 	 * 配列をリングバッファから読み込みます。
 	 *
-	 * @param buf   リングバッファから読み込んだ要素を格納する配列
-	 * @param count リングバッファから読み込む数
-	 * @param transform 変換関数
+	 * @param buf     リングバッファから読み込んだ要素を格納する配列
+	 * @param count   リングバッファから読み込む数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
 	size_type read_array(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
@@ -307,8 +309,9 @@ public:
 	/**
 	 * 任意の要素をリングバッファに書き込みます。
 	 *
-	 * @param buf   リングバッファに書き込む要素
-	 * @param transform 変換関数
+	 * @param buf     リングバッファに書き込む要素
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 */
 	/*template <class U>
 	void write(const U& buf, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
@@ -318,9 +321,10 @@ public:
 	/**
 	 * 配列をリングバッファに書き込みます。
 	 *
-	 * @param buf   リングバッファに書き込む要素の配列
-	 * @param count リングバッファに書き込む数
-	 * @param transform 変換関数
+	 * @param buf     リングバッファに書き込む要素の配列
+	 * @param count   リングバッファに書き込む数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
 	/*size_type write_array(const T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
@@ -332,9 +336,10 @@ public:
 	/**
 	 * 別のリングバッファからコピーします。
 	 *
-	 * @param src   コピー元のリングバッファ
-	 * @param count リングバッファから読み込む数
-	 * @param transform 変換関数
+	 * @param src     コピー元のリングバッファ
+	 * @param count   リングバッファから読み込む数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
 	/*size_type copy_array(this_type *src, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
@@ -373,7 +378,8 @@ public:
 	 *
 	 * 指定した要素を読み込むまでブロックします。
 	 *
-	 * @param transform 変換関数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ要素
 	 */
 	template <class U>
@@ -392,7 +398,8 @@ public:
 	 *
 	 * @param buf   リングバッファから読み込んだ要素を格納する配列
 	 * @param count リングバッファから読み込む数
-	 * @param transform 変換関数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
 	size_type read_fully(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
@@ -413,8 +420,9 @@ public:
 	 *
 	 * 指定した要素を書き込むまでブロックします。
 	 *
-	 * @param buf リングバッファに書き込む要素
-	 * @param transform 変換関数
+	 * @param buf     リングバッファに書き込む要素
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 */
 	template <class U>
 	void write_fully(const U& buf, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
@@ -426,9 +434,10 @@ public:
 	 *
 	 * 指定した要素数を書き込むまでブロックします。
 	 *
-	 * @param buf   リングバッファに書き込む要素の配列
-	 * @param count リングバッファに書き込む数
-	 * @param transform 変換関数
+	 * @param buf     リングバッファに書き込む要素の配列
+	 * @param count   リングバッファに書き込む数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
 	size_type write_fully(const T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
@@ -449,9 +458,10 @@ public:
 	 *
 	 * 指定した要素数を書き込むまでブロックします。
 	 *
-	 * @param src   コピー元のリングバッファ
-	 * @param count リングバッファから読み込む数
-	 * @param transform 変換関数
+	 * @param src     コピー元のリングバッファ
+	 * @param count   リングバッファから読み込む数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
 	/*size_type copy_array_fully(this_type *src, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
@@ -599,9 +609,10 @@ protected:
 	 *
 	 * ロックを確保してから呼び出します。
 	 *
-	 * @param buf   リングバッファから読み込んだ要素を格納する配列
-	 * @param count リングバッファから読み込む数
-	 * @param transform 変換関数
+	 * @param buf     リングバッファから読み込んだ要素を格納する配列
+	 * @param count   リングバッファから読み込む数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
 	size_type read_array_with_lock(T *buf, size_type count, transform_func_t rdtrans, transform_func_t wrtrans) {
@@ -619,9 +630,10 @@ protected:
 	 *
 	 * ロックを確保してから呼び出します。
 	 *
-	 * @param buf   リングバッファに書き込む要素の配列
-	 * @param count リングバッファに書き込む数
-	 * @param transform 変換関数
+	 * @param buf     リングバッファに書き込む要素の配列
+	 * @param count   リングバッファに書き込む数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
 	size_type write_array_with_lock(const T *buf, size_type count, transform_func_t rdtrans, transform_func_t wrtrans) {
@@ -639,9 +651,10 @@ protected:
 	 *
 	 * ロックを確保してから呼び出します。
 	 *
-	 * @param src   コピー元のリングバッファ
-	 * @param count リングバッファから読み込む数
-	 * @param transform 変換関数
+	 * @param src     コピー元のリングバッファ
+	 * @param count   リングバッファから読み込む数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
 	/*size_type copy_array_with_lock(this_type *src, size_type count, transform_func_t rdtrans, transform_func_t wrtrans) {
