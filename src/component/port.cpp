@@ -1171,7 +1171,7 @@ bool port::find_buffer(const port_buffer *pb) const
 OMX_ERRORTYPE port::add_held_buffer(const port_buffer *pb)
 {
 	scoped_log_begin;
-	std::lock_guard<std::recursive_mutex> lk_held(mut_list_held_bufs);
+	std::lock_guard<std::recursive_mutex> lk_buf(mut_list_bufs);
 
 	list_held_bufs.push_back(*pb);
 
@@ -1181,7 +1181,7 @@ OMX_ERRORTYPE port::add_held_buffer(const port_buffer *pb)
 OMX_ERRORTYPE port::remove_held_buffer(const port_buffer *pb)
 {
 	scoped_log_begin;
-	std::lock_guard<std::recursive_mutex> lk_held(mut_list_held_bufs);
+	std::lock_guard<std::recursive_mutex> lk_buf(mut_list_bufs);
 
 	for (auto it = list_held_bufs.begin(); it != list_held_bufs.end(); it++) {
 		if (it->header->pBuffer == pb->header->pBuffer) {

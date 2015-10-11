@@ -966,13 +966,10 @@ private:
 
 	//使用可能バッファ登録リスト
 	std::vector<port_buffer *> list_bufs;
-	mutable std::recursive_mutex mut_list_bufs;
-
-	//クライアントから受け取ったが、クライアントに返していない
-	//バッファのリスト
+	//クライアントから受け取ったが、未返却のバッファのリスト
 	//ポートのフラッシュ時にリスト内のバッファを強制的に返却します。
 	std::vector<port_buffer> list_held_bufs;
-	mutable std::recursive_mutex mut_list_held_bufs;
+	mutable std::recursive_mutex mut_list_bufs;
 
 	//バッファ送出用リングバッファ
 	ring_buffer<port_buffer> *ring_send;
