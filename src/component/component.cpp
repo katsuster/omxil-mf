@@ -213,6 +213,8 @@ bool component::should_run() const
 
 void component::stop_running()
 {
+	std::unique_lock<std::mutex> lock(mut);
+
 	running_main = false;
 }
 
@@ -1221,6 +1223,22 @@ OMX_ERRORTYPE component::FillBufferDone(port_buffer *pb)
  * protected functions (Maybe override by derived classes)
  */
 
+OMX_ERRORTYPE component::allocate_static_resouces()
+{
+	scoped_log_begin;
+	//do nothing
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE component::free_static_resouces()
+{
+	scoped_log_begin;
+	//do nothing
+
+	return OMX_ErrorNone;
+}
+
 void component::run()
 {
 	scoped_log_begin;
@@ -1467,6 +1485,8 @@ OMX_ERRORTYPE component::command_state_set_to_loaded_from_idle()
 	scoped_log_begin;
 	OMX_ERRORTYPE err, errtmp;
 
+	err = OMX_ErrorNone;
+
 	//Prepare to flush all ports
 	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
 		if (!it->second.get_enabled()) {
@@ -1480,6 +1500,12 @@ OMX_ERRORTYPE component::command_state_set_to_loaded_from_idle()
 	th_main->join();
 	delete th_main;
 	th_main = nullptr;
+
+	//Free static resources of component
+	err = free_static_resouces();
+	if (err != OMX_ErrorNone) {
+		errprint("Failed to free_static_resouces().\n");
+	}
 
 	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
 		if (!it->second.get_enabled()) {
@@ -1498,7 +1524,6 @@ OMX_ERRORTYPE component::command_state_set_to_loaded_from_idle()
 		it->second.end_flush();
 	}
 
-	err = OMX_ErrorNone;
 	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
 		if (!it->second.get_enabled()) {
 			//Disabled port, skip
@@ -1592,6 +1617,16 @@ OMX_ERRORTYPE component::command_state_set_to_idle_from_loaded()
 			//Wait for all enabled port to be populated
 			it->second.wait_populated(OMX_TRUE);
 		}
+	}
+	if (err != OMX_ErrorNone) {
+		return err;
+	}
+
+	//Allocate static resources of component
+	err = allocate_static_resouces();
+	if (err != OMX_ErrorNone) {
+		errprint("Failed to allocate_static_resouces().\n");
+		return err;
 	}
 
 	try {

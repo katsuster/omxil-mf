@@ -187,6 +187,28 @@ public:
 
 protected:
 	/**
+	 * コンポーネントの静的リソースの確保を行います。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * StateLoaded から StateIdle に遷移する際に呼び出されます。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE allocate_static_resouces();
+
+	/**
+	 * コンポーネントの静的リソースの確保を行います。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * StateIdle から StateLoaded に遷移する際に呼び出されます。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE free_static_resouces();
+
+	/**
 	 * コンポーネントのメイン処理を行います。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
@@ -217,6 +239,8 @@ protected:
 	 * 初期値は 0 個です。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * @return オーディオポートの個数
 	 */
 	virtual OMX_U32 get_audio_ports();
 
@@ -227,6 +251,8 @@ protected:
 	 * 初期値は 0 です。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * @return オーディオポートの開始インデックス
 	 */
 	virtual OMX_U32 get_audio_start_port();
 
@@ -237,6 +263,8 @@ protected:
 	 * 初期値は 0 個です。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * @return ビデオポートの個数
 	 */
 	virtual OMX_U32 get_video_ports();
 
@@ -247,6 +275,8 @@ protected:
 	 * 初期値は 0 です。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * @return ビデオポートの開始インデックス
 	 */
 	virtual OMX_U32 get_video_start_port();
 
@@ -257,6 +287,8 @@ protected:
 	 * 初期値は 0 個です。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * @return イメージポートの個数
 	 */
 	virtual OMX_U32 get_image_ports();
 
@@ -267,6 +299,8 @@ protected:
 	 * 初期値は 0 です。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * @return イメージポートの開始インデックス
 	 */
 	virtual OMX_U32 get_image_start_port();
 
@@ -277,6 +311,8 @@ protected:
 	 * 初期値は 0 個です。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * @return その他のポートの個数
 	 */
 	virtual OMX_U32 get_other_ports();
 
@@ -287,6 +323,8 @@ protected:
 	 * 初期値は 0 です。
 	 *
 	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * @return その他のポートの開始インデックス
 	 */
 	virtual OMX_U32 get_other_start_port();
 
