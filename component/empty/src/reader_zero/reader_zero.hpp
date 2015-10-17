@@ -17,9 +17,9 @@ public:
 	reader_zero(OMX_COMPONENTTYPE *c, const char *cname);
 	virtual ~reader_zero();
 
+protected:
 	virtual void run();
 
-protected:
 	virtual OMX_U32 get_video_ports();
 	virtual OMX_U32 get_video_start_port();
 

@@ -17,9 +17,9 @@ public:
 	filter_copy(OMX_COMPONENTTYPE *c, const char *cname);
 	virtual ~filter_copy();
 
+protected:
 	virtual void run();
 
-protected:
 	virtual OMX_U32 get_video_ports();
 	virtual OMX_U32 get_video_start_port();
 

@@ -5,6 +5,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <thread>
+#include <functional>
 
 #include <OMX_Component.h>
 #include <OMX_Core.h>
@@ -99,6 +100,15 @@ public:
 	virtual void wait_state_multiple(int cnt, ...) const;
 
 	/**
+	 * 全ての待機しているスレッドを強制的に解除すべきか、
+	 * を取得します。
+	 *
+	 * @return 強制解除すべきならば true、
+	 * 強制解除すべきでなければ false
+	 */
+	virtual bool is_broken() const;
+
+	/**
 	 * 全ての待機しているスレッドを強制的に解除します。
 	 *
 	 * 強制解除されたスレッドは runtime_error をスローします。
@@ -187,26 +197,102 @@ public:
 
 protected:
 	/**
-	 * コンポーネントの静的リソースの確保を行います。
-	 *
-	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 * コンポーネントが使用する静的リソースの確保を行います。
 	 *
 	 * StateLoaded から StateIdle に遷移する際に呼び出されます。
+	 *
+	 * デフォルトでは何も行いません。
+	 * 必要に応じて派生クラスにてオーバライドしてください。
 	 *
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE allocate_static_resouces();
 
 	/**
-	 * コンポーネントの静的リソースの確保を行います。
-	 *
-	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 * コンポーネントが使用する静的リソースの確保を行います。
 	 *
 	 * StateIdle から StateLoaded に遷移する際に呼び出されます。
+	 *
+	 * デフォルトでは何も行いません。
+	 * 必要に応じて派生クラスにてオーバライドしてください。
 	 *
 	 * @return OpenMAX エラー値
 	 */
 	virtual OMX_ERRORTYPE free_static_resouces();
+
+	/**
+	 * コンポーネント内の未処理のバッファを全て破棄、
+	 * 返却（フラッシュ）するように要求します。
+	 *
+	 * このメソッドはブロックせず、速やかに制御を返します。
+	 *
+	 * デフォルトでは、
+	 * component::set_request_flush(true)
+	 * を呼び出すだけです。
+	 *
+	 * @param port_index フラッシュを要求されているポート番号、
+	 * 	OMX_ALL は全てのポートを表す
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE begin_flush(OMX_U32 port_index);
+
+	/**
+	 * コンポーネント内の未処理のバッファを全て破棄、
+	 * 返却（フラッシュ）します。
+	 *
+	 * このメソッドはバッファを全て破棄、
+	 * もしくは返却するまでブロックします。
+	 *
+	 * begin_restart により処理の再開が要求されるまで、
+	 * コンポーネントの処理を停止する必要があります。
+	 *
+	 * デフォルトでは、
+	 * component::wait_flush_done()
+	 * を呼び出すだけです。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * @param port_index フラッシュを要求されているポート番号、
+	 * 	OMX_ALL は全てのポートを表す
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE end_flush(OMX_U32 port_index);
+
+	/**
+	 * フラッシュによって停止していた、
+	 * コンポーネントの処理を再開するよう要求します。
+	 *
+	 * このメソッドはブロックせず、速やかに制御を返します。
+	 *
+	 * デフォルトでは、
+	 * component::set_request_restart(true)
+	 * を呼び出すだけです。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * @param port_index フラッシュを要求されているポート番号、
+	 * 	OMX_ALL は全てのポートを表す
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE begin_restart(OMX_U32 port_index);
+
+	/**
+	 * フラッシュによって停止していた、
+	 * コンポーネントの処理を再開します。
+	 *
+	 * このメソッドはコンポーネントの処理を再開するまでブロックします。
+	 *
+	 * デフォルトでは、
+	 * component::wait_request_done()
+	 * を呼び出すだけです。
+	 *
+	 * 必要に応じて派生クラスにてオーバライドしてください。
+	 *
+	 * @param port_index フラッシュを要求されているポート番号、
+	 * 	OMX_ALL は全てのポートを表す
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE end_restart(OMX_U32 port_index);
 
 	/**
 	 * コンポーネントのメイン処理を行います。
@@ -331,12 +417,110 @@ protected:
 
 protected:
 	/**
+	 * OpenMAX コンポーネントのミューテックスを取得します。
+	 *
+	 * @return コンポーネントのミューテックス
+	 */
+	virtual std::mutex& mutex() const;
+
+	/**
+	 * OpenMAX コンポーネントの条件変数を取得します。
+	 *
+	 * @return コンポーネントの条件変数
+	 */
+	virtual std::condition_variable& condition() const;
+
+	/**
 	 * OpenMAX コンポーネントの待ちを強制キャンセルすべきか、
 	 * そうでないかをチェックし、キャンセルすべきなら例外をスローします。
 	 *
 	 * @param lock コンポーネントのロック
 	 */
 	virtual void error_if_broken(std::unique_lock<std::mutex>& lock) const;
+
+	/**
+	 * フラッシュ処理を要求されているかどうかを取得します。
+	 *
+	 * @return フラッシュ処理を要求されていれば true、
+	 * 要求されていなければ false
+	 */
+	virtual bool is_request_flush() const;
+
+	/**
+	 * フラッシュ処理を要求されているかどうかを設定します。
+	 *
+	 * @param f フラッシュ処理を要求されていれば true、
+	 * 要求されていなければ false
+	 */
+	virtual void set_request_flush(bool f);
+
+	/**
+	 * フラッシュ処理が完了したかどうかを取得します。
+	 *
+	 * @return フラッシュ処理が完了していれば true、
+	 * 完了していなければ false
+	 */
+	virtual bool is_flush_done() const;
+
+	/**
+	 * フラッシュ処理が完了したかどうかを設定します。
+	 *
+	 * @return フラッシュ処理が完了していれば true、
+	 * 完了していなければ false
+	 */
+	virtual void set_flush_done(bool f);
+
+	/**
+	 * フラッシュ後のリスタート処理を要求されているかどうかを取得します。
+	 *
+	 * @return リスタート処理を要求されていれば true、
+	 * 要求されていなければ false
+	 */
+	virtual bool is_request_restart() const;
+
+	/**
+	 * フラッシュ後のリスタート処理を要求されているかどうかを設定します。
+	 *
+	 * @param f リスタート処理を要求されていれば true、
+	 * 要求されていなければ false
+	 */
+	virtual void set_request_restart(bool f);
+
+	/**
+	 * フラッシュ後のリスタート処理が完了したかどうかを取得します。
+	 *
+	 * @param f リスタート処理が完了していれば true、
+	 * 完了していなければ false
+	 */
+	virtual bool is_restart_done() const;
+
+	/**
+	 * フラッシュ後のリスタート処理が完了したかどうかを設定します。
+	 *
+	 * @param f リスタート処理が完了していれば true、
+	 * 完了していなければ false
+	 */
+	virtual void set_restart_done(bool f);
+
+	/**
+	 * フラッシュ処理が要求されるまで待ちます。
+	 */
+	virtual void wait_request_flush() const;
+
+	/**
+	 * フラッシュ処理が完了するまで待ちます。
+	 */
+	virtual void wait_flush_done() const;
+
+	/**
+	 * フラッシュ後のリスタート処理が要求されるまで待ちます。
+	 */
+	virtual void wait_request_restart() const;
+
+	/**
+	 * フラッシュ後のリスタート処理が完了するまで待ちます。
+	 */
+	 virtual void wait_restart_done() const;
 
 	/**
 	 * OMX_SendCommand にて送られたコマンドを処理します。
@@ -507,6 +691,63 @@ protected:
 	virtual OMX_ERRORTYPE command_mark_buffer(OMX_U32 port_index);
 
 	/**
+	 * ポートに受付済みで、
+	 * コンポーネントが未処理のバッファを全て返却します。
+	 *
+	 * 下記の順に実行されます。
+	 *
+	 * <pre>
+	 * - コンポーネントのバッファフラッシュ
+	 *   - クライアントからポートへのバッファ処理要求の受付を禁止します。
+	 *     以降、OMX_EmptyThisBuffer, OMX_FillThisBuffer がエラーとなります。
+	 *     参照: port::plug_client_request
+	 *   - フラッシュ要求処理（func_request_flush で指定した処理）
+	 *     処理の中で component::begin_flush を呼ぶ必要があります。
+	 *   - コンポーネントからポートへのバッファ処理要求の受付を禁止します。
+	 *     以降、port::pop_buffer がエラーとなります。
+	 *     参照: port::plug_component_request
+	 *   - フラッシュ処理（func_wait_flush_done で指定した処理）
+	 *     処理の中で component::end_flush を呼ぶ必要があります。
+	 *
+	 * - ポートのバッファフラッシュ
+	 *   - ポートで EmptyThisBuffer, FillThisBuffer を受け付けたが、
+	 *     コンポーネントが処理していないバッファを全て返却します。
+	 * </pre>
+	 *
+	 * @param port_index             フラッシュするポートのインデックス
+	 * @param func_request_flush     フラッシュ要求処理
+	 * @param func_wait_flush_done   フラッシュ終了待ち処理
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE execute_flush(OMX_U32 port_index,
+		std::function<OMX_ERRORTYPE(OMX_U32)> func_request_flush, std::function<OMX_ERRORTYPE(OMX_U32)> func_wait_flush_done);
+
+	/**
+	 * フラッシュ処理で停止したコンポーネントを再開します。
+	 *
+	 * 下記の順に実行されます。
+	 *
+	 * <pre>
+	 * - コンポーネントのリスタート
+	 *   - コンポーネントからポートへのバッファ処理要求の受付を許可します。
+	 *     参照: port::unplug_component_request
+	 *   - リスタート要求処理（func_request_restart で指定した処理）
+	 *     処理の中で component::request_restart を呼ぶ必要があります。
+	 *   - クライアントからのバッファ処理要求の受付を許可します。
+	 *     参照: port::unplug_client_request
+	 *   - リスタート終了待ち処理（func_wait_restart_done で指定した処理）
+	 *     処理の中で component::wait_restart_done を呼ぶ必要があります。
+	 * </pre>
+	 *
+	 * @param port_index             フラッシュするポートのインデックス
+	 * @param func_request_restart   リスタート要求処理
+	 * @param func_wait_restart_done リスタート終了待ち処理
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE execute_restart(OMX_U32 port_index,
+		std::function<OMX_ERRORTYPE(OMX_U32)> func_request_restart, std::function<OMX_ERRORTYPE(OMX_U32)> func_wait_restart_done);
+
+	/**
 	 * ポート一覧表にポートを追加します。
 	 *
 	 * @param p     ポート
@@ -576,7 +817,15 @@ private:
 	//コンポーネントの状態変数
 	mutable std::condition_variable cond;
 	//待機の強制解除フラグ
-	bool broken;
+	bool f_broken;
+	//フラッシュ要求フラグ
+	bool f_flush_do;
+	//フラッシュ完了フラグ
+	bool f_flush_done;
+	//リスタート要求フラグ
+	bool f_restart_do;
+	//リスタート完了フラグ
+	bool f_restart_done;
 
 	//OpenMAX コンポーネントの状態
 	OMX_STATETYPE state;

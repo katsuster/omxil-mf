@@ -291,7 +291,7 @@ void port::update_buffer_status()
 		set_populated(OMX_FALSE);
 	}
 
-	if (list_bufs.size() == 0) {
+	if (list_bufs.empty()) {
 		set_no_buffer(OMX_TRUE);
 	} else {
 		set_no_buffer(OMX_FALSE);
@@ -525,43 +525,94 @@ OMX_ERRORTYPE port::enable_port()
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE port::begin_flush()
+OMX_ERRORTYPE port::plug_client_request()
 {
 	scoped_log_begin;
 	std::unique_lock<std::recursive_mutex> lk_port(mut);
 
 	if (!get_enabled()) {
-		errprint("port %d is disabled.\n",
+		errprint("Port %d is disabled.\n",
 			(int)get_port_index());
 		return OMX_ErrorIncorrectStateOperation;
 	}
 
-	//フラッシュ開始、ポートへの読み書き禁止
-	bound_send->shutdown(true, true);
+	//IL クライアントからポートへのリクエスト禁止
+	bound_send->shutdown(false, true);
 
 	return OMX_ErrorNone;
 }
 
-OMX_ERRORTYPE port::flush_buffers()
+OMX_ERRORTYPE port::unplug_client_request()
+{
+	scoped_log_begin;
+	std::unique_lock<std::recursive_mutex> lk_port(mut);
+
+	if (!get_enabled()) {
+		errprint("Port %d is disabled.\n",
+			(int)get_port_index());
+		return OMX_ErrorIncorrectStateOperation;
+	}
+
+	//IL クライアントからポートへのリクエスト許可
+	bound_send->abort_shutdown(false, true);
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port::plug_component_request()
+{
+	scoped_log_begin;
+	std::unique_lock<std::recursive_mutex> lk_port(mut);
+
+	if (!get_enabled()) {
+		errprint("Port %d is disabled.\n",
+			(int)get_port_index());
+		return OMX_ErrorIncorrectStateOperation;
+	}
+
+	//コンポーネントからポートへのリクエスト禁止
+	bound_send->shutdown(true, false);
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port::unplug_component_request()
+{
+	scoped_log_begin;
+	std::unique_lock<std::recursive_mutex> lk_port(mut);
+
+	if (!get_enabled()) {
+		errprint("Port %d is disabled.\n",
+			(int)get_port_index());
+		return OMX_ErrorIncorrectStateOperation;
+	}
+
+	//コンポーネントからポートへのリクエスト許可
+	bound_send->abort_shutdown(true, false);
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE port::return_buffers_force()
 {
 	scoped_log_begin;
 	std::unique_lock<std::recursive_mutex> lk_port(mut);
 	std::vector<port_buffer> list_held_copy = list_held_bufs;
 
 	if (!get_enabled()) {
-		errprint("port %d is disabled.\n",
+		errprint("Port %d is disabled.\n",
 			(int)get_port_index());
 		return OMX_ErrorIncorrectStateOperation;
 	}
 
-	//TODO: クライアントから受け取ったが返していないバッファを返却する
-	//      flush メソッドとコンポーネントが同時に動作すると、
-	//      同一のバッファが 2回返却されるかのうせいがある。
-	//      返却する前に、コンポーネント側の動作を確実に止める必要がある。
-	//for (port_buffer pb_held : list_held_copy) {
-	//	bound_ret->write_fully(&pb_held, 1);
-	//	cond.notify_all();
-	//}
+	//クライアントから受け取ったが返していないバッファを返却する
+	//TODO: flush メソッドとコンポーネントが同時に動作すると、
+	//      同一のバッファが 2回返却される可能性があるため、
+	//      返却前にコンポーネント側の動作を確実に止める必要がある。
+	for (port_buffer pb_held : list_held_copy) {
+		bound_ret->write_fully(&pb_held, 1);
+		cond.notify_all();
+	}
 
 	//NOTE: flush の前に shutdown し、
 	//バッファ処理要求の read/write を停止させる必要があります。
@@ -569,36 +620,19 @@ OMX_ERRORTYPE port::flush_buffers()
 	//別スレッドとの間に race condition が存在するため、
 	//別スレッドが同時に bound_send から read した場合、
 	//入力順と出力順が入れ替わったり、デッドロックする可能性があります。
-	while (bound_send->size() > 0) {
-		port_buffer pb;
-		size_t cnt;
-
-		//NOTE: shutdown 中に read_fully を使うと
-		//runtime_error がスローされるため、
-		//代わりに read_array を使います。
-		cnt = bound_send->read_array(&pb, 1);
-		if (cnt != 0) {
-			bound_ret->write_fully(&pb, 1);
-			cond.notify_all();
-		}
-	}
-
-	return OMX_ErrorNone;
-}
-
-OMX_ERRORTYPE port::end_flush()
-{
-	scoped_log_begin;
-	std::unique_lock<std::recursive_mutex> lk_port(mut);
-
-	if (!get_enabled()) {
-		errprint("port %d is disabled.\n",
-			(int)get_port_index());
-		return OMX_ErrorIncorrectStateOperation;
-	}
-
-	//フラッシュ終了、ポートへの読み書き許可
-	bound_send->abort_shutdown(true, true);
+	//while (bound_send->size() > 0) {
+	//	port_buffer pb;
+	//	size_t cnt;
+        //
+	//	//NOTE: shutdown 中に read_fully を使うと
+	//	//runtime_error がスローされるため、
+	//	//代わりに read_array を使います。
+	//	cnt = bound_send->read_array(&pb, 1);
+	//	if (cnt != 0) {
+	//		bound_ret->write_fully(&pb, 1);
+	//		cond.notify_all();
+	//	}
+	//}
 
 	return OMX_ErrorNone;
 }

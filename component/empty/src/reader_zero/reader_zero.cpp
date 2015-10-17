@@ -46,10 +46,26 @@ void reader_zero::run()
 	int i = 0;
 
 	while (should_run()) {
+		if (is_request_flush()) {
+			dprint("flushing...\n");
+			//do nothing
+			dprint("flushing... done\n");
+
+			set_flush_done(true);
+
+			wait_request_restart();
+
+			dprint("restarting...\n");
+			//do nothing
+			dprint("restarting... done\n");
+
+			set_restart_done(true);
+		}
+
 		result = out_port_video->pop_buffer(&pb_out);
 		if (result != OMX_ErrorNone) {
 			errprint("out_port_video.pop_buffer().\n");
-			break;
+			continue;
 		}
 
 		if (i % 100 < 50) {

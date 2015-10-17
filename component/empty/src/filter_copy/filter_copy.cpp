@@ -68,17 +68,32 @@ void filter_copy::run()
 	int i = 0;
 
 	while (should_run()) {
+		if (is_request_flush()) {
+			dprint("flushing...\n");
+			//do nothing
+			dprint("flushing... done\n");
+
+			set_flush_done(true);
+
+			wait_request_restart();
+
+			dprint("restarting...\n");
+			//do nothing
+			dprint("restarting... done\n");
+
+			set_restart_done(true);
+		}
+
 		result = in_port_video->pop_buffer(&pb_in);
 		if (result != OMX_ErrorNone) {
 			errprint("in_port_video.pop_buffer().\n");
-			break;
+			continue;
 		}
 
 		result = out_port_video->pop_buffer(&pb_out);
 		if (result != OMX_ErrorNone) {
 			errprint("out_port_video.pop_buffer().\n");
-			in_port_video->empty_buffer_done(&pb_in);
-			break;
+			continue;
 		}
 
 		//memset(pb_out.header->pBuffer, 0, pb_out.header->nAllocLen);

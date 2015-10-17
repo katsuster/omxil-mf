@@ -41,10 +41,26 @@ void renderer_null::run()
 	port_buffer pb_in;
 
 	while (should_run()) {
+		if (is_request_flush()) {
+			dprint("flushing...\n");
+			//do nothing
+			dprint("flushing... done\n");
+
+			set_flush_done(true);
+
+			wait_request_restart();
+
+			dprint("restarting...\n");
+			//do nothing
+			dprint("restarting... done\n");
+
+			set_restart_done(true);
+		}
+
 		result = in_port_video->pop_buffer(&pb_in);
 		if (result != OMX_ErrorNone) {
 			errprint("in_port_video.pop_buffer().\n");
-			break;
+			continue;
 		}
 
 		//NOTE: gst-openmax は nOffset を戻さないとおかしな挙動をする？？

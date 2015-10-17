@@ -736,34 +736,58 @@ public:
 	virtual OMX_ERRORTYPE enable_port();
 
 	/**
-	 * 一時的にポートへのバッファ処理要求を禁止し、
-	 * 未処理のバッファを全て返却（フラッシュ）する準備をします。
+	 * IL クライアントからポートへのバッファ処理要求を禁止します。
 	 *
-	 * empty_buffer または fill_buffer によって渡されているが、
-	 * 未処理のバッファは全て返却されます。
+	 * このメソッドを呼び出した後
+	 * クライアントからの EmptyThisBuffer と FillThisBuffer の呼び出しは、
+	 * 全てエラーとなります。
 	 *
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE begin_flush();
+	virtual OMX_ERRORTYPE plug_client_request();
 
 	/**
-	 * 未処理のバッファを全て返却（フラッシュ）します。
+	 * IL クライアントからポートへのバッファ処理要求を許可します。
 	 *
-	 * empty_buffer または fill_buffer によって渡されているが、
-	 * 未処理のバッファは全て返却されます。
+	 * このメソッドを呼び出した後
+	 * EmptyThisBuffer と FillThisBuffer の呼び出しは、
+	 * 正常に行われます。
 	 *
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE flush_buffers();
+	virtual OMX_ERRORTYPE unplug_client_request();
 
 	/**
-	 * ポートへのバッファ処理要求を許可します。
+	 * コンポーネントからポートへのバッファ処理要求を禁止します。
 	 *
-	 * 未処理のバッファを全て返却（フラッシュ）した後に呼び出します。
+	 * このメソッドを呼び出した後
+	 * pop_buffer メソッドの呼び出しは、
+	 * 全てエラーとなります。
 	 *
 	 * @return OpenMAX エラー値
 	 */
-	virtual OMX_ERRORTYPE end_flush();
+	virtual OMX_ERRORTYPE plug_component_request();
+
+	/**
+	 * コンポーネントからポートへのバッファ処理要求を許可します。
+	 *
+	 * このメソッドを呼び出した後
+	 * pop_buffer メソッドの呼び出しは、
+	 * 正常に行われます。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE unplug_component_request();
+
+	/**
+	 * 未処理のバッファを強制的に全て返却します。
+	 *
+	 * empty_buffer または fill_buffer によって渡されているが、
+	 * コンポーネントが処理していないバッファを全て返却します。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE return_buffers_force();
 
 	/**
 	 * 全てのバッファを EmptyBufferDone あるいは FillBufferDone にて、

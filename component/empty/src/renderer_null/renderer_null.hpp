@@ -17,9 +17,9 @@ public:
 	renderer_null(OMX_COMPONENTTYPE *c, const char *cname);
 	virtual ~renderer_null();
 
+protected:
 	virtual void run();
 
-protected:
 	virtual OMX_U32 get_video_ports();
 	virtual OMX_U32 get_video_start_port();
 
