@@ -1269,31 +1269,32 @@ OMX_ERRORTYPE port::fill_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 
 OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 {
+	scoped_log_begin;
 	port_buffer pb;
 	OMX_ERRORTYPE err;
 
 	if (!get_enabled()) {
-		errprint("port %d is disabled.\n",
+		errprint("Port %d is disabled.\n",
 			(int)get_port_index());
 		return OMX_ErrorIncorrectStateOperation;
 	}
 	if (is_shutting_write()) {
-		errprint("port %d is flushing.\n",
+		errprint("Port %d is flushing.\n",
 			(int)get_port_index());
 		return OMX_ErrorIncorrectStateOperation;
 	}
-
 	if (!find_buffer(bufhead)) {
-		dprint("buffer header:%p is not registered.\n", bufhead);
+		dprint("Buffer header:%p is not registered.\n", bufhead);
 	}
 
-	try {
-		pb.p          = this;
-		pb.f_allocate = false;
-		pb.header     = bufhead;
-		pb.index      = bufhead->nOffset;
+	pb.p          = this;
+	pb.f_allocate = false;
+	pb.header     = bufhead;
+	pb.index      = bufhead->nOffset;
 
-		add_held_buffer(&pb);
+	add_held_buffer(&pb);
+
+	try {
 		bound_send->write_fully(&pb, 1);
 
 		err = OMX_ErrorNone;
@@ -1310,6 +1311,7 @@ OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 
 OMX_ERRORTYPE port::pop_buffer(port_buffer *pb)
 {
+	scoped_log_begin;
 	OMX_ERRORTYPE err;
 
 	try {
@@ -1387,20 +1389,31 @@ OMX_ERRORTYPE port::fill_buffer_done(port_buffer *pb)
 
 OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 {
+	scoped_log_begin;
 	port_buffer pb;
 	OMX_ERRORTYPE err;
 
-	try {
-		pb.p = this;
-		pb.f_allocate = false;
-		pb.header = bufhead;
+	if (!get_enabled()) {
+		errprint("Port %d is disabled.\n",
+			(int)get_port_index());
+		return OMX_ErrorIncorrectStateOperation;
+	}
 
+	pb.p = this;
+	pb.f_allocate = false;
+	pb.header = bufhead;
+
+	remove_held_buffer(&pb);
+
+	try {
 		bound_ret->write_fully(&pb, 1);
 		cond.notify_all();
 
 		err = OMX_ErrorNone;
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: %s\n", e.what());
+
+		add_held_buffer(&pb);
 
 		err = OMX_ErrorInsufficientResources;
 	}
@@ -1450,8 +1463,6 @@ void *port::buffer_done()
 		//blocked read
 		bound_ret->read_fully(&pb, 1);
 		cond.notify_all();
-
-		remove_held_buffer(&pb);
 
 		comp = pb.p->get_component();
 
