@@ -65,23 +65,11 @@ void filter_copy::run()
 	port_buffer pb_in, pb_out;
 	OMX_U32 off_in, off_out, len_in, len_out;
 	OMX_TICKS stamp = 0;
-	int i = 0;
 
 	while (should_run()) {
 		if (is_request_flush()) {
-			dprint("flushing...\n");
-			//do nothing
-			dprint("flushing... done\n");
-
-			set_flush_done(true);
-
-			wait_request_restart();
-
-			dprint("restarting...\n");
-			//do nothing
-			dprint("restarting... done\n");
-
-			set_restart_done(true);
+			set_request_flush(false);
+			return;
 		}
 
 		result = in_port_video->pop_buffer(&pb_in);
@@ -117,8 +105,6 @@ void filter_copy::run()
 		pb_out.header->nFlags     = 0;
 		out_port_video->fill_buffer_done(&pb_out);
 
-		//next one
-		i++;
 		//16ms
 		stamp += 16000;
 	}

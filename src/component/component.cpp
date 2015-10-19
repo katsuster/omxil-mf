@@ -38,12 +38,13 @@ namespace mf {
  */
 
 component::component(OMX_COMPONENTTYPE *c, const char *cname)
-	: omx_reflector(c, cname), f_broken(false),
-	f_flush_do(false), f_flush_done(false),
-	f_restart_do(false), f_restart_done(false),
+	: omx_reflector(c, cname),
+	f_running(false), f_broken(false),
 	state(OMX_StateInvalid), omx_cbs(), omx_cbs_priv(nullptr),
 	th_accept(nullptr), ring_accept(nullptr), bound_accept(nullptr),
-	th_main(nullptr), running_main(false)
+	th_main(nullptr),
+	f_flush_do(false), f_flush_done(false),
+	f_restart_do(false), f_restart_done(false)
 {
 	scoped_log_begin;
 
@@ -102,6 +103,22 @@ const char *component::get_name() const
 	return "component";
 }
 
+bool component::should_run() const
+{
+	return is_running();
+}
+
+void component::stop_running()
+{
+	scoped_log_begin;
+	set_running(false);
+}
+
+void component::shutdown()
+{
+	set_broken(true);
+}
+
 OMX_STATETYPE component::get_state() const
 {
 	return state;
@@ -157,19 +174,6 @@ void component::wait_state_multiple(int cnt, ...) const
 	error_if_broken(lock);
 }
 
-bool component::is_broken() const
-{
-	return f_broken;
-}
-
-void component::shutdown()
-{
-	std::lock_guard<std::mutex> lock(mut);
-
-	f_broken = true;
-	cond.notify_all();
-}
-
 const OMX_CALLBACKTYPE *component::get_callbacks() const
 {
 	return &omx_cbs;
@@ -211,22 +215,6 @@ void component::wait_all_port_buffer_returned() const
 			it->second.wait_buffer_returned();
 		}
 	}
-}
-
-bool component::should_run() const
-{
-	return running_main;
-}
-
-void component::stop_running()
-{
-	scoped_log_begin;
-	std::lock_guard<std::mutex> lock(mut);
-
-	dprint("this:%p\n", this);
-
-	running_main = false;
-	cond.notify_all();
 }
 
 
@@ -1363,6 +1351,34 @@ void component::error_if_broken(std::unique_lock<std::mutex>& lock) const
 	}
 }
 
+bool component::is_running() const
+{
+	return f_running;
+}
+
+void component::set_running(bool f)
+{
+	scoped_log_begin;
+	std::lock_guard<std::mutex> lock(mut);
+
+	f_running = f;
+	cond.notify_all();
+}
+
+bool component::is_broken() const
+{
+	return f_broken;
+}
+
+void component::set_broken(bool f)
+{
+	scoped_log_begin;
+	std::lock_guard<std::mutex> lock(mut);
+
+	f_broken = f;
+	cond.notify_all();
+}
+
 bool component::is_request_flush() const
 {
 	return f_flush_do;
@@ -1419,7 +1435,7 @@ void component::set_restart_done(bool f)
 	cond.notify_all();
 }
 
-void component::wait_request_flush() const
+void component::wait_request_flush()
 {
 	scoped_log_begin;
 	std::unique_lock<std::mutex> lock(mut);
@@ -1427,10 +1443,11 @@ void component::wait_request_flush() const
 	cond.wait(lock, [&]() {
 			return is_broken() || !should_run() || is_request_flush();
 		});
+	f_flush_do = false;
 	error_if_broken(lock);
 }
 
-void component::wait_flush_done() const
+void component::wait_flush_done()
 {
 	scoped_log_begin;
 	std::unique_lock<std::mutex> lock(mut);
@@ -1438,10 +1455,11 @@ void component::wait_flush_done() const
 	cond.wait(lock, [&]() {
 			return is_broken() || !should_run() || is_flush_done();
 		});
+	f_flush_done = false;
 	error_if_broken(lock);
 }
 
-void component::wait_request_restart() const
+void component::wait_request_restart()
 {
 	scoped_log_begin;
 	std::unique_lock<std::mutex> lock(mut);
@@ -1449,10 +1467,11 @@ void component::wait_request_restart() const
 	cond.wait(lock, [&]() {
 			return is_broken() || !should_run() || is_request_restart();
 		});
+	f_restart_do = false;
 	error_if_broken(lock);
 }
 
-void component::wait_restart_done() const
+void component::wait_restart_done()
 {
 	scoped_log_begin;
 	std::unique_lock<std::mutex> lock(mut);
@@ -1460,6 +1479,7 @@ void component::wait_restart_done() const
 	cond.wait(lock, [&]() {
 			return is_broken() || !should_run() || is_restart_done();
 		});
+	f_restart_done = false;
 	error_if_broken(lock);
 }
 
@@ -2221,12 +2241,12 @@ void *component::accept_command_thread_main(OMX_COMPONENTTYPE *arg)
 	std::string thname;
 	component *comp = get_instance(arg);
 
-	try {
-		//スレッド名をつける
-		thname = "omx:cmd:";
-		thname += comp->get_name();
-		set_thread_name(thname.c_str());
+	//スレッド名をつける
+	thname = "omx:cmd:";
+	thname += comp->get_name();
+	set_thread_name(thname.c_str());
 
+	try {
 		comp->accept_command();
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: %s\n", e.what());
@@ -2241,22 +2261,30 @@ void *component::component_thread_main(OMX_COMPONENTTYPE *arg)
 	std::string thname;
 	component *comp = get_instance(arg);
 
-	try {
-		//スレッド名をつける
-		thname = "omx:run:";
-		thname += comp->get_name();
-		set_thread_name(thname.c_str());
+	//スレッド名をつける
+	thname = "omx:run:";
+	thname += comp->get_name();
+	set_thread_name(thname.c_str());
 
+	try {
 		//Idle 状態になってから開始する
 		comp->wait_state(OMX_StateIdle);
 
 		//メイン処理が始まったことを通知する
-		{
-			std::unique_lock<std::mutex> lock(comp->mut);
-			comp->running_main = true;
-			comp->cond.notify_all();
+		comp->set_running(true);
+		//リスタート処理開始
+		comp->set_request_restart(true);
+
+		while (comp->should_run()) {
+			comp->wait_request_restart();
+			//Do restarting if you need
+			comp->set_restart_done(true);
+
+			comp->run();
+
+			//Do flushing if you need
+			comp->set_flush_done(true);
 		}
-		comp->run();
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: %s\n", e.what());
 	}

@@ -42,19 +42,8 @@ void renderer_null::run()
 
 	while (should_run()) {
 		if (is_request_flush()) {
-			dprint("flushing...\n");
-			//do nothing
-			dprint("flushing... done\n");
-
-			set_flush_done(true);
-
-			wait_request_restart();
-
-			dprint("restarting...\n");
-			//do nothing
-			dprint("restarting... done\n");
-
-			set_restart_done(true);
+			set_request_flush(false);
+			return;
 		}
 
 		result = in_port_video->pop_buffer(&pb_in);
