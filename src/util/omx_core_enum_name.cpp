@@ -218,8 +218,7 @@ const char *omx_enum_name::get_OMX_ERRORTYPE_name(OMX_ERRORTYPE id)
 		id < OMX_ErrorKhronosExtensions) {
 		name = "(OMX_ErrorKhronosExtensions)";
 	}
-	if (OMX_ErrorMax <= id &&
-		id < OMX_ErrorVendorStartUnused) {
+	if (id < OMX_ErrorVendorStartUnused) {
 		name = "(OMX_ErrorVendorStartUnused)";
 	}
 
