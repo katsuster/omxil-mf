@@ -1252,12 +1252,6 @@ OMX_ERRORTYPE component::begin_flush(OMX_U32 port_index)
 {
 	scoped_log_begin;
 
-	if (is_request_flush()) {
-		errprint("Double flush(port:%d) detected.\n",
-			(int)port_index);
-	}
-
-	//TODO: remove it?
 	{
 		std::lock_guard<std::mutex> lock(mut);
 

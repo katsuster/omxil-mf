@@ -606,33 +606,25 @@ OMX_ERRORTYPE port::return_buffers_force()
 	}
 
 	//クライアントから受け取ったが返していないバッファを返却する
-	//TODO: flush メソッドとコンポーネントが同時に動作すると、
+	//NOTE: flush メソッドとコンポーネントが同時に動作すると、
 	//      同一のバッファが 2回返却される可能性があるため、
-	//      返却前にコンポーネント側の動作を確実に止める必要がある。
+	//      返却前にコンポーネント側の動作を確実に止める必要があります。
 	for (port_buffer pb_held : list_held_copy) {
+		remove_held_buffer(&pb_held);
 		bound_ret->write_fully(&pb_held, 1);
 		cond.notify_all();
 	}
 
-	//NOTE: flush の前に shutdown し、
-	//バッファ処理要求の read/write を停止させる必要があります。
-	//コンポーネントのメインスレッドなど、
-	//別スレッドとの間に race condition が存在するため、
-	//別スレッドが同時に bound_send から read した場合、
-	//入力順と出力順が入れ替わったり、デッドロックする可能性があります。
-	//while (bound_send->size() > 0) {
-	//	port_buffer pb;
-	//	size_t cnt;
-        //
-	//	//NOTE: shutdown 中に read_fully を使うと
-	//	//runtime_error がスローされるため、
-	//	//代わりに read_array を使います。
-	//	cnt = bound_send->read_array(&pb, 1);
-	//	if (cnt != 0) {
-	//		bound_ret->write_fully(&pb, 1);
-	//		cond.notify_all();
-	//	}
-	//}
+	//クライアントからの要求は全て破棄します
+	//FIXME: clear メソッドを実装を実装すべき
+	while (bound_send->size() > 0) {
+		port_buffer pb;
+
+		//NOTE: shutdown 中に read_fully を使うと
+		//runtime_error がスローされるため、
+		//代わりに read_array を使います。
+		bound_send->read_array(&pb, 1);
+	}
 
 	return OMX_ErrorNone;
 }
@@ -1390,6 +1382,7 @@ OMX_ERRORTYPE port::fill_buffer_done(port_buffer *pb)
 OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 {
 	scoped_log_begin;
+	std::unique_lock<std::recursive_mutex> lk_port(mut);
 	port_buffer pb;
 	OMX_ERRORTYPE err;
 

@@ -65,6 +65,19 @@ OMX_ERRORTYPE omxil_comp::SendCommand(OMX_COMMANDTYPE Cmd, OMX_U32 nParam, OMX_P
 {
 	OMX_ERRORTYPE result;
 
+	switch (Cmd) {
+	case OMX_CommandFlush: {
+		std::unique_lock<std::recursive_mutex> lock(mut_comp);
+
+		map_flush_done.clear();
+		cond_comp.notify_all();
+
+		break;
+	}
+	default:
+		break;
+	}
+
 	result = OMX_SendCommand(comp, Cmd, nParam, pCmdData);
 	if (result != OMX_ErrorNone) {
 		fprintf(stderr, "OMX_SendCommand failed.\n");
@@ -213,7 +226,30 @@ OMX_ERRORTYPE omxil_comp::EventHandler(OMX_HANDLETYPE hComponent, OMX_PTR pAppDa
 
 		printf("omxil_comp::EventHandler state '%s' set.\n",
 			get_omx_statetype_name((OMX_STATETYPE)nData2));
-			state_done = static_cast<OMX_STATETYPE>(nData2);
+		state_done = static_cast<OMX_STATETYPE>(nData2);
+		cond_comp.notify_all();
+	}
+	if (eEvent == OMX_EventCmdComplete &&
+		nData1 == OMX_CommandFlush) {
+		std::unique_lock<std::recursive_mutex> lock(mut_comp);
+		OMX_U32 port = nData2;
+		OMX_ERRORTYPE cmd_err = static_cast<OMX_ERRORTYPE>((intptr_t)pEventData);
+
+		auto it = map_flush_done.find(nData2);
+		if (it == map_flush_done.end()) {
+			//Add unknown ports
+			printf("omxil_comp::EventHandler cmd %d, port:%d completed (new).\n",
+				(int)nData1, (int)port);
+
+			map_flush_done.insert(
+				std::map<OMX_U32, OMX_ERRORTYPE>::value_type(port, cmd_err));
+		} else {
+			//Modify known ports
+			printf("omxil_comp::EventHandler cmd %d, port:%d completed.\n",
+				(int)nData1, (int)nData2);
+
+			it->second = cmd_err;
+		}
 		cond_comp.notify_all();
 	}
 
@@ -279,6 +315,20 @@ void omxil_comp::wait_state_changed(OMX_STATETYPE s) const
 	std::unique_lock<std::recursive_mutex> lock(mut_comp);
 
 	cond_comp.wait(lock, [&] { return state_done == s; });
+}
+
+void omxil_comp::wait_command_completed(OMX_COMMANDTYPE cmd, OMX_U32 port) const
+{
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+
+	cond_comp.wait(lock, [&] {
+			auto it = map_flush_done.find(port);
+			if (it == map_flush_done.end()) {
+				//Unknown ports
+				return false;
+			}
+			return it->second == OMX_ErrorNone;
+		});
 }
 
 omxil_comp::buflist_type *omxil_comp::find_buflist(OMX_U32 port)

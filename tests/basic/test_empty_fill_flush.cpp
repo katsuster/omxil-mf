@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
 	printf("wait for StateExecuting... Done!\n");
 
 	//FIXME: Component cannot execute after flush...
-	/*{
+	{
 		//EmptyThisBuffer > FillThisBuffer, Flush
 		fut_in = std::async(std::launch::async, lambda_in, 50 + 1);
 		fut_out = std::async(std::launch::async, lambda_out, 50);
@@ -305,7 +305,15 @@ int main(int argc, char *argv[])
 		printf("wait for FillDone of all buffers...\n");
 		comp->wait_all_buffer_free(pnum_out);
 		printf("wait for FillDone of all buffers... Done!\n");
-	}*/
+
+		printf("wait for Flush(in) command...\n");
+		comp->wait_command_completed(OMX_CommandFlush, pnum_in);
+		printf("wait for Flush(in) command... Done!\n");
+
+		printf("wait for Flush(out) command...\n");
+		comp->wait_command_completed(OMX_CommandFlush, pnum_out);
+		printf("wait for Flush(out) command... Done!\n");
+	}
 
 	{
 		//EmptyThisBuffer < FillThisBuffer, Flush
@@ -336,9 +344,17 @@ int main(int argc, char *argv[])
 		printf("wait for FillDone of all buffers...\n");
 		comp->wait_all_buffer_free(pnum_out);
 		printf("wait for FillDone of all buffers... Done!\n");
+
+		printf("wait for Flush(in) command...\n");
+		comp->wait_command_completed(OMX_CommandFlush, pnum_in);
+		printf("wait for Flush(in) command... Done!\n");
+
+		printf("wait for Flush(out) command...\n");
+		comp->wait_command_completed(OMX_CommandFlush, pnum_out);
+		printf("wait for Flush(out) command... Done!\n");
 	}
 
-	/*{
+	{
 		//EmptyThisBuffer == FillThisBuffer, Flush
 		fut_in = std::async(std::launch::async, lambda_in, 50);
 		fut_out = std::async(std::launch::async, lambda_out, 50);
@@ -367,7 +383,15 @@ int main(int argc, char *argv[])
 		printf("wait for FillDone of all buffers...\n");
 		comp->wait_all_buffer_free(pnum_out);
 		printf("wait for FillDone of all buffers... Done!\n");
-	}*/
+
+		printf("wait for Flush(in) command...\n");
+		comp->wait_command_completed(OMX_CommandFlush, pnum_in);
+		printf("wait for Flush(in) command... Done!\n");
+
+		printf("wait for Flush(out) command...\n");
+		comp->wait_command_completed(OMX_CommandFlush, pnum_out);
+		printf("wait for Flush(out) command... Done!\n");
+	}
 
 	//Set StateIdle
 	result = comp->SendCommand(OMX_CommandStateSet, OMX_StateIdle, 0);
@@ -380,6 +404,14 @@ int main(int argc, char *argv[])
 	printf("wait for StateIdle...\n");
 	comp->wait_state_changed(OMX_StateIdle);
 	printf("wait for StateIdle... Done!\n");
+
+	printf("wait for EmptyDone of all buffers...\n");
+	comp->wait_all_buffer_free(pnum_in);
+	printf("wait for EmptyDone of all buffers... Done!\n");
+
+	printf("wait for FillDone of all buffers...\n");
+	comp->wait_all_buffer_free(pnum_out);
+	printf("wait for FillDone of all buffers... Done!\n");
 
 
 	//Set StateLoaded

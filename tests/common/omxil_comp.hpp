@@ -59,7 +59,30 @@ public:
 	 */
 	virtual void wait_state_changed(OMX_STATETYPE s) const;
 
+	/**
+	 * ステート変更以外のコマンドの完了を待ちます。
+	 *
+	 * @param cmd  コマンド
+	 * @param port ポートのインデックス
+	 */
+	virtual void wait_command_completed(OMX_COMMANDTYPE cmd, OMX_U32 port) const;
+
+	/**
+	 * ポートに割り当てたバッファのリストを取得します。
+	 *
+	 * @param port ポートのインデックス
+	 * @return ポートが持つバッファのリストへのポインタ、
+	 * 管理外、あるいは、存在しないポートを指定した場合は nullptr
+	 */
 	virtual buflist_type *find_buflist(OMX_U32 port);
+
+	/**
+	 * ポートに割り当てたバッファのリストを取得します。
+	 *
+	 * @param port ポートのインデックス
+	 * @return ポートが持つバッファのリストへのポインタ、
+	 * 管理外、あるいは、存在しないポートを指定した場合は nullptr
+	 */
 	virtual const buflist_type *find_buflist(OMX_U32 port) const;
 
 	/**
@@ -173,6 +196,7 @@ private:
 	mutable std::recursive_mutex mut_comp;
 	mutable std::condition_variable_any cond_comp;
 	OMX_STATETYPE state_done;
+	std::map<OMX_U32, OMX_ERRORTYPE> map_flush_done;
 	std::map<OMX_U32, buflist_type *> map_buflist;
 
 };
