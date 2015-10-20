@@ -43,13 +43,13 @@ extern "C" {
 #define thread_id()    GetCurrentThreadId()
 #endif
 
-#if defined(__GNUC__)
-/* For GCC */
+#if defined(__GNUC__) || defined(__clang__)
+/* For GCC, Clang */
 #define DPRINT_FUNC    __func__
 /* #define DPRINT_FUNC    __PRETTY_FUNCTION__ */
 
 int OMX_MF_set_debug_level(int level);
-int OMX_MF_print_cont(int level, const char *fmt, ...) __attribute__((format(printf, 2, 3)));
+int OMX_MF_print_cont(int level, const char *fmt, ...) __attribute__((__format__(__printf__, 2, 3)));
 #else
 /* Others */
 #define DPRINT_FUNC    __func__
