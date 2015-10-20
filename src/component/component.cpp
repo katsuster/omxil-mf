@@ -2277,6 +2277,9 @@ void *component::component_thread_main(OMX_COMPONENTTYPE *arg)
 
 		while (comp->should_run()) {
 			comp->wait_request_restart();
+			if (!comp->should_run()) {
+				break;
+			}
 			//Do restarting if you need
 			comp->set_restart_done(true);
 
