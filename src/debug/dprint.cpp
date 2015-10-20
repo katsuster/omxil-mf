@@ -4,13 +4,16 @@
 
 #include <omxil_mf/dprint.h>
 
+#if defined(__linux__) && defined(__ANDROID__)
+//For Android
+#include <utils/Log.h>
+#elif defined(__linux__)
 //For autoconf
-#if defined(__linux__)
 #include "config.h"
 #endif
 
-//For VC++
 #if defined(_MSC_VER) && defined(_DEBUG)
+//For VC++
 #define ENABLE_DEBUG
 #endif
 
