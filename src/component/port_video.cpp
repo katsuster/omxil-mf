@@ -172,7 +172,7 @@ const OMX_PARAM_PORTDEFINITIONTYPE *port_video::get_definition() const
 	definition.format.video.eColorFormat  = get_color_format();
 	definition.format.video.pNativeWindow = native_window;
 
-        return &definition;
+	return &definition;
 }
 
 OMX_ERRORTYPE port_video::set_definition(const OMX_PARAM_PORTDEFINITIONTYPE& v)

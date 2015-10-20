@@ -1,5 +1,3 @@
-#include "util/util.hpp"
-
 #if defined(__linux__)
 #include <unistd.h>
 #include <dlfcn.h>
@@ -9,6 +7,8 @@
 #elif defined(_WINDOWS)
 #include <windows.h>
 #endif
+
+#include "util/util.hpp"
 
 namespace mf {
 
