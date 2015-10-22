@@ -863,6 +863,22 @@ OMX_ERRORTYPE port::allocate_tunnel_buffers()
 			pb->header      = header;
 			pb->index       = 0;
 
+			//Set information for myself
+			switch (get_dir()) {
+			case OMX_DirInput:
+				header->pInputPortPrivate = nullptr;
+				header->nInputPortIndex   = get_port_index();
+				break;
+			case OMX_DirOutput:
+				header->pOutputPortPrivate = nullptr;
+				header->nOutputPortIndex   = get_port_index();
+				break;
+			default:
+				errprint("Unknown direction.\n");
+				err = OMX_ErrorPortsNotCompatible;
+				goto err_out;
+			}
+
 			list_bufs.push_back(pb);
 			update_buffer_status();
 		}
@@ -1409,6 +1425,51 @@ OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 		add_held_buffer(&pb);
 
 		err = OMX_ErrorInsufficientResources;
+	}
+
+	return err;
+}
+
+OMX_ERRORTYPE port::start_tunneling()
+{
+	scoped_log_begin;
+	OMX_ERRORTYPE err, errtmp;
+
+	if (!get_enabled()) {
+		errprint("Port %d is disabled.\n",
+			(int)get_port_index());
+		return OMX_ErrorIncorrectStateOperation;
+	}
+	if (!get_tunneled() || !get_tunneled_supplier()) {
+		errprint("Port %d is not tunneled or supplier.\n",
+			(int)get_port_index());
+		return OMX_ErrorIncorrectStateOperation;
+	}
+
+	err = OMX_ErrorNone;
+	for (port_buffer *pb : list_bufs) {
+		switch (get_dir()) {
+		case OMX_DirInput:
+			errtmp = get_component()->EmptyThisBuffer(nullptr, pb->header);
+			if (errtmp != OMX_ErrorNone) {
+				errprint("Failed to EmptyThisBuffer() in comp:%p, pb:%p, buffer:%p.\n",
+					get_component(), pb, pb->header);
+			}
+			break;
+		case OMX_DirOutput:
+			errtmp = get_component()->FillThisBuffer(nullptr, pb->header);
+			if (errtmp != OMX_ErrorNone) {
+				errprint("Failed to FillThisBuffer() in comp:%p, pb:%p, buffer:%p.\n",
+					get_component(), pb, pb->header);
+			}
+			break;
+		default:
+			errprint("Unknown direction.\n");
+			errtmp = OMX_ErrorBadPortIndex;
+		}
+		if (errtmp != OMX_ErrorNone) {
+			err = errtmp;
+		}
 	}
 
 	return err;

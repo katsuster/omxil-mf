@@ -2032,11 +2032,14 @@ OMX_ERRORTYPE component::command_state_set_to_executing()
 
 OMX_ERRORTYPE component::command_state_set_to_executing_from_idle()
 {
+	scoped_log_begin;
+	OMX_ERRORTYPE err, errtmp;
+
 	try {
 		//Start main thread
 		th_main = new std::thread(component_thread_main, get_omx_component());
 	} catch (const std::bad_alloc& e) {
-		errprint("failed to create main thread '%s'.\n", e.what());
+		errprint("Failed to create main thread '%s'.\n", e.what());
 		return OMX_ErrorInsufficientResources;
 	}
 
@@ -2047,7 +2050,24 @@ OMX_ERRORTYPE component::command_state_set_to_executing_from_idle()
 		error_if_broken(lock);
 	}
 
-	return OMX_ErrorNone;
+	//トンネル接続している相手ポートに、全バッファの処理を要求する
+	err = OMX_ErrorNone;
+	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+		if (!it->second.get_enabled() ||
+			!it->second.get_tunneled() ||
+			!it->second.get_tunneled_supplier()) {
+			continue;
+		}
+
+		errtmp = it->second.start_tunneling();
+		if (errtmp != OMX_ErrorNone) {
+			errprint("Failed to start_tunneling() in port:%d.\n",
+				(int)it->second.get_port_index());
+			err = errtmp;
+		}
+	}
+
+	return err;
 }
 
 OMX_ERRORTYPE component::command_state_set_to_pause()

@@ -1044,6 +1044,13 @@ public:
 	 */
 	virtual OMX_ERRORTYPE push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead);
 
+	/**
+	 * トンネル接続されたポート間の転送を開始します。
+	 *
+	 * @return OpenMAX エラー値
+	 */
+	virtual OMX_ERRORTYPE start_tunneling();
+
 
 protected:
 	/**
