@@ -27,6 +27,11 @@
 //Debug print level
 static int debug_level = DPRINT_LEVEL_DEFAULT;
 
+int OMX_MF_get_debug_level()
+{
+	return debug_level;
+}
+
 int OMX_MF_set_debug_level(int level)
 {
 	debug_level = level;

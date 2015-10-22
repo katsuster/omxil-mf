@@ -48,22 +48,31 @@ extern "C" {
 #define DPRINT_FUNC    __func__
 /* #define DPRINT_FUNC    __PRETTY_FUNCTION__ */
 
+int OMX_MF_get_debug_level();
 int OMX_MF_set_debug_level(int level);
 int OMX_MF_print_cont(int level, const char *fmt, ...) __attribute__((__format__(__printf__, 2, 3)));
 #else
 /* Others */
 #define DPRINT_FUNC    __func__
 
+int OMX_MF_get_debug_level();
 int OMX_MF_set_debug_level(int level);
 int OMX_MF_print_cont(int level, const char *fmt, ...);
 #endif
 
-#define fatalprint_cont(fmt, ...)    OMX_MF_print_cont(DPRINT_LEVEL_FATAL, fmt, ##__VA_ARGS__)
-#define errprint_cont(fmt, ...)      OMX_MF_print_cont(DPRINT_LEVEL_ERROR, fmt, ##__VA_ARGS__)
-#define warnprint_cont(fmt, ...)     OMX_MF_print_cont(DPRINT_LEVEL_WARN, fmt, ##__VA_ARGS__)
-#define infoprint_cont(fmt, ...)     OMX_MF_print_cont(DPRINT_LEVEL_INFO, fmt, ##__VA_ARGS__)
-#define dprint_cont(fmt, ...)        OMX_MF_print_cont(DPRINT_LEVEL_DEBUG, fmt, ##__VA_ARGS__)
-#define traceprint_cont(fmt, ...)    OMX_MF_print_cont(DPRINT_LEVEL_TRACE, fmt, ##__VA_ARGS__)
+#define OMX_MF_print_cont_chk(level, fmt, ...)                        \
+	do {                                                          \
+		if (level <= OMX_MF_get_debug_level()) {              \
+			OMX_MF_print_cont(level, fmt, ##__VA_ARGS__); \
+		}                                                     \
+	} while (0)
+
+#define fatalprint_cont(fmt, ...)    OMX_MF_print_cont_chk(DPRINT_LEVEL_FATAL, fmt, ##__VA_ARGS__)
+#define errprint_cont(fmt, ...)      OMX_MF_print_cont_chk(DPRINT_LEVEL_ERROR, fmt, ##__VA_ARGS__)
+#define warnprint_cont(fmt, ...)     OMX_MF_print_cont_chk(DPRINT_LEVEL_WARN, fmt, ##__VA_ARGS__)
+#define infoprint_cont(fmt, ...)     OMX_MF_print_cont_chk(DPRINT_LEVEL_INFO, fmt, ##__VA_ARGS__)
+#define dprint_cont(fmt, ...)        OMX_MF_print_cont_chk(DPRINT_LEVEL_DEBUG, fmt, ##__VA_ARGS__)
+#define traceprint_cont(fmt, ...)    OMX_MF_print_cont_chk(DPRINT_LEVEL_TRACE, fmt, ##__VA_ARGS__)
 
 #define fatalprint(fmt, ...)    fatalprint_cont("[% 5d] %-5s: %s:%d: " fmt, (int)thread_id(), "fatal", DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
 #define errprint(fmt, ...)      errprint_cont(  "[% 5d] %-5s: %s:%d: " fmt, (int)thread_id(), "error", DPRINT_FUNC, __LINE__, ##__VA_ARGS__)
