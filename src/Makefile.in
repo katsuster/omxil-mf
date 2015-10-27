@@ -390,18 +390,24 @@ EXTRA_libomxil_mf_la_SOURCES = \
 	$(REGIST_DIR)/register_component.hpp
 
 libomxil_mf_la_CPPFLAGS = \
+	$(AM_CPPFLAGS) \
 	-I$(top_srcdir)/include \
 	-Wall -Werror
 
-libomxil_mf_la_CFLAGS = 
+libomxil_mf_la_CFLAGS = \
+	$(AM_CFLAGS)
+
 libomxil_mf_la_CXXFLAGS = \
+	$(AM_CXXFLAGS) \
 	-std=c++0x
 
 libomxil_mf_la_LIBADD = \
 	-lpthread \
 	-ldl
 
-libomxil_mf_la_LDFLAGS = 
+libomxil_mf_la_LDFLAGS = \
+	$(AM_LDFLAGS)
+
 all: all-am
 
 .SUFFIXES:
