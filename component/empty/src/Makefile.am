@@ -25,9 +25,12 @@ EXTRA_libomxil_mf_empty_la_SOURCES = \
 libomxil_mf_empty_la_HEADERS = 
 
 libomxil_mf_empty_la_CPPFLAGS = \
+	$(AM_CPPFLAGS) \
 	-Wall -Werror
-libomxil_mf_empty_la_CFLAGS   =
+libomxil_mf_empty_la_CFLAGS   = \
+	$(AM_CFLAGS)
 libomxil_mf_empty_la_CXXFLAGS = \
+	$(AM_CXXFLAGS) \
 	-std=c++0x
 
 libomxil_mf_empty_la_LIBADD   = \

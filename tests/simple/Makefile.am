@@ -5,11 +5,16 @@ check_PROGRAMS = \
 	renderer_null
 
 common_SOURCES  = $(COMMON_DIR)/omxil_utils.c $(COMMON_DIR)/omxil_comp.cpp
-common_CPPFLAGS = -Wall -Werror \
+common_CPPFLAGS = \
+	$(AM_CPPFLAGS) \
+	-Wall -Werror \
 	-I$(TEST_DIR)
-common_CFLAGS   = 
-common_CXXFLAGS = 
-common_LDADD    = 
+common_CFLAGS   = \
+	$(AM_CFLAGS)
+common_CXXFLAGS = \
+	$(AM_CXXFLAGS)
+common_LDADD    = \
+	-lpthread
 
 if USE_BELLAGIO
   common_CPPFLAGS += -DUSE_BELLAGIO
