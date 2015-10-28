@@ -286,18 +286,8 @@ OMX_ERRORTYPE omx_reflector::comp_ComponentDeInit(OMX_HANDLETYPE hComponent)
 		return OMX_ErrorInvalidComponent;
 	}
 	omx_reflector *comp = get_instance(hComponent);
-	OMX_ERRORTYPE err;
 
-	err = comp->ComponentDeInit(hComponent);
-
-	//NOTE: ComponentDeInit メンバ関数内で delete this; すると、
-	//this ポインタが無効になり SEGV の危険あり。
-	//必ず static 関数内で delete すること
-	dprint("delete component:%s, ptr:%p.\n",
-		comp->get_component_name().c_str(), comp);
-	delete comp;
-
-	return err;
+	return comp->ComponentDeInit(hComponent);
 }
 
 OMX_ERRORTYPE omx_reflector::comp_UseEGLImage(OMX_HANDLETYPE hComponent, OMX_BUFFERHEADERTYPE **ppBufferHdr, OMX_U32 nPortIndex, OMX_PTR pAppPrivate, void *eglImage)

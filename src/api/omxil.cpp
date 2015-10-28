@@ -151,10 +151,11 @@ OMX_API OMX_ERRORTYPE OMX_APIENTRY OMX_FreeHandle(OMX_IN OMX_HANDLETYPE hCompone
 		return OMX_ErrorInvalidState;
 	}
 
+	omx_comp->ComponentDeInit(hComponent);
+
 	//Delete derived component
 	if (omx_comp->pComponentPrivate != nullptr) {
 		mf::component *comp = mf::component::get_instance(hComponent);
-		comp->ComponentDeInit(hComponent);
 
 		//Call original destructor of extend libraries
 		//instead of 'delete comp'.
