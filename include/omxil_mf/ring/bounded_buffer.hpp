@@ -464,28 +464,30 @@ public:
 	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	/*size_type copy_array_fully(this_type *src, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	size_type copy_fully(this_type *src, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		std::unique_lock<std::recursive_mutex> lock_src(src->mut);
 		size_type pos = 0;
 
 		while (count - pos > 0) {
-			if (bound.full()) {
+			while (bound.full() || src->bound.empty()) {
 				lock_src.unlock();
-				wait_space_with_lock(lock);
-				lock_src.lock();
-			}
-			if (src->bound.empty()) {
 				lock.unlock();
-				src->wait_element_with_lock(lock_src);
+				if (bound.full()) {
+					wait_space_with_lock(lock);
+				}
+				if (src->bound.empty()) {
+					src->wait_element_with_lock(lock_src);
+				}
 				lock.lock();
+				lock_src.lock();
 			}
 
 			pos += copy_array_with_lock(src, count - pos, rdtrans, wrtrans);
 		}
 
 		return pos;
-	}*/
+	}
 
 	/**
 	 * リングバッファに指定された要素数が書き込まれるまでブロックします。
@@ -657,16 +659,17 @@ protected:
 	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	/*size_type copy_array_with_lock(this_type *src, size_type count, transform_func_t rdtrans, transform_func_t wrtrans) {
+	size_type copy_array_with_lock(this_type *src, size_type count, transform_func_t rdtrans, transform_func_t wrtrans) {
 		size_type result;
 
 		result = bound.copy_array(&src->bound, count, rdtrans, wrtrans);
+		src->cnt_rd += result;
 		cnt_wr += result;
 		notify_with_lock();
 		src->notify_with_lock();
 
 		return result;
-	}*/
+	}
 
 	/**
 	 * リングバッファに要素が書き込まれるまでブロックします。

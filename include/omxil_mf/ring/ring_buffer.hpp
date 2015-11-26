@@ -30,7 +30,9 @@ public:
 	using buffer_base<T>::read_array;
 	using buffer_base<T>::write_array;
 	using buffer_base<T>::get_remain;
+	using buffer_base<T>::get_remain_continuous;
 	using buffer_base<T>::get_space;
+	using buffer_base<T>::get_space_continuous;
 
 	class iterator : public std::iterator<std::forward_iterator_tag, T> {
 	public:
@@ -380,22 +382,22 @@ public:
 	/**
 	 * 別のリングバッファからコピーします。
 	 *
-	 * @param ring    コピー元のリングバッファ
+	 * @param src     コピー元のリングバッファ
 	 * @param count   リングバッファから読み込む数
 	 * @param rdtrans 読み出し用の変換関数
 	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	/*size_type copy_array(this_type *ring, size_type count, transform_func_t rdtrans = no_transform, transform_func_t wrtrans = no_transform) {
+	size_type copy_array(this_type *src, size_type count, transform_func_t rdtrans = no_transform, transform_func_t wrtrans = no_transform) {
 		size_type result;
 
-		count = std::min(count, get_remain_continuous(ring->rd, ring->wr, ring->elems()));
+		count = std::min(count, get_remain_continuous(src->rd, src->wr, src->elems()));
 
-		result = write_array(&(*ring)[0], count, rdtrans, wrtrans);
-		ring->skip(result);
+		result = write_array(&(*src)[0], count, rdtrans, wrtrans);
+		src->skip(result);
 
 		return result;
-	}*/
+	}
 
 protected:
 	void check_position(size_type n) const {
