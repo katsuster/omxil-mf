@@ -164,7 +164,15 @@ public:
 	//emplace_front
 	//push_front
 	//pop_front
-	//clear
+
+	/**
+	 * Remove all elements in this buffer.
+	 */
+	void clear() {
+		bound.clear();
+		cnt_rd = cnt_wr = 0;
+	}
+
 	//swap
 
 	//----------------------------------------
@@ -176,8 +184,7 @@ public:
 	 *
 	 * @return 内部バッファへの参照
 	 */
-	const Container& container() const
-	{
+	const Container& container() const {
 		return bound;
 	}
 
@@ -186,8 +193,7 @@ public:
 	 *
 	 * @return 内部バッファへの参照
 	 */
-	Container& container()
-	{
+	Container& container() {
 		return bound;
 	}
 
@@ -196,8 +202,7 @@ public:
 	 *
 	 * @return mutex オブジェクトへの参照
 	 */
-	const std::recursive_mutex& mutex() const
-	{
+	const std::recursive_mutex& mutex() const {
 		return mut;
 	}
 
@@ -206,8 +211,7 @@ public:
 	 *
 	 * @return mutex オブジェクトへの参照
 	 */
-	std::recursive_mutex& mutex()
-	{
+	std::recursive_mutex& mutex() {
 		return mut;
 	}
 

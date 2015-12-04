@@ -139,7 +139,7 @@ public:
 	};
 
 	ring_buffer(T *buf, size_type l)
-	: buffer_base<T>(buf, l), rd(0), wr(0) {
+		: buffer_base<T>(buf, l), rd(0), wr(0) {
 		//do nothing
 	}
 
@@ -183,6 +183,8 @@ public:
 
 	/**
 	 * The number of elements in this buffer.
+	 *
+	 * @return Number of elements in this buffer
 	 */
 	size_type size() const {
 		return get_remain(rd, wr, elems());
@@ -190,6 +192,8 @@ public:
 
 	/**
 	 * The largest possible size of this buffer.
+	 *
+	 * @return The largest possible size of this buffer
 	 */
 	size_type max_size() const {
 		return elems() - 1;
@@ -197,6 +201,8 @@ public:
 
 	/**
 	 * Is this buffer empty?
+	 *
+	 * @return true if this buffer is empty, false otherwise
 	 */
 	bool empty() const {
 		return size() == 0;
@@ -204,6 +210,8 @@ public:
 
 	/**
 	 * Is this buffer full?
+	 *
+	 * @return true if this buffer is full, false otherwise
 	 */
 	bool full() {
 		return size() == capacity();
@@ -212,7 +220,9 @@ public:
 	/**
 	 * Change the size of this buffer.
 	 *
-	 * This is not supported.
+	 * This function is not supported.
+	 *
+	 * @param new_size New buffer size
 	 */
 	void resize(size_type new_size) {
 		//cannot set
@@ -220,6 +230,10 @@ public:
 
 	/**
 	 * The maximum number of elements that can be stored in this buffer.
+	 *
+	 * In this class, capacity() returns same value as max_size().
+	 *
+	 * @return The size of currently allocated
 	 */
 	size_type capacity() const {
 		return elems() - 1;
@@ -228,7 +242,9 @@ public:
 	/**
 	 * Change the capacity of this buffer.
 	 *
-	 * This is not supported.
+	 * This function is not supported.
+	 *
+	 * @param new_cap New buffer capacity
 	 */
 	void set_capacity(size_type new_cap) {
 		//cannot set
@@ -236,6 +252,8 @@ public:
 
 	/**
 	 * The maximum number of elements in this buffer without overwriting.
+	 *
+	 * @return The maximum number of elements in this buffer without overwriting
 	 */
 	size_type reserve() const {
 		return get_space(rd, wr, elems(), 0);
@@ -245,35 +263,87 @@ public:
 	// element access
 	//----------------------------------------
 
+	/**
+	 * Access the first element in this buffer.
+	 *
+	 * @return A reference of first element
+	 */
 	reference front() {
 		return get_elem(rd);
 	}
 
+	/**
+	 * Access the first element in this buffer.
+	 *
+	 * @return A const reference of first element
+	 */
 	const_reference front() const {
 		return get_elem(rd);
 	}
 
+	/**
+	 * Access the last element in this buffer.
+	 *
+	 * @return A reference of last element
+	 */
 	reference back() {
 		return get_elem(rd + size() - 1);
 	}
 
+	/**
+	 * Access the last element in this buffer.
+	 *
+	 * @return A const reference of last element
+	 */
 	const_reference back() const {
 		return get_elem(rd + size() - 1);
 	}
 
+	/**
+	 * Access the element in this buffer.
+	 *
+	 * The position of first element is 0.
+	 *
+	 * @param n Position of element
+	 * @return A reference of specified element
+	 */
 	reference operator[](size_type n) {
 		return get_elem(rd + n);
 	}
 
+	/**
+	 * Access the element in this buffer.
+	 *
+	 * The position of first element is 0.
+	 *
+	 * @param n Position of element
+	 * @return A const reference of specified element
+	 */
 	const_reference operator[](size_type n) const {
 		return get_elem(rd + n);
 	}
 
+	/**
+	 * Access the element in this buffer.
+	 *
+	 * Throw the out_of_range exception if n is out of bounds.
+	 *
+	 * @param n Position of element
+	 * @return A reference of specified element
+	 */
 	reference at(size_type n) {
 		check_position(n);
 		return get_elem(rd + n);
 	}
 
+	/**
+	 * Access the element in this buffer.
+	 *
+	 * Throw the out_of_range exception if n is out of bounds.
+	 *
+	 * @param n Position of element
+	 * @return A const reference of specified element
+	 */
 	const_reference at(size_type n) const {
 		check_position(n);
 		return get_elem(rd + n);
@@ -293,7 +363,14 @@ public:
 	//emplace_front
 	//push_front
 	//pop_front
-	//clear
+
+	/**
+	 * Remove all elements in this buffer.
+	 */
+	void clear() {
+		rd = wr = 0;
+	}
+
 	//swap
 
 	//----------------------------------------
