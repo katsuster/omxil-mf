@@ -615,16 +615,7 @@ OMX_ERRORTYPE port::return_buffers_force()
 		cond.notify_all();
 	}
 
-	//クライアントからの要求は全て破棄します
-	//FIXME: clear メソッドを実装を実装すべき
-	while (bound_send->size() > 0) {
-		port_buffer pb;
-
-		//NOTE: shutdown 中に read_fully を使うと
-		//runtime_error がスローされるため、
-		//代わりに read_array を使います。
-		bound_send->read_array(&pb, 1);
-	}
+	bound_send->clear();
 
 	return OMX_ErrorNone;
 }

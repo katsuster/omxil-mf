@@ -170,7 +170,8 @@ public:
 	 */
 	void clear() {
 		bound.clear();
-		cnt_rd = cnt_wr = 0;
+		cnt_rd = cnt_wr;
+		notify_with_lock();
 	}
 
 	//swap
