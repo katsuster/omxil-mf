@@ -23,6 +23,7 @@ nobase_libomxil_mf_la_HEADERS = \
 	$(MF_HEADER_DIR)/omxil_mf.h \
 	$(MF_HEADER_DIR)/omx_reflector.hpp \
 	$(MF_HEADER_DIR)/component.hpp \
+	$(MF_HEADER_DIR)/component_worker.hpp \
 	$(MF_HEADER_DIR)/port.hpp \
 	$(MF_HEADER_DIR)/port_audio.hpp \
 	$(MF_HEADER_DIR)/port_video.hpp \

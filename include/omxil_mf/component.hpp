@@ -6,6 +6,7 @@
 #include <condition_variable>
 #include <thread>
 #include <functional>
+#include <vector>
 
 #include <OMX_Component.h>
 #include <OMX_Core.h>
@@ -13,6 +14,7 @@
 #include <omxil_mf/ring/ring_buffer.hpp>
 #include <omxil_mf/ring/bounded_buffer.hpp>
 #include <omxil_mf/omx_reflector.hpp>
+#include <omxil_mf/component_worker.hpp>
 #include <omxil_mf/port.hpp>
 
 //コマンドを受け渡すバッファの深さ
@@ -44,6 +46,8 @@ class component : public omx_reflector {
 public:
 	//親クラス
 	typedef omx_reflector super;
+	//ワーカースレッド一覧表の型
+	typedef std::vector<component_worker *> workerlist_t;
 	//ポート一覧表の型
 	typedef std::map<OMX_U32, port&> portmap_t;
 
@@ -60,6 +64,11 @@ public:
 	//disable operator=
 	component& operator=(const component& obj) = delete;
 
+	/**
+	 * コンポーネント名を取得します。
+	 *
+	 * @return コンポーネント名
+	 */
 	virtual const char *get_name() const override;
 
 	/**
@@ -553,7 +562,51 @@ protected:
 	 *
 	 * フラグは自動的にクリアされます。
 	 */
-	 virtual void wait_restart_done();
+	virtual void wait_restart_done();
+
+	/**
+	 * コンポーネントにワーカースレッドを登録します。
+	 *
+	 * @param wr 登録したいワーカースレッド
+	 * @return ワーカースレッドを登録できた場合は true,
+	 * できなければ false
+	 */
+	virtual bool register_worker_thread(component_worker *wr);
+
+	/**
+	 * コンポーネントからワーカースレッドの登録を解除します。
+	 *
+	 * 登録解除の際、スレッドを停止します。
+	 *
+	 * @param wr 削除したいワーカースレッド
+	 * @return ワーカースレッドを登録解除できた場合は true,
+	 * できなければ false
+	 */
+	virtual bool unregister_worker_thread(component_worker *wr);
+
+	/**
+	 * コンポーネントのワーカースレッドのリストを取得します。
+	 *
+	 * @return ワーカースレッドのリスト
+	 */
+	virtual const workerlist_t *get_worker_threads() const;
+
+	/**
+	 * コンポーネントのワーカースレッドのリストを取得します。
+	 *
+	 * @return ワーカースレッドのリスト
+	 */
+	virtual workerlist_t *get_worker_threads();
+
+	/**
+	 * 登録されたワーカースレッドを全て開始します。
+	 */
+	virtual void start_all_worker_threads();
+
+	/**
+	 * 登録されたワーカースレッドを全て停止します。
+	 */
+	virtual void stop_all_worker_threads();
 
 	/**
 	 * OMX_SendCommand にて送られたコマンドを処理します。
@@ -866,6 +919,9 @@ private:
 	//コマンド受け渡し用リングバッファ
 	ring_buffer<OMX_MF_CMD> *ring_accept;
 	bounded_buffer<ring_buffer<OMX_MF_CMD>, OMX_MF_CMD> *bound_accept;
+
+	//ワーカースレッド一覧表
+	workerlist_t list_workers;
 
 	//メイン処理スレッド
 	std::thread *th_main;

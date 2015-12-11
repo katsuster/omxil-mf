@@ -29,6 +29,7 @@ libomxil_mf_la_SOURCES = \
 	$(UTIL_DIR)/omx_other_enum_name.cpp \
 	$(COMPONENT_DIR)/omx_reflector.cpp \
 	$(COMPONENT_DIR)/component.cpp \
+	$(COMPONENT_DIR)/component_worker.cpp \
 	$(COMPONENT_DIR)/port.cpp \
 	$(COMPONENT_DIR)/port_audio.cpp \
 	$(COMPONENT_DIR)/port_video.cpp \

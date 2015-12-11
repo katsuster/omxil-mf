@@ -79,6 +79,9 @@ component::~component()
 
 	shutdown();
 
+	//Stop all workers
+	stop_all_worker_threads();
+
 	//shutdown main thread
 	if (th_main) {
 		stop_running();
@@ -112,11 +115,19 @@ void component::stop_running()
 {
 	scoped_log_begin;
 	set_running(false);
+
+	for (auto wr : list_workers) {
+		wr->set_running(false);
+	}
 }
 
 void component::shutdown()
 {
 	set_broken(true);
+
+	for (auto wr : list_workers) {
+		wr->set_broken(true);
+	}
 }
 
 OMX_STATETYPE component::get_state() const
@@ -1240,6 +1251,15 @@ OMX_ERRORTYPE component::begin_flush(OMX_U32 port_index)
 {
 	scoped_log_begin;
 
+	for (auto wr : list_workers) {
+		wr->set_request_flush(false);
+		wr->set_flush_done(false);
+		wr->set_request_restart(false);
+		wr->set_restart_done(false);
+
+		wr->set_request_flush(true);
+	}
+
 	{
 		std::lock_guard<std::mutex> lock(mut);
 
@@ -1258,6 +1278,10 @@ OMX_ERRORTYPE component::end_flush(OMX_U32 port_index)
 {
 	scoped_log_begin;
 
+	for (auto wr : list_workers) {
+		wr->wait_flush_done();
+	}
+
 	wait_flush_done();
 
 	return OMX_ErrorNone;
@@ -1267,6 +1291,10 @@ OMX_ERRORTYPE component::begin_restart(OMX_U32 port_index)
 {
 	scoped_log_begin;
 
+	for (auto wr : list_workers) {
+		wr->set_request_restart(true);
+	}
+
 	set_request_restart(true);
 
 	return OMX_ErrorNone;
@@ -1275,6 +1303,10 @@ OMX_ERRORTYPE component::begin_restart(OMX_U32 port_index)
 OMX_ERRORTYPE component::end_restart(OMX_U32 port_index)
 {
 	scoped_log_begin;
+
+	for (auto wr : list_workers) {
+		wr->wait_restart_done();
+	}
 
 	wait_restart_done();
 
@@ -1483,175 +1515,49 @@ void component::wait_restart_done()
 	error_if_broken(lock);
 }
 
-OMX_ERRORTYPE component::execute_flush(OMX_U32 port_index,
-	std::function<OMX_ERRORTYPE(OMX_U32)> func_request_flush, std::function<OMX_ERRORTYPE(OMX_U32)> func_wait_flush_done)
+bool component::register_worker_thread(component_worker *wr)
 {
-	scoped_log_begin;
-	std::vector<port *> filtered_ports;
-	OMX_ERRORTYPE err, errtmp;
+	list_workers.push_back(wr);
 
-	//Filter
-	if (port_index == OMX_ALL) {
-		//All ports
-		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-			if (!it->second.get_enabled()) {
-				continue;
-			}
-
-			filtered_ports.push_back(&it->second);
-		}
-	} else {
-		//Single port
-		port *port_found = find_port(port_index);
-		if (port_found == nullptr || !port_found->get_enabled()) {
-			errprint("Invalid or disabled port:%d\n",
-				(int)port_index);
-			return OMX_ErrorBadPortIndex;
-		} else {
-			filtered_ports.push_back(port_found);
-		}
-	}
-	if (filtered_ports.empty()) {
-		errprint("Invalid or disabled all ports.\n");
-		return OMX_ErrorBadPortIndex;
-	}
-
-	//Execute flush sequence
-	err = OMX_ErrorNone;
-
-	//Return or discard all buffers by component
-	for (port *p : filtered_ports) {
-		errtmp = p->plug_client_request();
-		if (errtmp != OMX_ErrorNone) {
-			errprint("Failed to port plug_client_request(%d), "
-				"err:0x%08x(%s).\n",
-				(int)port_index, (int)errtmp,
-				omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
-			err = errtmp;
-		}
-	}
-
-	errtmp = func_request_flush(port_index);
-	if (errtmp != OMX_ErrorNone) {
-		errprint("Failed to func_request_flush(%d), "
-			"err:0x%08x(%s).\n",
-			(int)port_index, (int)errtmp,
-			omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
-		err = errtmp;
-	}
-
-	for (port *p : filtered_ports) {
-		errtmp = p->plug_component_request();
-		if (errtmp != OMX_ErrorNone) {
-			errprint("Failed to port plug_component_request(%d), "
-				"err:0x%08x(%s).\n",
-				(int)port_index, (int)errtmp,
-				omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
-			err = errtmp;
-		}
-	}
-
-	errtmp = func_wait_flush_done(port_index);
-	if (errtmp != OMX_ErrorNone) {
-		errprint("Failed to func_wait_flush_done(%d), "
-			"err:0x%08x(%s).\n",
-			(int)port_index, (int)errtmp,
-			omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
-		err = errtmp;
-	}
-
-	//Return all unprocessed buffers by component
-	for (port *p : filtered_ports) {
-		errtmp = p->return_buffers_force();
-		if (errtmp != OMX_ErrorNone) {
-			errprint("Failed to port return_buffers_force(%d), "
-				"err:0x%08x(%s).\n",
-				(int)port_index, (int)errtmp,
-				omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
-			err = errtmp;
-		}
-	}
-
-	return err;
+	return true;
 }
 
-OMX_ERRORTYPE component::execute_restart(OMX_U32 port_index,
-	std::function<OMX_ERRORTYPE(OMX_U32)> func_request_restart, std::function<OMX_ERRORTYPE(OMX_U32)> func_wait_restart_done)
+bool component::unregister_worker_thread(component_worker *wr)
 {
-	scoped_log_begin;
-	std::vector<port *> filtered_ports;
-	OMX_ERRORTYPE err, errtmp;
+	for (auto it = list_workers.begin(); it != list_workers.end(); it++) {
+		if (*it == wr) {
+			(*it)->join();
+			list_workers.erase(it);
 
-	//Filter
-	if (port_index == OMX_ALL) {
-		//All ports
-		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-			if (!it->second.get_enabled()) {
-				continue;
-			}
-
-			filtered_ports.push_back(&it->second);
-		}
-	} else {
-		//Single port
-		port *port_found = find_port(port_index);
-		if (port_found == nullptr || !port_found->get_enabled()) {
-			errprint("Invalid or disabled port:%d\n",
-				(int)port_index);
-			return OMX_ErrorBadPortIndex;
-		} else {
-			filtered_ports.push_back(port_found);
-		}
-	}
-	if (filtered_ports.empty()) {
-		errprint("Invalid or disabled all ports.\n");
-		return OMX_ErrorBadPortIndex;
-	}
-
-	//Restart component
-	err = OMX_ErrorNone;
-
-	for (port *p : filtered_ports) {
-		errtmp = p->unplug_component_request();
-		if (errtmp != OMX_ErrorNone) {
-			errprint("Failed to port unplug_component_request(%d), "
-				"err:0x%08x(%s).\n",
-				(int)port_index, (int)errtmp,
-				omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
-			err = errtmp;
+			return true;
 		}
 	}
 
-	errtmp = func_request_restart(port_index);
-	if (errtmp != OMX_ErrorNone) {
-		errprint("Failed to func_request_restart(%d), "
-			"err:0x%08x(%s).\n",
-			(int)port_index, (int)errtmp,
-			omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
-		err = errtmp;
-	}
+	return false;
+}
 
-	for (port *p : filtered_ports) {
-		errtmp = p->unplug_client_request();
-		if (errtmp != OMX_ErrorNone) {
-			errprint("Failed to port unplug_client_request(%d), "
-				"err:0x%08x(%s).\n",
-				(int)port_index, (int)errtmp,
-				omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
-			err = errtmp;
-		}
-	}
+const component::workerlist_t *component::get_worker_threads() const
+{
+	return &list_workers;
+}
 
-	errtmp = func_wait_restart_done(port_index);
-	if (errtmp != OMX_ErrorNone) {
-		errprint("Failed to func_wait_restart_done(%d), "
-			"err:0x%08x(%s).\n",
-			(int)port_index, (int)errtmp,
-			omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
-		err = errtmp;
-	}
+component::workerlist_t *component::get_worker_threads()
+{
+	return &list_workers;
+}
 
-	return err;
+void component::start_all_worker_threads()
+{
+	for (auto wr : list_workers) {
+		wr->start();
+	}
+}
+
+void component::stop_all_worker_threads()
+{
+	for (auto wr : list_workers) {
+		wr->join();
+	}
 }
 
 void *component::accept_command()
@@ -1981,6 +1887,9 @@ OMX_ERRORTYPE component::command_state_set_to_idle_from_executing()
 	//Wait for all buffer returned to supplier
 	wait_all_port_buffer_returned();
 
+	//Stop all workers
+	stop_all_worker_threads();
+
 	//Stop & wait main thread
 	stop_running();
 	th_main->join();
@@ -2036,6 +1945,9 @@ OMX_ERRORTYPE component::command_state_set_to_executing_from_idle()
 	OMX_ERRORTYPE err, errtmp;
 
 	try {
+		//Start all workers
+		start_all_worker_threads();
+
 		//Start main thread
 		th_main = new std::thread(component_thread_main, get_omx_component());
 	} catch (const std::bad_alloc& e) {
@@ -2183,6 +2095,177 @@ OMX_ERRORTYPE component::command_mark_buffer(OMX_U32 port_index)
 	scoped_log_begin;
 
 	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE component::execute_flush(OMX_U32 port_index,
+	std::function<OMX_ERRORTYPE(OMX_U32)> func_request_flush, std::function<OMX_ERRORTYPE(OMX_U32)> func_wait_flush_done)
+{
+	scoped_log_begin;
+	std::vector<port *> filtered_ports;
+	OMX_ERRORTYPE err, errtmp;
+
+	//Filter
+	if (port_index == OMX_ALL) {
+		//All ports
+		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+			if (!it->second.get_enabled()) {
+				continue;
+			}
+
+			filtered_ports.push_back(&it->second);
+		}
+	} else {
+		//Single port
+		port *port_found = find_port(port_index);
+		if (port_found == nullptr || !port_found->get_enabled()) {
+			errprint("Invalid or disabled port:%d\n",
+				(int)port_index);
+			return OMX_ErrorBadPortIndex;
+		} else {
+			filtered_ports.push_back(port_found);
+		}
+	}
+	if (filtered_ports.empty()) {
+		errprint("Invalid or disabled all ports.\n");
+		return OMX_ErrorBadPortIndex;
+	}
+
+	//Execute flush sequence
+	err = OMX_ErrorNone;
+
+	//Return or discard all buffers by component
+	for (port *p : filtered_ports) {
+		errtmp = p->plug_client_request();
+		if (errtmp != OMX_ErrorNone) {
+			errprint("Failed to port plug_client_request(%d), "
+				"err:0x%08x(%s).\n",
+				(int)port_index, (int)errtmp,
+				omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
+			err = errtmp;
+		}
+	}
+
+	errtmp = func_request_flush(port_index);
+	if (errtmp != OMX_ErrorNone) {
+		errprint("Failed to func_request_flush(%d), "
+			"err:0x%08x(%s).\n",
+			(int)port_index, (int)errtmp,
+			omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
+		err = errtmp;
+	}
+
+	for (port *p : filtered_ports) {
+		errtmp = p->plug_component_request();
+		if (errtmp != OMX_ErrorNone) {
+			errprint("Failed to port plug_component_request(%d), "
+				"err:0x%08x(%s).\n",
+				(int)port_index, (int)errtmp,
+				omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
+			err = errtmp;
+		}
+	}
+
+	errtmp = func_wait_flush_done(port_index);
+	if (errtmp != OMX_ErrorNone) {
+		errprint("Failed to func_wait_flush_done(%d), "
+			"err:0x%08x(%s).\n",
+			(int)port_index, (int)errtmp,
+			omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
+		err = errtmp;
+	}
+
+	//Return all unprocessed buffers by component
+	for (port *p : filtered_ports) {
+		errtmp = p->return_buffers_force();
+		if (errtmp != OMX_ErrorNone) {
+			errprint("Failed to port return_buffers_force(%d), "
+				"err:0x%08x(%s).\n",
+				(int)port_index, (int)errtmp,
+				omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
+			err = errtmp;
+		}
+	}
+
+	return err;
+}
+
+OMX_ERRORTYPE component::execute_restart(OMX_U32 port_index,
+	std::function<OMX_ERRORTYPE(OMX_U32)> func_request_restart, std::function<OMX_ERRORTYPE(OMX_U32)> func_wait_restart_done)
+{
+	scoped_log_begin;
+	std::vector<port *> filtered_ports;
+	OMX_ERRORTYPE err, errtmp;
+
+	//Filter
+	if (port_index == OMX_ALL) {
+		//All ports
+		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+			if (!it->second.get_enabled()) {
+				continue;
+			}
+
+			filtered_ports.push_back(&it->second);
+		}
+	} else {
+		//Single port
+		port *port_found = find_port(port_index);
+		if (port_found == nullptr || !port_found->get_enabled()) {
+			errprint("Invalid or disabled port:%d\n",
+				(int)port_index);
+			return OMX_ErrorBadPortIndex;
+		} else {
+			filtered_ports.push_back(port_found);
+		}
+	}
+	if (filtered_ports.empty()) {
+		errprint("Invalid or disabled all ports.\n");
+		return OMX_ErrorBadPortIndex;
+	}
+
+	//Restart component
+	err = OMX_ErrorNone;
+
+	for (port *p : filtered_ports) {
+		errtmp = p->unplug_component_request();
+		if (errtmp != OMX_ErrorNone) {
+			errprint("Failed to port unplug_component_request(%d), "
+				"err:0x%08x(%s).\n",
+				(int)port_index, (int)errtmp,
+				omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
+			err = errtmp;
+		}
+	}
+
+	errtmp = func_request_restart(port_index);
+	if (errtmp != OMX_ErrorNone) {
+		errprint("Failed to func_request_restart(%d), "
+			"err:0x%08x(%s).\n",
+			(int)port_index, (int)errtmp,
+			omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
+		err = errtmp;
+	}
+
+	for (port *p : filtered_ports) {
+		errtmp = p->unplug_client_request();
+		if (errtmp != OMX_ErrorNone) {
+			errprint("Failed to port unplug_client_request(%d), "
+				"err:0x%08x(%s).\n",
+				(int)port_index, (int)errtmp,
+				omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
+			err = errtmp;
+		}
+	}
+
+	errtmp = func_wait_restart_done(port_index);
+	if (errtmp != OMX_ErrorNone) {
+		errprint("Failed to func_wait_restart_done(%d), "
+			"err:0x%08x(%s).\n",
+			(int)port_index, (int)errtmp,
+			omx_enum_name::get_OMX_ERRORTYPE_name(errtmp));
+		err = errtmp;
+	}
+
+	return err;
 }
 
 bool component::insert_port(port& p)
