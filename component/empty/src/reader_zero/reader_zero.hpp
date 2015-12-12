@@ -17,6 +17,8 @@ public:
 	reader_zero(OMX_COMPONENTTYPE *c, const char *cname);
 	virtual ~reader_zero();
 
+	virtual const char *get_name() const;
+
 protected:
 	virtual void run();
 
@@ -36,6 +38,23 @@ public:
 private:
 	port_video *out_port_video;
 
+
+public:
+	class worker_main : public component_worker {
+	public:
+		//親クラス
+		typedef component_worker super;
+
+		worker_main(reader_zero *c);
+		virtual ~worker_main();
+
+		virtual const char *get_name() const;
+		virtual void run();
+
+	private:
+		reader_zero *comp;
+
+	};
 };
 
 } //namespace mf

@@ -17,6 +17,8 @@ public:
 	filter_copy(OMX_COMPONENTTYPE *c, const char *cname);
 	virtual ~filter_copy();
 
+	virtual const char *get_name() const;
+
 protected:
 	virtual void run();
 
@@ -37,6 +39,23 @@ private:
 	port_video *in_port_video;
 	port_video *out_port_video;
 
+
+public:
+	class worker_main : public component_worker {
+	public:
+		//親クラス
+		typedef component_worker super;
+
+		worker_main(filter_copy *c);
+		virtual ~worker_main();
+
+		virtual const char *get_name() const;
+		virtual void run();
+
+	private:
+		filter_copy *comp;
+
+	};
 };
 
 } //namespace mf

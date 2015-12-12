@@ -17,6 +17,8 @@ public:
 	renderer_null(OMX_COMPONENTTYPE *c, const char *cname);
 	virtual ~renderer_null();
 
+	virtual const char *get_name() const;
+
 protected:
 	virtual void run();
 
@@ -36,6 +38,23 @@ public:
 private:
 	port_video *in_port_video;
 
+
+public:
+	class worker_main : public component_worker {
+	public:
+		//親クラス
+		typedef component_worker super;
+
+		worker_main(renderer_null *c);
+		virtual ~worker_main();
+
+		virtual const char *get_name() const;
+		virtual void run();
+
+	private:
+		renderer_null *comp;
+
+	};
 };
 
 } //namespace mf

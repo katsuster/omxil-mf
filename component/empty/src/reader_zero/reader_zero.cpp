@@ -37,6 +37,11 @@ reader_zero::~reader_zero()
 	out_port_video = nullptr;
 }
 
+const char *reader_zero::get_name() const
+{
+	return "read_zero";
+}
+
 void reader_zero::run()
 {
 	OMX_ERRORTYPE result;
@@ -103,6 +108,65 @@ reader_zero *reader_zero::get_instance(OMX_HANDLETYPE hComponent)
 	reader_zero *comp = (reader_zero *) omx_comp->pComponentPrivate;
 
 	return comp;
+}
+
+
+/*
+ * Worker thread
+ */
+
+reader_zero::worker_main::worker_main(reader_zero *c)
+	: component_worker(c), comp(c)
+{
+}
+
+reader_zero::worker_main::~worker_main()
+{
+}
+
+const char *reader_zero::worker_main::get_name() const
+{
+	return "read_zero::wrk_main";
+}
+
+void reader_zero::worker_main::run()
+{
+	OMX_ERRORTYPE result;
+	port_buffer pb_out;
+	OMX_U32 len;
+	OMX_TICKS stamp = 0;
+	int i = 0;
+
+	while (is_running()) {
+		if (is_request_flush()) {
+			set_request_flush(false);
+			return;
+		}
+
+		result = comp->out_port_video->pop_buffer(&pb_out);
+		if (result != OMX_ErrorNone) {
+			errprint("out_port_video.pop_buffer().\n");
+			continue;
+		}
+
+		if (i % 100 < 50) {
+			len = pb_out.header->nAllocLen;
+		} else {
+			len = pb_out.header->nAllocLen / 2;
+		}
+
+		memset(pb_out.header->pBuffer, 0, len);
+		pb_out.header->nFilledLen = len;
+		pb_out.header->nOffset    = 0;
+		pb_out.header->nTimeStamp = stamp;
+		pb_out.header->nFlags     = 0;
+		comp->out_port_video->fill_buffer_done(&pb_out);
+
+		//next one
+		i++;
+		//16ms
+		stamp += 16000;
+	}
 }
 
 } //namespace mf
