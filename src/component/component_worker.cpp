@@ -32,6 +32,7 @@ component_worker::~component_worker()
 {
 	scoped_log_begin;
 
+	set_broken(true);
 	join();
 }
 

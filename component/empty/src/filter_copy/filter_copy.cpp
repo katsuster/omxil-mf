@@ -3,9 +3,14 @@
 
 namespace mf {
 
+/*
+ * Component
+ */
+
 filter_copy::filter_copy(OMX_COMPONENTTYPE *c, const char *cname) 
 	: component(c, cname),
-	in_port_video(nullptr), out_port_video(nullptr)
+	in_port_video(nullptr), out_port_video(nullptr),
+	wk_main(this)
 {
 	OMX_VIDEO_PARAM_PORTFORMATTYPE f;
 
@@ -43,6 +48,8 @@ filter_copy::filter_copy(OMX_COMPONENTTYPE *c, const char *cname)
 		out_port_video->set_default_format(0);
 
 		insert_port(*out_port_video);
+
+		register_worker_thread(&wk_main);
 	} catch (const std::bad_alloc& e) {
 		delete out_port_video;
 		out_port_video = nullptr;
@@ -53,6 +60,8 @@ filter_copy::filter_copy(OMX_COMPONENTTYPE *c, const char *cname)
 
 filter_copy::~filter_copy()
 {
+	unregister_worker_thread(&wk_main);
+
 	delete out_port_video;
 	out_port_video = nullptr;
 	delete in_port_video;
@@ -62,58 +71,6 @@ filter_copy::~filter_copy()
 const char *filter_copy::get_name() const
 {
 	return "filt_copy";
-}
-
-
-void filter_copy::run()
-{
-	OMX_ERRORTYPE result;
-	port_buffer pb_in, pb_out;
-	OMX_U32 off_in, off_out, len_in, len_out;
-	OMX_TICKS stamp = 0;
-
-	while (should_run()) {
-		if (is_request_flush()) {
-			set_request_flush(false);
-			return;
-		}
-
-		result = in_port_video->pop_buffer(&pb_in);
-		if (result != OMX_ErrorNone) {
-			errprint("in_port_video.pop_buffer().\n");
-			continue;
-		}
-
-		result = out_port_video->pop_buffer(&pb_out);
-		if (result != OMX_ErrorNone) {
-			errprint("out_port_video.pop_buffer().\n");
-			continue;
-		}
-
-		//memset(pb_out.header->pBuffer, 0, pb_out.header->nAllocLen);
-
-		off_in = pb_in.header->nOffset;
-		len_in = pb_in.header->nFilledLen;
-		off_out = pb_out.header->nOffset;
-		len_out = pb_out.header->nAllocLen - off_out;
-
-		len_out = std::min(len_in, len_out);
-		memmove(&pb_out.header->pBuffer[off_out], 
-			&pb_in.header->pBuffer[off_in], len_out);
-
-		//NOTE: gst-openmax は nOffset を戻さないとおかしな挙動をする？？
-		pb_in.header->nOffset = 0;
-		in_port_video->empty_buffer_done(&pb_in);
-
-		pb_out.header->nFilledLen = len_out;
-		pb_out.header->nOffset    = 0;
-		pb_out.header->nTimeStamp = stamp;
-		pb_out.header->nFlags     = 0;
-		out_port_video->fill_buffer_done(&pb_out);
-
-		//16ms
-		stamp += 16000;
-	}
 }
 
 

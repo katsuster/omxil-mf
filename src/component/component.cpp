@@ -39,12 +39,9 @@ namespace mf {
 
 component::component(OMX_COMPONENTTYPE *c, const char *cname)
 	: omx_reflector(c, cname),
-	f_running(false), f_broken(false),
+	f_broken(false),
 	state(OMX_StateInvalid), omx_cbs(), omx_cbs_priv(nullptr),
-	th_accept(nullptr), ring_accept(nullptr), bound_accept(nullptr),
-	th_main(nullptr),
-	f_flush_do(false), f_flush_done(false),
-	f_restart_do(false), f_restart_done(false)
+	th_accept(nullptr), ring_accept(nullptr), bound_accept(nullptr)
 {
 	scoped_log_begin;
 
@@ -79,15 +76,8 @@ component::~component()
 
 	shutdown();
 
-	//Stop all workers
-	stop_all_worker_threads();
-
-	//shutdown main thread
-	if (th_main) {
-		stop_running();
-		th_main->join();
-	}
-	delete th_main;
+	//Force stop all workers
+	break_all_worker_threads();
 
 	//shutdown accept thread
 	if (bound_accept) {
@@ -104,21 +94,6 @@ component::~component()
 const char *component::get_name() const
 {
 	return "component";
-}
-
-bool component::should_run() const
-{
-	return is_running();
-}
-
-void component::stop_running()
-{
-	scoped_log_begin;
-	set_running(false);
-
-	for (auto wr : list_workers) {
-		wr->set_running(false);
-	}
 }
 
 void component::shutdown()
@@ -1260,17 +1235,6 @@ OMX_ERRORTYPE component::begin_flush(OMX_U32 port_index)
 		wr->set_request_flush(true);
 	}
 
-	{
-		std::lock_guard<std::mutex> lock(mut);
-
-		f_flush_do     = false;
-		f_flush_done   = false;
-		f_restart_do   = false;
-		f_restart_done = false;
-	}
-
-	set_request_flush(true);
-
 	return OMX_ErrorNone;
 }
 
@@ -1281,8 +1245,6 @@ OMX_ERRORTYPE component::end_flush(OMX_U32 port_index)
 	for (auto wr : list_workers) {
 		wr->wait_flush_done();
 	}
-
-	wait_flush_done();
 
 	return OMX_ErrorNone;
 }
@@ -1295,8 +1257,6 @@ OMX_ERRORTYPE component::begin_restart(OMX_U32 port_index)
 		wr->set_request_restart(true);
 	}
 
-	set_request_restart(true);
-
 	return OMX_ErrorNone;
 }
 
@@ -1308,15 +1268,7 @@ OMX_ERRORTYPE component::end_restart(OMX_U32 port_index)
 		wr->wait_restart_done();
 	}
 
-	wait_restart_done();
-
 	return OMX_ErrorNone;
-}
-
-void component::run()
-{
-	scoped_log_begin;
-	//do nothing
 }
 
 OMX_U32 component::get_audio_ports()
@@ -1383,20 +1335,6 @@ void component::error_if_broken(std::unique_lock<std::mutex>& lock) const
 	}
 }
 
-bool component::is_running() const
-{
-	return f_running;
-}
-
-void component::set_running(bool f)
-{
-	scoped_log_begin;
-	std::lock_guard<std::mutex> lock(mut);
-
-	f_running = f;
-	cond.notify_all();
-}
-
 bool component::is_broken() const
 {
 	return f_broken;
@@ -1411,112 +1349,10 @@ void component::set_broken(bool f)
 	cond.notify_all();
 }
 
-bool component::is_request_flush() const
-{
-	return f_flush_do;
-}
-
-void component::set_request_flush(bool f)
-{
-	scoped_log_begin;
-	std::lock_guard<std::mutex> lock(mut);
-
-	f_flush_do = f;
-	cond.notify_all();
-}
-
-bool component::is_flush_done() const
-{
-	return f_flush_done;
-}
-
-void component::set_flush_done(bool f)
-{
-	scoped_log_begin;
-	std::lock_guard<std::mutex> lock(mut);
-
-	f_flush_done = f;
-	cond.notify_all();
-}
-
-bool component::is_request_restart() const
-{
-	return f_restart_do;
-}
-
-void component::set_request_restart(bool f)
-{
-	scoped_log_begin;
-	std::lock_guard<std::mutex> lock(mut);
-
-	f_restart_do = f;
-	cond.notify_all();
-}
-
-bool component::is_restart_done() const
-{
-	return f_restart_done;
-}
-
-void component::set_restart_done(bool f)
-{
-	scoped_log_begin;
-	std::lock_guard<std::mutex> lock(mut);
-
-	f_restart_done = f;
-	cond.notify_all();
-}
-
-void component::wait_request_flush()
-{
-	scoped_log_begin;
-	std::unique_lock<std::mutex> lock(mut);
-
-	cond.wait(lock, [&]() {
-			return is_broken() || !should_run() || is_request_flush();
-		});
-	f_flush_do = false;
-	error_if_broken(lock);
-}
-
-void component::wait_flush_done()
-{
-	scoped_log_begin;
-	std::unique_lock<std::mutex> lock(mut);
-
-	cond.wait(lock, [&]() {
-			return is_broken() || !should_run() || is_flush_done();
-		});
-	f_flush_done = false;
-	error_if_broken(lock);
-}
-
-void component::wait_request_restart()
-{
-	scoped_log_begin;
-	std::unique_lock<std::mutex> lock(mut);
-
-	cond.wait(lock, [&]() {
-			return is_broken() || !should_run() || is_request_restart();
-		});
-	f_restart_do = false;
-	error_if_broken(lock);
-}
-
-void component::wait_restart_done()
-{
-	scoped_log_begin;
-	std::unique_lock<std::mutex> lock(mut);
-
-	cond.wait(lock, [&]() {
-			return is_broken() || !should_run() || is_restart_done();
-		});
-	f_restart_done = false;
-	error_if_broken(lock);
-}
-
 bool component::register_worker_thread(component_worker *wr)
 {
+	scoped_log_begin;
+
 	list_workers.push_back(wr);
 
 	return true;
@@ -1524,9 +1360,10 @@ bool component::register_worker_thread(component_worker *wr)
 
 bool component::unregister_worker_thread(component_worker *wr)
 {
+	scoped_log_begin;
+
 	for (auto it = list_workers.begin(); it != list_workers.end(); it++) {
 		if (*it == wr) {
-			(*it)->join();
 			list_workers.erase(it);
 
 			return true;
@@ -1538,24 +1375,44 @@ bool component::unregister_worker_thread(component_worker *wr)
 
 const component::workerlist_t *component::get_worker_threads() const
 {
+	scoped_log_begin;
+
 	return &list_workers;
 }
 
 component::workerlist_t *component::get_worker_threads()
 {
+	scoped_log_begin;
+
 	return &list_workers;
 }
 
 void component::start_all_worker_threads()
 {
+	scoped_log_begin;
+
 	for (auto wr : list_workers) {
+		wr->set_running(true);
 		wr->start();
 	}
 }
 
 void component::stop_all_worker_threads()
 {
+	scoped_log_begin;
+
 	for (auto wr : list_workers) {
+		wr->set_running(false);
+		wr->join();
+	}
+}
+
+void component::break_all_worker_threads()
+{
+	scoped_log_begin;
+
+	for (auto wr : list_workers) {
+		wr->set_broken(true);
 		wr->join();
 	}
 }
@@ -1890,12 +1747,6 @@ OMX_ERRORTYPE component::command_state_set_to_idle_from_executing()
 	//Stop all workers
 	stop_all_worker_threads();
 
-	//Stop & wait main thread
-	stop_running();
-	th_main->join();
-	delete th_main;
-	th_main = nullptr;
-
 	//Restart all ports
 	errtmp = execute_restart(OMX_ALL,
 		[&](OMX_U32 ind) -> OMX_ERRORTYPE {
@@ -1947,19 +1798,9 @@ OMX_ERRORTYPE component::command_state_set_to_executing_from_idle()
 	try {
 		//Start all workers
 		start_all_worker_threads();
-
-		//Start main thread
-		th_main = new std::thread(component_thread_main, get_omx_component());
 	} catch (const std::bad_alloc& e) {
 		errprint("Failed to create main thread '%s'.\n", e.what());
 		return OMX_ErrorInsufficientResources;
-	}
-
-	//メイン処理が始まってから状態を切り替える
-	{
-		std::unique_lock<std::mutex> lock(mut);
-		cond.wait(lock, [&] { return is_broken() || should_run(); });
-		error_if_broken(lock);
 	}
 
 	//トンネル接続している相手ポートに、全バッファの処理を要求する
@@ -2351,46 +2192,6 @@ void *component::accept_command_thread_main(OMX_COMPONENTTYPE *arg)
 
 	try {
 		comp->accept_command();
-	} catch (const std::runtime_error& e) {
-		errprint("runtime_error: %s\n", e.what());
-	}
-
-	return nullptr;
-}
-
-void *component::component_thread_main(OMX_COMPONENTTYPE *arg)
-{
-	scoped_log_begin;
-	std::string thname;
-	component *comp = get_instance(arg);
-
-	//スレッド名をつける
-	thname = "omx:run:";
-	thname += comp->get_name();
-	set_thread_name(thname.c_str());
-
-	try {
-		//Idle 状態になってから開始する
-		comp->wait_state(OMX_StateIdle);
-
-		//メイン処理が始まったことを通知する
-		comp->set_running(true);
-		//リスタート処理開始
-		comp->set_request_restart(true);
-
-		while (comp->should_run()) {
-			comp->wait_request_restart();
-			if (!comp->should_run()) {
-				break;
-			}
-			//Do restarting if you need
-			comp->set_restart_done(true);
-
-			comp->run();
-
-			//Do flushing if you need
-			comp->set_flush_done(true);
-		}
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: %s\n", e.what());
 	}

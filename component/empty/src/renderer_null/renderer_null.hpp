@@ -20,8 +20,6 @@ public:
 	virtual const char *get_name() const;
 
 protected:
-	virtual void run();
-
 	virtual OMX_U32 get_video_ports();
 	virtual OMX_U32 get_video_start_port();
 
@@ -39,7 +37,6 @@ private:
 	port_video *in_port_video;
 
 
-public:
 	class worker_main : public component_worker {
 	public:
 		//親クラス
@@ -55,6 +52,9 @@ public:
 		renderer_null *comp;
 
 	};
+
+	worker_main wk_main;
+
 };
 
 } //namespace mf

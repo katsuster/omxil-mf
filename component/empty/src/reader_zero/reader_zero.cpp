@@ -3,9 +3,13 @@
 
 namespace mf {
 
+/*
+ * Component
+ */
+
 reader_zero::reader_zero(OMX_COMPONENTTYPE *c, const char *cname) 
 	: component(c, cname),
-	out_port_video(nullptr)
+	out_port_video(nullptr), wk_main(this)
 {
 	OMX_VIDEO_PARAM_PORTFORMATTYPE f;
 
@@ -25,6 +29,8 @@ reader_zero::reader_zero(OMX_COMPONENTTYPE *c, const char *cname)
 		out_port_video->set_default_format(0);
 
 		insert_port(*out_port_video);
+
+		register_worker_thread(&wk_main);
 	} catch (const std::bad_alloc& e) {
 		delete out_port_video;
 		out_port_video = nullptr;
@@ -33,6 +39,8 @@ reader_zero::reader_zero(OMX_COMPONENTTYPE *c, const char *cname)
 
 reader_zero::~reader_zero()
 {
+	unregister_worker_thread(&wk_main);
+
 	delete out_port_video;
 	out_port_video = nullptr;
 }
@@ -40,46 +48,6 @@ reader_zero::~reader_zero()
 const char *reader_zero::get_name() const
 {
 	return "read_zero";
-}
-
-void reader_zero::run()
-{
-	OMX_ERRORTYPE result;
-	port_buffer pb_out;
-	OMX_U32 len;
-	OMX_TICKS stamp = 0;
-	int i = 0;
-
-	while (should_run()) {
-		if (is_request_flush()) {
-			set_request_flush(false);
-			return;
-		}
-
-		result = out_port_video->pop_buffer(&pb_out);
-		if (result != OMX_ErrorNone) {
-			errprint("out_port_video.pop_buffer().\n");
-			continue;
-		}
-
-		if (i % 100 < 50) {
-			len = pb_out.header->nAllocLen;
-		} else {
-			len = pb_out.header->nAllocLen / 2;
-		}
-
-		memset(pb_out.header->pBuffer, 0, len);
-		pb_out.header->nFilledLen = len;
-		pb_out.header->nOffset    = 0;
-		pb_out.header->nTimeStamp = stamp;
-		pb_out.header->nFlags     = 0;
-		out_port_video->fill_buffer_done(&pb_out);
-
-		//next one
-		i++;
-		//16ms
-		stamp += 16000;
-	}
 }
 
 

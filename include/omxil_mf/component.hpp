@@ -72,18 +72,6 @@ public:
 	virtual const char *get_name() const override;
 
 	/**
-	 * コンポーネントのメイン処理の実行を続けるべきか取得します。
-	 *
-	 * @return 実行を続けるべきなら true、停止すべきなら false
-	 */
-	virtual bool should_run() const;
-
-	/**
-	 * コンポーネントのメイン処理の中断を要求します。
-	 */
-	virtual void stop_running();
-
-	/**
 	 * 全ての待機しているスレッドを強制的に解除します。
 	 *
 	 * 強制解除されたスレッドは runtime_error をスローします。
@@ -295,30 +283,6 @@ protected:
 	virtual OMX_ERRORTYPE end_restart(OMX_U32 port_index);
 
 	/**
-	 * コンポーネントのメイン処理を行います。
-	 *
-	 * 必要に応じて派生クラスにてオーバライドしてください。
-	 *
-	 * FIXME: このメンバ関数は純粋仮想関数にしないでください。
-	 *
-	 * このメンバ関数は何もしませんが、
-	 * コンポーネント破棄の途中で呼び出される可能性があるため、
-	 * 純粋仮想関数として定義するとプロセスがクラッシュします。
-	 *
-	 * 実行中のコンポーネントを OMX_FreeHandle にて破棄するとき、
-	 * 1) 派生クラスのデストラクタ
-	 * 2) このクラスのデストラクタ
-	 * の順に呼び出されます。
-	 *
-	 * 派生クラスのデストラクタが終了した時点で、
-	 * 派生クラスの virtual メンバ関数は呼び出せなくなります。
-	 * 2) の時点で th_main スレッドが run() を呼び出すと、
-	 * 本来呼び出すべきだった派生クラスの run() は呼ばれず、
-	 * このクラスの run() が呼ばれ、プロセスがクラッシュします。
-	 */
-	virtual void run();
-
-	/**
 	 * OMX_GetParameter(OMX_IndexParamAudioInit) にて返す、
 	 * ポート数を取得します。
 	 *
@@ -439,22 +403,6 @@ protected:
 	virtual void error_if_broken(std::unique_lock<std::mutex>& lock) const;
 
 	/**
-	 * コンポーネントのメイン処理の実行を続けるべきか取得します。
-	 *
-	 * @return 実行を続けるべきなら true、
-	 * 停止すべきなら false
-	 */
-	bool is_running() const;
-
-	/**
-	 * コンポーネントのメイン処理の実行を続けるべきか設定します。
-	 *
-	 * @param f 実行を続けるべきなら true、
-	 * 停止すべきなら false
-	 */
-	void set_running(bool f);
-
-	/**
 	 * 全ての待機しているスレッドを強制的に解除すべきか、
 	 * を取得します。
 	 *
@@ -471,98 +419,6 @@ protected:
 	 * 強制解除すべきでなければ false
 	 */
 	virtual void set_broken(bool f);
-
-	/**
-	 * フラッシュ処理を要求されているかどうかを取得します。
-	 *
-	 * @return フラッシュ処理を要求されていれば true、
-	 * 要求されていなければ false
-	 */
-	virtual bool is_request_flush() const;
-
-	/**
-	 * フラッシュ処理を要求されているかどうかを設定します。
-	 *
-	 * @param f フラッシュ処理を要求されていれば true、
-	 * 要求されていなければ false
-	 */
-	virtual void set_request_flush(bool f);
-
-	/**
-	 * フラッシュ処理が完了したかどうかを取得します。
-	 *
-	 * @return フラッシュ処理が完了していれば true、
-	 * 完了していなければ false
-	 */
-	virtual bool is_flush_done() const;
-
-	/**
-	 * フラッシュ処理が完了したかどうかを設定します。
-	 *
-	 * @return フラッシュ処理が完了していれば true、
-	 * 完了していなければ false
-	 */
-	virtual void set_flush_done(bool f);
-
-	/**
-	 * フラッシュ後のリスタート処理を要求されているかどうかを取得します。
-	 *
-	 * @return リスタート処理を要求されていれば true、
-	 * 要求されていなければ false
-	 */
-	virtual bool is_request_restart() const;
-
-	/**
-	 * フラッシュ後のリスタート処理を要求されているかどうかを設定します。
-	 *
-	 * @param f リスタート処理を要求されていれば true、
-	 * 要求されていなければ false
-	 */
-	virtual void set_request_restart(bool f);
-
-	/**
-	 * フラッシュ後のリスタート処理が完了したかどうかを取得します。
-	 *
-	 * @param f リスタート処理が完了していれば true、
-	 * 完了していなければ false
-	 */
-	virtual bool is_restart_done() const;
-
-	/**
-	 * フラッシュ後のリスタート処理が完了したかどうかを設定します。
-	 *
-	 * @param f リスタート処理が完了していれば true、
-	 * 完了していなければ false
-	 */
-	virtual void set_restart_done(bool f);
-
-	/**
-	 * フラッシュ処理が要求されるまで待ちます。
-	 *
-	 * フラグは自動的にクリアされます。
-	 */
-	virtual void wait_request_flush();
-
-	/**
-	 * フラッシュ処理が完了するまで待ちます。
-	 *
-	 * フラグは自動的にクリアされます。
-	 */
-	virtual void wait_flush_done();
-
-	/**
-	 * フラッシュ後のリスタート処理が要求されるまで待ちます。
-	 *
-	 * フラグは自動的にクリアされます。
-	 */
-	virtual void wait_request_restart();
-
-	/**
-	 * フラッシュ後のリスタート処理が完了するまで待ちます。
-	 *
-	 * フラグは自動的にクリアされます。
-	 */
-	virtual void wait_restart_done();
 
 	/**
 	 * コンポーネントにワーカースレッドを登録します。
@@ -607,6 +463,13 @@ protected:
 	 * 登録されたワーカースレッドを全て停止します。
 	 */
 	virtual void stop_all_worker_threads();
+
+	/**
+	 * 登録されたワーカースレッドを強制的に停止します。
+	 *
+	 * 可能な限り待機状態も解除します。
+	 */
+	virtual void break_all_worker_threads();
 
 	/**
 	 * OMX_SendCommand にて送られたコマンドを処理します。
@@ -888,22 +751,12 @@ protected:
 	 */
 	static void *accept_command_thread_main(OMX_COMPONENTTYPE *arg);
 
-	/**
-	 * コンポーネントのメイン処理を行うスレッドの main 関数です。
-	 *
-	 * @param arg OpenMAX コンポーネントへのポインタ
-	 * @return 常に nullptr
-	 */
-	static void *component_thread_main(OMX_COMPONENTTYPE *arg);
-
 
 private:
 	//コンポーネントのロック
 	mutable std::mutex mut;
 	//コンポーネントの状態変数
 	mutable std::condition_variable cond;
-	//メイン処理を続けるかどうかのフラグ
-	bool f_running;
 	//待機の強制解除フラグ
 	bool f_broken;
 
@@ -922,17 +775,6 @@ private:
 
 	//ワーカースレッド一覧表
 	workerlist_t list_workers;
-
-	//メイン処理スレッド
-	std::thread *th_main;
-	//フラッシュ要求フラグ
-	bool f_flush_do;
-	//フラッシュ完了フラグ
-	bool f_flush_done;
-	//リスタート要求フラグ
-	bool f_restart_do;
-	//リスタート完了フラグ
-	bool f_restart_done;
 
 	//ポート一覧表
 	portmap_t map_ports;
