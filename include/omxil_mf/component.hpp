@@ -753,9 +753,8 @@ protected:
 
 
 private:
-	//コンポーネントのロック
+	//コンポーネントの状態を変更するときに使用するロック
 	mutable std::mutex mut;
-	//コンポーネントの状態変数
 	mutable std::condition_variable cond;
 	//待機の強制解除フラグ
 	bool f_broken;

@@ -137,7 +137,7 @@ public:
 	/**
 	 * フラッシュ処理が完了したかどうかを設定します。
 	 *
-	 * @return フラッシュ処理が完了していれば true、
+	 * @param f フラッシュ処理が完了していれば true、
 	 * 完了していなければ false
 	 */
 	virtual void set_flush_done(bool f);
@@ -161,7 +161,7 @@ public:
 	/**
 	 * フラッシュ後のリスタート処理が完了したかどうかを取得します。
 	 *
-	 * @param f リスタート処理が完了していれば true、
+	 * @return リスタート処理が完了していれば true、
 	 * 完了していなければ false
 	 */
 	virtual bool is_restart_done() const;
@@ -221,11 +221,11 @@ public:
 
 protected:
 	/**
-	 * ワーカースレッドを保持するコンポーネントの状態をチェックし、
+	 * ワーカースレッドの状態をチェックし、
 	 * 待ちを強制キャンセルすべきなら例外をスローします。
 	 *
-	 * @param lock コンポーネントのロック
-	 * @see component::is_broken()
+	 * @param lock ワーカスレッドのロック
+	 * @see component_worker::is_broken()
 	 */
 	virtual void error_if_broken(std::unique_lock<std::mutex>& lock) const;
 
@@ -233,15 +233,14 @@ protected:
 	/**
 	 * ワーカースレッドのメイン関数です。
 	 *
-	 * @param ワーカースレッドへのポインタ
+	 * @param arg ワーカースレッドへのポインタ
 	 * @return 常に nullptr
 	 */
 	static void *component_worker_thread_main(component_worker *arg);
 
 private:
-	//ワーカースレッドのロック
+	//ワーカースレッドの状態を変更するときに使用するロック
 	mutable std::mutex mut;
-	//ワーカースレッドの状態変数
 	mutable std::condition_variable cond;
 
 	//ワーカースレッドを保持するコンポーネント
@@ -250,7 +249,7 @@ private:
 	//スレッド
 	std::thread *th_work;
 
-	//メイン処理を続けるかどうかのフラグ
+	//処理を続けるかどうかのフラグ
 	bool f_running;
 	//待機の強制解除フラグ
 	bool f_broken;
