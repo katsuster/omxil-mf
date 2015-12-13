@@ -10,6 +10,23 @@
 namespace mf {
 
 class reader_zero : public component {
+	class worker_main : public component_worker {
+	public:
+		//親クラス
+		typedef component_worker super;
+
+		worker_main(reader_zero *c);
+		virtual ~worker_main();
+
+		virtual const char *get_name() const;
+		virtual void run();
+
+	private:
+		reader_zero *comp;
+
+	};
+
+
 public:
 	//親クラス
 	typedef component super;
@@ -35,24 +52,6 @@ public:
 
 private:
 	port_video *out_port_video;
-
-
-	class worker_main : public component_worker {
-	public:
-		//親クラス
-		typedef component_worker super;
-
-		worker_main(reader_zero *c);
-		virtual ~worker_main();
-
-		virtual const char *get_name() const;
-		virtual void run();
-
-	private:
-		reader_zero *comp;
-
-	};
-
 	worker_main wk_main;
 
 };

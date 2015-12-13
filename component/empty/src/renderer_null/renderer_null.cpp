@@ -4,6 +4,48 @@
 namespace mf {
 
 /*
+ * Worker thread
+ */
+
+renderer_null::worker_main::worker_main(renderer_null *c)
+	: component_worker(c), comp(c)
+{
+}
+
+renderer_null::worker_main::~worker_main()
+{
+}
+
+const char *renderer_null::worker_main::get_name() const
+{
+	return "rend_null::wrk_main";
+}
+
+void renderer_null::worker_main::run()
+{
+	OMX_ERRORTYPE result;
+	port_buffer pb_in;
+
+	while (is_running()) {
+		if (is_request_flush()) {
+			set_request_flush(false);
+			return;
+		}
+
+		result = comp->in_port_video->pop_buffer(&pb_in);
+		if (result != OMX_ErrorNone) {
+			errprint("in_port_video.pop_buffer().\n");
+			continue;
+		}
+
+		//NOTE: gst-openmax は nOffset を戻さないとおかしな挙動をする？？
+		pb_in.header->nOffset = 0;
+		comp->in_port_video->empty_buffer_done(&pb_in);
+	}
+}
+
+
+/*
  * Component
  */
 
@@ -74,48 +116,6 @@ renderer_null *renderer_null::get_instance(OMX_HANDLETYPE hComponent)
 	renderer_null *comp = (renderer_null *) omx_comp->pComponentPrivate;
 
 	return comp;
-}
-
-
-/*
- * Worker thread
- */
-
-renderer_null::worker_main::worker_main(renderer_null *c)
-	: component_worker(c), comp(c)
-{
-}
-
-renderer_null::worker_main::~worker_main()
-{
-}
-
-const char *renderer_null::worker_main::get_name() const
-{
-	return "rend_null::wrk_main";
-}
-
-void renderer_null::worker_main::run()
-{
-	OMX_ERRORTYPE result;
-	port_buffer pb_in;
-
-	while (is_running()) {
-		if (is_request_flush()) {
-			set_request_flush(false);
-			return;
-		}
-
-		result = comp->in_port_video->pop_buffer(&pb_in);
-		if (result != OMX_ErrorNone) {
-			errprint("in_port_video.pop_buffer().\n");
-			continue;
-		}
-
-		//NOTE: gst-openmax は nOffset を戻さないとおかしな挙動をする？？
-		pb_in.header->nOffset = 0;
-		comp->in_port_video->empty_buffer_done(&pb_in);
-	}
 }
 
 } //namespace mf

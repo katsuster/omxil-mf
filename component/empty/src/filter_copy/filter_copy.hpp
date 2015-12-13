@@ -10,6 +10,23 @@
 namespace mf {
 
 class filter_copy : public component {
+	class worker_main : public component_worker {
+	public:
+		//親クラス
+		typedef component_worker super;
+
+		worker_main(filter_copy *c);
+		virtual ~worker_main();
+
+		virtual const char *get_name() const;
+		virtual void run();
+
+	private:
+		filter_copy *comp;
+
+	};
+
+
 public:
 	//親クラス
 	typedef component super;
@@ -36,24 +53,6 @@ public:
 private:
 	port_video *in_port_video;
 	port_video *out_port_video;
-
-
-	class worker_main : public component_worker {
-	public:
-		//親クラス
-		typedef component_worker super;
-
-		worker_main(filter_copy *c);
-		virtual ~worker_main();
-
-		virtual const char *get_name() const;
-		virtual void run();
-
-	private:
-		filter_copy *comp;
-
-	};
-
 	worker_main wk_main;
 
 };
