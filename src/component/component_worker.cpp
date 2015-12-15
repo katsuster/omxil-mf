@@ -261,7 +261,7 @@ void *component_worker::component_worker_thread_main(component_worker *arg)
 				errprint("runtime_error: worker %s: %s\n",
 					arg->get_name(), e.what());
 			}
-
+			arg->set_request_flush(false);
 			arg->set_flush_done(true);
 		}
 	} catch (const std::runtime_error& e) {

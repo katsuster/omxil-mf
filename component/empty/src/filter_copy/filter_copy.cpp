@@ -30,7 +30,6 @@ void filter_copy::worker_main::run()
 
 	while (is_running()) {
 		if (is_request_flush()) {
-			set_request_flush(false);
 			return;
 		}
 
