@@ -1393,6 +1393,7 @@ void component::start_all_worker_threads()
 
 	for (auto wr : list_workers) {
 		wr->set_running(true);
+		wr->set_broken(false);
 		wr->start();
 	}
 }
