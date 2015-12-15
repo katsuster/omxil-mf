@@ -422,7 +422,7 @@ OMX_ERRORTYPE port::add_port_format(const OMX_OTHER_PARAM_PORTFORMATTYPE& f)
 
 OMX_ERRORTYPE port::remove_port_format(size_t index)
 {
-	if (index < 0 || formats.size() <= index) {
+	if (formats.size() <= index) {
 		return OMX_ErrorBadParameter;
 	}
 
@@ -433,7 +433,7 @@ OMX_ERRORTYPE port::remove_port_format(size_t index)
 
 const port_format *port::get_port_format(size_t index) const
 {
-	if (index < 0 || formats.size() <= index) {
+	if (formats.size() <= index) {
 		return nullptr;
 	}
 
@@ -469,7 +469,7 @@ const port_format *port::get_default_format() const
 
 OMX_ERRORTYPE port::set_default_format(size_t index)
 {
-	if (index < 0 || formats.size() <= index) {
+	if (formats.size() <= index) {
 		return OMX_ErrorBadParameter;
 	}
 
