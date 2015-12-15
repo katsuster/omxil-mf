@@ -259,14 +259,14 @@ void *component_worker::component_worker_thread_main(component_worker *arg)
 				arg->run();
 			} catch (const std::runtime_error& e) {
 				errprint("runtime_error: worker %s: %s\n",
-					e.what(), arg->get_name());
+					arg->get_name(), e.what());
 			}
 
 			arg->set_flush_done(true);
 		}
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: worker %s: %s\n",
-			e.what(), arg->get_name());
+			arg->get_name(), e.what());
 	}
 
 	return nullptr;
