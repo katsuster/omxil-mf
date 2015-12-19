@@ -7,7 +7,7 @@
 namespace mf {
 
 template <class T>
-class buffer_base {
+class OMX_MF_API_CLASS buffer_base {
 public:
 	//reference to an element
 	typedef T& reference;

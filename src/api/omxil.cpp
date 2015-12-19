@@ -1,7 +1,8 @@
 ﻿
+#define __OMX_EXPORTS
+
 #include <fstream>
 
-#define __OMX_EXPORTS
 #include <OMX_Core.h>
 
 #include <omxil_mf/omxil_mf.h>

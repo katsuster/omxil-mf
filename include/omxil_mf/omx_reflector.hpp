@@ -6,6 +6,8 @@
 #include <OMX_Component.h>
 #include <OMX_Core.h>
 
+#include <omxil_mf/base.h>
+
 namespace mf {
 
 /**
@@ -53,7 +55,7 @@ namespace mf {
  * </pre>
  *
  */
-class omx_reflector {
+class OMX_MF_API_CLASS omx_reflector {
 public:
 	//親クラス
 	//typedef xxxx super;

@@ -11,6 +11,7 @@
 #include <OMX_Component.h>
 #include <OMX_Core.h>
 
+#include <omxil_mf/base.h>
 #include <omxil_mf/ring/ring_buffer.hpp>
 #include <omxil_mf/ring/bounded_buffer.hpp>
 #include <omxil_mf/omx_reflector.hpp>
@@ -42,7 +43,7 @@ struct OMX_MF_CMD {
 /**
  * コンポーネントの基底クラス。
  */
-class component : public omx_reflector {
+class OMX_MF_API_CLASS component : public omx_reflector {
 public:
 	//親クラス
 	typedef omx_reflector super;

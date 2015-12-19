@@ -26,7 +26,7 @@ namespace mf {
  * runtime_error がスローされます。
  */
 template <class Container, class T>
-class bounded_buffer {
+class OMX_MF_API_CLASS bounded_buffer {
 public:
 	//type of this
 	typedef bounded_buffer<Container, T> this_type;

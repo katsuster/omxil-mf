@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstdarg>
 
+#define __OMX_MF_EXPORTS
 #include <omxil_mf/dprint.h>
 
 #if defined(__linux__) && defined(__ANDROID__)
@@ -27,19 +28,19 @@
 //Debug print level
 static int debug_level = DPRINT_LEVEL_DEFAULT;
 
-int OMX_MF_get_debug_level()
+OMX_MF_API int OMX_MF_get_debug_level()
 {
 	return debug_level;
 }
 
-int OMX_MF_set_debug_level(int level)
+OMX_MF_API int OMX_MF_set_debug_level(int level)
 {
 	debug_level = level;
 
 	return debug_level;
 }
 
-int OMX_MF_print_cont(int level, const char *fmt, ...)
+OMX_MF_API int OMX_MF_print_cont(int level, const char *fmt, ...)
 {
 	va_list ap;
 	int result;

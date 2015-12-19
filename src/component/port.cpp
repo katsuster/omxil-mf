@@ -1,4 +1,7 @@
-﻿#include <omxil_mf/component.hpp>
+﻿
+#define __OMX_MF_EXPORTS
+
+#include <omxil_mf/component.hpp>
 #include <omxil_mf/port.hpp>
 #include <omxil_mf/scoped_log.hpp>
 

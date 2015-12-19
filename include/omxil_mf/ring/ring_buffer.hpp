@@ -11,7 +11,7 @@
 namespace mf {
 
 template <class T>
-class ring_buffer : public buffer_base<T> {
+class OMX_MF_API_CLASS ring_buffer : public buffer_base<T> {
 public:
 	//type of this
 	typedef ring_buffer<T> this_type;

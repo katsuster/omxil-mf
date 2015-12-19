@@ -9,6 +9,7 @@
 #include <OMX_Component.h>
 #include <OMX_Core.h>
 
+#include <omxil_mf/base.h>
 #include <omxil_mf/ring/ring_buffer.hpp>
 #include <omxil_mf/ring/bounded_buffer.hpp>
 #include <omxil_mf/port_buffer.hpp>
@@ -21,7 +22,7 @@
 
 namespace mf {
 
-class port {
+class OMX_MF_API_CLASS port {
 public:
 	//親クラス
 	//typedef xxxx super;

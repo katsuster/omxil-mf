@@ -1,4 +1,7 @@
-﻿#include <cstdarg>
+﻿
+#define __OMX_MF_EXPORTS
+
+#include <cstdarg>
 #include <cstdint>
 #include <deque>
 #include <map>

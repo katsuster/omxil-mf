@@ -1,5 +1,6 @@
 ﻿
 #define __OMX_EXPORTS
+
 #include <OMX_Core.h>
 
 #include <omxil_mf/scoped_log.hpp>

@@ -8,9 +8,11 @@
 #include <OMX_Image.h>
 #include <OMX_Other.h>
 
+#include <omxil_mf/base.h>
+
 namespace mf {
 
-class port_format {
+class OMX_MF_API_CLASS port_format {
 public:
 	//親クラス
 	//typedef xxxx super;

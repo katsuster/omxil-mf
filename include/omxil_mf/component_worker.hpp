@@ -5,6 +5,8 @@
 #include <condition_variable>
 #include <thread>
 
+#include <omxil_mf/base.h>
+
 namespace mf {
 
 class component;
@@ -12,7 +14,7 @@ class component;
 /**
  * コンポーネント内で生成するワーカスレッドクラス。
  */
-class component_worker {
+class OMX_MF_API_CLASS component_worker {
 public:
 	//親クラス
 	//typedef xxxxx super;

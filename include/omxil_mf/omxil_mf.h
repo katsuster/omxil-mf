@@ -5,6 +5,8 @@
 #include <OMX_Core.h>
 #include <OMX_Component.h>
 
+#include <omxil_mf/base.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -2,17 +2,7 @@
 #ifndef OMX_MF_DPRINT_HPP__
 #define OMX_MF_DPRINT_HPP__
 
-#if defined(__linux__)
-#include <unistd.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#elif defined(_WINDOWS)
-#define _WIN32_WINNT    _WIN32_WINNT_WINXP
-#include <WinSDKVer.h>
-//#include <SDKDDKVer.h>
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
+#include <omxil_mf/base.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,16 +38,16 @@ extern "C" {
 #define DPRINT_FUNC    __func__
 /* #define DPRINT_FUNC    __PRETTY_FUNCTION__ */
 
-int OMX_MF_get_debug_level();
-int OMX_MF_set_debug_level(int level);
-int OMX_MF_print_cont(int level, const char *fmt, ...) __attribute__((__format__(__printf__, 2, 3)));
+OMX_MF_API int OMX_MF_get_debug_level();
+OMX_MF_API int OMX_MF_set_debug_level(int level);
+OMX_MF_API int OMX_MF_print_cont(int level, const char *fmt, ...) __attribute__((__format__(__printf__, 2, 3)));
 #else
 /* Others */
 #define DPRINT_FUNC    __func__
 
-int OMX_MF_get_debug_level();
-int OMX_MF_set_debug_level(int level);
-int OMX_MF_print_cont(int level, const char *fmt, ...);
+OMX_MF_API int OMX_MF_get_debug_level();
+OMX_MF_API int OMX_MF_set_debug_level(int level);
+OMX_MF_API int OMX_MF_print_cont(int level, const char *fmt, ...);
 #endif
 
 #define OMX_MF_print_cont_chk(level, fmt, ...)                        \

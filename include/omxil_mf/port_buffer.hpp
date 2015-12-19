@@ -7,6 +7,8 @@
 #include <OMX_Component.h>
 #include <OMX_Core.h>
 
+#include <omxil_mf/base.h>
+
 namespace mf {
 
 class component;
@@ -41,7 +43,7 @@ class port;
  * }
  * </pre>
  */
-struct port_buffer {
+struct OMX_MF_API_CLASS port_buffer {
 	//バッファを所持しているポート
 	port *p;
 	//OMX_AllocateBuffer によって確保されたバッファであれば true

@@ -5,11 +5,12 @@
 #include <OMX_Core.h>
 #include <OMX_Image.h>
 
+#include <omxil_mf/base.h>
 #include <omxil_mf/port.hpp>
 
 namespace mf {
 
-class port_image : public port {
+class OMX_MF_API_CLASS port_image : public port {
 public:
 	//親クラス
 	typedef port super;

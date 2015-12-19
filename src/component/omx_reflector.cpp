@@ -1,4 +1,7 @@
-﻿#include <stdexcept>
+﻿
+#define __OMX_MF_EXPORTS
+
+#include <stdexcept>
 
 #include <OMX_Component.h>
 #include <OMX_Core.h>

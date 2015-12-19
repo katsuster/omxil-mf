@@ -6,7 +6,7 @@
 namespace mf {
 
 template <class RandomIterator>
-class bit_stream {
+class OMX_MF_API_CLASS bit_stream {
 public:
 	bit_stream(RandomIterator buffer, size_t offset, size_t length)
 		: buf(buffer), off(offset), len(length), pos(0)
