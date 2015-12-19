@@ -6,6 +6,8 @@
  *         To use strncpy().
  *       - NOMINMAX
  *         To use std::min(), std::max().
+ * NOTE: Suppress some warnings of Visual Studio.
+ *       - C4251
  */
 
 #include <windows.h>
