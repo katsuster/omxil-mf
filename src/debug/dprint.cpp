@@ -1,8 +1,9 @@
 ﻿
+#define __OMX_MF_EXPORTS
+
 #include <cstdio>
 #include <cstdarg>
 
-#define __OMX_MF_EXPORTS
 #include <omxil_mf/dprint.h>
 
 #if defined(__linux__) && defined(__ANDROID__)

@@ -1,5 +1,6 @@
 ﻿
 #define __OMX_EXPORTS
+#define __OMX_MF_EXPORTS
 
 #include <OMX_Core.h>
 

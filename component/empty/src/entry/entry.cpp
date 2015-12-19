@@ -1,4 +1,5 @@
-﻿#define __OMX_EXPORTS
+﻿
+#define __OMX_EXPORTS
 
 #include <cstdio>
 #include <string>

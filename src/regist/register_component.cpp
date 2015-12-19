@@ -1,4 +1,6 @@
 ﻿
+#define __OMX_MF_EXPORTS
+
 #include <algorithm>
 #include <fstream>
 #include <mutex>
