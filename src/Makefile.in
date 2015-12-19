@@ -120,8 +120,8 @@ am__installdirs = "$(DESTDIR)$(omxil_mfdir)"
 LTLIBRARIES = $(omxil_mf_LTLIBRARIES)
 libomxil_mf_la_DEPENDENCIES =
 am_libomxil_mf_la_OBJECTS = libomxil_mf_la-omxil.lo \
-	libomxil_mf_la-omxil_mf.lo libomxil_mf_la-util.lo \
-	libomxil_mf_la-omx_types_enum_name.lo \
+	libomxil_mf_la-omxil_mf.lo libomxil_mf_la-windll.lo \
+	libomxil_mf_la-util.lo libomxil_mf_la-omx_types_enum_name.lo \
 	libomxil_mf_la-omx_index_enum_name.lo \
 	libomxil_mf_la-omx_core_enum_name.lo \
 	libomxil_mf_la-omx_component_enum_name.lo \
@@ -361,6 +361,7 @@ libomxil_mf_ladir = $(includedir)
 libomxil_mf_la_SOURCES = \
 	$(API_DIR)/omxil.cpp \
 	$(API_DIR)/omxil_mf.cpp \
+	$(API_DIR)/windll.cpp \
 	$(UTIL_DIR)/util.cpp \
 	$(UTIL_DIR)/omx_types_enum_name.cpp \
 	$(UTIL_DIR)/omx_index_enum_name.cpp \
@@ -512,6 +513,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-port_video.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-register_component.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-util.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libomxil_mf_la-windll.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -547,6 +549,13 @@ libomxil_mf_la-omxil_mf.lo: $(API_DIR)/omxil_mf.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(API_DIR)/omxil_mf.cpp' object='libomxil_mf_la-omxil_mf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-omxil_mf.lo `test -f '$(API_DIR)/omxil_mf.cpp' || echo '$(srcdir)/'`$(API_DIR)/omxil_mf.cpp
+
+libomxil_mf_la-windll.lo: $(API_DIR)/windll.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-windll.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-windll.Tpo -c -o libomxil_mf_la-windll.lo `test -f '$(API_DIR)/windll.cpp' || echo '$(srcdir)/'`$(API_DIR)/windll.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libomxil_mf_la-windll.Tpo $(DEPDIR)/libomxil_mf_la-windll.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$(API_DIR)/windll.cpp' object='libomxil_mf_la-windll.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -c -o libomxil_mf_la-windll.lo `test -f '$(API_DIR)/windll.cpp' || echo '$(srcdir)/'`$(API_DIR)/windll.cpp
 
 libomxil_mf_la-util.lo: $(UTIL_DIR)/util.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libomxil_mf_la_CPPFLAGS) $(CPPFLAGS) $(libomxil_mf_la_CXXFLAGS) $(CXXFLAGS) -MT libomxil_mf_la-util.lo -MD -MP -MF $(DEPDIR)/libomxil_mf_la-util.Tpo -c -o libomxil_mf_la-util.lo `test -f '$(UTIL_DIR)/util.cpp' || echo '$(srcdir)/'`$(UTIL_DIR)/util.cpp
