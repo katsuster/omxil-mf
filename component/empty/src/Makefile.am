@@ -12,6 +12,7 @@ libomxil_mf_empty_ladir = $(includedir)
 
 libomxil_mf_empty_la_SOURCES = \
 	$(ENTRY_DIR)/entry.cpp \
+	$(ENTRY_DIR)/windll.cpp \
 	$(READER_ZERO_DIR)/reader_zero.cpp \
 	$(RENDERER_NULL_DIR)/renderer_null.cpp \
 	$(FILTER_COPY_DIR)/filter_copy.cpp

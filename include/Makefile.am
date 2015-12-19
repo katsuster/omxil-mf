@@ -21,6 +21,7 @@ nobase_libomxil_mf_la_HEADERS = \
 	$(RING_DIR)/buffer_base.hpp \
 	$(RING_DIR)/ring_buffer.hpp \
 	$(MF_HEADER_DIR)/omxil_mf.h \
+	$(MF_HEADER_DIR)/base.h \
 	$(MF_HEADER_DIR)/omx_reflector.hpp \
 	$(MF_HEADER_DIR)/component.hpp \
 	$(MF_HEADER_DIR)/component_worker.hpp \
