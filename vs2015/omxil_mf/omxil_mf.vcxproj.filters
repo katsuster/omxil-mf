@@ -108,6 +108,9 @@
     <ClCompile Include="..\..\src\util\util.cpp">
       <Filter>ソース ファイル\util</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\component\component_worker.cpp">
+      <Filter>ソース ファイル\component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\OMX_Audio.h">
@@ -199,6 +202,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\util\util.hpp">
       <Filter>ソース ファイル\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\base.h">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\omxil_mf\component_worker.hpp">
+      <Filter>ヘッダー ファイル\omxil_mf</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

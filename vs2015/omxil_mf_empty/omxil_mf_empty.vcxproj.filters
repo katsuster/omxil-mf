@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ソース ファイル\entry">
+      <UniqueIdentifier>{aedc7ddd-4fc2-4aa7-8311-90126caa37c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\filter_copy">
+      <UniqueIdentifier>{a4f34071-15e5-4774-a20e-4a1e601b4ed6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\reader_zero">
+      <UniqueIdentifier>{8dd167d8-8b22-4eed-acb0-c1d1a8ba22a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\renderer_null">
+      <UniqueIdentifier>{47f4b6f2-afe0-4c2d-abdc-23b1c405fc1a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\component\empty\src\entry\entry.cpp">
+      <Filter>ソース ファイル\entry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\component\empty\src\renderer_null\renderer_null.cpp">
+      <Filter>ソース ファイル\renderer_null</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\component\empty\src\reader_zero\reader_zero.cpp">
+      <Filter>ソース ファイル\reader_zero</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\component\empty\src\filter_copy\filter_copy.cpp">
+      <Filter>ソース ファイル\filter_copy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\component\empty\src\entry\windll.cpp">
+      <Filter>ソース ファイル\entry</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\component\empty\src\filter_copy\filter_copy.hpp">
+      <Filter>ソース ファイル\filter_copy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\component\empty\src\renderer_null\renderer_null.hpp">
+      <Filter>ソース ファイル\renderer_null</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\component\empty\src\reader_zero\reader_zero.hpp">
+      <Filter>ソース ファイル\reader_zero</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\component\empty\src\entry\entry.h">
+      <Filter>ソース ファイル\entry</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
