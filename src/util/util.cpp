@@ -1,3 +1,6 @@
+
+#include <vector>
+
 #if defined(__linux__)
 #include <unistd.h>
 #include <dlfcn.h>
@@ -55,7 +58,9 @@ void *open_library(const char *name)
 	return dlopen(name, RTLD_LAZY);
 #elif defined(_WINDOWS)
 	//Windows
-	return LoadLibraryEx((LPCWSTR)name, nullptr, 0);
+	std::vector<TCHAR> buf(strlen(name) + 1);
+	mbstowcs(&buf.front(), name, strlen(name));
+	return LoadLibraryEx(&buf.front(), nullptr, 0);
 #endif
 	//Other, always failed
 	return nullptr;
@@ -81,7 +86,12 @@ int close_library(void *handle)
 	return dlclose(handle);
 #elif defined(_WINDOWS)
 	//Windows
-	return CloseHandle(handle);
+	BOOL ret = FreeLibrary((HMODULE)handle);
+	if (ret) {
+		return 0;
+	} else {
+		return -1;
+	}
 #endif
 	//Other, always failed
 	return -1;
