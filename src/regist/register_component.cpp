@@ -364,13 +364,15 @@ void register_component::load_components(void)
 		}
 
 		//register components (by library)
-		libresult = entry_func();
-		if (libresult != OMX_ErrorNone) {
-			//failed to regist
-			errprint("Library '%s' entry '%s' was failed. "
+		if (entry_func) {
+			libresult = entry_func();
+			if (libresult != OMX_ErrorNone) {
+				//failed to regist
+				errprint("Library '%s' entry '%s' was failed. "
 					"Skipped.\n",
-				libname.c_str(), OMX_MF_ENTRY_FUNCNAME);
-			flag_err = true;
+					libname.c_str(), OMX_MF_ENTRY_FUNCNAME);
+				flag_err = true;
+			}
 		}
 
 		if (!flag_err) {
