@@ -21,7 +21,7 @@ struct buffer_attr {
 
 class omxil_comp {
 public:
-	typedef typename std::vector<OMX_BUFFERHEADERTYPE *> buflist_type;
+	typedef std::vector<OMX_BUFFERHEADERTYPE *> buflist_type;
 
 	omxil_comp(const char *comp_name);
 	virtual ~omxil_comp();
