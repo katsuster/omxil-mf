@@ -11,7 +11,7 @@ AC_ARG_PROGRAM()
 AC_CONFIG_SRCDIR([src/api/omxil.cpp])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([.])
-AC_CONFIG_MACRO_DIR([m4])
+dnl AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([foreign ])
 LT_INIT()
