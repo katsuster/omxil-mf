@@ -123,6 +123,7 @@ AC_CONFIG_FILES([Makefile include/Makefile src/Makefile
 	tests/simple/Makefile ])
 #doc/Makefile
 
-AC_CONFIG_SUBDIRS([component/empty ])
+AC_CONFIG_SUBDIRS([src/cppunit-1.12.1])
+AC_CONFIG_SUBDIRS([component/empty])
 
 AC_OUTPUT()
