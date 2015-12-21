@@ -1,9 +1,9 @@
-dnl Process this file with autoconf to produce a configure script.
-AC_INIT(Makefile.am)
-
 # autoconf 2.50 or higher to rebuild aclocal.m4, because the
 # AC_CREATE_PREFIX_CONFIG_H macro needs the AS_DIRNAME macro.
 AC_PREREQ(2.50)
+
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT([cppunit], [1.12.1.0])
 
 # Making releases:
 #   CPPUNIT_MICRO_VERSION += 1;
@@ -37,8 +37,8 @@ AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 
 AC_CONFIG_AUX_DIR(config)
-AM_CONFIG_HEADER(config/config.h)
-AM_INIT_AUTOMAKE(cppunit, $CPPUNIT_VERSION)
+AC_CONFIG_HEADER(config/config.h)
+AM_INIT_AUTOMAKE([foreign])
 
 # General "with" options
 # ----------------------------------------------------------------------------
