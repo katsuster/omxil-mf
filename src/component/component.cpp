@@ -1830,10 +1830,31 @@ OMX_ERRORTYPE component::command_state_set_to_executing_from_idle()
 OMX_ERRORTYPE component::command_state_set_to_pause()
 {
 	scoped_log_begin;
+	OMX_ERRORTYPE err;
 
-	set_state(OMX_StatePause);
+	switch (get_state()) {
+	case OMX_StateIdle:
+		//err = command_state_set_to_pause_from_idle();
+		//break;
+	case OMX_StateExecuting:
+		//err = command_state_set_to_pause_from_executing();
+		//break;
+	case OMX_StatePause:
+		err = OMX_ErrorSameState;
+		break;
+	default:
+		errprint("Invalid state:%s.\n",
+			omx_enum_name::get_OMX_STATETYPE_name(get_state()));
 
-	return OMX_ErrorNone;
+		err = OMX_ErrorInvalidState;
+		break;
+	}
+
+	if (err == OMX_ErrorNone) {
+		set_state(OMX_StatePause);
+	}
+
+	return err;
 }
 
 OMX_ERRORTYPE component::command_state_set_to_wait_for_resources()
