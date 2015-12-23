@@ -379,6 +379,50 @@ public:
 	}
 
 	/**
+	 * 任意の要素をリングバッファから読み込みますが、
+	 * 読み込み位置を変更しません。
+	 *
+	 * 指定した要素を読み込むまでブロックします。
+	 *
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
+	 * @return リングバッファから読み込んだ要素
+	 */
+	template <class U>
+	U peek_fully(transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+		U buf;
+
+		peek_fully(reinterpret_cast<T *>(&buf), sizeof(U), rdtrans, wrtrans);
+
+		return buf;
+	}
+
+	/**
+	 * 配列をリングバッファから読み込みますが、
+	 * 読み込み位置を変更しません。
+	 *
+	 * 指定した要素数を読み込むまでブロックします。
+	 *
+	 * @param buf   リングバッファから読み込んだ要素を格納する配列
+	 * @param count リングバッファから読み込む数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
+	 * @return リングバッファから読み込んだ数
+	 */
+	size_type peek_fully(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+		std::unique_lock<std::recursive_mutex> lock(mut);
+		size_type pos = 0;
+
+		while (count - pos > 0) {
+			wait_element_with_lock(lock);
+
+			pos += peek_array_with_lock(&buf[pos], count - pos, rdtrans, wrtrans);
+		}
+
+		return pos;
+	}
+
+	/**
 	 * 任意の要素をリングバッファから読み込みます。
 	 *
 	 * 指定した要素を読み込むまでブロックします。
@@ -606,6 +650,27 @@ protected:
 
 		result = bound.skip(count);
 		cnt_rd += result;
+		notify_with_lock();
+
+		return result;
+	}
+
+	/**
+	 * 配列をリングバッファから読み込みますが、
+	 * 読み込み位置を変更しません。
+	 *
+	 * ロックを確保してから呼び出します。
+	 *
+	 * @param buf     リングバッファから読み込んだ要素を格納する配列
+	 * @param count   リングバッファから読み込む数
+	 * @param rdtrans 読み出し用の変換関数
+	 * @param wrtrans 書き込み用の変換関数
+	 * @return リングバッファから読み込んだ数
+	 */
+	size_type peek_array_with_lock(T *buf, size_type count, transform_func_t rdtrans, transform_func_t wrtrans) {
+		size_type result;
+
+		result = bound.peek_array(buf, count, rdtrans, wrtrans);
 		notify_with_lock();
 
 		return result;
