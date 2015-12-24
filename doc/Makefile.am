@@ -1,3 +1,5 @@
+EXTRA_DIST = doxyfile
+
 if HAVE_DOXYGEN
 
 DOXYGEN_CONF = doxyfile
