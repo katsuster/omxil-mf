@@ -17,6 +17,7 @@ Makefile
 .deps/
 /cppunit-config
 /cppunit.pc
+/cppunit.spec
 /doc/Doxyfile
 /include/cppunit/config-auto.h
 
