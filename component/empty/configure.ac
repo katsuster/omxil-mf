@@ -98,6 +98,8 @@ dnl ----------------------------------------
 dnl Output the configure.
 dnl ----------------------------------------
 AC_CONFIG_FILES([Makefile src/Makefile 
+	src/entry/Makefile src/reader_zero/Makefile 
+	src/renderer_null/Makefile src/filter_copy/Makefile 
 	tests/Makefile ])
 
 AC_OUTPUT()
