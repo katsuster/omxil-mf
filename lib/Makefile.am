@@ -1,2 +1,2 @@
 
-#SUBDIRS = cppunit-1.12.1
+SUBDIRS = cppunit-1.12.1

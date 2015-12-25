@@ -125,7 +125,7 @@ AC_CONFIG_FILES([Makefile include/Makefile src/Makefile  lib/Makefile
 	tests/simple/Makefile ])
 #doc/Makefile
 
-#AC_CONFIG_SUBDIRS([lib/cppunit-1.12.1])
+AC_CONFIG_SUBDIRS([lib/cppunit-1.12.1])
 AC_CONFIG_SUBDIRS([component/empty])
 
 AC_OUTPUT()
