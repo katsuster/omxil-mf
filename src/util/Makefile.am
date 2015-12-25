@@ -22,3 +22,4 @@ libutil_la_CPPFLAGS = $(omxil_mf_common_cppflags) \
 	-I$(top_srcdir)/src
 libutil_la_CFLAGS   = $(omxil_mf_common_cflags)
 libutil_la_CXXFLAGS = $(omxil_mf_common_cxxflags)
+libutil_la_LDFLAGS  = $(omxil_mf_common_ldflags)

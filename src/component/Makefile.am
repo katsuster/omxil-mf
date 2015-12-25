@@ -20,3 +20,4 @@ libcomponent_la_CPPFLAGS = $(omxil_mf_common_cppflags) \
 	-I$(top_srcdir)/src
 libcomponent_la_CFLAGS   = $(omxil_mf_common_cflags)
 libcomponent_la_CXXFLAGS = $(omxil_mf_common_cxxflags)
+libcomponent_la_LDFLAGS  = $(omxil_mf_common_ldflags)

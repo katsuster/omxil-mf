@@ -11,3 +11,4 @@ libdebug_la_CPPFLAGS = $(omxil_mf_common_cppflags) \
 	-I$(top_srcdir)/src
 libdebug_la_CFLAGS   = $(omxil_mf_common_cflags)
 libdebug_la_CXXFLAGS = $(omxil_mf_common_cxxflags)
+libdebug_la_LDFLAGS  = $(omxil_mf_common_ldflags)
