@@ -1,5 +1,5 @@
 
-SUBDIRS = include src component doc tests
+SUBDIRS = include lib src component doc tests
 
 omxil_mf_common_cppflags = \
 	$(AM_CPPFLAGS) \

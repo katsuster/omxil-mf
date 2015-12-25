@@ -116,7 +116,7 @@ fi
 dnl ----------------------------------------
 dnl Output the configure.
 dnl ----------------------------------------
-AC_CONFIG_FILES([Makefile include/Makefile src/Makefile 
+AC_CONFIG_FILES([Makefile include/Makefile src/Makefile  lib/Makefile 
 	src/api/Makefile src/util/Makefile src/component/Makefile 
 	src/regist/Makefile src/debug/Makefile 
 	component/Makefile 
@@ -125,7 +125,7 @@ AC_CONFIG_FILES([Makefile include/Makefile src/Makefile
 	tests/simple/Makefile ])
 #doc/Makefile
 
-#AC_CONFIG_SUBDIRS([src/cppunit-1.12.1])
+#AC_CONFIG_SUBDIRS([lib/cppunit-1.12.1])
 AC_CONFIG_SUBDIRS([component/empty])
 
 AC_OUTPUT()

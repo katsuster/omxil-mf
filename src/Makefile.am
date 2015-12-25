@@ -1,5 +1,4 @@
 
-#SUBDIRS = cppunit-1.12.1
 SUBDIRS = api util component regist debug
 
 omxil_mfdir = $(libdir)
