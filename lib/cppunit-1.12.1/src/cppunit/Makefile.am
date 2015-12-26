@@ -3,7 +3,6 @@
 #
 
 EXTRA_DIST = cppunit.dsp cppunit_dll.dsp DllMain.cpp
-INCLUDES = -I$(top_builddir)/include -I$(top_srcdir)/include
 
 lib_LTLIBRARIES = libcppunit.la
 
@@ -60,6 +59,9 @@ libcppunit_la_SOURCES = \
   XmlOutputter.cpp \
   XmlOutputterHook.cpp \
   Win32DynamicLibraryManager.cpp
+
+libcppunit_la_CPPFLAGS = \
+ -I$(top_builddir)/include -I$(top_srcdir)/include
 
 libcppunit_la_LDFLAGS= \
  -no-undefined -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \

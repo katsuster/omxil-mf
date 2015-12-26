@@ -3,8 +3,6 @@ EXTRA_DIST = CppUnitTestMain.dsw CppUnitTestMain.dsp CppUnitTestPlugIn.dsp CppUn
 TESTS = cppunittestmain
 check_PROGRAMS = $(TESTS)
 
-INCLUDES = -I$(top_builddir)/include -I$(top_srcdir)/include
-
 cppunittestmain_SOURCES = \
 	assertion_traitsTest.cpp \
 	assertion_traitsTest.h \
@@ -74,6 +72,8 @@ cppunittestmain_SOURCES = \
 	XmlUniformiser.cpp \
 	XmlUniformiserTest.h \
 	XmlUniformiserTest.cpp
+
+cppunittestmain_CPPFLAGS = -I$(top_builddir)/include -I$(top_srcdir)/include
 
 cppunittestmain_LDADD= \
   $(top_builddir)/src/cppunit/libcppunit.la 
