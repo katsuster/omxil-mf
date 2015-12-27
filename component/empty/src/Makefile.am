@@ -18,12 +18,12 @@ libomxil_mf_empty_la_LIBADD  = \
 	renderer_null/librenderer_null.la \
 	filter_copy/libfilter_copy.la
 
-libomxil_mf_empty_la_CPPFLAGS = $(omxil_mf_common_cppflags) \
+libomxil_mf_empty_la_CPPFLAGS = $(omxil_mf_empty_common_cppflags) \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src
-libomxil_mf_empty_la_CFLAGS   = $(omxil_mf_common_cflags)
-libomxil_mf_empty_la_CXXFLAGS = $(omxil_mf_common_cxxflags)
-libomxil_mf_empty_la_LDFLAGS  = $(omxil_mf_common_ldflags) \
+libomxil_mf_empty_la_CFLAGS   = $(omxil_mf_empty_common_cflags)
+libomxil_mf_empty_la_CXXFLAGS = $(omxil_mf_empty_common_cxxflags)
+libomxil_mf_empty_la_LDFLAGS  = $(omxil_mf_empty_common_ldflags) \
 	-lpthread \
 	-lomxil-mf
 

@@ -7,12 +7,12 @@ libfilter_copy_la_SOURCES = \
 EXTRA_libfilter_copy_la_SOURCES = \
 	filter_copy.hpp
 
-libfilter_copy_la_CPPFLAGS = $(omxil_mf_common_cppflags) \
+libfilter_copy_la_CPPFLAGS = $(omxil_mf_empty_common_cppflags) \
 	-I$(top_srcdir)/include \
 	-I$(top_srcdir)/src
-libfilter_copy_la_CFLAGS   = $(omxil_mf_common_cflags)
-libfilter_copy_la_CXXFLAGS = $(omxil_mf_common_cxxflags)
-libfilter_copy_la_LDFLAGS  = $(omxil_mf_common_ldflags)
+libfilter_copy_la_CFLAGS   = $(omxil_mf_empty_common_cflags)
+libfilter_copy_la_CXXFLAGS = $(omxil_mf_empty_common_cxxflags)
+libfilter_copy_la_LDFLAGS  = $(omxil_mf_empty_common_ldflags)
 
 if USE_INNER_LIB
   libfilter_copy_la_CPPFLAGS += \
