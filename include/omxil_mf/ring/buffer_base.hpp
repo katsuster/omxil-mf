@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <cstring>
 
+#include <omxil_mf/base.h>
+
 namespace mf {
 
 template <class T>

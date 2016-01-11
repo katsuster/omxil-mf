@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+#include <omxil_mf/base.h>
+
 namespace mf {
 
 template <class RandomIterator>

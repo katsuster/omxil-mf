@@ -6,6 +6,8 @@
 #include <cstddef>
 #include <iterator>
 
+#include <omxil_mf/base.h>
+
 #include "buffer_base.hpp"
 
 namespace mf {
@@ -33,6 +35,111 @@ public:
 	using buffer_base<T>::get_remain_continuous;
 	using buffer_base<T>::get_space;
 	using buffer_base<T>::get_space_continuous;
+
+	class const_iterator : public std::iterator<std::forward_iterator_tag, T> {
+	public:
+		explicit const_iterator(const ring_buffer *buffer)
+			: const_iterator(buffer, 0) {
+		}
+
+		const_iterator(const ring_buffer *buffer, size_type position)
+			: buf(buffer), pos(position) {
+		}
+
+		~const_iterator() {
+		}
+
+		const_iterator(const const_iterator& obj) {
+			*this = obj;
+		}
+
+		const const_iterator& operator=(const const_iterator& obj) {
+			if (this == &obj) {
+				return *this;
+			}
+
+			buf = obj.buf;
+			pos = obj.pos;
+
+			return *this;
+		}
+
+		const_reference operator*() const {
+			return (*buf)[pos];
+		}
+
+		const_iterator& operator++() {
+			pos++;
+			return *this;
+		}
+
+		const_iterator operator++(int) {
+			return const_iterator(buf, pos++);
+		}
+
+		const_iterator& operator+=(size_type off) {
+			pos += off;
+			return *this;
+		}
+
+		const_iterator& operator--() {
+			pos--;
+			return *this;
+		}
+
+		const_iterator operator--(int) {
+			return const_iterator(buf, pos--);
+		}
+
+		const_iterator& operator-=(size_type off) {
+			pos -= off;
+			return *this;
+		}
+
+		const_iterator operator+(int off) const {
+			return const_iterator(buf, pos + off);
+		}
+
+		const_iterator operator-(int off) const {
+			return const_iterator(buf, pos - off);
+		}
+
+		int operator-(const const_iterator& obj) const {
+			return pos - obj.pos;
+		}
+
+		const_reference operator[](size_type off) const {
+			return (*buf)[pos + off];
+		}
+
+		bool operator==(const const_iterator& obj) const {
+			return (buf == obj.buf) && (pos == obj.pos);
+		}
+
+		bool operator!=(const const_iterator& obj) const {
+			return !(*this == obj);
+		}
+
+		bool operator<(const const_iterator& obj) const {
+			return (buf == obj.buf) && (pos < obj.pos);
+		}
+
+		bool operator>(const const_iterator& obj) const {
+			return !(*this < obj) && (*this != obj);
+		}
+
+		bool operator<=(const const_iterator& obj) const {
+			return (*this < obj) && (*this == obj);
+		}
+
+		bool operator>=(const const_iterator& obj) const {
+			return !(*this < obj);
+		}
+
+	private:
+		const ring_buffer *buf;
+		size_type pos;
+	};
 
 	class iterator : public std::iterator<std::forward_iterator_tag, T> {
 	public:
@@ -62,11 +169,7 @@ public:
 			return *this;
 		}
 
-		const_reference operator*() const {
-			return (*buf)[pos];
-		}
-
-		reference operator*() {
+		reference operator*() const {
 			return (*buf)[pos];
 		}
 
@@ -79,6 +182,11 @@ public:
 			return iterator(buf, pos++);
 		}
 
+		iterator& operator+=(size_type off) {
+			pos += off;
+			return *this;
+		}
+
 		iterator& operator--() {
 			pos--;
 			return *this;
@@ -86,6 +194,11 @@ public:
 
 		iterator operator--(int) {
 			return iterator(buf, pos--);
+		}
+
+		iterator& operator-=(size_type off) {
+			pos -= off;
+			return *this;
 		}
 
 		iterator operator+(int off) const {
@@ -96,15 +209,11 @@ public:
 			return iterator(buf, pos - off);
 		}
 
-		int operator-(const iterator& obj) {
+		int operator-(const iterator& obj) const {
 			return pos - obj.pos;
 		}
 
-		const_reference operator[](size_type off) const {
-			return (*buf)[pos + off];
-		}
-
-		reference operator[](size_type off) {
+		reference operator[](size_type off) const {
 			return (*buf)[pos + off];
 		}
 
@@ -135,7 +244,6 @@ public:
 	private:
 		ring_buffer *buf;
 		size_type pos;
-
 	};
 
 	ring_buffer(T *buf, size_type l)
@@ -157,10 +265,20 @@ public:
 	// iterators
 	//----------------------------------------
 
+	/**
+	 * Returns an iterator pointing to the first element.
+	 *
+	 * @return An iterator to the first element.
+	 */
 	iterator begin() {
 		return iterator(this, 0);
 	}
 
+	/**
+	 * Returns an iterator pointing to the past-the-end element.
+	 *
+	 * @return An iterator pointing to the past-the-end element
+	 */
 	iterator end() {
 		return iterator(this, size());
 	}
@@ -172,8 +290,24 @@ public:
 	// const iterators
 	//----------------------------------------
 
-	//cbegin
-	//cend
+	/**
+	 * Returns an const_iterator pointing to the first element.
+	 *
+	 * @return An const_iterator to the first element.
+	 */
+	const_iterator cbegin() {
+		return const_iterator(this, 0);
+	}
+
+	/**
+	 * Returns an const_iterator pointing to the past-the-end element.
+	 *
+	 * @return An const_iterator pointing to the past-the-end element
+	 */
+	const_iterator cend() {
+		return const_iterator(this, size());
+	}
+
 	//crbegin
 	//crend
 

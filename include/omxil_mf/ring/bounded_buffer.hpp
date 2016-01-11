@@ -10,6 +10,8 @@
 //#include <cstdint>
 #include <cstddef>
 
+#include <omxil_mf/base.h>
+
 #include "buffer_base.hpp"
 
 namespace mf {
