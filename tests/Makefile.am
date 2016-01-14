@@ -1,1 +1,1 @@
-SUBDIRS = basic interop simple
+SUBDIRS = common basic interop simple
