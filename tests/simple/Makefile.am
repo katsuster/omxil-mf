@@ -1,38 +1,29 @@
-TEST_DIR   = $(top_srcdir)/tests
-COMMON_DIR = $(TEST_DIR)/common
 
 check_PROGRAMS = \
 	renderer_null
 
-common_SOURCES  = $(COMMON_DIR)/omxil_utils.c $(COMMON_DIR)/omxil_comp.cpp
-common_CPPFLAGS = \
-	$(AM_CPPFLAGS) \
-	-Wall -Werror \
-	-I$(TEST_DIR)
-common_CFLAGS   = \
-	$(AM_CFLAGS)
-common_CXXFLAGS = \
-	$(AM_CXXFLAGS)
-common_LDADD    = \
-	-lpthread
+common_ldadd    = $(top_srcdir)/common/libcommon.la
+
+common_cppflags = $(omxil_mf_common_cppflags) \
+	-I$(top_srcdir)/tests
+common_cflags   = $(omxil_mf_common_cflags)
+common_cxxflags = $(omxil_mf_common_cxxflags)
+common_ldflags  = $(omxil_mf_common_ldflags)
 
 if USE_BELLAGIO
-  common_CPPFLAGS += -DUSE_BELLAGIO
-  common_CFLAGS   += 
-  common_CXXFLAGS += -std=c++0x
-  common_LDADD    += -lomxil-bellagio
+  common_cppflags += -DUSE_BELLAGIO
+  common_ldflags  += -lomxil-bellagio
 else
-  common_CPPFLAGS += -DUSE_MF -I$(top_srcdir)/include
-  common_CFLAGS   += 
-  common_CXXFLAGS += -std=c++0x
-  common_LDADD    += $(top_builddir)/src/libomxil-mf.la
+  common_ldadd    += $(top_builddir)/src/libomxil-mf.la
+  common_cppflags += -DUSE_MF -I$(top_srcdir)/include
 endif
 
-renderer_null_SOURCES   = test_renderer_null.cpp $(common_SOURCES)
-renderer_null_LDADD     = $(common_LDADD)
-renderer_null_CPPFLAGS  = $(common_CPPFLAGS)
-renderer_null_CFLAGS    = $(common_CFLAGS)
-renderer_null_CXXFLAGS  = $(common_CXXFLAGS)
+renderer_null_SOURCES   = test_renderer_null.cpp
+renderer_null_LDADD     = $(common_ldadd)
+renderer_null_CPPFLAGS  = $(common_cppflags)
+renderer_null_CFLAGS    = $(common_cflags)
+renderer_null_CXXFLAGS  = $(common_cxxflags)
+renderer_null_LDFLAGS   = $(common_ldflagss)
 
 TESTS = \
 	renderer_null
