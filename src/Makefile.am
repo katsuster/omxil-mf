@@ -25,4 +25,5 @@ libomxil_mf_la_CXXFLAGS = $(omxil_mf_common_cxxflags)
 libomxil_mf_la_LDFLAGS  = $(omxil_mf_common_ldflags) \
 	-L$(top_srcdir)/src \
 	-lpthread \
-	-ldl
+	-ldl \
+	-lstdc++

@@ -24,8 +24,9 @@ libomxil_mf_empty_la_CPPFLAGS = $(omxil_mf_empty_common_cppflags) \
 libomxil_mf_empty_la_CFLAGS   = $(omxil_mf_empty_common_cflags)
 libomxil_mf_empty_la_CXXFLAGS = $(omxil_mf_empty_common_cxxflags)
 libomxil_mf_empty_la_LDFLAGS  = $(omxil_mf_empty_common_ldflags) \
+	-lomxil-mf \
 	-lpthread \
-	-lomxil-mf
+	-lstdc++
 
 if USE_INNER_LIB
   libomxil_mf_empty_la_CPPFLAGS += \
