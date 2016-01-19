@@ -8,7 +8,7 @@
 
 namespace mf {
 
-template <class T>
+template <class RandomIterator, class T>
 class OMX_MF_API_CLASS buffer_base {
 public:
 	//reference to an element

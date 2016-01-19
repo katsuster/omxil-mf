@@ -33,11 +33,11 @@ public:
 	//type of this
 	typedef bounded_buffer<Container, T> this_type;
 	//reference to an element
-	typedef typename buffer_base<T>::reference reference;
+	typedef typename buffer_base<T *, T>::reference reference;
 	//const reference to an element
-	typedef typename buffer_base<T>::const_reference const_reference;
+	typedef typename buffer_base<T *, T>::const_reference const_reference;
 	//size type(unsigned)
-	typedef typename buffer_base<T>::size_type size_type;
+	typedef typename buffer_base<T *, T>::size_type size_type;
 
 	typedef int (* transform_func_t)(T *dest, const T *src, size_type n, size_type *ntrans);
 
@@ -290,7 +290,7 @@ public:
 	 * @return 任意の要素
 	 */
 	template <class U>
-	U read(transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	U read(transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
 		U buf;
 
 		read_array(reinterpret_cast<T *>(&buf), sizeof(U), rdtrans, wrtrans);
@@ -307,7 +307,7 @@ public:
 	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
-	size_type read_array(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	size_type read_array(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 
 		return read_array_with_lock(buf, count, rdtrans, wrtrans);
@@ -321,7 +321,7 @@ public:
 	 * @param wrtrans 書き込み用の変換関数
 	 */
 	/*template <class U>
-	void write(const U& buf, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	void write(const U& buf, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
 		write_array(reinterpret_cast<T *>(&buf), sizeof(U), rdtrans, wrtrans);
 	}*/
 
@@ -334,7 +334,7 @@ public:
 	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	/*size_type write_array(const T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	/*size_type write_array(const T *buf, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 
 		return write_array_with_lock(buf, count, rdtrans, wrtrans);
@@ -349,7 +349,7 @@ public:
 	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	/*size_type copy_array(this_type *src, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	/*size_type copy_array(this_type *src, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		std::unique_lock<std::recursive_mutex> lock_src(src->mut);
 
@@ -391,7 +391,7 @@ public:
 	 * @return リングバッファから読み込んだ要素
 	 */
 	template <class U>
-	U peek_fully(transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	U peek_fully(transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
 		U buf;
 
 		peek_fully(reinterpret_cast<T *>(&buf), sizeof(U), rdtrans, wrtrans);
@@ -411,7 +411,7 @@ public:
 	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
-	size_type peek_fully(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	size_type peek_fully(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		size_type pos = 0;
 
@@ -434,7 +434,7 @@ public:
 	 * @return リングバッファから読み込んだ要素
 	 */
 	template <class U>
-	U read_fully(transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	U read_fully(transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
 		U buf;
 
 		read_fully(reinterpret_cast<T *>(&buf), sizeof(U), rdtrans, wrtrans);
@@ -453,7 +453,7 @@ public:
 	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
-	size_type read_fully(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	size_type read_fully(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		size_type pos = 0;
 
@@ -476,7 +476,7 @@ public:
 	 * @param wrtrans 書き込み用の変換関数
 	 */
 	template <class U>
-	void write_fully(const U& buf, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	void write_fully(const U& buf, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
 		write_fully(reinterpret_cast<const T *>(&buf), sizeof(U), rdtrans, wrtrans);
 	}
 
@@ -491,7 +491,7 @@ public:
 	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	size_type write_fully(const T *buf, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	size_type write_fully(const T *buf, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		size_type pos = 0;
 
@@ -515,7 +515,7 @@ public:
 	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	size_type copy_fully(this_type *src, size_type count, transform_func_t rdtrans = buffer_base<T>::no_transform, transform_func_t wrtrans = buffer_base<T>::no_transform) {
+	size_type copy_fully(this_type *src, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		std::unique_lock<std::recursive_mutex> lock_src(src->mut);
 		size_type pos = 0;

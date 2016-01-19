@@ -26,6 +26,9 @@ class OMX_MF_API_CLASS port {
 public:
 	//親クラス
 	//typedef xxxx super;
+	//ポートバッファをキューイングするリングバッファの型
+	typedef ring_buffer<port_buffer *, port_buffer> portbuf_ring_t;
+	typedef bounded_buffer<portbuf_ring_t, port_buffer> portbuf_bound_t;
 
 	//disable default constructor
 	port() = delete;
@@ -1194,12 +1197,12 @@ private:
 	mutable std::recursive_mutex mut_list_bufs;
 
 	//バッファ送出用リングバッファ
-	ring_buffer<port_buffer> *ring_send;
-	bounded_buffer<ring_buffer<port_buffer>, port_buffer> *bound_send;
+	portbuf_ring_t *ring_send;
+	portbuf_bound_t *bound_send;
 
 	//使用後のバッファ返却用リングバッファ
-	ring_buffer<port_buffer> *ring_ret;
-	bounded_buffer<ring_buffer<port_buffer>, port_buffer> *bound_ret;
+	portbuf_ring_t *ring_ret;
+	portbuf_bound_t *bound_ret;
 	//使用後のバッファ返却スレッド
 	std::thread *th_ret;
 

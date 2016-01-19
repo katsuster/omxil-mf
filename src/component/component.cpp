@@ -50,8 +50,8 @@ component::component(OMX_COMPONENTTYPE *c, const char *cname)
 
 	try {
 		//create ring buffer
-		ring_accept = new ring_buffer<OMX_MF_CMD>(nullptr, OMX_MF_CMD_DEPTH + 1);
-		bound_accept = new bounded_buffer<ring_buffer<OMX_MF_CMD>, OMX_MF_CMD>(*ring_accept);
+		ring_accept = new command_ring_t(nullptr, OMX_MF_CMD_DEPTH + 1);
+		bound_accept = new command_bound_t(*ring_accept);
 
 		//start command accept thread
 		th_accept = new std::thread(accept_command_thread_main, get_omx_component());

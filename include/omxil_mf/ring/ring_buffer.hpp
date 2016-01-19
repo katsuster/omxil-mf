@@ -12,29 +12,29 @@
 
 namespace mf {
 
-template <class T>
-class OMX_MF_API_CLASS ring_buffer : public buffer_base<T> {
+template <class RandomIterator, class T>
+class OMX_MF_API_CLASS ring_buffer : public buffer_base<RandomIterator, T> {
 public:
 	//type of this
-	typedef ring_buffer<T> this_type;
+	typedef ring_buffer<RandomIterator, T> this_type;
 	//reference to an element
-	typedef typename buffer_base<T>::reference reference;
+	typedef typename buffer_base<RandomIterator, T>::reference reference;
 	//const reference to an element
-	typedef typename buffer_base<T>::const_reference const_reference;
+	typedef typename buffer_base<RandomIterator, T>::const_reference const_reference;
 	//size type(unsigned)
-	typedef typename buffer_base<T>::size_type size_type;
+	typedef typename buffer_base<RandomIterator, T>::size_type size_type;
 
 	typedef int (* transform_func_t)(T *dest, const T *src, size_t n, size_t *ntrans);
 
-	using buffer_base<T>::no_transform;
-	using buffer_base<T>::elems;
-	using buffer_base<T>::get_elem;
-	using buffer_base<T>::read_array;
-	using buffer_base<T>::write_array;
-	using buffer_base<T>::get_remain;
-	using buffer_base<T>::get_remain_continuous;
-	using buffer_base<T>::get_space;
-	using buffer_base<T>::get_space_continuous;
+	using buffer_base<RandomIterator, T>::no_transform;
+	using buffer_base<RandomIterator, T>::elems;
+	using buffer_base<RandomIterator, T>::get_elem;
+	using buffer_base<RandomIterator, T>::read_array;
+	using buffer_base<RandomIterator, T>::write_array;
+	using buffer_base<RandomIterator, T>::get_remain;
+	using buffer_base<RandomIterator, T>::get_remain_continuous;
+	using buffer_base<RandomIterator, T>::get_space;
+	using buffer_base<RandomIterator, T>::get_space_continuous;
 
 	class const_iterator : public std::iterator<std::forward_iterator_tag, T> {
 	public:
@@ -247,7 +247,7 @@ public:
 	};
 
 	ring_buffer(T *buf, size_type l)
-		: buffer_base<T>(buf, l), rd(0), wr(0) {
+		: buffer_base<RandomIterator, T>(buf, l), rd(0), wr(0) {
 		//do nothing
 	}
 

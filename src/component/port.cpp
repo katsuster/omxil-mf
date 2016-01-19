@@ -31,12 +31,12 @@ port::port(int ind, component *c)
 
 	try {
 		//creating ring buffer for sending OpenMAX buffers
-		ring_send  = new ring_buffer<port_buffer>(nullptr, OMX_MF_BUFS_DEPTH + 1);
-		bound_send = new bounded_buffer<ring_buffer<port_buffer>, port_buffer>(*ring_send);
+		ring_send  = new portbuf_ring_t(nullptr, OMX_MF_BUFS_DEPTH + 1);
+		bound_send = new portbuf_bound_t(*ring_send);
 
 		//creating ring buffer for returning OpenMAX buffers
-		ring_ret  = new ring_buffer<port_buffer>(nullptr, OMX_MF_BUFS_DEPTH + 1);
-		bound_ret = new bounded_buffer<ring_buffer<port_buffer>, port_buffer>(*ring_ret);
+		ring_ret  = new portbuf_ring_t(nullptr, OMX_MF_BUFS_DEPTH + 1);
+		bound_ret = new portbuf_bound_t(*ring_ret);
 
 		//start returning OpenMAX buffers thread
 		th_ret = new std::thread(buffer_done_thread_main, this);
