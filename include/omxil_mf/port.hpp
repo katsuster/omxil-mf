@@ -27,7 +27,7 @@ public:
 	//親クラス
 	//typedef xxxx super;
 	//ポートバッファをキューイングするリングバッファの型
-	typedef ring_buffer<port_buffer *, port_buffer> portbuf_ring_t;
+	typedef ring_buffer<std::vector<port_buffer>::iterator, port_buffer> portbuf_ring_t;
 	typedef bounded_buffer<portbuf_ring_t, port_buffer> portbuf_bound_t;
 
 	//disable default constructor
@@ -1197,10 +1197,12 @@ private:
 	mutable std::recursive_mutex mut_list_bufs;
 
 	//バッファ送出用リングバッファ
+	std::vector<port_buffer> vec_send;
 	portbuf_ring_t *ring_send;
 	portbuf_bound_t *bound_send;
 
 	//使用後のバッファ返却用リングバッファ
+	std::vector<port_buffer> vec_ret;
 	portbuf_ring_t *ring_ret;
 	portbuf_bound_t *bound_ret;
 	//使用後のバッファ返却スレッド

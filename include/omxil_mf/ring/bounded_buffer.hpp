@@ -39,8 +39,6 @@ public:
 	//size type(unsigned)
 	typedef typename buffer_base<T *, T>::size_type size_type;
 
-	typedef int (* transform_func_t)(T *dest, const T *src, size_type n, size_type *ntrans);
-
 	bounded_buffer(Container& buffer)
 		: bound(buffer), cnt_rd(0), cnt_wr(0),
 		shutting_read(false), shutting_write(false) {
@@ -285,15 +283,13 @@ public:
 	/**
 	 * 任意の要素をリングバッファから読み込みます。
 	 *
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return 任意の要素
 	 */
 	template <class U>
-	U read(transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
+	U read() {
 		U buf;
 
-		read_array(reinterpret_cast<T *>(&buf), sizeof(U), rdtrans, wrtrans);
+		read_array(reinterpret_cast<T *>(&buf), sizeof(U));
 
 		return buf;
 	}
@@ -303,26 +299,22 @@ public:
 	 *
 	 * @param buf     リングバッファから読み込んだ要素を格納する配列
 	 * @param count   リングバッファから読み込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
-	size_type read_array(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
+	size_type read_array(T *buf, size_type count) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 
-		return read_array_with_lock(buf, count, rdtrans, wrtrans);
+		return read_array_with_lock(buf, count);
 	}
 
 	/**
 	 * 任意の要素をリングバッファに書き込みます。
 	 *
 	 * @param buf     リングバッファに書き込む要素
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 */
 	/*template <class U>
-	void write(const U& buf, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
-		write_array(reinterpret_cast<T *>(&buf), sizeof(U), rdtrans, wrtrans);
+	void write(const U& buf) {
+		write_array(reinterpret_cast<T *>(&buf), sizeof(U));
 	}*/
 
 	/**
@@ -330,14 +322,12 @@ public:
 	 *
 	 * @param buf     リングバッファに書き込む要素の配列
 	 * @param count   リングバッファに書き込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	/*size_type write_array(const T *buf, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
+	/*size_type write_array(const T *buf, size_type count) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 
-		return write_array_with_lock(buf, count, rdtrans, wrtrans);
+		return write_array_with_lock(buf, count);
 	}*/
 
 	/**
@@ -345,15 +335,13 @@ public:
 	 *
 	 * @param src     コピー元のリングバッファ
 	 * @param count   リングバッファから読み込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	/*size_type copy_array(this_type *src, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
+	/*size_type copy_array(this_type *src, size_type count) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		std::unique_lock<std::recursive_mutex> lock_src(src->mut);
 
-		return copy_array_with_lock(src, count, rdtrans, wrtrans);
+		return copy_array_with_lock(src, count);
 	}*/
 
 
@@ -386,15 +374,13 @@ public:
 	 *
 	 * 指定した要素を読み込むまでブロックします。
 	 *
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ要素
 	 */
 	template <class U>
-	U peek_fully(transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
+	U peek_fully() {
 		U buf;
 
-		peek_fully(reinterpret_cast<T *>(&buf), sizeof(U), rdtrans, wrtrans);
+		peek_fully(reinterpret_cast<T *>(&buf), sizeof(U));
 
 		return buf;
 	}
@@ -407,18 +393,16 @@ public:
 	 *
 	 * @param buf   リングバッファから読み込んだ要素を格納する配列
 	 * @param count リングバッファから読み込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
-	size_type peek_fully(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
+	size_type peek_fully(T *buf, size_type count) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		size_type pos = 0;
 
 		while (count - pos > 0) {
 			wait_element_with_lock(lock);
 
-			pos += peek_array_with_lock(&buf[pos], count - pos, rdtrans, wrtrans);
+			pos += peek_array_with_lock(&buf[pos], count - pos);
 		}
 
 		return pos;
@@ -429,15 +413,13 @@ public:
 	 *
 	 * 指定した要素を読み込むまでブロックします。
 	 *
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ要素
 	 */
 	template <class U>
-	U read_fully(transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
+	U read_fully() {
 		U buf;
 
-		read_fully(reinterpret_cast<T *>(&buf), sizeof(U), rdtrans, wrtrans);
+		read_fully(reinterpret_cast<T *>(&buf), sizeof(U));
 
 		return buf;
 	}
@@ -449,18 +431,16 @@ public:
 	 *
 	 * @param buf   リングバッファから読み込んだ要素を格納する配列
 	 * @param count リングバッファから読み込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
-	size_type read_fully(T *buf, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
+	size_type read_fully(T *buf, size_type count) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		size_type pos = 0;
 
 		while (count - pos > 0) {
 			wait_element_with_lock(lock);
 
-			pos += read_array_with_lock(&buf[pos], count - pos, rdtrans, wrtrans);
+			pos += read_array_with_lock(&buf[pos], count - pos);
 		}
 
 		return pos;
@@ -472,12 +452,10 @@ public:
 	 * 指定した要素を書き込むまでブロックします。
 	 *
 	 * @param buf     リングバッファに書き込む要素
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 */
 	template <class U>
-	void write_fully(const U& buf, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
-		write_fully(reinterpret_cast<const T *>(&buf), sizeof(U), rdtrans, wrtrans);
+	void write_fully(const U& buf) {
+		write_fully(reinterpret_cast<const T *>(&buf), sizeof(U));
 	}
 
 	/**
@@ -487,18 +465,16 @@ public:
 	 *
 	 * @param buf     リングバッファに書き込む要素の配列
 	 * @param count   リングバッファに書き込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	size_type write_fully(const T *buf, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
+	size_type write_fully(const T *buf, size_type count) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		size_type pos = 0;
 
 		while (count - pos > 0) {
 			wait_space_with_lock(lock);
 
-			pos += write_array_with_lock(&buf[pos], count - pos, rdtrans, wrtrans);
+			pos += write_array_with_lock(&buf[pos], count - pos);
 		}
 
 		return pos;
@@ -511,11 +487,9 @@ public:
 	 *
 	 * @param src     コピー元のリングバッファ
 	 * @param count   リングバッファから読み込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	size_type copy_fully(this_type *src, size_type count, transform_func_t rdtrans = buffer_base<T *, T>::no_transform, transform_func_t wrtrans = buffer_base<T *, T>::no_transform) {
+	size_type copy_fully(this_type *src, size_type count) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		std::unique_lock<std::recursive_mutex> lock_src(src->mut);
 		size_type pos = 0;
@@ -534,7 +508,7 @@ public:
 				lock_src.lock();
 			}
 
-			pos += copy_array_with_lock(src, count - pos, rdtrans, wrtrans);
+			pos += copy_array_with_lock(src, count - pos);
 		}
 
 		return pos;
@@ -665,14 +639,12 @@ protected:
 	 *
 	 * @param buf     リングバッファから読み込んだ要素を格納する配列
 	 * @param count   リングバッファから読み込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
-	size_type peek_array_with_lock(T *buf, size_type count, transform_func_t rdtrans, transform_func_t wrtrans) {
+	size_type peek_array_with_lock(T *buf, size_type count) {
 		size_type result;
 
-		result = bound.peek_array(buf, count, rdtrans, wrtrans);
+		result = bound.peek_array(buf, count);
 		notify_with_lock();
 
 		return result;
@@ -685,14 +657,12 @@ protected:
 	 *
 	 * @param buf     リングバッファから読み込んだ要素を格納する配列
 	 * @param count   リングバッファから読み込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
-	size_type read_array_with_lock(T *buf, size_type count, transform_func_t rdtrans, transform_func_t wrtrans) {
+	size_type read_array_with_lock(T *buf, size_type count) {
 		size_type result;
 
-		result = bound.read_array(buf, count, rdtrans, wrtrans);
+		result = bound.read_array(buf, count);
 		cnt_rd += result;
 		notify_with_lock();
 
@@ -706,14 +676,12 @@ protected:
 	 *
 	 * @param buf     リングバッファに書き込む要素の配列
 	 * @param count   リングバッファに書き込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	size_type write_array_with_lock(const T *buf, size_type count, transform_func_t rdtrans, transform_func_t wrtrans) {
+	size_type write_array_with_lock(const T *buf, size_type count) {
 		size_type result;
 
-		result = bound.write_array(buf, count, rdtrans, wrtrans);
+		result = bound.write_array(buf, count);
 		cnt_wr += result;
 		notify_with_lock();
 
@@ -727,14 +695,12 @@ protected:
 	 *
 	 * @param src     コピー元のリングバッファ
 	 * @param count   リングバッファから読み込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	size_type copy_array_with_lock(this_type *src, size_type count, transform_func_t rdtrans, transform_func_t wrtrans) {
+	size_type copy_array_with_lock(this_type *src, size_type count) {
 		size_type result;
 
-		result = bound.copy_array(&src->bound, count, rdtrans, wrtrans);
+		result = bound.copy_array(&src->bound, count);
 		src->cnt_rd += result;
 		cnt_wr += result;
 		notify_with_lock();

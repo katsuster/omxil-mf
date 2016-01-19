@@ -48,7 +48,7 @@ public:
 	//親クラス
 	typedef omx_reflector super;
 	//コマンドをキューイングするリングバッファの型
-	typedef ring_buffer<OMX_MF_CMD *, OMX_MF_CMD> command_ring_t;
+	typedef ring_buffer<std::vector<OMX_MF_CMD>::iterator, OMX_MF_CMD> command_ring_t;
 	typedef bounded_buffer<command_ring_t, OMX_MF_CMD> command_bound_t;
 	//ワーカースレッド一覧表の型
 	typedef std::vector<component_worker *> workerlist_t;
@@ -773,6 +773,7 @@ private:
 	//コマンド受理スレッド
 	std::thread *th_accept;
 	//コマンド受け渡し用リングバッファ
+	std::vector<OMX_MF_CMD> vec_accept;
 	command_ring_t *ring_accept;
 	command_bound_t *bound_accept;
 

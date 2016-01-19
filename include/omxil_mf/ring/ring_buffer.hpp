@@ -24,9 +24,6 @@ public:
 	//size type(unsigned)
 	typedef typename buffer_base<RandomIterator, T>::size_type size_type;
 
-	typedef int (* transform_func_t)(T *dest, const T *src, size_t n, size_t *ntrans);
-
-	using buffer_base<RandomIterator, T>::no_transform;
 	using buffer_base<RandomIterator, T>::elems;
 	using buffer_base<RandomIterator, T>::get_elem;
 	using buffer_base<RandomIterator, T>::read_array;
@@ -246,7 +243,7 @@ public:
 		size_type pos;
 	};
 
-	ring_buffer(T *buf, size_type l)
+	ring_buffer(RandomIterator buf, size_type l)
 		: buffer_base<RandomIterator, T>(buf, l), rd(0), wr(0) {
 		//do nothing
 	}
@@ -550,16 +547,14 @@ public:
 	 *
 	 * @param buf     リングバッファから読み込んだ要素を格納する配列
 	 * @param count   リングバッファから読み込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
-	size_type peek_array(T *buf, size_type count, transform_func_t rdtrans = no_transform, transform_func_t wrtrans = no_transform) {
+	size_type peek_array(T *buf, size_type count) {
 		size_type result;
 
 		count = std::min(count, get_remain(rd, wr, elems()));
 
-		result = read_array(rd, buf, count, rdtrans, wrtrans);
+		result = read_array(rd, buf, count);
 
 		return result;
 	}
@@ -569,16 +564,14 @@ public:
 	 *
 	 * @param buf     リングバッファから読み込んだ要素を格納する配列
 	 * @param count   リングバッファから読み込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファから読み込んだ数
 	 */
-	size_type read_array(T *buf, size_type count, transform_func_t rdtrans = no_transform, transform_func_t wrtrans = no_transform) {
+	size_type read_array(T *buf, size_type count) {
 		size_type result;
 
 		count = std::min(count, get_remain(rd, wr, elems()));
 
-		result = read_array(rd, buf, count, rdtrans, wrtrans);
+		result = read_array(rd, buf, count);
 		rd += result;
 		if (rd >= elems()) {
 			rd -= elems();
@@ -592,16 +585,14 @@ public:
 	 *
 	 * @param buf     リングバッファに書き込む要素の配列
 	 * @param count   リングバッファに書き込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	size_type write_array(const T *buf, size_type count, transform_func_t rdtrans = no_transform, transform_func_t wrtrans = no_transform) {
+	size_type write_array(const T *buf, size_type count) {
 		size_type result;
 
 		count = std::min(count, get_space(rd, wr, elems(), 0));
 
-		result = write_array(wr, buf, count, rdtrans, wrtrans);
+		result = write_array(wr, buf, count);
 		wr += result;
 		if (wr >= elems()) {
 			wr -= elems();
@@ -615,16 +606,14 @@ public:
 	 *
 	 * @param src     コピー元のリングバッファ
 	 * @param count   リングバッファから読み込む数
-	 * @param rdtrans 読み出し用の変換関数
-	 * @param wrtrans 書き込み用の変換関数
 	 * @return リングバッファに書き込んだ数
 	 */
-	size_type copy_array(this_type *src, size_type count, transform_func_t rdtrans = no_transform, transform_func_t wrtrans = no_transform) {
+	size_type copy_array(this_type *src, size_type count) {
 		size_type result;
 
 		count = std::min(count, get_remain_continuous(src->rd, src->wr, src->elems()));
 
-		result = write_array(&(*src)[0], count, rdtrans, wrtrans);
+		result = write_array(&(*src)[0], count);
 		src->skip(result);
 
 		return result;
