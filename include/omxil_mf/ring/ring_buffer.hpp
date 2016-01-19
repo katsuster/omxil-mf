@@ -33,13 +33,15 @@ public:
 	using buffer_base<RandomIterator, T>::get_space;
 	using buffer_base<RandomIterator, T>::get_space_continuous;
 
-	class const_iterator : public std::iterator<std::forward_iterator_tag, T> {
+	class const_iterator : public std::iterator<std::random_access_iterator_tag, T> {
 	public:
+		typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
+
 		explicit const_iterator(const ring_buffer *buffer)
 			: const_iterator(buffer, 0) {
 		}
 
-		const_iterator(const ring_buffer *buffer, size_type position)
+		const_iterator(const ring_buffer *buffer, difference_type position)
 			: buf(buffer), pos(position) {
 		}
 
@@ -74,7 +76,7 @@ public:
 			return const_iterator(buf, pos++);
 		}
 
-		const_iterator& operator+=(size_type off) {
+		const_iterator& operator+=(difference_type off) {
 			pos += off;
 			return *this;
 		}
@@ -88,7 +90,7 @@ public:
 			return const_iterator(buf, pos--);
 		}
 
-		const_iterator& operator-=(size_type off) {
+		const_iterator& operator-=(difference_type off) {
 			pos -= off;
 			return *this;
 		}
@@ -105,7 +107,7 @@ public:
 			return pos - obj.pos;
 		}
 
-		const_reference operator[](size_type off) const {
+		const_reference operator[](difference_type off) const {
 			return (*buf)[pos + off];
 		}
 
@@ -135,16 +137,18 @@ public:
 
 	private:
 		const ring_buffer *buf;
-		size_type pos;
+		difference_type pos;
 	};
 
-	class iterator : public std::iterator<std::forward_iterator_tag, T> {
+	class iterator : public std::iterator<std::random_access_iterator_tag, T> {
 	public:
+		typedef typename std::iterator<std::random_access_iterator_tag, T>::difference_type difference_type;
+
 		explicit iterator(ring_buffer *buffer)
 			: iterator(buffer, 0) {
 		}
 
-		iterator(ring_buffer *buffer, size_type position)
+		iterator(ring_buffer *buffer, difference_type position)
 			: buf(buffer), pos(position) {
 		}
 
@@ -179,7 +183,7 @@ public:
 			return iterator(buf, pos++);
 		}
 
-		iterator& operator+=(size_type off) {
+		iterator& operator+=(difference_type off) {
 			pos += off;
 			return *this;
 		}
@@ -193,7 +197,7 @@ public:
 			return iterator(buf, pos--);
 		}
 
-		iterator& operator-=(size_type off) {
+		iterator& operator-=(difference_type off) {
 			pos -= off;
 			return *this;
 		}
@@ -210,7 +214,7 @@ public:
 			return pos - obj.pos;
 		}
 
-		reference operator[](size_type off) const {
+		reference operator[](difference_type off) const {
 			return (*buf)[pos + off];
 		}
 
@@ -240,7 +244,7 @@ public:
 
 	private:
 		ring_buffer *buf;
-		size_type pos;
+		difference_type pos;
 	};
 
 	ring_buffer(RandomIterator buf, size_type l)
