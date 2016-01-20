@@ -39,7 +39,7 @@ public:
 	//size type(unsigned)
 	typedef typename buffer_base<T *, T>::size_type size_type;
 
-	bounded_buffer(Container& buffer)
+	explicit bounded_buffer(Container& buffer)
 		: bound(buffer), cnt_rd(0), cnt_wr(0),
 		shutting_read(false), shutting_write(false) {
 		//do nothing

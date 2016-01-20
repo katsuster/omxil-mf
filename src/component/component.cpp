@@ -51,7 +51,7 @@ component::component(OMX_COMPONENTTYPE *c, const char *cname)
 	try {
 		//create ring buffer
 		vec_accept.reserve(OMX_MF_CMD_DEPTH + 1);
-		ring_accept = new command_ring_t(vec_accept.begin(), OMX_MF_CMD_DEPTH + 1);
+		ring_accept = new command_ring_t(vec_accept.begin(), vec_accept.capacity());
 		bound_accept = new command_bound_t(*ring_accept);
 
 		//start command accept thread
