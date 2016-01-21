@@ -612,10 +612,12 @@ public:
 	 * @param count   リングバッファから読み込む数
 	 * @return リングバッファに書き込んだ数
 	 */
-	size_type copy_array(this_type *src, size_type count) {
+	template <class SomeIterator>
+	size_type copy_array(ring_buffer<SomeIterator, T> *src, size_type count) {
 		size_type result;
 
-		count = std::min(count, get_remain_continuous(src->rd, src->wr, src->elems()));
+		count = std::min(count, get_remain_continuous(src->get_read_position(), src->get_write_position(),
+			src->elems()));
 
 		result = write_array(&(*src)[0], count);
 		src->skip(result);

@@ -7,9 +7,6 @@
 
 #include <omxil_mf/base.h>
 
-#include <omxil_mf/port_buffer.hpp>
-#include <omxil_mf/scoped_log.hpp>
-
 namespace mf {
 
 template <class RandomIterator, class T>

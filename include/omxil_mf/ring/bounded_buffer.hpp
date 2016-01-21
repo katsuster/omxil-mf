@@ -224,11 +224,21 @@ public:
 		notify_with_lock();
 	}
 
+	/**
+	 * 現在のバッファの読み取り位置を取得します。
+	 *
+	 * @return バッファの読み取り位置
+	 */
 	size_type get_read_position() const {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		return bound.get_read_position();
 	}
 
+	/**
+	 * 現在のバッファの読み取り位置を設定します。
+	 *
+	 * @param new_pos バッファの読み取り位置
+	 */
 	void set_read_position(size_type new_pos) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 
@@ -237,11 +247,21 @@ public:
 		notify_with_lock();
 	}
 
+	/**
+	 * 現在のバッファの書き込み位置を取得します。
+	 *
+	 * @return バッファの書き込み位置
+	 */
 	size_type get_write_position() const {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 		return bound.get_write_position();
 	}
 
+	/**
+	 * 現在のバッファの書き込み位置を設定します。
+	 *
+	 * @param new_pos バッファの書き込み位置
+	 */
 	/*void set_write_position(size_type new_pos) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
 
@@ -260,12 +280,30 @@ public:
 	}
 
 	/**
+	 * 読み出した要素の総数を設定します。
+	 *
+	 * @param new_cnt 読み出した要素の総数
+	 */
+	void set_read_count(uint64_t new_cnt) {
+		cnt_rd = new_cnt;
+	}
+
+	/**
 	 * 書き込んだ要素の総数を取得します。
 	 *
 	 * @return 書き込んだ要素の総数
 	 */
 	uint64_t get_write_count() const {
 		return cnt_wr;
+	}
+
+	/**
+	 * 書き込んだ要素の総数を設定します。
+	 *
+	 * @param new_cnt 書き込んだ要素の総数
+	 */
+	void set_write_count(uint64_t new_cnt) {
+		cnt_wr = new_cnt;
 	}
 
 	/**
@@ -489,19 +527,20 @@ public:
 	 * @param count   リングバッファから読み込む数
 	 * @return リングバッファに書き込んだ数
 	 */
-	size_type copy_fully(this_type *src, size_type count) {
+	template <class SomeContainer>
+	size_type copy_fully(bounded_buffer<SomeContainer, T> *src, size_type count) {
 		std::unique_lock<std::recursive_mutex> lock(mut);
-		std::unique_lock<std::recursive_mutex> lock_src(src->mut);
+		std::unique_lock<std::recursive_mutex> lock_src(src->mutex());
 		size_type pos = 0;
 
 		while (count - pos > 0) {
-			while (bound.full() || src->bound.empty()) {
+			while (bound.full() || src->container().empty()) {
 				lock_src.unlock();
 				lock.unlock();
 				if (bound.full()) {
 					wait_space_with_lock(lock);
 				}
-				if (src->bound.empty()) {
+				if (src->container().empty()) {
 					src->wait_element_with_lock(lock_src);
 				}
 				lock.lock();
@@ -612,7 +651,6 @@ public:
 		notify_with_lock();
 	}
 
-protected:
 	/**
 	 * 要素を読み飛ばします。
 	 *
@@ -697,11 +735,12 @@ protected:
 	 * @param count   リングバッファから読み込む数
 	 * @return リングバッファに書き込んだ数
 	 */
-	size_type copy_array_with_lock(this_type *src, size_type count) {
+	template <class SomeContainer>
+	size_type copy_array_with_lock(bounded_buffer<SomeContainer, T> *src, size_type count) {
 		size_type result;
 
-		result = bound.copy_array(&src->bound, count);
-		src->cnt_rd += result;
+		result = bound.copy_array(&src->container(), count);
+		src->set_read_count(src->get_read_count() + result);
 		cnt_wr += result;
 		notify_with_lock();
 		src->notify_with_lock();
@@ -749,6 +788,11 @@ protected:
 		}
 	}
 
+	/**
+	 * バッファに変更を加えたことを他のスレッドに通知します。
+	 *
+	 * ロックを確保してから呼び出します。
+	 */
 	void notify_with_lock() {
 		if (!bound.full()) {
 			cond_not_full.notify_all();
