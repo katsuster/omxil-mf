@@ -196,14 +196,90 @@ port *component::find_port(OMX_U32 index)
 	return &ret->second;
 }
 
-void component::wait_all_port_buffer_returned() const
+OMX_ERRORTYPE component::filter_ports(OMX_U32 port_index, std::vector<const port *> *filtered_ports) const
+{
+	if (filtered_ports == nullptr) {
+		errprint("filtered_ports is null.\n");
+		return OMX_ErrorBadParameter;
+	}
+
+	filtered_ports->clear();
+
+	if (port_index == OMX_ALL) {
+		//All ports
+		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+			filtered_ports->push_back(&it->second);
+		}
+	} else {
+		//Single port
+		const port *port_found = find_port(port_index);
+		if (port_found == nullptr) {
+			errprint("Invalid port:%d\n",
+				(int)port_index);
+			return OMX_ErrorBadPortIndex;
+		} else {
+			filtered_ports->push_back(port_found);
+		}
+	}
+	if (filtered_ports->empty()) {
+		errprint("Invalid all ports.\n");
+		return OMX_ErrorBadPortIndex;
+	}
+
+	return OMX_ErrorNone;
+}
+
+OMX_ERRORTYPE component::filter_ports(OMX_U32 port_index, std::vector<port *> *filtered_ports)
+{
+	if (filtered_ports == nullptr) {
+		errprint("filtered_ports is null.\n");
+		return OMX_ErrorBadParameter;
+	}
+
+	filtered_ports->clear();
+
+	if (port_index == OMX_ALL) {
+		//All ports
+		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
+			filtered_ports->push_back(&it->second);
+		}
+	} else {
+		//Single port
+		port *port_found = find_port(port_index);
+		if (port_found == nullptr) {
+			errprint("Invalid port:%d\n",
+				(int)port_index);
+			return OMX_ErrorBadPortIndex;
+		} else {
+			filtered_ports->push_back(port_found);
+		}
+	}
+	if (filtered_ports->empty()) {
+		errprint("Invalid all ports.\n");
+		return OMX_ErrorBadPortIndex;
+	}
+
+	return OMX_ErrorNone;
+}
+
+void component::wait_port_buffer_returned(OMX_U32 port_index) const
 {
 	scoped_log_begin;
+	std::vector<const port *> filtered_ports;
+	OMX_ERRORTYPE err;
 
-	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-		if (it->second.get_enabled()) {
-			it->second.wait_buffer_returned();
+	//Filter
+	err = filter_ports(port_index, &filtered_ports);
+	if (err != OMX_ErrorNone) {
+		errprint("Invalid or disabled all ports.\n");
+		return;
+	}
+
+	for (const port *p : filtered_ports) {
+		if (!p->get_enabled()) {
+			continue;
 		}
+		p->wait_buffer_returned();
 	}
 }
 
@@ -1747,7 +1823,7 @@ OMX_ERRORTYPE component::command_state_set_to_idle_from_executing()
 	}
 
 	//Wait for all buffer returned to supplier
-	wait_all_port_buffer_returned();
+	wait_port_buffer_returned(OMX_ALL);
 
 	//Stop all workers
 	stop_all_worker_threads();
@@ -1890,7 +1966,7 @@ OMX_ERRORTYPE component::command_flush(OMX_U32 port_index)
 		}
 
 		//Wait for all buffer returned to supplier
-		wait_all_port_buffer_returned();
+		wait_port_buffer_returned(port_index);
 
 		//Restart all ports and component
 		err = execute_restart(port_index,
@@ -1972,29 +2048,10 @@ OMX_ERRORTYPE component::execute_flush(OMX_U32 port_index,
 	OMX_ERRORTYPE err, errtmp;
 
 	//Filter
-	if (port_index == OMX_ALL) {
-		//All ports
-		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-			if (!it->second.get_enabled()) {
-				continue;
-			}
-
-			filtered_ports.push_back(&it->second);
-		}
-	} else {
-		//Single port
-		port *port_found = find_port(port_index);
-		if (port_found == nullptr || !port_found->get_enabled()) {
-			errprint("Invalid or disabled port:%d\n",
-				(int)port_index);
-			return OMX_ErrorBadPortIndex;
-		} else {
-			filtered_ports.push_back(port_found);
-		}
-	}
-	if (filtered_ports.empty()) {
+	errtmp = filter_ports(port_index, &filtered_ports);
+	if (errtmp != OMX_ErrorNone) {
 		errprint("Invalid or disabled all ports.\n");
-		return OMX_ErrorBadPortIndex;
+		return errtmp;
 	}
 
 	//Execute flush sequence
@@ -2002,6 +2059,10 @@ OMX_ERRORTYPE component::execute_flush(OMX_U32 port_index,
 
 	//Return or discard all buffers by component
 	for (port *p : filtered_ports) {
+		if (!p->get_enabled()) {
+			continue;
+		}
+
 		errtmp = p->plug_client_request();
 		if (errtmp != OMX_ErrorNone) {
 			errprint("Failed to port plug_client_request(%d), "
@@ -2022,6 +2083,10 @@ OMX_ERRORTYPE component::execute_flush(OMX_U32 port_index,
 	}
 
 	for (port *p : filtered_ports) {
+		if (!p->get_enabled()) {
+			continue;
+		}
+
 		errtmp = p->plug_component_request();
 		if (errtmp != OMX_ErrorNone) {
 			errprint("Failed to port plug_component_request(%d), "
@@ -2043,6 +2108,10 @@ OMX_ERRORTYPE component::execute_flush(OMX_U32 port_index,
 
 	//Return all unprocessed buffers by component
 	for (port *p : filtered_ports) {
+		if (!p->get_enabled()) {
+			continue;
+		}
+
 		errtmp = p->return_buffers_force();
 		if (errtmp != OMX_ErrorNone) {
 			errprint("Failed to port return_buffers_force(%d), "
@@ -2064,35 +2133,20 @@ OMX_ERRORTYPE component::execute_restart(OMX_U32 port_index,
 	OMX_ERRORTYPE err, errtmp;
 
 	//Filter
-	if (port_index == OMX_ALL) {
-		//All ports
-		for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
-			if (!it->second.get_enabled()) {
-				continue;
-			}
-
-			filtered_ports.push_back(&it->second);
-		}
-	} else {
-		//Single port
-		port *port_found = find_port(port_index);
-		if (port_found == nullptr || !port_found->get_enabled()) {
-			errprint("Invalid or disabled port:%d\n",
-				(int)port_index);
-			return OMX_ErrorBadPortIndex;
-		} else {
-			filtered_ports.push_back(port_found);
-		}
-	}
-	if (filtered_ports.empty()) {
+	errtmp = filter_ports(port_index, &filtered_ports);
+	if (errtmp != OMX_ErrorNone) {
 		errprint("Invalid or disabled all ports.\n");
-		return OMX_ErrorBadPortIndex;
+		return errtmp;
 	}
 
 	//Restart component
 	err = OMX_ErrorNone;
 
 	for (port *p : filtered_ports) {
+		if (!p->get_enabled()) {
+			continue;
+		}
+
 		errtmp = p->unplug_component_request();
 		if (errtmp != OMX_ErrorNone) {
 			errprint("Failed to port unplug_component_request(%d), "
@@ -2113,6 +2167,10 @@ OMX_ERRORTYPE component::execute_restart(OMX_U32 port_index,
 	}
 
 	for (port *p : filtered_ports) {
+		if (!p->get_enabled()) {
+			continue;
+		}
+
 		errtmp = p->unplug_client_request();
 		if (errtmp != OMX_ErrorNone) {
 			errprint("Failed to port unplug_client_request(%d), "

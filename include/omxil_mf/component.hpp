@@ -151,9 +151,30 @@ public:
 	virtual port *find_port(OMX_U32 index);
 
 	/**
-	 * 全ての有効なポートがバッファを返却するまで待ちます。
+	 * 指定した条件に一致するポートの一覧を取得します。
+	 *
+	 * @param port_index     ポート番号、
+	 * 	OMX_ALL は全てのポートを表す
+	 * @param filtered_ports ポート一覧表
 	 */
-	virtual void wait_all_port_buffer_returned() const;
+	virtual OMX_ERRORTYPE filter_ports(OMX_U32 port_index, std::vector<const port *> *filtered_ports) const;
+
+	/**
+	 * 指定した条件に一致するポートの一覧を取得します。
+	 *
+	 * @param port_index     ポート番号、
+	 * 	OMX_ALL は全てのポートを表す
+	 * @param filtered_ports ポート一覧表
+	 */
+	virtual OMX_ERRORTYPE filter_ports(OMX_U32 port_index, std::vector<port *> *filtered_ports);
+
+	/**
+	 * 指定された有効なポートがバッファを返却するまで待ちます。
+	 *
+	 * @param port_index バッファを返却するポート番号、
+	 * 	OMX_ALL は全てのポートを表す
+	 */
+	virtual void wait_port_buffer_returned(OMX_U32 port_index) const;
 
 	//----------
 	//OpenMAX member functions
