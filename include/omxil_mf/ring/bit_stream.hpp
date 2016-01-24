@@ -60,6 +60,40 @@ public:
 		return (pos & 0x7) == 0;
 	}
 
+	bool is_word_align() const
+	{
+		return (pos & 0xf) == 0;
+	}
+
+	bool is_dword_align() const
+	{
+		return (pos & 0x1f) == 0;
+	}
+
+	void align_byte()
+	{
+		if (is_byte_align()) {
+			return;
+		}
+		pos += 8 - (pos & 0x7);
+	}
+
+	void align_word()
+	{
+		if (is_word_align()) {
+			return;
+		}
+		pos += 16 - (pos & 0xf);
+	}
+
+	void align_dword()
+	{
+		if (is_dword_align()) {
+			return;
+		}
+		pos += 32 - (pos & 0x1f);
+	}
+
 	void skip(size_t n)
 	{
 		bit_position(bit_position() + (n << 3));
