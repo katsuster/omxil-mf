@@ -18,7 +18,7 @@ reader_ts::worker_main::~worker_main()
 
 const char *reader_ts::worker_main::get_name() const
 {
-	return "read_zero::wrk_main";
+	return "read_ts::wrk_main";
 }
 
 void reader_ts::worker_main::run()
@@ -105,7 +105,7 @@ reader_ts::~reader_ts()
 
 const char *reader_ts::get_name() const
 {
-	return "read_zero";
+	return "read_ts";
 }
 
 

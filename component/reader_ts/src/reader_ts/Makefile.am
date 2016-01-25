@@ -2,10 +2,14 @@
 noinst_LTLIBRARIES = libreader_ts.la
 
 libreader_ts_la_SOURCES = \
-	reader_ts.cpp
+	reader_ts.cpp \
+	unit.cpp \
+	packet.cpp
 
 EXTRA_libreader_ts_la_SOURCES = \
-	reader_ts.hpp
+	reader_ts.hpp \
+	unit.hpp \
+	packet.hpp
 
 libreader_ts_la_CPPFLAGS = $(omxil_mf_reader_ts_common_cppflags) \
 	-I$(top_srcdir)/include \
