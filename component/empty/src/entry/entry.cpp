@@ -12,20 +12,20 @@
 #include "filter_copy/filter_copy.hpp"
 
 #define READER_ZERO_NAME       "OMX.MF.reader.zero"
-#define READER_ZERO_A_ALIAS    "OMX.MF.audio.reader.zero"
-#define READER_ZERO_V_ALIAS    "OMX.MF.video.reader.zero"
+#define READER_ZERO_A_ALIAS    "OMX.MF.audio_reader.zero"
+#define READER_ZERO_V_ALIAS    "OMX.MF.video_reader.zero"
 #define READER_ZERO_A_ROLE     "audio_reader.zero"
 #define READER_ZERO_V_ROLE     "video_reader.zero"
 
 #define RENDERER_NULL_NAME       "OMX.MF.renderer.null"
-#define RENDERER_NULL_A_ALIAS    "OMX.MF.audio.renderer.null"
-#define RENDERER_NULL_V_ALIAS    "OMX.MF.video.renderer.null"
+#define RENDERER_NULL_A_ALIAS    "OMX.MF.audio_renderer.null"
+#define RENDERER_NULL_V_ALIAS    "OMX.MF.video_renderer.null"
 #define RENDERER_NULL_A_ROLE     "audio_renderer.null"
 #define RENDERER_NULL_V_ROLE     "video_renderer.null"
 
 #define FILTER_COPY_NAME       "OMX.MF.filter.copy"
-#define FILTER_COPY_A_ALIAS    "OMX.MF.audio.filter.copy"
-#define FILTER_COPY_V_ALIAS    "OMX.MF.video.filter.copy"
+#define FILTER_COPY_A_ALIAS    "OMX.MF.audio_filter.copy"
+#define FILTER_COPY_V_ALIAS    "OMX.MF.video_filter.copy"
 #define FILTER_COPY_A_ROLE     "audio_filter.copy"
 #define FILTER_COPY_V_ROLE     "video_filter.copy"
 
