@@ -11,9 +11,9 @@ AC_ARG_PROGRAM()
 AC_CONFIG_SRCDIR([src/entry/entry.cpp])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([conf])
-dnl AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([foreign ])
+AM_INIT_AUTOMAKE([foreign])
 LT_INIT()
 
 dnl ----------------------------------------
@@ -21,15 +21,6 @@ dnl Checks for programs.
 dnl ----------------------------------------
 AC_PROG_CC()
 AC_PROG_CXX()
-dnl AC_PROG_AWK()
-dnl AC_PROG_INSTALL()
-dnl AC_PROG_LN_S()
-dnl AC_PROG_LIBTOOL()
-dnl AC_PROG_SED()
-dnl AM_PROG_CC_C_O()
-dnl AM_PROG_LIBTOOL()
-
-dnl AC_SUBST(VAR, [var_value])
 
 
 dnl ----------------------------------------
@@ -40,25 +31,16 @@ dnl ----------------------------------------
 dnl ----------------------------------------
 dnl Checks for header files.
 dnl ----------------------------------------
-dnl AC_HEADER_STDC()
-
-dnl AC_CHECK_HEADERS([fcntl.h stdlib.h string.h strings.h unistd.h])
 
 
 dnl ----------------------------------------
 dnl Checks for types, structures, compiler characteristics.
 dnl ----------------------------------------
-dnl AC_C_CONST()
-dnl AC_C_INLINE()
 
 
 dnl ----------------------------------------
 dnl Checks for library functions.
 dnl ----------------------------------------
-dnl AC_FUNC_MEMCMP()
-
-dnl AC_CHECK_LIB([xxxx], [func_xxxx], [], 
-dnl	[AC_MSG_ERROR([cannot find libxxxx])])
 
 
 dnl ----------------------------------------
@@ -97,9 +79,9 @@ AM_CONDITIONAL(USE_INNER_LIB, [test x$enable_use_inner_lib = xyes])
 dnl ----------------------------------------
 dnl Output the configure.
 dnl ----------------------------------------
-AC_CONFIG_FILES([Makefile src/Makefile 
-	src/entry/Makefile src/reader_zero/Makefile 
-	src/renderer_null/Makefile src/filter_copy/Makefile 
-	tests/Makefile ])
+AC_CONFIG_FILES([Makefile src/Makefile
+	src/entry/Makefile src/reader_zero/Makefile
+	src/renderer_null/Makefile src/filter_copy/Makefile
+	tests/Makefile])
 
 AC_OUTPUT()
