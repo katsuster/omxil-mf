@@ -13,5 +13,6 @@ find -name lt~obsolete.m4 | xargs rm -f
 find -name ltoptions.m4   | xargs rm -f
 find -name ltsugar.m4     | xargs rm -f
 find -name ltversion.m4   | xargs rm -f
+find -name autom4te.cache | xargs rm -rf
 find -name .deps          | xargs rm -rf
 find -name doxygen_sqlite3.db | xargs rm -rf
