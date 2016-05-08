@@ -1,2 +1,2 @@
-SUBDIRS = empty reader_ts
+SUBDIRS = empty simple reader_ts
 

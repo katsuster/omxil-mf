@@ -126,6 +126,7 @@ AC_CONFIG_FILES([Makefile include/Makefile src/Makefile lib/Makefile
 
 AC_CONFIG_SUBDIRS([lib/cppunit-1.12.1])
 AC_CONFIG_SUBDIRS([component/empty])
+AC_CONFIG_SUBDIRS([component/simple])
 AC_CONFIG_SUBDIRS([component/reader_ts])
 
 AC_OUTPUT()
