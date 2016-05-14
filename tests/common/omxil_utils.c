@@ -676,9 +676,9 @@ void dump_bufferheadertype(const OMX_BUFFERHEADERTYPE *p)
 		p->pMarkData,
 		(int)p->nTickCount,
 #ifndef OMX_SKIP64BIT
-		p->nTimeStamp,
+		(unsigned long long)p->nTimeStamp,
 #else
-		(uint64_t)(nTimeStamp.nHighPart << 32) | nTimeStamp.nLowPart,
+		(unsigned long long)(nTimeStamp.nHighPart << 32) | nTimeStamp.nLowPart,
 #endif
 		(int)p->nFlags,
 		(int)p->nOutputPortIndex,
