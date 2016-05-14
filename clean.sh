@@ -1,7 +1,8 @@
 #!/bin/bash
 
-rm -rf conf
-rm -rf m4
+find -name conf -a -type d | xargs rm -rf
+find -name m4 -a -type d   | xargs rm -rf
+
 find -name configure      | xargs rm -f
 find -name Makefile       | xargs rm -f
 find -name Makefile.in    | xargs rm -f
