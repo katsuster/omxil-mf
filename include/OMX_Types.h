@@ -31,6 +31,8 @@
 #ifndef OMX_Types_h
 #define OMX_Types_h
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -130,56 +132,28 @@ extern "C" {
   */ 
 
 /** OMX_U8 is an 8 bit unsigned quantity that is byte aligned */
-typedef unsigned char OMX_U8;
+typedef uint8_t OMX_U8;
 
 /** OMX_S8 is an 8 bit signed quantity that is byte aligned */
-typedef signed char OMX_S8;
+typedef int8_t OMX_S8;
 
 /** OMX_U16 is a 16 bit unsigned quantity that is 16 bit word aligned */
-typedef unsigned short OMX_U16;
+typedef uint16_t OMX_U16;
 
 /** OMX_S16 is a 16 bit signed quantity that is 16 bit word aligned */
-typedef signed short OMX_S16;
+typedef int16_t OMX_S16;
 
 /** OMX_U32 is a 32 bit unsigned quantity that is 32 bit word aligned */
-typedef unsigned long OMX_U32;
+typedef uint32_t OMX_U32;
 
 /** OMX_S32 is a 32 bit signed quantity that is 32 bit word aligned */
-typedef signed long OMX_S32;
-
-
-/* Users with compilers that cannot accept the "long long" designation should
-   define the OMX_SKIP64BIT macro.  It should be noted that this may cause 
-   some components to fail to compile if the component was written to require
-   64 bit integral types.  However, these components would NOT compile anyway
-   since the compiler does not support the way the component was written.
-*/
-#ifndef OMX_SKIP64BIT
-#ifdef __SYMBIAN32__
-/** OMX_U64 is a 64 bit unsigned quantity that is 64 bit word aligned */
-typedef unsigned long long OMX_U64;
-
-/** OMX_S64 is a 64 bit signed quantity that is 64 bit word aligned */
-typedef signed long long OMX_S64;
-
-#elif defined(WIN32)
-
-/** OMX_U64 is a 64 bit unsigned quantity that is 64 bit word aligned */   
-typedef unsigned __int64  OMX_U64;
-
-/** OMX_S64 is a 64 bit signed quantity that is 64 bit word aligned */
-typedef signed   __int64  OMX_S64;
-
-#else /* WIN32 */
+typedef int32_t OMX_S32;
 
 /** OMX_U64 is a 64 bit unsigned quantity that is 64 bit word aligned */
-typedef unsigned long long OMX_U64;
+typedef uint64_t OMX_U64;
 
 /** OMX_S64 is a 64 bit signed quantity that is 64 bit word aligned */
-typedef signed long long OMX_S64;
-
-#endif /* WIN32 */
-#endif
+typedef int64_t OMX_S64;
 
 
 /** The OMX_BOOL type is intended to be used to represent a true or a false 
