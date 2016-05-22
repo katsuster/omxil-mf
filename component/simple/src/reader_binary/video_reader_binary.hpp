@@ -7,29 +7,14 @@
 #include <omxil_mf/port_video.hpp>
 #include <omxil_mf/scoped_log.hpp>
 
+#include "reader_binary/reader_binary.hpp"
+
 namespace mf {
 
-class video_reader_binary : public component {
-	class worker_main : public component_worker {
-	public:
-		//親クラス
-		typedef component_worker super;
-
-		worker_main(video_reader_binary *c);
-		virtual ~worker_main();
-
-		virtual const char *get_name() const;
-		virtual void run();
-
-	private:
-		video_reader_binary *comp;
-
-	};
-
-
+class video_reader_binary : public reader_binary {
 public:
 	//親クラス
-	typedef component super;
+	typedef reader_binary super;
 
 	video_reader_binary(OMX_COMPONENTTYPE *c, const char *cname);
 	virtual ~video_reader_binary();
@@ -38,7 +23,6 @@ public:
 
 protected:
 	virtual OMX_U32 get_video_ports();
-	virtual OMX_U32 get_video_start_port();
 
 public:
 	/**
@@ -52,7 +36,6 @@ public:
 
 private:
 	port_video *out_port_video;
-	worker_main wk_main;
 
 };
 

@@ -8,7 +8,7 @@ namespace mf {
  */
 
 reader_binary::worker_main::worker_main(reader_binary *c)
-	: component_worker(c), comp(c)
+	: component_worker(c), comp(c), out_port(nullptr)
 {
 }
 
@@ -18,7 +18,22 @@ reader_binary::worker_main::~worker_main()
 
 const char *reader_binary::worker_main::get_name() const
 {
-	return "read_binary::wrk_main";
+	return "rd_bin::wrk_main";
+}
+
+port *reader_binary::worker_main::get_out_port()
+{
+	return out_port;
+}
+
+const port *reader_binary::worker_main::get_out_port() const
+{
+	return out_port;
+}
+
+void reader_binary::worker_main::set_out_port(port *p)
+{
+	out_port = p;
 }
 
 void reader_binary::worker_main::run()
@@ -34,9 +49,9 @@ void reader_binary::worker_main::run()
 			return;
 		}
 
-		result = comp->out_port_video->pop_buffer(&pb_out);
+		result = out_port->pop_buffer(&pb_out);
 		if (result != OMX_ErrorNone) {
-			errprint("out_port_video.pop_buffer().\n");
+			errprint("out_port.pop_buffer().\n");
 			continue;
 		}
 
@@ -51,7 +66,7 @@ void reader_binary::worker_main::run()
 		pb_out.header->nOffset    = 0;
 		pb_out.header->nTimeStamp = stamp;
 		pb_out.header->nFlags     = 0;
-		comp->out_port_video->fill_buffer_done(&pb_out);
+		out_port->fill_buffer_done(&pb_out);
 
 		//next one
 		i++;
@@ -66,56 +81,115 @@ void reader_binary::worker_main::run()
  */
 
 reader_binary::reader_binary(OMX_COMPONENTTYPE *c, const char *cname) 
-	: component(c, cname),
-	out_port_video(nullptr), wk_main(this)
+	: component(c, cname), wk_main(this)
 {
-	OMX_VIDEO_PARAM_PORTFORMATTYPE f;
-
-	try {
-		out_port_video = new port_video(2, this);
-		out_port_video->set_dir(OMX_DirOutput);
-		out_port_video->set_buffer_count_actual(4);
-		out_port_video->set_buffer_count_min(1);
-		out_port_video->set_buffer_size(65536);
-		out_port_video->set_buffer_alignment(64);
-		out_port_video->set_frame_width(640);
-		out_port_video->set_frame_height(480);
-		f.eCompressionFormat = OMX_VIDEO_CodingUnused;
-		f.eColorFormat       = OMX_COLOR_FormatYUV420Planar;
-		f.xFramerate         = 0;
-		out_port_video->add_port_format(f);
-		out_port_video->set_default_format(0);
-
-		insert_port(*out_port_video);
-
-		register_worker_thread(&wk_main);
-	} catch (const std::bad_alloc& e) {
-		delete out_port_video;
-		out_port_video = nullptr;
-	}
+	//do nothing
 }
 
 reader_binary::~reader_binary()
 {
-	unregister_worker_thread(&wk_main);
-
-	delete out_port_video;
-	out_port_video = nullptr;
+	//do nothing
 }
 
 const char *reader_binary::get_name() const
 {
-	return "read_zero";
+	return "rd_bin";
 }
 
+std::string& reader_binary::get_uri()
+{
+	return uri_target;
+}
+
+const std::string& reader_binary::get_uri() const
+{
+	return uri_target;
+}
+
+void reader_binary::set_uri(char *uri)
+{
+	uri_target = uri;
+}
+
+void reader_binary::set_uri(std::string& uri)
+{
+	uri_target = uri;
+}
+
+
+OMX_ERRORTYPE reader_binary::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure)
+{
+	scoped_log_begin;
+	void *ptr = nullptr;
+	OMX_ERRORTYPE err;
+
+	ptr = pComponentParameterStructure;
+
+	switch (nParamIndex) {
+	case OMX_IndexParamContentURI: {
+		OMX_PARAM_CONTENTURITYPE *p_uri = static_cast<OMX_PARAM_CONTENTURITYPE *>(ptr);
+		size_t len_uri;
+
+		len_uri = p_uri->nSize - sizeof(OMX_PARAM_CONTENTURITYPE);
+		if (len_uri < uri_target.size()) {
+			errprint("length %d is too short, needs %d.\n",
+				(int)len_uri, (int)uri_target.size());
+			return OMX_ErrorBadParameter;
+		}
+		strcpy((char *)p_uri->contentURI, uri_target.c_str());
+
+		err = OMX_ErrorNone;
+		break;
+	}
+	default:
+		err = super::GetParameter(hComponent, nParamIndex, pComponentParameterStructure);
+		break;
+	}
+
+	return err;
+}
+
+OMX_ERRORTYPE reader_binary::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure)
+{
+	scoped_log_begin;
+	void *ptr = nullptr;
+	OMX_ERRORTYPE err;
+
+	ptr = pComponentParameterStructure;
+
+	switch (nParamIndex) {
+	case OMX_IndexParamContentURI: {
+		OMX_PARAM_CONTENTURITYPE *p_uri = static_cast<OMX_PARAM_CONTENTURITYPE *>(ptr);
+
+		uri_target = (char *)p_uri->contentURI;
+
+		break;
+	}
+	default:
+		err = super::SetParameter(hComponent, nParamIndex, pComponentParameterStructure);
+		break;
+	}
+
+	return err;
+}
 
 /*
  * protected functions
  */
 
-OMX_U32 reader_binary::get_video_ports()
+reader_binary::worker_main& reader_binary::get_worker()
 {
-	return 1;
+	return wk_main;
+}
+
+const reader_binary::worker_main& reader_binary::get_worker() const
+{
+	return wk_main;
+}
+
+OMX_U32 reader_binary::get_audio_start_port()
+{
+	return 0;
 }
 
 OMX_U32 reader_binary::get_video_start_port()
@@ -137,4 +211,3 @@ reader_binary *reader_binary::get_instance(OMX_HANDLETYPE hComponent)
 }
 
 } //namespace mf
-

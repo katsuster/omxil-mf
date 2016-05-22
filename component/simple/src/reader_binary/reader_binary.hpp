@@ -10,6 +10,7 @@
 namespace mf {
 
 class reader_binary : public component {
+public:
 	class worker_main : public component_worker {
 	public:
 		//親クラス
@@ -19,11 +20,16 @@ class reader_binary : public component {
 		virtual ~worker_main();
 
 		virtual const char *get_name() const;
+
+		virtual port *get_out_port();
+		virtual const port *get_out_port() const;
+		virtual void set_out_port(port *p);
+
 		virtual void run();
 
 	private:
 		reader_binary *comp;
-
+		port *out_port;
 	};
 
 
@@ -36,8 +42,19 @@ public:
 
 	virtual const char *get_name() const;
 
+	virtual std::string& get_uri();
+	virtual const std::string& get_uri() const;
+	virtual void set_uri(char *uri);
+	virtual void set_uri(std::string& uri);
+
+	OMX_ERRORTYPE GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure);
+	OMX_ERRORTYPE SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure);
+
 protected:
-	virtual OMX_U32 get_video_ports();
+	virtual worker_main& get_worker();
+	virtual const worker_main& get_worker() const;
+
+	virtual OMX_U32 get_audio_start_port();
 	virtual OMX_U32 get_video_start_port();
 
 public:
@@ -51,9 +68,9 @@ public:
 	static reader_binary *get_instance(OMX_HANDLETYPE hComponent);
 
 private:
-	port_video *out_port_video;
 	worker_main wk_main;
 
+	std::string uri_target;
 };
 
 } //namespace mf

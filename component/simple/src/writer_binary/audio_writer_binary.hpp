@@ -7,29 +7,14 @@
 #include <omxil_mf/port_audio.hpp>
 #include <omxil_mf/scoped_log.hpp>
 
+#include "writer_binary/writer_binary.hpp"
+
 namespace mf {
 
-class audio_writer_binary : public component {
-	class worker_main : public component_worker {
-	public:
-		//親クラス
-		typedef component_worker super;
-
-		worker_main(audio_writer_binary *c);
-		virtual ~worker_main();
-
-		virtual const char *get_name() const;
-		virtual void run();
-
-	private:
-		audio_writer_binary *comp;
-
-	};
-
-
+class audio_writer_binary : public writer_binary {
 public:
 	//親クラス
-	typedef component super;
+	typedef writer_binary super;
 
 	audio_writer_binary(OMX_COMPONENTTYPE *c, const char *cname);
 	virtual ~audio_writer_binary();
@@ -38,7 +23,6 @@ public:
 
 protected:
 	virtual OMX_U32 get_audio_ports();
-	virtual OMX_U32 get_audio_start_port();
 
 public:
 	/**
@@ -52,11 +36,9 @@ public:
 
 private:
 	port_audio *in_port_audio;
-	worker_main wk_main;
 
 };
 
 } //namespace mf
 
 #endif //OMX_MF_COMPONENT_SIMPLE__AUDIO_WRITER_BINARY_HPP__
-

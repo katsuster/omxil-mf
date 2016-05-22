@@ -10,6 +10,7 @@
 namespace mf {
 
 class writer_binary : public component {
+public:
 	class worker_main : public component_worker {
 	public:
 		//親クラス
@@ -19,10 +20,16 @@ class writer_binary : public component {
 		virtual ~worker_main();
 
 		virtual const char *get_name() const;
+
+		virtual port *get_in_port();
+		virtual const port *get_in_port() const;
+		virtual void set_in_port(port *p);
+
 		virtual void run();
 
 	private:
 		writer_binary *comp;
+		port *in_port;
 
 	};
 
@@ -36,8 +43,19 @@ public:
 
 	virtual const char *get_name() const;
 
+	virtual std::string& get_uri();
+	virtual const std::string& get_uri() const;
+	virtual void set_uri(char *uri);
+	virtual void set_uri(std::string& uri);
+
+	OMX_ERRORTYPE GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure);
+	OMX_ERRORTYPE SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure);
+
 protected:
-	virtual OMX_U32 get_video_ports();
+	virtual worker_main& get_worker();
+	virtual const worker_main& get_worker() const;
+
+	virtual OMX_U32 get_audio_start_port();
 	virtual OMX_U32 get_video_start_port();
 
 public:
@@ -51,7 +69,6 @@ public:
 	static writer_binary *get_instance(OMX_HANDLETYPE hComponent);
 
 private:
-	port_video *in_port_video;
 	worker_main wk_main;
 
 };
