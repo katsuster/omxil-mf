@@ -14,7 +14,7 @@ audio_writer_binary::audio_writer_binary(OMX_COMPONENTTYPE *c, const char *cname
 	OMX_AUDIO_PARAM_PORTFORMATTYPE f;
 
 	try {
-		in_port_audio = new port_audio(3, this);
+		in_port_audio = new port_audio(0, this);
 		in_port_audio->set_dir(OMX_DirInput);
 		in_port_audio->set_buffer_count_actual(4);
 		in_port_audio->set_buffer_count_min(1);

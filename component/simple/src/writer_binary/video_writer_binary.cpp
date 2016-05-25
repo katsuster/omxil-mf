@@ -14,11 +14,11 @@ video_writer_binary::video_writer_binary(OMX_COMPONENTTYPE *c, const char *cname
 	OMX_VIDEO_PARAM_PORTFORMATTYPE f;
 
 	try {
-		in_port_video = new port_video(3, this);
+		in_port_video = new port_video(0, this);
 		in_port_video->set_dir(OMX_DirInput);
 		in_port_video->set_buffer_count_actual(4);
 		in_port_video->set_buffer_count_min(1);
-		in_port_video->set_buffer_size(32768);
+		in_port_video->set_buffer_size(4096);
 		in_port_video->set_buffer_alignment(64);
 		f.eCompressionFormat = OMX_VIDEO_CodingUnused;
 		f.eColorFormat       = OMX_COLOR_FormatYUV420Planar;

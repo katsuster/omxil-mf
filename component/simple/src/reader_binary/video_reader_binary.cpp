@@ -14,11 +14,11 @@ video_reader_binary::video_reader_binary(OMX_COMPONENTTYPE *c, const char *cname
 	OMX_VIDEO_PARAM_PORTFORMATTYPE f;
 
 	try {
-		out_port_video = new port_video(2, this);
+		out_port_video = new port_video(0, this);
 		out_port_video->set_dir(OMX_DirOutput);
 		out_port_video->set_buffer_count_actual(4);
 		out_port_video->set_buffer_count_min(1);
-		out_port_video->set_buffer_size(65536);
+		out_port_video->set_buffer_size(4096);
 		out_port_video->set_buffer_alignment(64);
 		f.eCompressionFormat = OMX_VIDEO_CodingAutoDetect;
 		f.eColorFormat       = OMX_COLOR_FormatUnused;

@@ -101,7 +101,7 @@ OMX_U32 writer_binary::get_audio_start_port()
 
 OMX_U32 writer_binary::get_video_start_port()
 {
-	return 3;
+	return 0;
 }
 
 

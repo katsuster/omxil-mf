@@ -194,7 +194,7 @@ OMX_U32 reader_binary::get_audio_start_port()
 
 OMX_U32 reader_binary::get_video_start_port()
 {
-	return 2;
+	return 0;
 }
 
 
