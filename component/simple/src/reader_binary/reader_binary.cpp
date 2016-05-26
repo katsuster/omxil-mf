@@ -1,4 +1,9 @@
 ﻿
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 #include "reader_binary/reader_binary.hpp"
 
 namespace mf {
@@ -36,13 +41,30 @@ void reader_binary::worker_main::set_out_port(port *p)
 	out_port = p;
 }
 
-void reader_binary::worker_main::run()
+void reader_binary::worker_main::send_eos()
 {
-	OMX_ERRORTYPE result;
 	port_buffer pb_out;
-	OMX_U32 len;
-	OMX_TICKS stamp = 0;
-	int i = 0;
+	OMX_ERRORTYPE result;
+
+	result = out_port->pop_buffer(&pb_out);
+	if (result != OMX_ErrorNone) {
+		errprint("out_port.pop_buffer().\n");
+		return;
+	}
+
+	pb_out.header->nOffset    = 0;
+	pb_out.header->nFilledLen = 0;
+	pb_out.header->nFlags     = OMX_BUFFERFLAG_EOS;
+	//FIXME: クロックコンポーネントに対応すべき？
+	pb_out.header->nTimeStamp = 0;
+	out_port->fill_buffer_done(&pb_out);
+}
+
+void reader_binary::worker_main::read_file(int fd)
+{
+	port_buffer pb_out;
+	ssize_t nread;
+	OMX_ERRORTYPE result;
 
 	while (is_running()) {
 		if (is_request_flush()) {
@@ -55,24 +77,51 @@ void reader_binary::worker_main::run()
 			continue;
 		}
 
-		if (i % 100 < 50) {
-			len = pb_out.header->nAllocLen;
-		} else {
-			len = pb_out.header->nAllocLen / 2;
+		if (pb_out.remain() == 0) {
+			//no space
+			out_port->fill_buffer_done(&pb_out);
+			continue;
 		}
 
-		memset(pb_out.header->pBuffer, 0, len);
-		pb_out.header->nFilledLen = len;
-		pb_out.header->nOffset    = 0;
-		pb_out.header->nTimeStamp = stamp;
-		pb_out.header->nFlags     = 0;
-		out_port->fill_buffer_done(&pb_out);
+		nread = read(fd, pb_out.get_ptr(), pb_out.remain());
+		if (nread == 0) {
+			//EOF
+			infoprint("read() reached EOF.\n");
+			send_eos();
+			break;
+		} else if (nread == -1) {
+			//Error
+			errprint("read() failed.\n");
+			break;
+		}
 
-		//next one
-		i++;
-		//16ms
-		stamp += 16000;
+		pb_out.skip(nread);
+		pb_out.header->nFlags     = 0;
+		//FIXME: クロックコンポーネントに対応すべき？
+		pb_out.header->nTimeStamp = 0;
+		out_port->fill_buffer_done(&pb_out);
 	}
+}
+
+void reader_binary::worker_main::run()
+{
+	int fd = -1;
+
+	fd = open(comp->uri_target.c_str(), O_RDONLY);
+	if (fd == -1) {
+		errprint("open(%s) failed.\n", comp->uri_target.c_str());
+		return;
+	}
+
+	try {
+		read_file(fd);
+	} catch (const std::exception& ex) {
+		errprint("catch exception '%s'.\n", ex.what());
+	} catch (...) {
+		errprint("catch unknown exception.\n");
+	}
+
+	close(fd);
 }
 
 
@@ -115,7 +164,6 @@ void reader_binary::set_uri(std::string& uri)
 {
 	uri_target = uri;
 }
-
 
 OMX_ERRORTYPE reader_binary::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE nParamIndex, OMX_PTR pComponentParameterStructure)
 {
@@ -172,6 +220,7 @@ OMX_ERRORTYPE reader_binary::SetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTY
 
 	return err;
 }
+
 
 /*
  * protected functions

@@ -25,8 +25,9 @@ public:
 		virtual const port *get_out_port() const;
 		virtual void set_out_port(port *p);
 
+		virtual void send_eos();
+		virtual void read_file(int fd);
 		virtual void run();
-
 	private:
 		reader_binary *comp;
 		port *out_port;
