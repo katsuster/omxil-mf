@@ -1,4 +1,9 @@
 ﻿
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 #include "writer_binary/writer_binary.hpp"
 
 namespace mf {
@@ -18,7 +23,7 @@ writer_binary::worker_main::~worker_main()
 
 const char *writer_binary::worker_main::get_name() const
 {
-	return "rend_null::wrk_main";
+	return "wr_bin::wrk_main";
 }
 
 port *writer_binary::worker_main::get_in_port()
@@ -36,10 +41,11 @@ void writer_binary::worker_main::set_in_port(port *p)
 	in_port = p;
 }
 
-void writer_binary::worker_main::run()
+void writer_binary::worker_main::write_file(int fd)
 {
-	OMX_ERRORTYPE result;
 	port_buffer pb_in;
+	ssize_t nwritten;
+	OMX_ERRORTYPE result;
 
 	while (is_running()) {
 		if (is_request_flush()) {
@@ -52,10 +58,43 @@ void writer_binary::worker_main::run()
 			continue;
 		}
 
-		//NOTE: gst-openmax は nOffset を戻さないとおかしな挙動をする？？
-		pb_in.header->nOffset = 0;
+		if (pb_in.remain() == 0) {
+			//no data
+			in_port->fill_buffer_done(&pb_in);
+			continue;
+		}
+
+		nwritten = write(fd, pb_in.get_ptr(), pb_in.remain());
+		if (nwritten == -1) {
+			//Error
+			errprint("write() failed.\n");
+			break;
+		}
+
+		pb_in.skip(nwritten);
 		in_port->empty_buffer_done(&pb_in);
 	}
+}
+
+void writer_binary::worker_main::run()
+{
+	int fd = -1;
+
+	fd = open(comp->uri_target.c_str(), O_RDWR);
+	if (fd == -1) {
+		errprint("open(%s) failed.\n", comp->uri_target.c_str());
+		return;
+	}
+
+	try {
+		write_file(fd);
+	} catch (const std::exception& ex) {
+		errprint("catch exception '%s'.\n", ex.what());
+	} catch (...) {
+		errprint("catch unknown exception.\n");
+	}
+
+	close(fd);
 }
 
 
@@ -76,9 +115,28 @@ writer_binary::~writer_binary()
 
 const char *writer_binary::get_name() const
 {
-	return "rend_null";
+	return "wr_bin";
 }
 
+std::string& writer_binary::get_uri()
+{
+	return uri_target;
+}
+
+const std::string& writer_binary::get_uri() const
+{
+	return uri_target;
+}
+
+void writer_binary::set_uri(char *uri)
+{
+	uri_target = uri;
+}
+
+void writer_binary::set_uri(std::string& uri)
+{
+	uri_target = uri;
+}
 
 /*
  * protected functions

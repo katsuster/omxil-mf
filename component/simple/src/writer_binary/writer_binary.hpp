@@ -25,6 +25,7 @@ public:
 		virtual const port *get_in_port() const;
 		virtual void set_in_port(port *p);
 
+		virtual void write_file(int fd);
 		virtual void run();
 
 	private:
@@ -71,6 +72,7 @@ public:
 private:
 	worker_main wk_main;
 
+	std::string uri_target;
 };
 
 } //namespace mf
