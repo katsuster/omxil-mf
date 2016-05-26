@@ -41,11 +41,6 @@ size_t port_buffer::skip(size_t count)
 {
 	size_t n;
 
-	if (p->get_dir() != OMX_DirInput) {
-		errprint("cannot skip on output port.\n");
-		return 0;
-	}
-
 	n = std::min(count, remain());
 	set_index(get_index() + n);
 

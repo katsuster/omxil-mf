@@ -120,13 +120,10 @@ public:
 	size_t remain() const;
 
 	/**
-	 * バッファの要素を読まずに飛ばします。
+	 * バッファの要素を読まずに、もしくは書かずに飛ばします。
 	 *
-	 * 出力ポートを読み飛ばそうとした場合、
-	 * 現在位置は変更されず、0 を返します。
-	 *
-	 * @param count 読み飛ばす要素数
-	 * @return 読み飛ばした要素数
+	 * @param count 飛ばす要素数
+	 * @return 飛ばした要素数
 	 */
 	size_t skip(size_t count);
 
