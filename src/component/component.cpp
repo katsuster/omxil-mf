@@ -1307,11 +1307,6 @@ OMX_ERRORTYPE component::begin_flush(OMX_U32 port_index)
 	scoped_log_begin;
 
 	for (auto wr : list_workers) {
-		wr->set_request_flush(false);
-		wr->set_flush_done(false);
-		wr->set_request_restart(false);
-		wr->set_restart_done(false);
-
 		wr->set_request_flush(true);
 	}
 
