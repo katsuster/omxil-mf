@@ -71,6 +71,7 @@ port::~port()
 	//shutdown returning OpenMAX buffers thread
 	if (bound_ret) {
 		bound_ret->shutdown();
+		cond.notify_all();
 	}
 	if (th_ret) {
 		th_ret->join();
@@ -82,6 +83,7 @@ port::~port()
 	//shutdown sending OpenMAX buffers thread
 	if (bound_send) {
 		bound_send->shutdown();
+		cond.notify_all();
 	}
 	delete bound_send;
 	delete ring_send;
@@ -543,6 +545,7 @@ OMX_ERRORTYPE port::plug_client_request()
 
 	//IL クライアントからポートへのリクエスト禁止
 	bound_send->shutdown(false, true);
+	cond.notify_all();
 
 	return OMX_ErrorNone;
 }
@@ -560,6 +563,7 @@ OMX_ERRORTYPE port::unplug_client_request()
 
 	//IL クライアントからポートへのリクエスト許可
 	bound_send->abort_shutdown(false, true);
+	cond.notify_all();
 
 	return OMX_ErrorNone;
 }
@@ -577,6 +581,7 @@ OMX_ERRORTYPE port::plug_component_request()
 
 	//コンポーネントからポートへのリクエスト禁止
 	bound_send->shutdown(true, false);
+	cond.notify_all();
 
 	return OMX_ErrorNone;
 }
@@ -594,6 +599,7 @@ OMX_ERRORTYPE port::unplug_component_request()
 
 	//コンポーネントからポートへのリクエスト許可
 	bound_send->abort_shutdown(true, false);
+	cond.notify_all();
 
 	return OMX_ErrorNone;
 }
@@ -621,6 +627,7 @@ OMX_ERRORTYPE port::return_buffers_force()
 	}
 
 	bound_send->clear();
+	cond.notify_all();
 
 	return OMX_ErrorNone;
 }
@@ -1300,6 +1307,7 @@ OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 
 	try {
 		bound_send->write_fully(&pb, 1);
+		cond.notify_all();
 
 		err = OMX_ErrorNone;
 	} catch (const std::runtime_error& e) {
@@ -1320,6 +1328,7 @@ OMX_ERRORTYPE port::pop_buffer(port_buffer *pb)
 
 	try {
 		bound_send->read_fully(pb, 1);
+		cond.notify_all();
 
 		err = OMX_ErrorNone;
 	} catch (const std::runtime_error& e) {
