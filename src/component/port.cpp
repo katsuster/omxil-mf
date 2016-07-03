@@ -1,6 +1,9 @@
 ﻿
 #define __OMX_MF_EXPORTS
 
+#include <string>
+#include <sstream>
+
 #include <omxil_mf/component.hpp>
 #include <omxil_mf/port.hpp>
 #include <omxil_mf/scoped_log.hpp>
@@ -1570,10 +1573,17 @@ void *port::buffer_done_thread_main(port *p)
 
 	try {
 		//スレッド名をつける
-		thname = "omx:p";
-		thname += std::to_string(p->get_port_index());
-		thname += ":";
-		thname += p->get_component()->get_name();
+		{
+			//std::to_string is not supported on Android KitKat
+			//so using std::stringstream instead.
+			std::stringstream ss;
+
+			thname = "omx:p";
+			ss << p->get_port_index();
+			thname += ss.str();
+			thname += ":";
+			thname += p->get_component()->get_name();
+		}
 		set_thread_name(thname.c_str());
 
 		p->buffer_done();
