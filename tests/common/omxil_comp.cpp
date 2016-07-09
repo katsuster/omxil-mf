@@ -1,5 +1,6 @@
 ﻿
 #include <cstring>
+#include <algorithm>
 #include <string>
 
 #include <OMX_Component.h>
@@ -376,6 +377,30 @@ void omxil_comp::register_buffer(OMX_U32 port, OMX_BUFFERHEADERTYPE *buf)
 			std::map<OMX_U32, buflist_type *>::value_type(port, bl));
 	}
 	bl->push_back(buf);
+}
+
+void omxil_comp::unregister_buffer(OMX_U32 port, OMX_BUFFERHEADERTYPE *buf)
+{
+	std::unique_lock<std::recursive_mutex> lock(mut_comp);
+	omxil_comp::buflist_type *bl;
+
+	bl = find_buflist(port);
+	if (bl == nullptr) {
+		//not found
+		return;
+	}
+
+	auto it = std::find(bl->begin(), bl->end(), buf);
+	if (it == bl->end()) {
+		//not found
+		return;
+	}
+
+	bl->erase(it);
+	if (bl->empty()) {
+		delete bl;
+		map_buflist.erase(port);
+	}
 }
 
 OMX_BUFFERHEADERTYPE *omxil_comp::get_free_buffer(OMX_U32 port) const
