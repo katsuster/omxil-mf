@@ -201,6 +201,8 @@ int main(int argc, char *argv[])
 		OMX_U8 *pb = (*it)->pBuffer;
 		buffer_attr *pbattr = static_cast<buffer_attr *>((*it)->pAppPrivate);
 
+		comp->unregister_buffer(pnum_in, *it);
+
 		result = comp->FreeBuffer(pnum_in, *it);
 		if (result != OMX_ErrorNone) {
 			fprintf(stderr, "OMX_FreeBuffer(%d) failed.\n",
@@ -234,6 +236,8 @@ err_out2:
 	for (auto it = buf_in.begin(); it != buf_in.end(); it++) {
 		OMX_U8 *pb = (*it)->pBuffer;
 		buffer_attr *pbattr = static_cast<buffer_attr *>((*it)->pAppPrivate);
+
+		comp->unregister_buffer(pnum_in, *it);
 
 		comp->FreeBuffer(pnum_in, *it);
 
