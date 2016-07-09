@@ -19,6 +19,11 @@ struct buffer_attr {
 	bool used;
 };
 
+struct command_attr {
+	OMX_COMMANDTYPE cmd;
+	OMX_ERRORTYPE err;
+};
+
 class omxil_comp {
 public:
 	typedef std::vector<OMX_BUFFERHEADERTYPE *> buflist_type;
@@ -196,7 +201,7 @@ private:
 	mutable std::recursive_mutex mut_comp;
 	mutable std::condition_variable_any cond_comp;
 	OMX_STATETYPE state_done;
-	std::map<OMX_U32, OMX_ERRORTYPE> map_flush_done;
+	std::map<OMX_U32, command_attr> map_cmd_done;
 	std::map<OMX_U32, buflist_type *> map_buflist;
 
 };

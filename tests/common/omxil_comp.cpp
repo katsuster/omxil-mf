@@ -69,7 +69,7 @@ OMX_ERRORTYPE omxil_comp::SendCommand(OMX_COMMANDTYPE Cmd, OMX_U32 nParam, OMX_P
 	case OMX_CommandFlush: {
 		std::unique_lock<std::recursive_mutex> lock(mut_comp);
 
-		map_flush_done.clear();
+		map_cmd_done.clear();
 		cond_comp.notify_all();
 
 		break;
@@ -229,26 +229,31 @@ OMX_ERRORTYPE omxil_comp::EventHandler(OMX_HANDLETYPE hComponent, OMX_PTR pAppDa
 		state_done = static_cast<OMX_STATETYPE>(nData2);
 		cond_comp.notify_all();
 	}
-	if (eEvent == OMX_EventCmdComplete &&
-		nData1 == OMX_CommandFlush) {
+	if (eEvent == OMX_EventCmdComplete) {
 		std::unique_lock<std::recursive_mutex> lock(mut_comp);
+		OMX_COMMANDTYPE cmd = static_cast<OMX_COMMANDTYPE>(nData1);
 		OMX_U32 port = nData2;
 		OMX_ERRORTYPE cmd_err = static_cast<OMX_ERRORTYPE>((intptr_t)pEventData);
+		command_attr cmd_attr;
 
-		auto it = map_flush_done.find(nData2);
-		if (it == map_flush_done.end()) {
+		auto it = map_cmd_done.find(nData2);
+		if (it == map_cmd_done.end()) {
 			//Add unknown ports
 			printf("omxil_comp::EventHandler cmd %d, port:%d completed (new).\n",
-				(int)nData1, (int)port);
+				(int)cmd, (int)port);
 
-			map_flush_done.insert(
-				std::map<OMX_U32, OMX_ERRORTYPE>::value_type(port, cmd_err));
+			cmd_attr.cmd = cmd;
+			cmd_attr.err = cmd_err;
+			map_cmd_done.insert(
+				std::map<OMX_U32, command_attr>::value_type(port, cmd_attr));
 		} else {
 			//Modify known ports
 			printf("omxil_comp::EventHandler cmd %d, port:%d completed.\n",
-				(int)nData1, (int)nData2);
+				(int)cmd, (int)port);
 
-			it->second = cmd_err;
+			cmd_attr.cmd = cmd;
+			cmd_attr.err = cmd_err;
+			it->second = cmd_attr;
 		}
 		cond_comp.notify_all();
 	}
@@ -322,12 +327,13 @@ void omxil_comp::wait_command_completed(OMX_COMMANDTYPE cmd, OMX_U32 port) const
 	std::unique_lock<std::recursive_mutex> lock(mut_comp);
 
 	cond_comp.wait(lock, [&] {
-			auto it = map_flush_done.find(port);
-			if (it == map_flush_done.end()) {
+			auto it = map_cmd_done.find(port);
+			if (it == map_cmd_done.end()) {
 				//Unknown ports
 				return false;
 			}
-			return it->second == OMX_ErrorNone;
+			return (it->second.cmd == cmd) &&
+				(it->second.err == OMX_ErrorNone);
 		});
 }
 
