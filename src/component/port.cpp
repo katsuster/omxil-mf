@@ -625,8 +625,8 @@ OMX_ERRORTYPE port::return_buffers_force()
 	//      返却前にコンポーネント側の動作を確実に止める必要があります。
 	for (port_buffer pb_held : list_held_copy) {
 		remove_held_buffer(&pb_held);
+		pb_held.header->nFilledLen = 0;
 		bound_ret->write_fully(&pb_held, 1);
-		cond.notify_all();
 	}
 
 	bound_send->clear();
