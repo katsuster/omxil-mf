@@ -28,7 +28,8 @@ port::port(int ind, component *c)
 	tunneled_port(0), f_tunneled_supplier(OMX_FALSE),
 	default_format(-1),
 	ring_send(nullptr), bound_send(nullptr),
-	ring_ret(nullptr), bound_ret(nullptr), th_ret(nullptr)
+	ring_ret(nullptr), bound_ret(nullptr), th_ret(nullptr),
+	cnt_send_wr(0), cnt_recv_rd(0)
 {
 	scoped_log_begin;
 
@@ -74,7 +75,7 @@ port::~port()
 	//shutdown returning OpenMAX buffers thread
 	if (bound_ret) {
 		bound_ret->shutdown();
-		cond.notify_all();
+		notify_buffer_count();
 	}
 	if (th_ret) {
 		th_ret->join();
@@ -86,7 +87,7 @@ port::~port()
 	//shutdown sending OpenMAX buffers thread
 	if (bound_send) {
 		bound_send->shutdown();
-		cond.notify_all();
+		notify_buffer_count();
 	}
 	delete bound_send;
 	delete ring_send;
@@ -630,7 +631,7 @@ OMX_ERRORTYPE port::return_buffers_force()
 	}
 
 	bound_send->clear();
-	cond.notify_all();
+	notify_buffer_count();
 
 	return OMX_ErrorNone;
 }
@@ -641,7 +642,7 @@ void port::wait_buffer_returned() const
 	std::unique_lock<std::recursive_mutex> lk_port(mut);
 
 	cond.wait(lk_port, [&] { return is_broken() ||
-		bound_send->get_write_count() == bound_ret->get_read_count(); });
+		cnt_send_wr == cnt_recv_rd; });
 	error_if_broken(lk_port);
 }
 
@@ -1310,7 +1311,7 @@ OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 
 	try {
 		bound_send->write_fully(&pb, 1);
-		cond.notify_all();
+		notify_buffer_count();
 
 		err = OMX_ErrorNone;
 	} catch (const std::runtime_error& e) {
@@ -1331,7 +1332,7 @@ OMX_ERRORTYPE port::pop_buffer(port_buffer *pb)
 
 	try {
 		bound_send->read_fully(pb, 1);
-		cond.notify_all();
+		notify_buffer_count();
 
 		err = OMX_ErrorNone;
 	} catch (const std::runtime_error& e) {
@@ -1416,7 +1417,7 @@ OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 
 	try {
 		bound_ret->write_fully(&pb, 1);
-		cond.notify_all();
+		notify_buffer_count();
 
 		err = OMX_ErrorNone;
 	} catch (const std::runtime_error& e) {
@@ -1501,6 +1502,17 @@ bool port::is_broken() const
 	return is_shutting_read() && is_shutting_write();
 }
 
+void port::notify_buffer_count()
+{
+	scoped_log_begin;
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
+
+	cnt_send_wr = bound_send->get_write_count();
+	cnt_recv_rd = bound_ret->get_read_count();
+
+	cond.notify_all();
+}
+
 //----------------------------------------
 //コンポーネント利用者へのバッファ返却スレッド
 //----------------------------------------
@@ -1516,7 +1528,7 @@ void *port::buffer_done()
 	while (1) {
 		//blocked read
 		bound_ret->read_fully(&pb, 1);
-		cond.notify_all();
+		notify_buffer_count();
 
 		comp = pb.p->get_component();
 

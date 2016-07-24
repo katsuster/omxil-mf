@@ -1077,6 +1077,11 @@ protected:
 	virtual bool is_broken() const;
 
 	/**
+	 * 送出、返却した OpenMAX バッファ数を更新し、通知します。
+	 */
+	virtual void notify_buffer_count();
+
+	/**
 	 * 指定されたコンポーネントのポートと、トンネル接続します。
 	 * （入力ポート用）
 	 *
@@ -1199,6 +1204,8 @@ private:
 	//使用後のバッファ返却スレッド
 	std::thread *th_ret;
 
+	//バッファ送出数、返却数のメモ
+	uint64_t cnt_send_wr, cnt_recv_rd;
 };
 
 } //namespace mf
