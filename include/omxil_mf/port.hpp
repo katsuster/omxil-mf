@@ -990,15 +990,6 @@ public:
 	 */
 	virtual OMX_ERRORTYPE pop_buffer(port_buffer *pb);
 
-	/**
-	 * 受付中の OpenMAX バッファ数を取得します。
-	 *
-	 * バッファ処理スレッドにて使用します。
-	 *
-	 * @return 受付中のバッファ数
-	 */
-	virtual int get_buffer_count();
-
 
 	//----------------------------------------
 	// コンポーネント → コンポーネント利用者へのバッファ返却

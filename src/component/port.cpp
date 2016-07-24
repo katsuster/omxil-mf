@@ -538,7 +538,7 @@ OMX_ERRORTYPE port::enable_port()
 OMX_ERRORTYPE port::plug_client_request()
 {
 	scoped_log_begin;
-	std::unique_lock<std::recursive_mutex> lk_port(mut);
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
 
 	if (!get_enabled()) {
 		errprint("Port %d is disabled.\n",
@@ -556,7 +556,7 @@ OMX_ERRORTYPE port::plug_client_request()
 OMX_ERRORTYPE port::unplug_client_request()
 {
 	scoped_log_begin;
-	std::unique_lock<std::recursive_mutex> lk_port(mut);
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
 
 	if (!get_enabled()) {
 		errprint("Port %d is disabled.\n",
@@ -574,7 +574,7 @@ OMX_ERRORTYPE port::unplug_client_request()
 OMX_ERRORTYPE port::plug_component_request()
 {
 	scoped_log_begin;
-	std::unique_lock<std::recursive_mutex> lk_port(mut);
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
 
 	if (!get_enabled()) {
 		errprint("Port %d is disabled.\n",
@@ -592,7 +592,7 @@ OMX_ERRORTYPE port::plug_component_request()
 OMX_ERRORTYPE port::unplug_component_request()
 {
 	scoped_log_begin;
-	std::unique_lock<std::recursive_mutex> lk_port(mut);
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
 
 	if (!get_enabled()) {
 		errprint("Port %d is disabled.\n",
@@ -610,7 +610,7 @@ OMX_ERRORTYPE port::unplug_component_request()
 OMX_ERRORTYPE port::return_buffers_force()
 {
 	scoped_log_begin;
-	std::unique_lock<std::recursive_mutex> lk_port(mut);
+	std::lock_guard<std::recursive_mutex> lk_port(mut);
 	std::vector<port_buffer> list_held_copy = list_held_bufs;
 
 	if (!get_enabled()) {
@@ -1342,14 +1342,6 @@ OMX_ERRORTYPE port::pop_buffer(port_buffer *pb)
 
 	return err;
 }
-
-int port::get_buffer_count()
-{
-	return bound_send->size();
-}
-
-
-
 
 //----------------------------------------
 //コンポーネント → コンポーネント利用者へのバッファ返却
