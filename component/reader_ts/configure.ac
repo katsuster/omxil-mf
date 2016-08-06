@@ -14,6 +14,7 @@ AC_CONFIG_AUX_DIR([conf])
 dnl AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([foreign ])
+AM_SILENT_RULES([yes])
 LT_INIT()
 
 dnl ----------------------------------------

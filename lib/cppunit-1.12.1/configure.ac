@@ -39,6 +39,7 @@ AC_SUBST(LT_AGE)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADER(config/config.h)
 AM_INIT_AUTOMAKE([foreign])
+AM_SILENT_RULES([yes])
 
 # General "with" options
 # ----------------------------------------------------------------------------
