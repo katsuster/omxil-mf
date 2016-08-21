@@ -169,6 +169,7 @@ public:
 	 * Remove all elements in this buffer.
 	 */
 	void clear() {
+		std::lock_guard<std::recursive_mutex> lock(mut);
 		bound.clear();
 		cnt_rd = cnt_wr;
 		notify_with_lock();
