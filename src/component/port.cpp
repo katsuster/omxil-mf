@@ -80,15 +80,16 @@ port::~port()
 	if (th_ret) {
 		th_ret->join();
 	}
-	delete th_ret;
-	delete bound_ret;
-	delete ring_ret;
 
 	//shutdown sending OpenMAX buffers thread
 	if (bound_send) {
 		bound_send->shutdown();
 		notify_buffer_count();
 	}
+
+	delete th_ret;
+	delete bound_ret;
+	delete ring_ret;
 	delete bound_send;
 	delete ring_send;
 }
