@@ -366,6 +366,8 @@ OMX_ERRORTYPE component::SendCommand(OMX_HANDLETYPE hComponent, OMX_COMMANDTYPE 
 		cmd.data = pCmdData;
 
 		bound_accept->write_fully(&cmd, 1);
+	} catch (const mf::interrupted_error& e) {
+		infoprint("interrupted: %s\n", e.what());
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: %s\n", e.what());
 	}
@@ -1406,7 +1408,7 @@ void component::error_if_broken(std::unique_lock<std::mutex>& lock) const
 	if (is_broken()) {
 		std::string msg(__func__);
 		msg += ": interrupted.";
-		throw std::runtime_error(msg);
+		throw mf::interrupted_error(msg);
 	}
 }
 
@@ -1655,6 +1657,9 @@ OMX_ERRORTYPE component::command_state_set_to_loaded()
 	case OMX_StateIdle:
 		try {
 			err = command_state_set_to_loaded_from_idle();
+		} catch (const mf::interrupted_error& e) {
+			infoprint("interrupted: %s\n", e.what());
+			err = OMX_ErrorInsufficientResources;
 		} catch (const std::runtime_error& e) {
 			errprint("runtime_error: %s\n", e.what());
 			err = OMX_ErrorInsufficientResources;
@@ -1722,6 +1727,9 @@ OMX_ERRORTYPE component::command_state_set_to_idle()
 	case OMX_StateLoaded:
 		try {
 			err = command_state_set_to_idle_from_loaded();
+		} catch (const mf::interrupted_error& e) {
+			infoprint("interrupted: %s\n", e.what());
+			err = OMX_ErrorInsufficientResources;
 		} catch (const std::runtime_error& e) {
 			errprint("runtime_error: %s\n", e.what());
 			err = OMX_ErrorInsufficientResources;
@@ -1733,6 +1741,9 @@ OMX_ERRORTYPE component::command_state_set_to_idle()
 	case OMX_StateExecuting:
 		try {
 			err = command_state_set_to_idle_from_executing();
+		} catch (const mf::interrupted_error& e) {
+			infoprint("interrupted: %s\n", e.what());
+			err = OMX_ErrorInsufficientResources;
 		} catch (const std::runtime_error& e) {
 			errprint("runtime_error: %s\n", e.what());
 			err = OMX_ErrorInsufficientResources;
@@ -1983,6 +1994,10 @@ OMX_ERRORTYPE component::command_flush(OMX_U32 port_index)
 			}
 			ev_results.push_back(it->first);
 		}
+	} catch (const mf::interrupted_error& e) {
+		infoprint("interrupted: %s\n", e.what());
+		err = OMX_ErrorInsufficientResources;
+		success = false;
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: %s\n", e.what());
 		err = OMX_ErrorInsufficientResources;
@@ -2271,6 +2286,8 @@ void *component::accept_command_thread_main(OMX_COMPONENTTYPE *arg)
 
 	try {
 		comp->accept_command();
+	} catch (const mf::interrupted_error& e) {
+		infoprint("interrupted: %s\n", e.what());
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: %s\n", e.what());
 	}

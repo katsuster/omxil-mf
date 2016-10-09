@@ -1315,11 +1315,15 @@ OMX_ERRORTYPE port::push_buffer(OMX_BUFFERHEADERTYPE *bufhead)
 		notify_buffer_count();
 
 		err = OMX_ErrorNone;
+	} catch (const mf::interrupted_error& e) {
+		infoprint("interrupted: %s\n", e.what());
+
+		remove_held_buffer(&pb);
+		err = OMX_ErrorInsufficientResources;
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: %s\n", e.what());
 
 		remove_held_buffer(&pb);
-
 		err = OMX_ErrorInsufficientResources;
 	}
 
@@ -1336,6 +1340,10 @@ OMX_ERRORTYPE port::pop_buffer(port_buffer *pb)
 		notify_buffer_count();
 
 		err = OMX_ErrorNone;
+	} catch (const mf::interrupted_error& e) {
+		infoprint("interrupted: %s\n", e.what());
+
+		err = OMX_ErrorInsufficientResources;
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: %s\n", e.what());
 
@@ -1421,11 +1429,15 @@ OMX_ERRORTYPE port::push_buffer_done(OMX_BUFFERHEADERTYPE *bufhead)
 		notify_buffer_count();
 
 		err = OMX_ErrorNone;
+	} catch (const mf::interrupted_error& e) {
+		infoprint("interrupted: %s\n", e.what());
+
+		add_held_buffer(&pb);
+		err = OMX_ErrorInsufficientResources;
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: %s\n", e.what());
 
 		add_held_buffer(&pb);
-
 		err = OMX_ErrorInsufficientResources;
 	}
 
@@ -1494,7 +1506,7 @@ void port::error_if_broken(std::unique_lock<std::recursive_mutex>& lk_port) cons
 	if (is_broken()) {
 		std::string msg(__func__);
 		msg += ": interrupted by shutdown.";
-		throw std::runtime_error(msg);
+		throw mf::interrupted_error(msg);
 	}
 }
 
@@ -1592,6 +1604,8 @@ void *port::buffer_done_thread_main(port *p)
 		set_thread_name(thname.c_str());
 
 		p->buffer_done();
+	} catch (const mf::interrupted_error& e) {
+		infoprint("interrupted: %s\n", e.what());
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: %s\n", e.what());
 	}

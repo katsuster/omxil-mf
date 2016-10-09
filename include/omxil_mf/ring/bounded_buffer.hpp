@@ -13,6 +13,7 @@
 #include <omxil_mf/base.h>
 
 #include "buffer_base.hpp"
+#include "special_except.hpp"
 
 namespace mf {
 
@@ -25,7 +26,7 @@ namespace mf {
  * スレッドがブロックされます。
  *
  * shutdown() すると全てのスレッドのブロックが強制解除され、
- * runtime_error がスローされます。
+ * interrupted_error がスローされます。
  */
 template <class Container, class T>
 class OMX_MF_API_CLASS bounded_buffer {
@@ -562,7 +563,7 @@ public:
 	 * リングバッファに指定された要素数が書き込まれるまでブロックします。
 	 * リングバッファに要素が既に存在していればすぐに返ります。
 	 *
-	 * シャットダウンされた場合は runtime_error をスローします。
+	 * シャットダウンされた場合は interrupted_error をスローします。
 	 *
 	 * @param n 要素数
 	 */
@@ -573,7 +574,7 @@ public:
 		if (shutting_read) {
 			std::string msg(__func__);
 			msg += ": interrupted.";
-			throw std::runtime_error(msg);
+			throw mf::interrupted_error(msg);
 		}
 	}
 
@@ -581,7 +582,7 @@ public:
 	 * リングバッファに指定された要素数の空きができるまでブロックします。
 	 * リングバッファに空きが既に存在していればすぐに返ります。
 	 *
-	 * シャットダウンされた場合は runtime_error をスローします。
+	 * シャットダウンされた場合は interrupted_error をスローします。
 	 *
 	 * @param n 要素数
 	 */
@@ -592,7 +593,7 @@ public:
 		if (shutting_write) {
 			std::string msg(__func__);
 			msg += ": interrupted.";
-			throw std::runtime_error(msg);
+			throw mf::interrupted_error(msg);
 		}
 	}
 
@@ -600,7 +601,7 @@ public:
 	 * 以降の読み出しと書き込みを禁止し、
 	 * 全ての待機しているスレッドを強制的に解除（シャットダウン）します。
 	 *
-	 * 強制解除されたスレッドは runtime_error をスローします。
+	 * 強制解除されたスレッドは interrupted_error をスローします。
 	 *
 	 * 下記の呼び出しと等価です。
 	 *
@@ -614,7 +615,7 @@ public:
 	 * 以降の読み出し、または書き込みを禁止し、
 	 * 全ての待機しているスレッドを強制的に解除（シャットダウン）します。
 	 *
-	 * 強制解除されたスレッドは runtime_error をスローします。
+	 * 強制解除されたスレッドは interrupted_error をスローします。
 	 *
 	 * @param rd 以降の読み出しを禁止し、
 	 * 	読み出しの待機状態を解除する場合は true、
@@ -760,7 +761,7 @@ public:
 	 * ロックを確保してから呼び出します。
 	 *
 	 * 読み出し側をシャットダウンされた場合は、
-	 * runtime_error をスローします。
+	 * interrupted_error をスローします。
 	 *
 	 * @param lock リングバッファのロックへの参照
 	 */
@@ -769,7 +770,7 @@ public:
 		if (shutting_read) {
 			std::string msg(__func__);
 			msg += ": interrupted.";
-			throw std::runtime_error(msg);
+			throw mf::interrupted_error(msg);
 		}
 	}
 
@@ -780,7 +781,7 @@ public:
 	 * ロックを確保してから呼び出します。
 	 *
 	 * 書き込み側をシャットダウンされた場合は、
-	 * runtime_error をスローします。
+	 * interrupted_error をスローします。
 	 *
 	 * @param lock リングバッファのロックへの参照
 	 */
@@ -789,7 +790,7 @@ public:
 		if (shutting_write) {
 			std::string msg(__func__);
 			msg += ": interrupted.";
-			throw std::runtime_error(msg);
+			throw mf::interrupted_error(msg);
 		}
 	}
 

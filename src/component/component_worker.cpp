@@ -228,7 +228,7 @@ void component_worker::error_if_broken(std::unique_lock<std::mutex>& lock) const
 		msg += ": ";
 		msg += get_name();
 		msg += ": interrupted.";
-		throw std::runtime_error(msg);
+		throw mf::interrupted_error(msg);
 	}
 }
 
@@ -260,6 +260,9 @@ void *component_worker::component_worker_thread_main(component_worker *arg)
 
 			try {
 				arg->run();
+			} catch (const mf::interrupted_error& e) {
+				infoprint("interrupted: worker %s: %s\n",
+					arg->get_name(), e.what());
 			} catch (const std::runtime_error& e) {
 				errprint("runtime_error: worker %s: %s\n",
 					arg->get_name(), e.what());
@@ -267,6 +270,9 @@ void *component_worker::component_worker_thread_main(component_worker *arg)
 			arg->set_request_flush(false);
 			arg->set_flush_done(true);
 		}
+	} catch (const mf::interrupted_error& e) {
+		infoprint("interrupted: worker %s: %s\n",
+			arg->get_name(), e.what());
 	} catch (const std::runtime_error& e) {
 		errprint("runtime_error: worker %s: %s\n",
 			arg->get_name(), e.what());
