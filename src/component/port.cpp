@@ -1540,8 +1540,7 @@ void *port::buffer_done()
 
 	while (1) {
 		//blocked read
-		bound_ret->read_fully(&pb, 1);
-		notify_buffer_count();
+		bound_ret->peek_fully(&pb, 1);
 
 		comp = pb.p->get_component();
 
@@ -1578,6 +1577,10 @@ void *port::buffer_done()
 			errprint("error handler returns error: %s\n",
 				omx_enum_name::get_OMX_ERRORTYPE_name(err_handler));
 		}
+
+		//erase request
+		bound_ret->read_fully(&pb, 1);
+		notify_buffer_count();
 	}
 
 	return nullptr;
