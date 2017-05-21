@@ -1890,8 +1890,21 @@ OMX_ERRORTYPE component::command_state_set_to_executing_from_idle()
 		return OMX_ErrorInsufficientResources;
 	}
 
-	//トンネル接続している相手ポートに、全バッファの処理を要求する
+	//Start all ports and component
 	err = OMX_ErrorNone;
+	errtmp = execute_restart(OMX_ALL,
+		[&](OMX_U32 ind) -> OMX_ERRORTYPE {
+			return begin_restart(ind);
+		},
+		[&](OMX_U32 ind) -> OMX_ERRORTYPE {
+			return end_restart(ind);
+		});
+	if (errtmp != OMX_ErrorNone) {
+		errprint("Failed to execute_restart(idle->exec, port:all)\n");
+		err = errtmp;
+	}
+
+	//トンネル接続している相手ポートに、全バッファの処理を要求する
 	for (auto it = map_ports.begin(); it != map_ports.end(); it++) {
 		if (!it->second.get_enabled() ||
 			!it->second.get_tunneled() ||

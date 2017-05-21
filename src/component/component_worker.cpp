@@ -247,10 +247,6 @@ void *component_worker::component_worker_thread_main(component_worker *arg)
 	set_thread_name(thname.c_str());
 
 	try {
-		//メイン処理が始まったことを通知する
-		arg->set_running(true);
-		arg->set_request_restart(true);
-
 		while (arg->is_running()) {
 			arg->wait_request_restart();
 			if (!arg->is_running()) {
