@@ -17,7 +17,7 @@
 namespace mf {
 
 port::port(int ind, component *c)
-	: port_index(ind), dir(OMX_DirMax),
+	: definition(), port_index(ind), dir(OMX_DirMax),
 	buffer_count_actual(0), buffer_count_min(0), buffer_size(0),
 	f_enabled(OMX_TRUE), f_populated(OMX_FALSE),
 	domain(OMX_PortDomainMax),
