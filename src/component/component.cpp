@@ -452,7 +452,6 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			break;
 		}
 
-		err = OMX_ErrorNone;
 		break;
 	}
 	case OMX_IndexParamAudioInit: {
@@ -551,7 +550,6 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			*pf_audio = tmp;
 		}
 
-		err = OMX_ErrorNone;
 		break;
 	}
 	case OMX_IndexParamVideoPortFormat: {
@@ -591,7 +589,6 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			*pf_video = tmp;
 		}
 
-		err = OMX_ErrorNone;
 		break;
 	}
 	case OMX_IndexParamImagePortFormat: {
@@ -631,7 +628,6 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			*pf_image = tmp;
 		}
 
-		err = OMX_ErrorNone;
 		break;
 	}
 	case OMX_IndexParamOtherPortFormat: {
@@ -671,7 +667,6 @@ OMX_ERRORTYPE component::GetParameter(OMX_HANDLETYPE hComponent, OMX_INDEXTYPE n
 			*pf_other = tmp;
 		}
 
-		err = OMX_ErrorNone;
 		break;
 	}
 	default:
